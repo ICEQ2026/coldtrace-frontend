@@ -10,6 +10,7 @@ permissions:
   deployments: write
   issues: write
   pull-requests: read
+  statuses: write
 
 jobs:
   publish-preview-link:
@@ -57,6 +58,16 @@ jobs:
               environment_url: previewUrl,
               log_url: `https://vercel.com/${process.env.VERCEL_TEAM_SLUG}/${process.env.VERCEL_PROJECT_SLUG}`,
               description: 'Vercel branch preview URL',
+            });
+
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha: context.sha,
+              state: 'success',
+              target_url: previewUrl,
+              description: 'Open Vercel branch preview',
+              context: 'Vercel Preview',
             });
 
             await core.summary
