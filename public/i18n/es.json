@@ -54,6 +54,11 @@
       "expired": "Este enlace de recuperación expiró."
     }
   },
+  "page-not-found": {
+    "title": "Página no encontrada",
+    "content": "La ruta <strong>{{ invalid_path }}</strong> no existe.",
+    "go-home": "Ir al login"
+  },
   "sign-up": {
     "title": "Crear cuenta",
     "organization-name": "Nombre de la organización",

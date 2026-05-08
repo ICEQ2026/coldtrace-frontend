@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+.page-not-found {
+  align-items: center;
+  background: #f7f8fa;
+  box-sizing: border-box;
+  color: #404040;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: calc(100dvh - 72px);
+  padding: clamp(124px, 18vh, 184px) 24px 64px;
+  text-align: center;
+}
+
+.container-with-spacing {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(400px, 100%);
+}
+
+h1 {
+  font-family: 'Varela Round', Arial, sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 34px;
+  margin: 0;
+}
+
+div {
+  color: #999da3;
+  font-family: 'Inter', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}

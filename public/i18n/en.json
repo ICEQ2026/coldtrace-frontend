@@ -54,6 +54,11 @@
       "expired": "This recovery link expired."
     }
   },
+  "page-not-found": {
+    "title": "Page not found",
+    "content": "The path <strong>{{ invalid_path }}</strong> does not exist.",
+    "go-home": "Go to login"
+  },
   "sign-up": {
     "title": "Create your account",
     "organization-name": "Organization name",
