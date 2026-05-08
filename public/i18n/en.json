@@ -24,6 +24,36 @@
       "server-error": "We could not validate the account. Check the fake API server."
     }
   },
+  "password-recovery": {
+    "title": "Recover password",
+    "subtitle": "Enter your account email to continue.",
+    "email": "Email address",
+    "request-link": "Request link",
+    "requesting": "Requesting link...",
+    "continue-reset": "Continue to reset password",
+    "back-to-login": "Back to login",
+    "success": "Recovery link sent for this simulated flow.",
+    "error": {
+      "email-invalid": "Enter a valid email address.",
+      "not-found": "There is no account linked to this email.",
+      "server-error": "We could not validate the account. Check the fake API server."
+    }
+  },
+  "reset-password": {
+    "title": "Reset password",
+    "password": "New password",
+    "confirm-password": "Confirm password",
+    "change-password": "Change password",
+    "request-new-link": "Request a new link",
+    "back-to-login": "Back to login",
+    "toggle-password-visibility": "Toggle password visibility",
+    "success": "Password changed successfully for this simulated flow.",
+    "error": {
+      "password-min-length": "Use at least 8 characters.",
+      "passwords-must-match": "Passwords must match.",
+      "expired": "This recovery link expired."
+    }
+  },
   "sign-up": {
     "title": "Create your account",
     "organization-name": "Organization name",

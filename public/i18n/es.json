@@ -24,6 +24,36 @@
       "server-error": "No se pudo validar la cuenta. Revisa el servidor de fake API."
     }
   },
+  "password-recovery": {
+    "title": "Recuperar contraseña",
+    "subtitle": "Ingresa el correo de tu cuenta para continuar.",
+    "email": "Correo electrónico",
+    "request-link": "Solicitar enlace",
+    "requesting": "Solicitando enlace...",
+    "continue-reset": "Continuar para restablecer contraseña",
+    "back-to-login": "Volver al login",
+    "success": "Enlace de recuperación enviado para este flujo simulado.",
+    "error": {
+      "email-invalid": "Ingresa un correo electrónico válido.",
+      "not-found": "No existe una cuenta vinculada a este correo.",
+      "server-error": "No se pudo validar la cuenta. Revisa el servidor de fake API."
+    }
+  },
+  "reset-password": {
+    "title": "Restablecer contraseña",
+    "password": "Nueva contraseña",
+    "confirm-password": "Confirmar contraseña",
+    "change-password": "Cambiar contraseña",
+    "request-new-link": "Solicitar nuevo enlace",
+    "back-to-login": "Volver al login",
+    "toggle-password-visibility": "Alternar visibilidad de contraseña",
+    "success": "Contraseña cambiada correctamente para este flujo simulado.",
+    "error": {
+      "password-min-length": "Usa al menos 8 caracteres.",
+      "passwords-must-match": "Las contraseñas deben coincidir.",
+      "expired": "Este enlace de recuperación expiró."
+    }
+  },
   "sign-up": {
     "title": "Crear cuenta",
     "organization-name": "Nombre de la organización",
