@@ -1,3 +1,9 @@
+:host {
+  background: #f7f8fa;
+  display: block;
+  min-height: 100dvh;
+}
+
 .language-switcher-bar {
   align-items: center;
   background: #f7f8fa;
@@ -6,4 +12,5 @@
   justify-content: flex-end;
   min-height: 72px;
   padding: 14px 24px 0;
+  width: 100%;
 }

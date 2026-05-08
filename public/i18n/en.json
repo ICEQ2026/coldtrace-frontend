@@ -2,6 +2,28 @@
   "app": {
     "name": "ColdTrace"
   },
+  "sign-in": {
+    "title": "Sign in",
+    "email": "Email address",
+    "password": "Password",
+    "forgot-password": "Forgot Password?",
+    "keep-signed-in": "Keep me signed in",
+    "login": "Login",
+    "signing-in": "Signing in...",
+    "social-divider": "or sign in with",
+    "continue-with-google": "Continue with Google",
+    "continue-with-apple": "Continue with Apple",
+    "create-account": "Create an account",
+    "toggle-password-visibility": "Toggle password visibility",
+    "success": "Access granted. Opening the ColdTrace dashboard...",
+    "error": {
+      "email-invalid": "Enter a valid email address.",
+      "password-required": "Enter your password.",
+      "invalid-credentials": "Invalid credentials for this fake account.",
+      "revoked-access": "Access revoked. Contact your organization administrator.",
+      "server-error": "We could not validate the account. Check the fake API server."
+    }
+  },
   "sign-up": {
     "title": "Create your account",
     "organization-name": "Organization name",

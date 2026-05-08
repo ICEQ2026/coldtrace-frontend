@@ -2,6 +2,28 @@
   "app": {
     "name": "ColdTrace"
   },
+  "sign-in": {
+    "title": "Iniciar sesión",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "forgot-password": "¿Olvidaste tu contraseña?",
+    "keep-signed-in": "Mantener sesión iniciada",
+    "login": "Iniciar sesión",
+    "signing-in": "Iniciando sesión...",
+    "social-divider": "o inicia sesión con",
+    "continue-with-google": "Continuar con Google",
+    "continue-with-apple": "Continuar con Apple",
+    "create-account": "Crear una cuenta",
+    "toggle-password-visibility": "Alternar visibilidad de contraseña",
+    "success": "Acceso concedido. Abriendo el dashboard de ColdTrace...",
+    "error": {
+      "email-invalid": "Ingresa un correo electrónico válido.",
+      "password-required": "Ingresa tu contraseña.",
+      "invalid-credentials": "Credenciales inválidas para esta cuenta fake.",
+      "revoked-access": "Acceso revocado. Contacta al administrador de tu organización.",
+      "server-error": "No se pudo validar la cuenta. Revisa el servidor de fake API."
+    }
+  },
   "sign-up": {
     "title": "Crear cuenta",
     "organization-name": "Nombre de la organización",
