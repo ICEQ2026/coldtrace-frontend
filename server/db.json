@@ -6,6 +6,41 @@
       "commercialName": "Mauricio Pajes Organization",
       "taxId": "",
       "contactEmail": "mpajes2006@gmail.com"
+    },
+    {
+      "id": 2,
+      "legalName": "My Chifa",
+      "commercialName": "My Chifa",
+      "taxId": "",
+      "contactEmail": "test@test.com"
+    },
+    {
+      "id": 3,
+      "legalName": "My Chifa",
+      "commercialName": "My Chifa",
+      "taxId": "",
+      "contactEmail": "test1@test.com"
+    },
+    {
+      "id": 4,
+      "legalName": "Mi Polleria",
+      "commercialName": "Mi Polleria",
+      "taxId": "",
+      "contactEmail": "test2@test.com"
+    },
+    {
+      "id": 5,
+      "legalName": "Tambo",
+      "commercialName": "Tambo",
+      "taxId": "",
+      "contactEmail": "juan@test.com"
+    },
+    {
+      "id": 6,
+      "legalName": "oxxo",
+      "commercialName": "oxxo",
+      "taxId": "",
+      "contactEmail": "carlos@test.com"
     }
   ],
   "roles": [
@@ -42,8 +77,47 @@
       "email": "mpajes2006@gmail.com",
       "organizationId": 1,
       "roleId": 1
+    },
+    {
+      "id": 2,
+      "firstName": "test",
+      "lastName": "",
+      "email": "test@test.com",
+      "organizationId": 2,
+      "roleId": 1
+    },
+    {
+      "id": 3,
+      "firstName": "Test",
+      "lastName": "1",
+      "email": "test1@test.com",
+      "organizationId": 3,
+      "roleId": 1
+    },
+    {
+      "id": 4,
+      "firstName": "test2",
+      "lastName": "",
+      "email": "test2@test.com",
+      "organizationId": 4,
+      "roleId": 1
+    },
+    {
+      "id": 5,
+      "firstName": "Juan",
+      "lastName": "Francisco Perez Leon",
+      "email": "juan@test.com",
+      "organizationId": 5,
+      "roleId": 1
+    },
+    {
+      "id": 6,
+      "firstName": "Carlos",
+      "lastName": "Luis Perez Rodriguez",
+      "email": "carlos@test.com",
+      "organizationId": 6,
+      "roleId": 1
     }
   ],
-  "email-verifications": [],
   "password-reset-requests": []
 }
