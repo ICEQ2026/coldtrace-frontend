@@ -6,5 +6,5 @@ const identityAccessRoutes = () =>
 
 export const routes: Routes = [
   { path: 'identity-access', loadChildren: identityAccessRoutes },
-  { path: '', redirectTo: '/identity-access/sign-up', pathMatch: 'full' }
+  { path: '', redirectTo: '/identity-access/sign-in', pathMatch: 'full' }
 ];
