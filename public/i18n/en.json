@@ -1,0 +1,33 @@
+{
+  "app": {
+    "name": "ColdTrace"
+  },
+  "sign-up": {
+    "title": "Create your account",
+    "organization-name": "Organization name",
+    "organization-name-placeholder": "ColdTrace Market",
+    "full-name": "Full name",
+    "full-name-placeholder": "Jane Smith",
+    "email": "Email address",
+    "password": "Password",
+    "confirm-password": "Confirm password",
+    "accept-terms": "Accept terms and conditions",
+    "create": "Create account",
+    "creating": "Creating account...",
+    "social-divider": "or sign up with",
+    "continue-with-google": "Continue with Google",
+    "continue-with-apple": "Continue with Apple",
+    "already-have-account": "Already have an account?",
+    "toggle-password-visibility": "Toggle password visibility",
+    "success": "Organization and admin account created.",
+    "error": {
+      "organization-name-required": "Enter your organization name.",
+      "full-name-required": "Enter your full name.",
+      "email-invalid": "Enter a valid email address.",
+      "password-min-length": "Use at least 8 characters.",
+      "passwords-must-match": "Passwords must match.",
+      "duplicate-email": "This email is already registered.",
+      "server-error": "We could not create the account. Check the fake API server."
+    }
+  }
+}

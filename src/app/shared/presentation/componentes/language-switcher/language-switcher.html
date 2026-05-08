@@ -1,0 +1,15 @@
+<div class="language-switcher" [class.es-selected]="currentLang === 'es'" aria-label="Language selector">
+  <span class="language-thumb" aria-hidden="true"></span>
+  @for (language of languages; track language) {
+    <button
+      type="button"
+      class="language-option"
+      [class.active]="currentLang === language"
+      [attr.aria-pressed]="currentLang === language"
+      (click)="useLanguage(language)"
+    >
+      <img [src]="flagFor(language)" alt="" aria-hidden="true" />
+      <span>{{ labelFor(language) }}</span>
+    </button>
+  }
+</div>

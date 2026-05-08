@@ -1,0 +1,49 @@
+{
+  "organizations": [
+    {
+      "id": 1,
+      "legalName": "Mauricio Pajes Organization",
+      "commercialName": "Mauricio Pajes Organization",
+      "taxId": "",
+      "contactEmail": "mpajes2006@gmail.com"
+    }
+  ],
+  "roles": [
+    {
+      "id": 1,
+      "name": "administrator",
+      "label": "Administrator",
+      "permissions": []
+    },
+    {
+      "id": 2,
+      "name": "operations-manager",
+      "label": "Operations Manager",
+      "permissions": []
+    },
+    {
+      "id": 3,
+      "name": "operator",
+      "label": "Operator",
+      "permissions": []
+    },
+    {
+      "id": 4,
+      "name": "auditor",
+      "label": "Auditor",
+      "permissions": []
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "firstName": "Mauricio",
+      "lastName": "Pajes",
+      "email": "mpajes2006@gmail.com",
+      "organizationId": 1,
+      "roleId": 1
+    }
+  ],
+  "email-verifications": [],
+  "password-reset-requests": []
+}
