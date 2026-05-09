@@ -7,8 +7,15 @@
   (signedOut)="logout()"
 >
   <nav class="asset-tabs" aria-label="Asset sections">
-    <a class="active">{{ 'asset-management.tabs.cold-room' | translate }}</a>
-    <a>{{ 'asset-management.tabs.transport' | translate }}</a>
+    @for (assetType of assetTypeTabs; track assetType) {
+      <button
+        type="button"
+        [class.active]="selectedAssetType() === assetType"
+        (click)="selectAssetType(assetType)"
+      >
+        {{ assetTypeLabelKey(assetType) | translate }}
+      </button>
+    }
     <a>{{ 'asset-management.tabs.sensor' | translate }}</a>
     <a>{{ 'asset-management.tabs.gateway' | translate }}</a>
     <a>{{ 'asset-management.tabs.settings' | translate }}</a>
@@ -29,18 +36,18 @@
       <button type="button" class="primary-action" (click)="toggleForm()">
         <mat-icon aria-hidden="true">{{ formVisible() ? 'close' : 'add' }}</mat-icon>
         <span>
-          {{ (formVisible() ? 'asset-management.form.close' : 'asset-management.form.open') | translate }}
+          {{ (formVisible() ? 'asset-management.form.close' : formOpenKey()) | translate }}
         </span>
       </button>
     }
   </div>
 
   @if (feedback() === 'success') {
-    <p class="feedback success">{{ 'asset-management.feedback.created' | translate }}</p>
+    <p class="feedback success">{{ formCreatedKey() | translate }}</p>
   }
 
   @if (feedback() === 'duplicate-id') {
-    <p class="feedback error">{{ 'asset-management.feedback.duplicate-id' | translate }}</p>
+    <p class="feedback error">{{ formDuplicateKey() | translate }}</p>
   }
 
   @if (feedback() === 'server-error' || assetManagementStore.error()) {
@@ -51,15 +58,15 @@
     <section class="form-card" aria-labelledby="cold-room-form-title">
       <div class="section-heading">
         <div>
-          <h2 id="cold-room-form-title">{{ 'asset-management.form.title' | translate }}</h2>
-          <p>{{ 'asset-management.form.subtitle' | translate }}</p>
+          <h2 id="cold-room-form-title">{{ formTitleKey() | translate }}</h2>
+          <p>{{ formSubtitleKey() | translate }}</p>
         </div>
       </div>
 
       <form class="cold-room-form" [formGroup]="coldRoomForm" (ngSubmit)="submit()">
         <label class="form-field">
           <span>{{ 'asset-management.form.internal-id' | translate }}</span>
-          <input type="text" formControlName="internalId" placeholder="CR-42312" />
+          <input type="text" formControlName="internalId" [placeholder]="internalIdPlaceholder()" />
           @if (hasControlError('internalId')) {
             <small>{{ 'asset-management.form.internal-id-error' | translate }}</small>
           }
@@ -70,7 +77,7 @@
           <input
             type="text"
             formControlName="name"
-            [placeholder]="'asset-management.form.name-placeholder' | translate"
+            [placeholder]="namePlaceholderKey() | translate"
           />
           @if (hasControlError('name')) {
             <small>{{ 'asset-management.form.name-error' | translate }}</small>
@@ -111,7 +118,7 @@
             {{ 'asset-management.form.cancel' | translate }}
           </button>
           <button type="submit" class="primary-action" [disabled]="creating()">
-            {{ (creating() ? 'asset-management.form.creating' : 'asset-management.form.create') | translate }}
+            {{ (creating() ? 'asset-management.form.creating' : formCreateKey()) | translate }}
           </button>
         </div>
       </form>
@@ -121,8 +128,8 @@
   <section class="table-card" aria-labelledby="cold-room-table-title">
     <div class="section-heading">
       <div>
-        <h2 id="cold-room-table-title">{{ 'asset-management.cold-room-title' | translate }}</h2>
-        <p>{{ 'asset-management.cold-room-subtitle' | translate }}</p>
+        <h2 id="cold-room-table-title">{{ pageTitleKey() | translate }}</h2>
+        <p>{{ pageSubtitleKey() | translate }}</p>
       </div>
       <button type="button" class="secondary-action" (click)="loadPageData()">
         {{ 'asset-management.reload' | translate }}
@@ -160,7 +167,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (asset of filteredColdRooms(); track asset.id) {
+            @for (asset of filteredAssets(); track asset.id) {
               <tr>
                 <td [attr.data-label]="'asset-management.table.id' | translate">{{ asset.uuid }}</td>
                 <td [attr.data-label]="'asset-management.table.name' | translate">{{ asset.name }}</td>
@@ -199,7 +206,7 @@
               </tr>
             } @empty {
               <tr>
-                <td colspan="7" class="empty-state">{{ 'asset-management.empty' | translate }}</td>
+                <td colspan="8" class="empty-state">{{ 'asset-management.empty' | translate }}</td>
               </tr>
             }
           </tbody>
@@ -207,7 +214,7 @@
       </div>
 
       <footer class="table-footer">
-        <span>{{ 'asset-management.item-count' | translate: { count: filteredColdRooms().length } }}</span>
+        <span>{{ 'asset-management.item-count' | translate: { count: filteredAssets().length } }}</span>
         <div class="pager" aria-label="Pagination">
           <button type="button" disabled>1</button>
         </div>

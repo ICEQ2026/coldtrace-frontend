@@ -168,6 +168,30 @@
       "gateway": "Gateway",
       "settings": "Ajustes"
     },
+    "sections": {
+      "cold-room": {
+        "title": "Cámaras frigoríficas",
+        "subtitle": "Registra y revisa cámaras frigoríficas de la organización activa.",
+        "form-open": "Nueva cámara",
+        "form-title": "Registrar cámara frigorífica",
+        "form-subtitle": "Crea una cámara frigorífica para la organización activa.",
+        "form-create": "Crear cámara",
+        "feedback-created": "Cámara creada correctamente.",
+        "feedback-duplicate": "Ya existe una cámara con este ID.",
+        "name-placeholder": "Cámara 21"
+      },
+      "transport": {
+        "title": "Unidades de transporte",
+        "subtitle": "Registra y revisa unidades de transporte refrigerado de la organización activa.",
+        "form-open": "Nuevo transporte",
+        "form-title": "Registrar unidad de transporte",
+        "form-subtitle": "Crea una unidad de transporte refrigerado para la organización activa.",
+        "form-create": "Crear transporte",
+        "feedback-created": "Unidad de transporte creada correctamente.",
+        "feedback-duplicate": "Ya existe una unidad de transporte con este ID.",
+        "name-placeholder": "Camión 08"
+      }
+    },
     "table": {
       "id": "ID",
       "name": "Nombre",
@@ -197,14 +221,10 @@
       "offline": "Sin conexión"
     },
     "form": {
-      "open": "Nueva cámara",
       "close": "Cerrar",
-      "title": "Registrar cámara frigorífica",
-      "subtitle": "Crea una cámara frigorífica para la organización activa.",
       "internal-id": "ID interno",
-      "internal-id-error": "Ingresa un ID de cámara válido.",
+      "internal-id-error": "Ingresa un ID de activo válido.",
       "name": "Nombre",
-      "name-placeholder": "Cámara 21",
       "name-error": "Ingresa al menos 3 caracteres.",
       "capacity": "Capacidad (kg)",
       "capacity-error": "Ingresa una capacidad mayor a cero.",
@@ -214,12 +234,9 @@
       "description": "Descripción",
       "description-placeholder": "Notas operativas de la cámara",
       "cancel": "Cancelar",
-      "create": "Crear cámara",
       "creating": "Creando..."
     },
     "feedback": {
-      "created": "Cámara creada correctamente.",
-      "duplicate-id": "Ya existe una cámara con este ID.",
       "server-error": "No se pudo cargar la información de activos. Inténtalo nuevamente.",
       "loading": "Cargando información de activos..."
     }
