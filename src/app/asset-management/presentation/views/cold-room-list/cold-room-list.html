@@ -10,15 +10,12 @@
     @for (assetType of assetTypeTabs; track assetType) {
       <button
         type="button"
-        [class.active]="selectedAssetType() === assetType"
+        [class.active]="selectedTab() === assetType"
         (click)="selectAssetType(assetType)"
       >
         {{ assetTypeLabelKey(assetType) | translate }}
       </button>
     }
-    <a>{{ 'asset-management.tabs.sensor' | translate }}</a>
-    <a>{{ 'asset-management.tabs.gateway' | translate }}</a>
-    <a>{{ 'asset-management.tabs.settings' | translate }}</a>
   </nav>
 
   <div class="assets-toolbar">
@@ -32,7 +29,7 @@
       />
     </label>
 
-    @if (canManageAssets()) {
+    @if (canManageAssets() && isAssetTab()) {
       <button type="button" class="primary-action" (click)="toggleForm()">
         <mat-icon aria-hidden="true">{{ formVisible() ? 'close' : 'add' }}</mat-icon>
         <span>
@@ -54,7 +51,7 @@
     <p class="feedback error">{{ 'asset-management.feedback.server-error' | translate }}</p>
   }
 
-  @if (formVisible() && canManageAssets()) {
+  @if (formVisible() && canManageAssets() && isAssetTab()) {
     <section class="form-card" aria-labelledby="cold-room-form-title">
       <div class="section-heading">
         <div>
@@ -125,6 +122,103 @@
     </section>
   }
 
+  @if (selectedTab() === 'sensor') {
+    <section class="table-card" aria-labelledby="sensor-link-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="sensor-link-title">{{ 'asset-management.sensors.title' | translate }}</h2>
+          <p>{{ 'asset-management.sensors.subtitle' | translate }}</p>
+        </div>
+        <button type="button" class="secondary-action" (click)="loadPageData()">
+          {{ 'asset-management.reload' | translate }}
+        </button>
+      </div>
+
+      @if (canManageAssets()) {
+        <div class="link-panel">
+          <label class="form-field">
+            <span>{{ 'asset-management.sensors.sensor' | translate }}</span>
+            <select [value]="selectedSensorId() ?? ''" (change)="updateSelectedSensor($any($event.target).value)">
+              <option value="">{{ 'asset-management.sensors.select-sensor' | translate }}</option>
+              @for (sensor of availableSensors(); track sensor.id) {
+                <option [value]="sensor.id">{{ sensor.uuid }} - {{ sensor.model }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="form-field">
+            <span>{{ 'asset-management.sensors.asset' | translate }}</span>
+            <select [value]="selectedAssetId() ?? ''" (change)="updateSelectedAsset($any($event.target).value)">
+              <option value="">{{ 'asset-management.sensors.select-asset' | translate }}</option>
+              @for (asset of organizationAssets(); track asset.id) {
+                <option [value]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
+              }
+            </select>
+          </label>
+
+          <div class="form-actions link-actions">
+            <button
+              type="button"
+              class="primary-action"
+              [disabled]="!selectedSensorId() || !selectedAssetId() || linkingSensor()"
+              (click)="linkSensor()"
+            >
+              {{ (linkingSensor() ? 'asset-management.sensors.linking' : 'asset-management.sensors.link') | translate }}
+            </button>
+          </div>
+        </div>
+      }
+
+      <div class="assets-table-wrapper">
+        <table class="assets-table sensor-table">
+          <colgroup>
+            <col style="width: 130px" />
+            <col style="width: 210px" />
+            <col style="width: 180px" />
+            <col style="width: 250px" />
+            <col style="width: 140px" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>{{ 'asset-management.sensors.table.id' | translate }}</th>
+              <th>{{ 'asset-management.sensors.table.model' | translate }}</th>
+              <th>{{ 'asset-management.sensors.table.measurement' | translate }}</th>
+              <th>{{ 'asset-management.sensors.table.asset' | translate }}</th>
+              <th>{{ 'asset-management.sensors.table.status' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (sensor of organizationSensors(); track sensor.id) {
+              <tr>
+                <td [attr.data-label]="'asset-management.sensors.table.id' | translate">{{ sensor.uuid }}</td>
+                <td [attr.data-label]="'asset-management.sensors.table.model' | translate">{{ sensor.model }}</td>
+                <td [attr.data-label]="'asset-management.sensors.table.measurement' | translate">{{ sensor.measurementType }}</td>
+                <td [attr.data-label]="'asset-management.sensors.table.asset' | translate">
+                  {{ assetNameForSensor(sensor) | translate }}
+                </td>
+                <td [attr.data-label]="'asset-management.sensors.table.status' | translate">
+                  <span
+                    class="status-pill"
+                    [class.active]="sensor.status === sensorStatus.Linked"
+                    [class.maintenance]="sensor.status === sensorStatus.Available"
+                    [class.inactive]="sensor.status === sensorStatus.Offline"
+                  >
+                    {{ 'asset-management.sensors.status.' + sensor.status | translate }}
+                  </span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-state">{{ 'asset-management.sensors.empty' | translate }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (isAssetTab()) {
   <section class="table-card" aria-labelledby="cold-room-table-title">
     <div class="section-heading">
       <div>
@@ -221,4 +315,5 @@
       </footer>
     }
   </section>
+  }
 </app-dashboard-shell>

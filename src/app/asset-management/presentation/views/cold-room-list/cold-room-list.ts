@@ -10,6 +10,8 @@ import { Asset } from '../../../domain/model/asset.entity';
 import { AssetStatus } from '../../../domain/model/asset-status.enum';
 import { AssetType } from '../../../domain/model/asset-type.enum';
 import { ConnectivityStatus } from '../../../domain/model/connectivity-status.enum';
+import { Sensor } from '../../../domain/model/sensor.entity';
+import { SensorStatus } from '../../../domain/model/sensor-status.enum';
 import { Organization } from '../../../../identity-access/domain/model/organization.entity';
 import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
@@ -18,6 +20,7 @@ import { IdentityAccessApi } from '../../../../identity-access/infrastructure/id
 import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
 
 type AssetFeedback = 'idle' | 'success' | 'duplicate-id' | 'server-error';
+type AssetManagementTab = AssetType | 'sensor' | 'gateway' | 'settings';
 
 @Component({
   selector: 'app-cold-room-list',
@@ -27,6 +30,7 @@ type AssetFeedback = 'idle' | 'success' | 'duplicate-id' | 'server-error';
 })
 export class ColdRoomList implements OnInit {
   protected readonly assetStatus = AssetStatus;
+  protected readonly sensorStatus = SensorStatus;
   protected readonly connectivityStatus = ConnectivityStatus;
   protected readonly assetManagementStore = inject(AssetManagementStore);
   protected readonly identityAccessStore = inject(IdentityAccessStore);
@@ -34,9 +38,12 @@ export class ColdRoomList implements OnInit {
   private readonly identityAccessApi = inject(IdentityAccessApi);
   private readonly router = inject(Router);
 
-  protected readonly assetTypeTabs = [
+  protected readonly assetTypeTabs: AssetManagementTab[] = [
     AssetType.ColdRoom,
     AssetType.Transport,
+    'sensor',
+    'gateway',
+    'settings',
   ];
   protected readonly identityLoading = signal(false);
   protected readonly creating = signal(false);
@@ -44,7 +51,10 @@ export class ColdRoomList implements OnInit {
   protected readonly formVisible = signal(false);
   protected readonly feedback = signal<AssetFeedback>('idle');
   protected readonly searchTerm = signal('');
-  protected readonly selectedAssetType = signal<AssetType>(AssetType.ColdRoom);
+  protected readonly selectedTab = signal<AssetManagementTab>(AssetType.ColdRoom);
+  protected readonly selectedSensorId = signal<number | null>(null);
+  protected readonly selectedAssetId = signal<number | null>(null);
+  protected readonly linkingSensor = signal(false);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -61,6 +71,7 @@ export class ColdRoomList implements OnInit {
     () => this.identityLoading() || this.assetManagementStore.loading(),
   );
   protected readonly assets = this.assetManagementStore.assets;
+  protected readonly sensors = this.assetManagementStore.sensors;
   protected readonly activeOrganizationName = computed(() => {
     return this.identityAccessStore.currentOrganizationNameFrom(this.users(), this.organizations());
   });
@@ -77,6 +88,12 @@ export class ColdRoomList implements OnInit {
       .permissionKeysForRole(role)
       .includes('roles-permissions.permissions.manage-assets');
   });
+  protected readonly selectedAssetType = computed(() => {
+    return this.selectedTab() === AssetType.Transport ? AssetType.Transport : AssetType.ColdRoom;
+  });
+  protected readonly isAssetTab = computed(() => {
+    return this.selectedTab() === AssetType.ColdRoom || this.selectedTab() === AssetType.Transport;
+  });
 
   protected readonly selectedAssets = computed(() => {
     const organizationId = this.activeOrganizationId();
@@ -88,6 +105,30 @@ export class ColdRoomList implements OnInit {
     return this.assets().filter((asset) => {
       return asset.organizationId === organizationId && asset.type === this.selectedAssetType();
     });
+  });
+
+  protected readonly organizationAssets = computed(() => {
+    const organizationId = this.activeOrganizationId();
+
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.assets().filter((asset) => asset.organizationId === organizationId);
+  });
+
+  protected readonly organizationSensors = computed(() => {
+    const organizationId = this.activeOrganizationId();
+
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.sensors().filter((sensor) => sensor.organizationId === organizationId);
+  });
+
+  protected readonly availableSensors = computed(() => {
+    return this.organizationSensors().filter((sensor) => !sensor.assetId);
   });
 
   protected readonly filteredAssets = computed(() => {
@@ -120,6 +161,7 @@ export class ColdRoomList implements OnInit {
     this.identityLoading.set(true);
     this.feedback.set('idle');
     this.assetManagementStore.loadAssets();
+    this.assetManagementStore.loadSensors();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -144,16 +186,18 @@ export class ColdRoomList implements OnInit {
     this.searchTerm.set(value);
   }
 
-  protected selectAssetType(assetType: AssetType): void {
-    if (this.selectedAssetType() === assetType) {
+  protected selectAssetType(tab: AssetManagementTab): void {
+    if (this.selectedTab() === tab) {
       return;
     }
 
-    this.selectedAssetType.set(assetType);
+    this.selectedTab.set(tab);
     this.searchTerm.set('');
     this.formVisible.set(false);
     this.feedback.set('idle');
     this.submitted.set(false);
+    this.selectedSensorId.set(null);
+    this.selectedAssetId.set(null);
     this.resetForm();
   }
 
@@ -220,7 +264,63 @@ export class ColdRoomList implements OnInit {
       });
   }
 
-  protected assetTypeLabelKey(assetType: AssetType): string {
+  protected linkSensor(): void {
+    this.feedback.set('idle');
+
+    const sensor = this.organizationSensors().find((currentSensor) => {
+      return currentSensor.id === this.selectedSensorId();
+    });
+    const asset = this.organizationAssets().find((currentAsset) => {
+      return currentAsset.id === this.selectedAssetId();
+    });
+
+    if (!sensor || !asset || sensor.assetId) {
+      this.feedback.set('duplicate-id');
+      return;
+    }
+
+    const updatedSensor = new Sensor(
+      sensor.id,
+      sensor.organizationId,
+      sensor.uuid,
+      sensor.model,
+      sensor.measurementType,
+      asset.id,
+      sensor.gatewayId,
+      SensorStatus.Linked,
+      sensor.calibrationStatus,
+      sensor.lastCalibrationDate,
+      sensor.nextCalibrationDate,
+    );
+
+    this.linkingSensor.set(true);
+    this.assetManagementStore
+      .updateSensor(updatedSensor)
+      .pipe(finalize(() => this.linkingSensor.set(false)))
+      .subscribe({
+        next: () => {
+          this.feedback.set('success');
+          this.selectedSensorId.set(null);
+          this.selectedAssetId.set(null);
+        },
+        error: () => this.feedback.set('server-error'),
+      });
+  }
+
+  protected assetNameForSensor(sensor: Sensor): string {
+    const asset = this.assets().find((currentAsset) => currentAsset.id === sensor.assetId);
+    return asset ? `${asset.uuid} - ${asset.name}` : 'asset-management.sensors.unassigned';
+  }
+
+  protected updateSelectedSensor(value: string): void {
+    this.selectedSensorId.set(Number(value) || null);
+  }
+
+  protected updateSelectedAsset(value: string): void {
+    this.selectedAssetId.set(Number(value) || null);
+  }
+
+  protected assetTypeLabelKey(assetType: AssetManagementTab): string {
     return `asset-management.tabs.${assetType}`;
   }
 
@@ -249,10 +349,18 @@ export class ColdRoomList implements OnInit {
   }
 
   protected formCreatedKey(): string {
+    if (this.selectedTab() === 'sensor') {
+      return 'asset-management.sensors.feedback-linked';
+    }
+
     return `asset-management.sections.${this.selectedAssetType()}.feedback-created`;
   }
 
   protected formDuplicateKey(): string {
+    if (this.selectedTab() === 'sensor') {
+      return 'asset-management.sensors.feedback-unavailable';
+    }
+
     return `asset-management.sections.${this.selectedAssetType()}.feedback-duplicate`;
   }
 

@@ -220,6 +220,32 @@
       "unstable": "Unstable",
       "offline": "Offline"
     },
+    "sensors": {
+      "title": "Sensors",
+      "subtitle": "Link available IoT sensors to registered assets from the active organization.",
+      "sensor": "Sensor",
+      "asset": "Asset",
+      "select-sensor": "Select sensor",
+      "select-asset": "Select asset",
+      "link": "Link sensor",
+      "linking": "Linking...",
+      "unassigned": "Unassigned",
+      "empty": "No sensors registered for this organization.",
+      "feedback-linked": "Sensor linked successfully.",
+      "feedback-unavailable": "Select an available sensor and a valid asset.",
+      "table": {
+        "id": "ID",
+        "model": "Model",
+        "measurement": "Measurement",
+        "asset": "Asset",
+        "status": "Status"
+      },
+      "status": {
+        "available": "Available",
+        "linked": "Linked",
+        "offline": "Offline"
+      }
+    },
     "form": {
       "close": "Close",
       "internal-id": "Internal ID",

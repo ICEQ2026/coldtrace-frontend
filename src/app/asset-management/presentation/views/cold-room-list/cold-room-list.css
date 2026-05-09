@@ -172,7 +172,8 @@
 }
 
 .form-field input,
-.form-field textarea {
+.form-field textarea,
+.form-field select {
   background: #f4f4f4;
   border: 1px solid transparent;
   border-radius: 8px;
@@ -189,7 +190,8 @@
 }
 
 .form-field input:focus,
-.form-field textarea:focus {
+.form-field textarea:focus,
+.form-field select:focus {
   border-color: #9aaeeb;
 }
 
@@ -204,6 +206,22 @@
   gap: 12px;
   grid-column: 1 / -1;
   justify-content: flex-end;
+}
+
+.link-panel {
+  align-items: end;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  margin-top: 22px;
+}
+
+.link-actions {
+  grid-column: auto;
+}
+
+.sensor-table {
+  min-width: 860px;
 }
 
 .loading-state {
