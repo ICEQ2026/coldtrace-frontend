@@ -30,6 +30,10 @@ export class AssetManagementApi extends BaseApi {
     return this.assetsEndpoint.create(asset);
   }
 
+  updateAsset(asset: Asset): Observable<Asset> {
+    return this.assetsEndpoint.update(asset, asset.id);
+  }
+
   getSensors(): Observable<Sensor[]> {
     return this.sensorsEndpoint.getAll();
   }

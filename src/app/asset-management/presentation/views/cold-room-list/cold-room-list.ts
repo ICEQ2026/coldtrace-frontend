@@ -22,7 +22,7 @@ import { IdentityAccessStore } from '../../../../identity-access/application/ide
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
 import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
 
-type AssetFeedback = 'idle' | 'success' | 'duplicate-id' | 'server-error';
+type AssetFeedback = 'idle' | 'success' | 'updated' | 'duplicate-id' | 'server-error';
 type AssetManagementTab = AssetType | 'sensor' | 'gateway' | 'settings';
 
 @Component({
@@ -50,10 +50,18 @@ export class ColdRoomList implements OnInit {
     'gateway',
     'settings',
   ];
+  protected readonly assetStatuses: AssetStatus[] = [
+    AssetStatus.Active,
+    AssetStatus.Maintenance,
+    AssetStatus.Inactive,
+  ];
   protected readonly identityLoading = signal(false);
   protected readonly creating = signal(false);
+  protected readonly updatingAsset = signal(false);
   protected readonly submitted = signal(false);
+  protected readonly updateSubmitted = signal(false);
   protected readonly formVisible = signal(false);
+  protected readonly editingAssetId = signal<number | null>(null);
   protected readonly feedback = signal<AssetFeedback>('idle');
   protected readonly searchTerm = signal('');
   protected readonly selectedTab = signal<AssetManagementTab>(AssetType.ColdRoom);
@@ -73,6 +81,10 @@ export class ColdRoomList implements OnInit {
     capacity: [0, [Validators.required, Validators.min(1)]],
     location: ['', [Validators.required, Validators.minLength(3)]],
     description: [''],
+  });
+  protected readonly updateAssetForm = this.fb.nonNullable.group({
+    location: ['', [Validators.required, Validators.minLength(3)]],
+    status: [AssetStatus.Active, Validators.required],
   });
 
   protected readonly loading = computed(
@@ -160,6 +172,11 @@ export class ColdRoomList implements OnInit {
     return this.organizationGateways().filter((gateway) => {
       return gateway.status === GatewayStatus.Available;
     });
+  });
+
+  protected readonly editingAsset = computed(() => {
+    const assetId = this.editingAssetId();
+    return this.assets().find((asset) => asset.id === assetId) ?? null;
   });
 
   protected readonly calibrationSummary = computed(() => {
@@ -253,11 +270,13 @@ export class ColdRoomList implements OnInit {
     this.selectedAssetId.set(null);
     this.selectedGatewayId.set(null);
     this.selectedGatewaySensorId.set(null);
+    this.cancelAssetUpdate();
     this.resetForm();
   }
 
   protected toggleForm(): void {
     this.feedback.set('idle');
+    this.cancelAssetUpdate();
     this.formVisible.update((visible) => !visible);
   }
 
@@ -317,6 +336,66 @@ export class ColdRoomList implements OnInit {
         },
         error: () => this.feedback.set('server-error'),
       });
+  }
+
+  protected selectAssetForUpdate(asset: Asset): void {
+    this.feedback.set('idle');
+    this.updateSubmitted.set(false);
+    this.formVisible.set(false);
+    this.editingAssetId.set(asset.id);
+    this.updateAssetForm.reset({
+      location: asset.location,
+      status: asset.status,
+    });
+  }
+
+  protected updateAssetDetails(): void {
+    this.updateSubmitted.set(true);
+    this.feedback.set('idle');
+    this.updateAssetForm.markAllAsTouched();
+
+    const asset = this.editingAsset();
+
+    if (!asset || this.updateAssetForm.invalid || !this.canManageAssets()) {
+      return;
+    }
+
+    const updatedAsset = new Asset(
+      asset.id,
+      asset.organizationId,
+      asset.uuid,
+      asset.type,
+      asset.name,
+      this.updateAssetForm.controls.location.value.trim(),
+      asset.capacity,
+      asset.description,
+      this.updateAssetForm.controls.status.value,
+      asset.lastIncident,
+      asset.currentTemperature,
+      asset.entryDate,
+      asset.connectivity,
+    );
+
+    this.updatingAsset.set(true);
+    this.assetManagementStore
+      .updateAsset(updatedAsset)
+      .pipe(finalize(() => this.updatingAsset.set(false)))
+      .subscribe({
+        next: () => {
+          this.cancelAssetUpdate();
+          this.feedback.set('updated');
+        },
+        error: () => this.feedback.set('server-error'),
+      });
+  }
+
+  protected cancelAssetUpdate(): void {
+    this.editingAssetId.set(null);
+    this.updateSubmitted.set(false);
+    this.updateAssetForm.reset({
+      location: '',
+      status: AssetStatus.Active,
+    });
   }
 
   protected linkSensor(): void {
@@ -471,6 +550,10 @@ export class ColdRoomList implements OnInit {
   }
 
   protected formCreatedKey(): string {
+    if (this.feedback() === 'updated') {
+      return 'asset-management.update.feedback-updated';
+    }
+
     if (this.selectedTab() === 'sensor') {
       return 'asset-management.sensors.feedback-linked';
     }
@@ -541,6 +624,11 @@ export class ColdRoomList implements OnInit {
   protected hasControlError(controlName: keyof typeof this.coldRoomForm.controls): boolean {
     const control = this.coldRoomForm.controls[controlName];
     return control.invalid && (control.touched || this.submitted());
+  }
+
+  protected hasUpdateControlError(controlName: keyof typeof this.updateAssetForm.controls): boolean {
+    const control = this.updateAssetForm.controls[controlName];
+    return control.invalid && (control.touched || this.updateSubmitted());
   }
 
   protected logout(): void {

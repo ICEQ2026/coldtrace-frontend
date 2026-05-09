@@ -201,7 +201,8 @@
       "temperature": "Temp.",
       "entry-date": "Fecha de ingreso",
       "status": "Estado",
-      "connectivity": "Conectividad"
+      "connectivity": "Conectividad",
+      "actions": "Acciones"
     },
     "incidents": {
       "high-temperature": "Temperatura alta",
@@ -211,9 +212,9 @@
       "none": "Sin incidentes"
     },
     "status": {
-      "active": "Reconocido",
-      "maintenance": "Reconocido",
-      "inactive": "Sin reconocer"
+      "active": "Activo",
+      "maintenance": "Mantenimiento",
+      "inactive": "Inactivo"
     },
     "connectivity": {
       "online": "En línea",
@@ -297,6 +298,15 @@
       "description-placeholder": "Notas operativas de la cámara",
       "cancel": "Cancelar",
       "creating": "Creando..."
+    },
+    "update": {
+      "title": "Actualizar activo",
+      "location": "Ubicación",
+      "status": "Estado",
+      "save": "Guardar cambios",
+      "updating": "Guardando...",
+      "edit": "Editar activo",
+      "feedback-updated": "Activo actualizado correctamente."
     },
     "feedback": {
       "server-error": "No se pudo cargar la información de activos. Inténtalo nuevamente.",

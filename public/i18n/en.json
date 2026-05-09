@@ -201,7 +201,8 @@
       "temperature": "Temp.",
       "entry-date": "Entry date",
       "status": "Status",
-      "connectivity": "Connectivity"
+      "connectivity": "Connectivity",
+      "actions": "Actions"
     },
     "incidents": {
       "high-temperature": "High temperature",
@@ -211,9 +212,9 @@
       "none": "No incidents"
     },
     "status": {
-      "active": "Acknowledged",
-      "maintenance": "Acknowledged",
-      "inactive": "Unacknowledged"
+      "active": "Active",
+      "maintenance": "Maintenance",
+      "inactive": "Inactive"
     },
     "connectivity": {
       "online": "Online",
@@ -297,6 +298,15 @@
       "description-placeholder": "Cold room operating notes",
       "cancel": "Cancel",
       "creating": "Creating..."
+    },
+    "update": {
+      "title": "Update asset",
+      "location": "Ubication",
+      "status": "Status",
+      "save": "Save changes",
+      "updating": "Saving...",
+      "edit": "Edit asset",
+      "feedback-updated": "Asset updated successfully."
     },
     "feedback": {
       "server-error": "We could not load asset data. Try again later.",

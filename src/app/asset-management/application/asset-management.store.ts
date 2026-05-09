@@ -46,6 +46,18 @@ export class AssetManagementStore {
     );
   }
 
+  updateAsset(asset: Asset): Observable<Asset> {
+    return this.assetManagementApi.updateAsset(asset).pipe(
+      tap((updatedAsset) => {
+        this.assetsSignal.update((assets) =>
+          assets.map((currentAsset) =>
+            currentAsset.id === updatedAsset.id ? updatedAsset : currentAsset,
+          ),
+        );
+      }),
+    );
+  }
+
   loadSensors(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);

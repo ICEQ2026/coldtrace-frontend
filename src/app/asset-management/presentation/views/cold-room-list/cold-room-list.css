@@ -98,6 +98,22 @@
   white-space: nowrap;
 }
 
+.icon-action {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #ebeef2;
+  border-radius: 8px;
+  color: #98a2b3;
+  display: inline-flex;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.icon-action:hover {
+  color: #2563eb;
+}
+
 .feedback {
   border-radius: 8px;
   font: 800 12px/20px 'Inter', Arial, sans-serif;

@@ -39,7 +39,7 @@
     }
   </div>
 
-  @if (feedback() === 'success') {
+  @if (feedback() === 'success' || feedback() === 'updated') {
     <p class="feedback success">{{ formCreatedKey() | translate }}</p>
   }
 
@@ -120,6 +120,51 @@
         </div>
       </form>
     </section>
+  }
+
+  @if (canManageAssets() && isAssetTab()) {
+    @if (editingAsset(); as asset) {
+      <section class="form-card" aria-labelledby="asset-update-form-title">
+        <div class="section-heading">
+          <div>
+            <h2 id="asset-update-form-title">{{ 'asset-management.update.title' | translate }}</h2>
+            <p>{{ asset.uuid }} - {{ asset.name }}</p>
+          </div>
+        </div>
+
+        <form class="cold-room-form" [formGroup]="updateAssetForm" (ngSubmit)="updateAssetDetails()">
+          <label class="form-field full">
+            <span>{{ 'asset-management.update.location' | translate }}</span>
+            <input
+              type="text"
+              formControlName="location"
+              [placeholder]="'asset-management.form.location-placeholder' | translate"
+            />
+            @if (hasUpdateControlError('location')) {
+              <small>{{ 'asset-management.form.location-error' | translate }}</small>
+            }
+          </label>
+
+          <label class="form-field">
+            <span>{{ 'asset-management.update.status' | translate }}</span>
+            <select formControlName="status">
+              @for (status of assetStatuses; track status) {
+                <option [value]="status">{{ statusLabelKey(status) | translate }}</option>
+              }
+            </select>
+          </label>
+
+          <div class="form-actions">
+            <button type="button" class="secondary-action" (click)="cancelAssetUpdate()">
+              {{ 'asset-management.form.cancel' | translate }}
+            </button>
+            <button type="submit" class="primary-action" [disabled]="updatingAsset()">
+              {{ (updatingAsset() ? 'asset-management.update.updating' : 'asset-management.update.save') | translate }}
+            </button>
+          </div>
+        </form>
+      </section>
+    }
   }
 
   @if (selectedTab() === 'sensor') {
@@ -386,6 +431,9 @@
             <col style="width: 130px" />
             <col style="width: 150px" />
             <col style="width: 135px" />
+            @if (canManageAssets()) {
+              <col style="width: 90px" />
+            }
           </colgroup>
           <thead>
             <tr>
@@ -397,6 +445,9 @@
               <th>{{ 'asset-management.table.entry-date' | translate }}</th>
               <th>{{ 'asset-management.table.status' | translate }}</th>
               <th>{{ 'asset-management.table.connectivity' | translate }}</th>
+              @if (canManageAssets()) {
+                <th>{{ 'asset-management.table.actions' | translate }}</th>
+              }
             </tr>
           </thead>
           <tbody>
@@ -436,10 +487,22 @@
                     {{ connectivityLabelKey(asset.connectivity) | translate }}
                   </span>
                 </td>
+                @if (canManageAssets()) {
+                  <td [attr.data-label]="'asset-management.table.actions' | translate">
+                    <button
+                      type="button"
+                      class="icon-action"
+                      [attr.aria-label]="'asset-management.update.edit' | translate"
+                      (click)="selectAssetForUpdate(asset)"
+                    >
+                      <mat-icon aria-hidden="true">edit</mat-icon>
+                    </button>
+                  </td>
+                }
               </tr>
             } @empty {
               <tr>
-                <td colspan="8" class="empty-state">{{ 'asset-management.empty' | translate }}</td>
+                <td [attr.colspan]="canManageAssets() ? 9 : 8" class="empty-state">{{ 'asset-management.empty' | translate }}</td>
               </tr>
             }
           </tbody>
