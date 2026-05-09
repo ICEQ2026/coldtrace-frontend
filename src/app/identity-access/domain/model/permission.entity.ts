@@ -6,7 +6,7 @@ export class Permission implements BaseEntity {
     private _id: number,
     private _resource: string,
     private _action: PermissionAction,
-    private _description: string
+    private _description: string,
   ) {}
 
   get id(): number {

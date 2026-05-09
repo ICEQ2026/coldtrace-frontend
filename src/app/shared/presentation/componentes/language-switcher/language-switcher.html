@@ -1,15 +1,21 @@
-<div class="language-switcher" [class.es-selected]="currentLang === 'es'" aria-label="Language selector">
-  <span class="language-thumb" aria-hidden="true"></span>
+<mat-button-toggle-group
+  class="language-switcher"
+  [value]="currentLang"
+  appearance="standard"
+  aria-label="Language selector"
+  hideSingleSelectionIndicator
+  name="language"
+>
   @for (language of languages; track language) {
-    <button
-      type="button"
-      class="language-option"
-      [class.active]="currentLang === language"
-      [attr.aria-pressed]="currentLang === language"
+    <mat-button-toggle
+      [value]="language"
+      [aria-label]="labelFor(language)"
       (click)="useLanguage(language)"
     >
-      <img [src]="flagFor(language)" alt="" aria-hidden="true" />
-      <span>{{ labelFor(language) }}</span>
-    </button>
+      <span class="language-option">
+        <img class="language-flag" [src]="flagFor(language)" alt="" aria-hidden="true" />
+        <span>{{ labelFor(language) }}</span>
+      </span>
+    </mat-button-toggle>
   }
-</div>
+</mat-button-toggle-group>

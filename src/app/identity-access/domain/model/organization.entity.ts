@@ -6,7 +6,7 @@ export class Organization implements BaseEntity {
     private _legalName: string,
     private _commercialName: string,
     private _taxId: string,
-    private _contactEmail: string
+    private _contactEmail: string,
   ) {}
 
   get id(): number {

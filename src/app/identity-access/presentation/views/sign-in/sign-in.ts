@@ -1,8 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
+import { IdentityAccessStore } from '../../../application/identity-access.store';
 import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 
 type SignInFeedback = 'idle' | 'invalid-credentials' | 'revoked-access' | 'success' | 'server-error';
@@ -17,7 +18,9 @@ export class SignIn {
   private readonly validPassword = 'ColdTrace123';
   private readonly revokedAccessEmail = 'revoked@coldtrace.com';
   private readonly fb = inject(FormBuilder);
+  private readonly identityAccessStore = inject(IdentityAccessStore);
   private readonly identityAccessApi = inject(IdentityAccessApi);
+  private readonly router = inject(Router);
 
   protected readonly submitted = signal(false);
   protected readonly signingIn = signal(false);
@@ -43,22 +46,29 @@ export class SignIn {
     const password = this.signInForm.controls.password.value;
 
     this.signingIn.set(true);
-    this.identityAccessApi
-      .getUsers()
+    forkJoin({
+      users: this.identityAccessApi.getUsers(),
+      roles: this.identityAccessApi.getRoles(),
+      organizations: this.identityAccessApi.getOrganizations(),
+    })
       .pipe(finalize(() => this.signingIn.set(false)))
       .subscribe({
-        next: (users) => {
+        next: ({ users, roles, organizations }) => {
           if (email === this.revokedAccessEmail) {
             this.feedback.set('revoked-access');
             return;
           }
 
-          const userExists = users.some((user) => user.email.toLowerCase() === email);
-          const validCredentials = userExists && password === this.validPassword;
+          const currentUser = users.find((user) => user.email.toLowerCase() === email);
+          const validCredentials = !!currentUser && password === this.validPassword;
           this.feedback.set(validCredentials ? 'success' : 'invalid-credentials');
 
-          if (validCredentials) {
+          if (validCredentials && currentUser) {
+            this.identityAccessStore.setCurrentUser(currentUser);
+            this.identityAccessStore.setCurrentRoleFrom(users, roles);
+            this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
             this.submitted.set(false);
+            void this.router.navigate(['/identity-access/dashboard']);
           }
         },
         error: () => this.feedback.set('server-error'),

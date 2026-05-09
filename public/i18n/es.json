@@ -19,9 +19,9 @@
     "error": {
       "email-invalid": "Ingresa un correo electrónico válido.",
       "password-required": "Ingresa tu contraseña.",
-      "invalid-credentials": "Credenciales inválidas para esta cuenta fake.",
+      "invalid-credentials": "Correo o contraseña inválidos.",
       "revoked-access": "Acceso revocado. Contacta al administrador de tu organización.",
-      "server-error": "No se pudo validar la cuenta. Revisa el servidor de fake API."
+      "server-error": "No se pudo validar la cuenta. Inténtalo nuevamente."
     }
   },
   "password-recovery": {
@@ -32,11 +32,11 @@
     "requesting": "Solicitando enlace...",
     "continue-reset": "Continuar para restablecer contraseña",
     "back-to-login": "Volver al login",
-    "success": "Enlace de recuperación enviado para este flujo simulado.",
+    "success": "Enlace de recuperación enviado a tu correo.",
     "error": {
       "email-invalid": "Ingresa un correo electrónico válido.",
       "not-found": "No existe una cuenta vinculada a este correo.",
-      "server-error": "No se pudo validar la cuenta. Revisa el servidor de fake API."
+      "server-error": "No se pudo validar la cuenta. Inténtalo nuevamente."
     }
   },
   "reset-password": {
@@ -47,7 +47,7 @@
     "request-new-link": "Solicitar nuevo enlace",
     "back-to-login": "Volver al login",
     "toggle-password-visibility": "Alternar visibilidad de contraseña",
-    "success": "Contraseña cambiada correctamente para este flujo simulado.",
+    "success": "Contraseña cambiada correctamente.",
     "error": {
       "password-min-length": "Usa al menos 8 caracteres.",
       "passwords-must-match": "Las contraseñas deben coincidir.",
@@ -58,6 +58,100 @@
     "title": "Página no encontrada",
     "content": "La ruta <strong>{{ invalid_path }}</strong> no existe.",
     "go-home": "Ir al login"
+  },
+  "roles-permissions": {
+    "dashboard": "Dashboard",
+    "breadcrumb": "Dashboard",
+    "title": "Control de acceso",
+    "main-page-title": "Inicio",
+    "assets-page-title": "Activos",
+    "alerts-page-title": "Alertas",
+    "monitoring-page-title": "Monitoreo",
+    "reports-page-title": "Reportes",
+    "permissions-page-title": "Permisos por rol",
+    "create-user-page-title": "Crear usuario",
+    "admin-role": "Manager",
+    "search": "Buscar usuarios o roles...",
+    "table-title": "Usuarios y roles",
+    "table-subtitle": "Revisa usuarios de la organización activa y gestiona asignaciones de rol.",
+    "permissions-title": "Permisos por rol",
+    "permissions-subtitle": "Activa o desactiva permisos por rol. El super administrador queda fijo con acceso total.",
+    "create-user-title": "Nuevo usuario organizacional",
+    "create-user-subtitle": "Registra un usuario dentro de la organización activa y asigna un rol operativo.",
+    "create-user": "Crear usuario",
+    "reload": "Recargar",
+    "save": "Guardar",
+    "saved": "Guardado",
+    "empty": "No hay usuarios para esta búsqueda.",
+    "empty-section-message": "Esta sección todavía no tiene contenido.",
+    "menu": {
+      "main-page": "Inicio",
+      "assets": "Activos",
+      "alerts": "Alertas",
+      "monitoring": "Monitoreo",
+      "access": "Acceso",
+      "users": "Usuarios",
+      "create-user": "Nuevo usuario",
+      "permissions": "Permisos",
+      "reports": "Reportes"
+    },
+    "summary": {
+      "users": "Usuarios",
+      "admins": "Administradores",
+      "pending": "Cambios pendientes"
+    },
+    "table": {
+      "id": "ID",
+      "user": "Usuario",
+      "current-role": "Rol actual",
+      "new-role": "Nuevo rol",
+      "permissions": "Permisos",
+      "actions": "Acciones"
+    },
+    "roles": {
+      "super-admin": "Super administrador",
+      "administrator": "Administrador",
+      "operations-manager": "Responsable de operaciones",
+      "operator": "Operador",
+      "auditor": "Auditor",
+      "unassigned": "Seleccionar rol"
+    },
+    "permissions": {
+      "manage-administrators": "Gestionar administradores",
+      "manage-users": "Gestionar usuarios",
+      "manage-assets": "Gestionar activos",
+      "view-reports": "Ver reportes",
+      "resolve-alerts": "Resolver alertas",
+      "monitor-assets": "Monitorear activos",
+      "read-only": "Solo lectura",
+      "none": "Sin permisos"
+    },
+    "form": {
+      "organization": "Organización",
+      "full-name": "Nombre completo",
+      "full-name-placeholder": "Laura Mendoza",
+      "full-name-error": "Ingresa al menos 3 caracteres.",
+      "email": "Correo electrónico",
+      "email-placeholder": "usuario@coldtrace.com",
+      "email-error": "Ingresa un correo válido.",
+      "role": "Rol",
+      "role-error": "Selecciona un rol válido.",
+      "cancel": "Cancelar",
+      "create": "Crear usuario",
+      "creating": "Creando..."
+    },
+    "feedback": {
+      "saved": "Asignación de rol actualizada.",
+      "user-created": "Usuario creado correctamente.",
+      "duplicate-email": "Ya existe un usuario con este correo.",
+      "invalid-role": "Selecciona un rol válido antes de guardar.",
+      "server-error": "No se pudo cargar la información de acceso. Inténtalo nuevamente.",
+      "loading": "Cargando información de acceso..."
+    },
+    "denied": {
+      "title": "Acceso denegado",
+      "message": "Tu rol actual puede revisar información de acceso, pero no puede crear usuarios ni actualizar roles y permisos."
+    }
   },
   "sign-up": {
     "title": "Crear cuenta",
@@ -76,7 +170,7 @@
     "continue-with-apple": "Continuar con Apple",
     "already-have-account": "¿Ya tienes una cuenta?",
     "toggle-password-visibility": "Alternar visibilidad de contraseña",
-    "success": "Organización y cuenta administradora creadas.",
+    "success": "Organización y cuenta super administradora creadas.",
     "error": {
       "organization-name-required": "Ingresa el nombre de tu organización.",
       "full-name-required": "Ingresa tu nombre completo.",
@@ -84,7 +178,7 @@
       "password-min-length": "Usa al menos 8 caracteres.",
       "passwords-must-match": "Las contraseñas deben coincidir.",
       "duplicate-email": "Este correo ya está registrado.",
-      "server-error": "No se pudo crear la cuenta. Revisa el servidor de fake API."
+      "server-error": "No se pudo crear la cuenta. Inténtalo nuevamente."
     }
   }
 }

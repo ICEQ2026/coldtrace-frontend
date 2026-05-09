@@ -1,0 +1,147 @@
+:host {
+  display: block;
+}
+
+.table-heading,
+.form-actions {
+  align-items: center;
+  display: flex;
+}
+
+.table-heading,
+.form-actions {
+  justify-content: space-between;
+}
+
+.form-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(96, 108, 128, 0.05), 0 4px 4px rgba(0, 0, 0, 0.16);
+  margin-top: 30px;
+  max-width: 760px;
+  padding: 26px;
+}
+
+.table-heading {
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.table-heading h2 {
+  color: #323c4d;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 20px;
+  margin: 0;
+}
+
+.table-heading p {
+  color: #98a2b3;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 20px;
+  margin: 4px 0 0;
+}
+
+.user-form {
+  display: grid;
+  gap: 18px;
+}
+
+.form-field {
+  display: grid;
+  gap: 8px;
+}
+
+.form-field span {
+  color: #404040;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.form-field input,
+.form-field select {
+  background: #f7f8fa;
+  border: 1px solid #ebeef2;
+  border-radius: 8px;
+  color: #404040;
+  font-size: 13px;
+  font-weight: 700;
+  height: 42px;
+  padding: 0 12px;
+}
+
+.form-field input[readonly] {
+  color: #606c80;
+}
+
+.form-field small {
+  color: #b51313;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.primary-action,
+.secondary-action {
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  height: 34px;
+  line-height: 32px;
+  padding: 0 16px;
+  text-decoration: none;
+}
+
+.primary-action {
+  background: #2563eb;
+  border: 1px solid #2563eb;
+  color: #ffffff;
+}
+
+.primary-action:disabled {
+  background: #98a2b3;
+  border-color: #98a2b3;
+}
+
+.secondary-action {
+  background: #ffffff;
+  border: 1px solid #ebeef2;
+  color: #2563eb;
+}
+
+.feedback {
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  margin: 0 0 14px;
+  padding: 10px 12px;
+}
+
+.feedback.success {
+  background: #eaf8f0;
+  color: #176900;
+}
+
+.feedback.error {
+  background: #feeceb;
+  color: #b51313;
+}
+
+.feedback.neutral {
+  background: #f0f2f5;
+  color: #606c80;
+}
+
+@media (max-width: 720px) {
+  .table-heading,
+  .form-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .primary-action,
+  .secondary-action {
+    width: 100%;
+  }
+}

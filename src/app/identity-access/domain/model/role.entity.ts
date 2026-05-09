@@ -7,7 +7,7 @@ export class Role implements BaseEntity {
     private _id: number,
     private _name: RoleName,
     private _label: string,
-    private _permissions: Permission[]
+    private _permissions: Permission[],
   ) {}
 
   get id(): number {

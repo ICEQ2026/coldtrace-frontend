@@ -15,12 +15,16 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
       resource.email,
       resource.organizationId,
       resource.roleId,
+      resource.uuid ?? `USR-${resource.id}`,
+      resource.organizationUserId ?? resource.id,
     );
   }
 
   toResourceFromEntity(entity: User): UserResource {
     return {
       id: entity.id,
+      uuid: entity.uuid,
+      organizationUserId: entity.organizationUserId,
       firstName: entity.firstName,
       lastName: entity.lastName,
       email: entity.email,

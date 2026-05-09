@@ -38,10 +38,9 @@
             [attr.aria-label]="'sign-in.toggle-password-visibility' | translate"
             (click)="togglePasswordVisibility()"
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M2.75 12s3.5-6.25 9.25-6.25S21.25 12 21.25 12s-3.5 6.25-9.25 6.25S2.75 12 2.75 12Z"/>
-              <circle cx="12" cy="12" r="2.75"/>
-            </svg>
+            <span class="material-icons" aria-hidden="true">
+              {{ passwordVisible() ? 'visibility_off' : 'visibility' }}
+            </span>
           </button>
         </div>
         @if (hasControlError('password')) {

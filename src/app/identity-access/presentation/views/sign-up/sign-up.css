@@ -120,19 +120,15 @@
   background: #e4e7eb;
 }
 
-.icon-button svg {
-  fill: none;
-  height: 24px;
-  stroke: #999da3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2;
-  transition: stroke 160ms ease;
-  width: 24px;
+.icon-button .material-icons {
+  color: #999da3;
+  font-size: 24px;
+  line-height: 24px;
+  transition: color 160ms ease;
 }
 
-.icon-button:hover svg {
-  stroke: #7f96d8;
+.icon-button:hover .material-icons {
+  color: #7f96d8;
 }
 
 .check-row {
