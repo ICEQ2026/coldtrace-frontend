@@ -357,6 +357,7 @@ export class ColdRoomList implements OnInit {
       .subscribe({
         next: () => {
           this.feedback.set('updated');
+          this.assetManagementStore.loadAssets();
         },
         error: () => this.feedback.set('server-error'),
       });
@@ -372,7 +373,7 @@ export class ColdRoomList implements OnInit {
       return currentAsset.id === this.selectedAssetId();
     });
 
-    if (!sensor || !asset || sensor.assetId) {
+    if (!sensor || !asset || sensor.assetId || !this.canManageAssets()) {
       this.feedback.set('duplicate-id');
       return;
     }
@@ -400,6 +401,7 @@ export class ColdRoomList implements OnInit {
           this.feedback.set('success');
           this.selectedSensorId.set(null);
           this.selectedAssetId.set(null);
+          this.assetManagementStore.loadSensors();
         },
         error: () => this.feedback.set('server-error'),
       });
@@ -415,7 +417,13 @@ export class ColdRoomList implements OnInit {
       return currentSensor.id === this.selectedGatewaySensorId();
     });
 
-    if (!gateway || !sensor || gateway.status !== GatewayStatus.Available || sensor.gatewayId) {
+    if (
+      !gateway ||
+      !sensor ||
+      gateway.status !== GatewayStatus.Available ||
+      sensor.gatewayId ||
+      !this.canManageAssets()
+    ) {
       this.feedback.set('duplicate-id');
       return;
     }
@@ -454,6 +462,8 @@ export class ColdRoomList implements OnInit {
           this.feedback.set('success');
           this.selectedGatewayId.set(null);
           this.selectedGatewaySensorId.set(null);
+          this.assetManagementStore.loadSensors();
+          this.assetManagementStore.loadGateways();
         },
         error: () => this.feedback.set('server-error'),
       });
