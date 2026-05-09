@@ -1,0 +1,17 @@
+<app-dashboard-shell
+  [activeOrganizationName]="activeOrganizationName()"
+  [pageTitleKey]="pageTitleKey()"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccess()"
+  (signedOut)="logout()"
+>
+  <section class="placeholder-card" aria-labelledby="placeholder-title">
+    <h2 id="placeholder-title">{{ pageTitleKey() | translate }}</h2>
+    @if (loading()) {
+      <p>{{ 'roles-permissions.feedback.loading' | translate }}</p>
+    } @else {
+      <p>{{ 'roles-permissions.empty-section-message' | translate }}</p>
+    }
+  </section>
+</app-dashboard-shell>

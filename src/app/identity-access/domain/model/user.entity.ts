@@ -7,7 +7,9 @@ export class User implements BaseEntity {
     private _lastName: string,
     private _email: string,
     private _organizationId: number,
-    private _roleId: number
+    private _roleId: number,
+    private _uuid: string = `USR-${_id}`,
+    private _organizationUserId: number = _id,
   ) {}
 
   get id(): number {
@@ -60,5 +62,21 @@ export class User implements BaseEntity {
 
   set roleId(value: number) {
     this._roleId = value;
+  }
+
+  get uuid(): string {
+    return this._uuid;
+  }
+
+  set uuid(value: string) {
+    this._uuid = value;
+  }
+
+  get organizationUserId(): number {
+    return this._organizationUserId;
+  }
+
+  set organizationUserId(value: number) {
+    this._organizationUserId = value;
   }
 }

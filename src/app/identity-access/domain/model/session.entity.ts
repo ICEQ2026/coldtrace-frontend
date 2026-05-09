@@ -6,7 +6,7 @@ export class Session implements BaseEntity {
     private _userId: number,
     private _startedAt: string,
     private _expiresAt: string,
-    private _active: boolean
+    private _active: boolean,
   ) {}
 
   get id(): number {

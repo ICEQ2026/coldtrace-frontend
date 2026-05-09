@@ -4,5 +4,5 @@ export enum PermissionAction {
   Update = 'update',
   Delete = 'delete',
   Export = 'export',
-  Manage = 'manage'
+  Manage = 'manage',
 }

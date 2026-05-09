@@ -19,9 +19,9 @@
     "error": {
       "email-invalid": "Enter a valid email address.",
       "password-required": "Enter your password.",
-      "invalid-credentials": "Invalid credentials for this fake account.",
+      "invalid-credentials": "Invalid email or password.",
       "revoked-access": "Access revoked. Contact your organization administrator.",
-      "server-error": "We could not validate the account. Check the fake API server."
+      "server-error": "We could not validate the account. Try again later."
     }
   },
   "password-recovery": {
@@ -32,11 +32,11 @@
     "requesting": "Requesting link...",
     "continue-reset": "Continue to reset password",
     "back-to-login": "Back to login",
-    "success": "Recovery link sent for this simulated flow.",
+    "success": "Recovery link sent to your email.",
     "error": {
       "email-invalid": "Enter a valid email address.",
       "not-found": "There is no account linked to this email.",
-      "server-error": "We could not validate the account. Check the fake API server."
+      "server-error": "We could not validate the account. Try again later."
     }
   },
   "reset-password": {
@@ -47,7 +47,7 @@
     "request-new-link": "Request a new link",
     "back-to-login": "Back to login",
     "toggle-password-visibility": "Toggle password visibility",
-    "success": "Password changed successfully for this simulated flow.",
+    "success": "Password changed successfully.",
     "error": {
       "password-min-length": "Use at least 8 characters.",
       "passwords-must-match": "Passwords must match.",
@@ -58,6 +58,100 @@
     "title": "Page not found",
     "content": "The path <strong>{{ invalid_path }}</strong> does not exist.",
     "go-home": "Go to login"
+  },
+  "roles-permissions": {
+    "dashboard": "Dashboard",
+    "breadcrumb": "Dashboard",
+    "title": "Access Control",
+    "main-page-title": "Main Page",
+    "assets-page-title": "Assets",
+    "alerts-page-title": "Alerts",
+    "monitoring-page-title": "Monitoring",
+    "reports-page-title": "Reports",
+    "permissions-page-title": "Role Permissions",
+    "create-user-page-title": "Create User",
+    "admin-role": "Manager",
+    "search": "Search users or roles...",
+    "table-title": "Users and Roles",
+    "table-subtitle": "Review users in the active organization and manage role assignments.",
+    "permissions-title": "Role permissions",
+    "permissions-subtitle": "Toggle permissions by role. The super administrator is fixed with full access.",
+    "create-user-title": "New organization user",
+    "create-user-subtitle": "Register a user inside the active organization and assign an operational role.",
+    "create-user": "Create user",
+    "reload": "Reload",
+    "save": "Save",
+    "saved": "Saved",
+    "empty": "No users match this search.",
+    "empty-section-message": "This section does not have content yet.",
+    "menu": {
+      "main-page": "Main Page",
+      "assets": "Assets",
+      "alerts": "Alerts",
+      "monitoring": "Monitoring",
+      "access": "Access",
+      "users": "Users",
+      "create-user": "New user",
+      "permissions": "Permissions",
+      "reports": "Reports"
+    },
+    "summary": {
+      "users": "Users",
+      "admins": "Administrators",
+      "pending": "Pending changes"
+    },
+    "table": {
+      "id": "ID",
+      "user": "User",
+      "current-role": "Current role",
+      "new-role": "New role",
+      "permissions": "Permissions",
+      "actions": "Actions"
+    },
+    "roles": {
+      "super-admin": "Super Administrator",
+      "administrator": "Administrator",
+      "operations-manager": "Operations Manager",
+      "operator": "Operator",
+      "auditor": "Auditor",
+      "unassigned": "Select role"
+    },
+    "permissions": {
+      "manage-administrators": "Manage administrators",
+      "manage-users": "Manage users",
+      "manage-assets": "Manage assets",
+      "view-reports": "View reports",
+      "resolve-alerts": "Resolve alerts",
+      "monitor-assets": "Monitor assets",
+      "read-only": "Read only",
+      "none": "No permissions"
+    },
+    "form": {
+      "organization": "Organization",
+      "full-name": "Full name",
+      "full-name-placeholder": "Laura Mendoza",
+      "full-name-error": "Enter at least 3 characters.",
+      "email": "Email address",
+      "email-placeholder": "user@coldtrace.com",
+      "email-error": "Enter a valid email.",
+      "role": "Role",
+      "role-error": "Select a valid role.",
+      "cancel": "Cancel",
+      "create": "Create user",
+      "creating": "Creating..."
+    },
+    "feedback": {
+      "saved": "Role assignment updated.",
+      "user-created": "User created successfully.",
+      "duplicate-email": "A user with this email already exists.",
+      "invalid-role": "Select a valid role before saving.",
+      "server-error": "We could not load access data. Try again later.",
+      "loading": "Loading access data..."
+    },
+    "denied": {
+      "title": "Access denied",
+      "message": "Your current role can review access information, but it cannot create users or update roles and permissions."
+    }
   },
   "sign-up": {
     "title": "Create your account",
@@ -76,7 +170,7 @@
     "continue-with-apple": "Continue with Apple",
     "already-have-account": "Already have an account?",
     "toggle-password-visibility": "Toggle password visibility",
-    "success": "Organization and admin account created.",
+    "success": "Organization and super administrator account created.",
     "error": {
       "organization-name-required": "Enter your organization name.",
       "full-name-required": "Enter your full name.",
@@ -84,7 +178,7 @@
       "password-min-length": "Use at least 8 characters.",
       "passwords-must-match": "Passwords must match.",
       "duplicate-email": "This email is already registered.",
-      "server-error": "We could not create the account. Check the fake API server."
+      "server-error": "We could not create the account. Try again later."
     }
   }
 }

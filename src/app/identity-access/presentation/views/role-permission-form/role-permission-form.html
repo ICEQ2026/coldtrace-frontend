@@ -1,0 +1,51 @@
+<app-dashboard-shell
+  [activeOrganizationName]="activeOrganizationName()"
+  [pageTitleKey]="'roles-permissions.permissions-page-title'"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccess()"
+  (signedOut)="logout()"
+>
+  <section class="table-card permission-editor" aria-labelledby="role-permissions-title">
+    <div class="table-heading">
+      <div>
+        <h2 id="role-permissions-title">{{ 'roles-permissions.permissions-title' | translate }}</h2>
+        <p>{{ 'roles-permissions.permissions-subtitle' | translate }}</p>
+      </div>
+      <button type="button" class="reload-action" (click)="loadRoles()">
+        {{ 'roles-permissions.reload' | translate }}
+      </button>
+    </div>
+
+    @if (feedback() === 'server-error') {
+      <p class="feedback error">{{ 'roles-permissions.feedback.server-error' | translate }}</p>
+    }
+
+    @if (loading()) {
+      <p class="feedback neutral">{{ 'roles-permissions.feedback.loading' | translate }}</p>
+    } @else if (!canManageAccess()) {
+      <p class="feedback error">{{ 'roles-permissions.denied.message' | translate }}</p>
+    } @else {
+      <div class="role-permission-list">
+        @for (role of roles(); track role.id) {
+          <article class="role-permission-row">
+            <span class="role-pill">{{ roleLabelKey(role) | translate }}</span>
+            <div class="permission-list">
+              @for (permissionKey of identityAccessStore.availablePermissionKeys; track permissionKey) {
+                <label class="permission-toggle">
+                  <input
+                    type="checkbox"
+                    [checked]="isPermissionSelected(role, permissionKey)"
+                    [disabled]="isPermissionToggleDisabled(role, permissionKey)"
+                    (change)="toggleRolePermission(role, permissionKey, $any($event.target).checked)"
+                  />
+                  <span>{{ permissionKey | translate }}</span>
+                </label>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</app-dashboard-shell>

@@ -30,6 +30,10 @@ export class IdentityAccessApi extends BaseApi {
     return this.usersEndpoint.create(user);
   }
 
+  updateUser(user: User): Observable<User> {
+    return this.usersEndpoint.update(user, user.id);
+  }
+
   getOrganizations(): Observable<Organization[]> {
     return this.organizationsEndpoint.getAll();
   }

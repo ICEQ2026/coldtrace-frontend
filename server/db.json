@@ -12,38 +12,16 @@
       "legalName": "My Chifa",
       "commercialName": "My Chifa",
       "taxId": "",
-      "contactEmail": "test@test.com"
-    },
-    {
-      "id": 3,
-      "legalName": "My Chifa",
-      "commercialName": "My Chifa",
-      "taxId": "",
-      "contactEmail": "test1@test.com"
-    },
-    {
-      "id": 4,
-      "legalName": "Mi Polleria",
-      "commercialName": "Mi Polleria",
-      "taxId": "",
-      "contactEmail": "test2@test.com"
-    },
-    {
-      "id": 5,
-      "legalName": "Tambo",
-      "commercialName": "Tambo",
-      "taxId": "",
-      "contactEmail": "juan@test.com"
-    },
-    {
-      "id": 6,
-      "legalName": "oxxo",
-      "commercialName": "oxxo",
-      "taxId": "",
-      "contactEmail": "carlos@test.com"
+      "contactEmail": "leonardo@chifa.com"
     }
   ],
   "roles": [
+    {
+      "id": 5,
+      "name": "super-admin",
+      "label": "Super Administrator",
+      "permissions": []
+    },
     {
       "id": 1,
       "name": "administrator",
@@ -72,51 +50,83 @@
   "users": [
     {
       "id": 1,
+      "uuid": "USR-1",
+      "organizationUserId": 1,
       "firstName": "Mauricio",
       "lastName": "Pajes",
       "email": "mpajes2006@gmail.com",
       "organizationId": 1,
-      "roleId": 1
+      "roleId": 5
     },
     {
       "id": 2,
-      "firstName": "test",
-      "lastName": "",
-      "email": "test@test.com",
-      "organizationId": 2,
-      "roleId": 1
+      "uuid": "USR-2",
+      "organizationUserId": 2,
+      "firstName": "Laura",
+      "lastName": "Mendoza",
+      "email": "laura.mendoza@coldtrace.com",
+      "organizationId": 1,
+      "roleId": 2
     },
     {
       "id": 3,
-      "firstName": "Test",
-      "lastName": "1",
-      "email": "test1@test.com",
-      "organizationId": 3,
-      "roleId": 1
+      "uuid": "USR-3",
+      "organizationUserId": 3,
+      "firstName": "Andrés",
+      "lastName": "Silva",
+      "email": "andres.silva@coldtrace.com",
+      "organizationId": 1,
+      "roleId": 2
     },
     {
       "id": 4,
-      "firstName": "test2",
-      "lastName": "",
-      "email": "test2@test.com",
-      "organizationId": 4,
-      "roleId": 1
+      "uuid": "USR-4",
+      "organizationUserId": 4,
+      "firstName": "Ricardo",
+      "lastName": "Torres",
+      "email": "ricardo.torres@coldtrace.com",
+      "organizationId": 1,
+      "roleId": 4
     },
     {
       "id": 5,
-      "firstName": "Juan",
-      "lastName": "Francisco Perez Leon",
-      "email": "juan@test.com",
-      "organizationId": 5,
-      "roleId": 1
+      "uuid": "USR-5",
+      "organizationUserId": 5,
+      "firstName": "Sofía",
+      "lastName": "Rojas",
+      "email": "sofia.rojas@coldtrace.com",
+      "organizationId": 1,
+      "roleId": 3
     },
     {
       "id": 6,
-      "firstName": "Carlos",
-      "lastName": "Luis Perez Rodriguez",
-      "email": "carlos@test.com",
-      "organizationId": 6,
-      "roleId": 1
+      "uuid": "USR-6",
+      "organizationUserId": 6,
+      "firstName": "Jorge",
+      "lastName": "Castillo",
+      "email": "jorge.castillo@coldtrace.com",
+      "organizationId": 1,
+      "roleId": 4
+    },
+    {
+      "id": 7,
+      "uuid": "USR-7",
+      "organizationUserId": 7,
+      "firstName": "Cristian",
+      "lastName": "Coaguila",
+      "email": "cristian@coldtrace.com",
+      "organizationId": 1,
+      "roleId": 3
+    },
+    {
+      "id": 8,
+      "uuid": "USR-8",
+      "organizationUserId": 1,
+      "firstName": "Leonardo",
+      "lastName": "Diaz",
+      "email": "leonardo@chifa.com",
+      "organizationId": 2,
+      "roleId": 5
     }
   ],
   "password-reset-requests": []

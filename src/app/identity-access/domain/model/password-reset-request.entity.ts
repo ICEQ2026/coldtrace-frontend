@@ -7,7 +7,7 @@ export class PasswordResetRequest implements BaseEntity {
     private _userId: number,
     private _email: string,
     private _status: PasswordResetStatus,
-    private _expiresAt: string
+    private _expiresAt: string,
   ) {}
 
   get id(): number {
