@@ -169,6 +169,21 @@
         </div>
       }
 
+      <div class="calibration-summary" aria-label="Sensor calibration summary">
+        @for (summary of calibrationSummary(); track summary.status) {
+          <article
+            class="calibration-card"
+            [class.active]="summary.status === calibrationStatus.Compliant"
+            [class.maintenance]="summary.status === calibrationStatus.DueSoon"
+            [class.inactive]="summary.status === calibrationStatus.Expired"
+            [class.neutral]="summary.status === calibrationStatus.Unknown"
+          >
+            <span>{{ calibrationLabelKey(summary.status) | translate }}</span>
+            <strong>{{ summary.count }}</strong>
+          </article>
+        }
+      </div>
+
       <div class="assets-table-wrapper">
         <table class="assets-table sensor-table">
           <colgroup>
@@ -177,6 +192,9 @@
             <col style="width: 180px" />
             <col style="width: 250px" />
             <col style="width: 140px" />
+            <col style="width: 150px" />
+            <col style="width: 150px" />
+            <col style="width: 150px" />
           </colgroup>
           <thead>
             <tr>
@@ -185,6 +203,9 @@
               <th>{{ 'asset-management.sensors.table.measurement' | translate }}</th>
               <th>{{ 'asset-management.sensors.table.asset' | translate }}</th>
               <th>{{ 'asset-management.sensors.table.status' | translate }}</th>
+              <th>{{ 'asset-management.sensors.table.calibration' | translate }}</th>
+              <th>{{ 'asset-management.sensors.table.last-calibration' | translate }}</th>
+              <th>{{ 'asset-management.sensors.table.next-calibration' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -206,10 +227,23 @@
                     {{ 'asset-management.sensors.status.' + sensor.status | translate }}
                   </span>
                 </td>
+                <td [attr.data-label]="'asset-management.sensors.table.calibration' | translate">
+                  <span
+                    class="status-pill"
+                    [class.active]="sensor.calibrationStatus === calibrationStatus.Compliant"
+                    [class.maintenance]="sensor.calibrationStatus === calibrationStatus.DueSoon"
+                    [class.inactive]="sensor.calibrationStatus === calibrationStatus.Expired"
+                    [class.neutral]="sensor.calibrationStatus === calibrationStatus.Unknown"
+                  >
+                    {{ calibrationLabelKey(sensor.calibrationStatus) | translate }}
+                  </span>
+                </td>
+                <td [attr.data-label]="'asset-management.sensors.table.last-calibration' | translate">{{ sensor.lastCalibrationDate }}</td>
+                <td [attr.data-label]="'asset-management.sensors.table.next-calibration' | translate">{{ sensor.nextCalibrationDate }}</td>
               </tr>
             } @empty {
               <tr>
-                <td colspan="5" class="empty-state">{{ 'asset-management.sensors.empty' | translate }}</td>
+                <td colspan="8" class="empty-state">{{ 'asset-management.sensors.empty' | translate }}</td>
               </tr>
             }
           </tbody>

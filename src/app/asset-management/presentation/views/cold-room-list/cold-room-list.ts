@@ -9,6 +9,7 @@ import { AssetManagementStore } from '../../../application/asset-management.stor
 import { Asset } from '../../../domain/model/asset.entity';
 import { AssetStatus } from '../../../domain/model/asset-status.enum';
 import { AssetType } from '../../../domain/model/asset-type.enum';
+import { CalibrationStatus } from '../../../domain/model/calibration-status.enum';
 import { ConnectivityStatus } from '../../../domain/model/connectivity-status.enum';
 import { Gateway } from '../../../domain/model/gateway.entity';
 import { GatewayStatus } from '../../../domain/model/gateway-status.enum';
@@ -33,6 +34,7 @@ type AssetManagementTab = AssetType | 'sensor' | 'gateway' | 'settings';
 export class ColdRoomList implements OnInit {
   protected readonly assetStatus = AssetStatus;
   protected readonly sensorStatus = SensorStatus;
+  protected readonly calibrationStatus = CalibrationStatus;
   protected readonly gatewayStatus = GatewayStatus;
   protected readonly connectivityStatus = ConnectivityStatus;
   protected readonly assetManagementStore = inject(AssetManagementStore);
@@ -158,6 +160,27 @@ export class ColdRoomList implements OnInit {
     return this.organizationGateways().filter((gateway) => {
       return gateway.status === GatewayStatus.Available;
     });
+  });
+
+  protected readonly calibrationSummary = computed(() => {
+    return [
+      {
+        status: CalibrationStatus.Compliant,
+        count: this.calibrationCount(CalibrationStatus.Compliant),
+      },
+      {
+        status: CalibrationStatus.DueSoon,
+        count: this.calibrationCount(CalibrationStatus.DueSoon),
+      },
+      {
+        status: CalibrationStatus.Expired,
+        count: this.calibrationCount(CalibrationStatus.Expired),
+      },
+      {
+        status: CalibrationStatus.Unknown,
+        count: this.calibrationCount(CalibrationStatus.Unknown),
+      },
+    ];
   });
 
   protected readonly filteredAssets = computed(() => {
@@ -487,6 +510,10 @@ export class ColdRoomList implements OnInit {
     return `asset-management.connectivity.${connectivity}`;
   }
 
+  protected calibrationLabelKey(status: CalibrationStatus): string {
+    return `asset-management.sensors.calibration-status.${status}`;
+  }
+
   protected incidentIconName(lastIncident: string): string {
     const iconByIncidentKey: Record<string, string> = {
       'asset-management.incidents.high-temperature': 'warning',
@@ -531,6 +558,10 @@ export class ColdRoomList implements OnInit {
       month: 'short',
       year: 'numeric',
     }).format(new Date());
+  }
+
+  private calibrationCount(status: CalibrationStatus): number {
+    return this.organizationSensors().filter((sensor) => sensor.calibrationStatus === status).length;
   }
 
   private resetForm(): void {
