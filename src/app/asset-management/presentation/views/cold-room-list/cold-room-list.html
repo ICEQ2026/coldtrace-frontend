@@ -122,51 +122,6 @@
     </section>
   }
 
-  @if (canManageAssets() && isAssetTab()) {
-    @if (editingAsset(); as asset) {
-      <section class="form-card" aria-labelledby="asset-update-form-title">
-        <div class="section-heading">
-          <div>
-            <h2 id="asset-update-form-title">{{ 'asset-management.update.title' | translate }}</h2>
-            <p>{{ asset.uuid }} - {{ asset.name }}</p>
-          </div>
-        </div>
-
-        <form class="cold-room-form" [formGroup]="updateAssetForm" (ngSubmit)="updateAssetDetails()">
-          <label class="form-field full">
-            <span>{{ 'asset-management.update.location' | translate }}</span>
-            <input
-              type="text"
-              formControlName="location"
-              [placeholder]="'asset-management.form.location-placeholder' | translate"
-            />
-            @if (hasUpdateControlError('location')) {
-              <small>{{ 'asset-management.form.location-error' | translate }}</small>
-            }
-          </label>
-
-          <label class="form-field">
-            <span>{{ 'asset-management.update.status' | translate }}</span>
-            <select formControlName="status">
-              @for (status of assetStatuses; track status) {
-                <option [value]="status">{{ statusLabelKey(status) | translate }}</option>
-              }
-            </select>
-          </label>
-
-          <div class="form-actions">
-            <button type="button" class="secondary-action" (click)="cancelAssetUpdate()">
-              {{ 'asset-management.form.cancel' | translate }}
-            </button>
-            <button type="submit" class="primary-action" [disabled]="updatingAsset()">
-              {{ (updatingAsset() ? 'asset-management.update.updating' : 'asset-management.update.save') | translate }}
-            </button>
-          </div>
-        </form>
-      </section>
-    }
-  }
-
   @if (selectedTab() === 'sensor') {
     <section class="table-card" aria-labelledby="sensor-link-title">
       <div class="section-heading">
@@ -431,9 +386,6 @@
             <col style="width: 130px" />
             <col style="width: 150px" />
             <col style="width: 135px" />
-            @if (canManageAssets()) {
-              <col style="width: 90px" />
-            }
           </colgroup>
           <thead>
             <tr>
@@ -445,9 +397,6 @@
               <th>{{ 'asset-management.table.entry-date' | translate }}</th>
               <th>{{ 'asset-management.table.status' | translate }}</th>
               <th>{{ 'asset-management.table.connectivity' | translate }}</th>
-              @if (canManageAssets()) {
-                <th>{{ 'asset-management.table.actions' | translate }}</th>
-              }
             </tr>
           </thead>
           <tbody>
@@ -468,14 +417,30 @@
                 <td [attr.data-label]="'asset-management.table.temperature' | translate">{{ asset.currentTemperature }}</td>
                 <td [attr.data-label]="'asset-management.table.entry-date' | translate">{{ asset.entryDate }}</td>
                 <td [attr.data-label]="'asset-management.table.status' | translate">
-                  <span
-                    class="status-pill"
-                    [class.active]="asset.status === assetStatus.Active"
-                    [class.maintenance]="asset.status === assetStatus.Maintenance"
-                    [class.inactive]="asset.status === assetStatus.Inactive"
-                  >
-                    {{ statusLabelKey(asset.status) | translate }}
-                  </span>
+                  @if (canManageAssets()) {
+                    <select
+                      class="status-select"
+                      [class.active]="asset.status === assetStatus.Active"
+                      [class.maintenance]="asset.status === assetStatus.Maintenance"
+                      [class.inactive]="asset.status === assetStatus.Inactive"
+                      [value]="asset.status"
+                      [disabled]="updatingAssetId() === asset.id"
+                      (change)="updateAssetStatus(asset, $any($event.target).value)"
+                    >
+                      @for (status of assetStatuses; track status) {
+                        <option [value]="status">{{ statusLabelKey(status) | translate }}</option>
+                      }
+                    </select>
+                  } @else {
+                    <span
+                      class="status-pill"
+                      [class.active]="asset.status === assetStatus.Active"
+                      [class.maintenance]="asset.status === assetStatus.Maintenance"
+                      [class.inactive]="asset.status === assetStatus.Inactive"
+                    >
+                      {{ statusLabelKey(asset.status) | translate }}
+                    </span>
+                  }
                 </td>
                 <td [attr.data-label]="'asset-management.table.connectivity' | translate">
                   <span
@@ -487,22 +452,10 @@
                     {{ connectivityLabelKey(asset.connectivity) | translate }}
                   </span>
                 </td>
-                @if (canManageAssets()) {
-                  <td [attr.data-label]="'asset-management.table.actions' | translate">
-                    <button
-                      type="button"
-                      class="icon-action"
-                      [attr.aria-label]="'asset-management.update.edit' | translate"
-                      (click)="selectAssetForUpdate(asset)"
-                    >
-                      <mat-icon aria-hidden="true">edit</mat-icon>
-                    </button>
-                  </td>
-                }
               </tr>
             } @empty {
               <tr>
-                <td [attr.colspan]="canManageAssets() ? 9 : 8" class="empty-state">{{ 'asset-management.empty' | translate }}</td>
+                <td colspan="8" class="empty-state">{{ 'asset-management.empty' | translate }}</td>
               </tr>
             }
           </tbody>

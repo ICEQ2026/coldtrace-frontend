@@ -201,8 +201,7 @@
       "temperature": "Temp.",
       "entry-date": "Fecha de ingreso",
       "status": "Estado",
-      "connectivity": "Conectividad",
-      "actions": "Acciones"
+      "connectivity": "Conectividad"
     },
     "incidents": {
       "high-temperature": "Temperatura alta",
@@ -300,12 +299,6 @@
       "creating": "Creando..."
     },
     "update": {
-      "title": "Actualizar activo",
-      "location": "Ubicación",
-      "status": "Estado",
-      "save": "Guardar cambios",
-      "updating": "Guardando...",
-      "edit": "Editar activo",
       "feedback-updated": "Activo actualizado correctamente."
     },
     "feedback": {

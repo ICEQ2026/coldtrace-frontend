@@ -201,8 +201,7 @@
       "temperature": "Temp.",
       "entry-date": "Entry date",
       "status": "Status",
-      "connectivity": "Connectivity",
-      "actions": "Actions"
+      "connectivity": "Connectivity"
     },
     "incidents": {
       "high-temperature": "High temperature",
@@ -300,12 +299,6 @@
       "creating": "Creating..."
     },
     "update": {
-      "title": "Update asset",
-      "location": "Ubication",
-      "status": "Status",
-      "save": "Save changes",
-      "updating": "Saving...",
-      "edit": "Edit asset",
       "feedback-updated": "Asset updated successfully."
     },
     "feedback": {

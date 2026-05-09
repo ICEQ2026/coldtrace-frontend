@@ -57,11 +57,9 @@ export class ColdRoomList implements OnInit {
   ];
   protected readonly identityLoading = signal(false);
   protected readonly creating = signal(false);
-  protected readonly updatingAsset = signal(false);
+  protected readonly updatingAssetId = signal<number | null>(null);
   protected readonly submitted = signal(false);
-  protected readonly updateSubmitted = signal(false);
   protected readonly formVisible = signal(false);
-  protected readonly editingAssetId = signal<number | null>(null);
   protected readonly feedback = signal<AssetFeedback>('idle');
   protected readonly searchTerm = signal('');
   protected readonly selectedTab = signal<AssetManagementTab>(AssetType.ColdRoom);
@@ -81,10 +79,6 @@ export class ColdRoomList implements OnInit {
     capacity: [0, [Validators.required, Validators.min(1)]],
     location: ['', [Validators.required, Validators.minLength(3)]],
     description: [''],
-  });
-  protected readonly updateAssetForm = this.fb.nonNullable.group({
-    location: ['', [Validators.required, Validators.minLength(3)]],
-    status: [AssetStatus.Active, Validators.required],
   });
 
   protected readonly loading = computed(
@@ -172,11 +166,6 @@ export class ColdRoomList implements OnInit {
     return this.organizationGateways().filter((gateway) => {
       return gateway.status === GatewayStatus.Available;
     });
-  });
-
-  protected readonly editingAsset = computed(() => {
-    const assetId = this.editingAssetId();
-    return this.assets().find((asset) => asset.id === assetId) ?? null;
   });
 
   protected readonly calibrationSummary = computed(() => {
@@ -270,13 +259,11 @@ export class ColdRoomList implements OnInit {
     this.selectedAssetId.set(null);
     this.selectedGatewayId.set(null);
     this.selectedGatewaySensorId.set(null);
-    this.cancelAssetUpdate();
     this.resetForm();
   }
 
   protected toggleForm(): void {
     this.feedback.set('idle');
-    this.cancelAssetUpdate();
     this.formVisible.update((visible) => !visible);
   }
 
@@ -338,25 +325,12 @@ export class ColdRoomList implements OnInit {
       });
   }
 
-  protected selectAssetForUpdate(asset: Asset): void {
+  protected updateAssetStatus(asset: Asset, value: string): void {
     this.feedback.set('idle');
-    this.updateSubmitted.set(false);
-    this.formVisible.set(false);
-    this.editingAssetId.set(asset.id);
-    this.updateAssetForm.reset({
-      location: asset.location,
-      status: asset.status,
-    });
-  }
 
-  protected updateAssetDetails(): void {
-    this.updateSubmitted.set(true);
-    this.feedback.set('idle');
-    this.updateAssetForm.markAllAsTouched();
+    const nextStatus = this.assetStatuses.find((status) => status === value);
 
-    const asset = this.editingAsset();
-
-    if (!asset || this.updateAssetForm.invalid || !this.canManageAssets()) {
+    if (!nextStatus || nextStatus === asset.status || !this.canManageAssets()) {
       return;
     }
 
@@ -366,36 +340,26 @@ export class ColdRoomList implements OnInit {
       asset.uuid,
       asset.type,
       asset.name,
-      this.updateAssetForm.controls.location.value.trim(),
+      asset.location,
       asset.capacity,
       asset.description,
-      this.updateAssetForm.controls.status.value,
+      nextStatus,
       asset.lastIncident,
       asset.currentTemperature,
       asset.entryDate,
       asset.connectivity,
     );
 
-    this.updatingAsset.set(true);
+    this.updatingAssetId.set(asset.id);
     this.assetManagementStore
       .updateAsset(updatedAsset)
-      .pipe(finalize(() => this.updatingAsset.set(false)))
+      .pipe(finalize(() => this.updatingAssetId.set(null)))
       .subscribe({
         next: () => {
-          this.cancelAssetUpdate();
           this.feedback.set('updated');
         },
         error: () => this.feedback.set('server-error'),
       });
-  }
-
-  protected cancelAssetUpdate(): void {
-    this.editingAssetId.set(null);
-    this.updateSubmitted.set(false);
-    this.updateAssetForm.reset({
-      location: '',
-      status: AssetStatus.Active,
-    });
   }
 
   protected linkSensor(): void {
@@ -624,11 +588,6 @@ export class ColdRoomList implements OnInit {
   protected hasControlError(controlName: keyof typeof this.coldRoomForm.controls): boolean {
     const control = this.coldRoomForm.controls[controlName];
     return control.invalid && (control.touched || this.submitted());
-  }
-
-  protected hasUpdateControlError(controlName: keyof typeof this.updateAssetForm.controls): boolean {
-    const control = this.updateAssetForm.controls[controlName];
-    return control.invalid && (control.touched || this.updateSubmitted());
   }
 
   protected logout(): void {
