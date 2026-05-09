@@ -544,7 +544,7 @@
       "model": "TempSense T100",
       "measurementType": "Temperature",
       "assetId": 1,
-      "gatewayId": null,
+      "gatewayId": 1,
       "status": "linked",
       "calibrationStatus": "compliant",
       "lastCalibrationDate": "01 May 2026",
@@ -614,6 +614,53 @@
       "calibrationStatus": "compliant",
       "lastCalibrationDate": "09 May 2026",
       "nextCalibrationDate": "09 Nov 2026"
+    }
+  ],
+  "gateways": [
+    {
+      "id": 1,
+      "organizationId": 1,
+      "uuid": "GW-001",
+      "name": "Main Warehouse Gateway",
+      "location": "San Miguel - Plaza San Miguel",
+      "network": "LTE / Wi-Fi",
+      "status": "paired"
+    },
+    {
+      "id": 2,
+      "organizationId": 1,
+      "uuid": "GW-002",
+      "name": "Transport Dock Gateway",
+      "location": "Callao - Port Storage",
+      "network": "LTE",
+      "status": "available"
+    },
+    {
+      "id": 3,
+      "organizationId": 1,
+      "uuid": "GW-003",
+      "name": "Cold Room Backup Gateway",
+      "location": "San Borja - Clinic Storage",
+      "network": "Wi-Fi",
+      "status": "available"
+    },
+    {
+      "id": 4,
+      "organizationId": 1,
+      "uuid": "GW-004",
+      "name": "South Route Gateway",
+      "location": "Villa El Salvador - Distribution",
+      "network": "LTE",
+      "status": "offline"
+    },
+    {
+      "id": 5,
+      "organizationId": 2,
+      "uuid": "GW-201",
+      "name": "Chifa Delivery Gateway",
+      "location": "Surco Delivery Route",
+      "network": "LTE",
+      "status": "available"
     }
   ],
   "password-reset-requests": []

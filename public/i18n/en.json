@@ -246,6 +246,33 @@
         "offline": "Offline"
       }
     },
+    "gateways": {
+      "title": "Gateways",
+      "subtitle": "Pair available network gateways with organization sensors.",
+      "gateway": "Gateway",
+      "sensor": "Sensor",
+      "select-gateway": "Select gateway",
+      "select-sensor": "Select sensor",
+      "pair": "Pair gateway",
+      "pairing": "Pairing...",
+      "unassigned": "Unassigned",
+      "empty": "No gateways registered for this organization.",
+      "feedback-paired": "Gateway paired successfully.",
+      "feedback-unavailable": "Select an available gateway and a valid sensor.",
+      "table": {
+        "id": "ID",
+        "name": "Name",
+        "location": "Ubication",
+        "network": "Network",
+        "sensor": "Sensor",
+        "status": "Status"
+      },
+      "status": {
+        "available": "Available",
+        "paired": "Paired",
+        "offline": "Offline"
+      }
+    },
     "form": {
       "close": "Close",
       "internal-id": "Internal ID",
