@@ -1,0 +1,23 @@
+import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
+import { AssetStatus } from '../domain/model/asset-status.enum';
+import { AssetType } from '../domain/model/asset-type.enum';
+import { ConnectivityStatus } from '../domain/model/connectivity-status.enum';
+
+export interface AssetResource extends BaseResource {
+  organizationId: number;
+  uuid: string;
+  type: AssetType;
+  name: string;
+  location: string;
+  capacity: number;
+  description: string;
+  status: AssetStatus;
+  lastIncident: string;
+  currentTemperature: string;
+  entryDate: string;
+  connectivity: ConnectivityStatus;
+}
+
+export interface AssetsResponse extends BaseResponse {
+  assets: AssetResource[];
+}

@@ -23,9 +23,8 @@ export const identityAccessRoutes: Routes = [
   },
   {
     path: 'assets',
-    loadComponent: dashboardPlaceholder,
-    title: 'ColdTrace - Assets',
-    data: { pageTitleKey: 'roles-permissions.assets-page-title' },
+    redirectTo: '/asset-management/assets',
+    pathMatch: 'full',
   },
   {
     path: 'alerts',

@@ -1,0 +1,217 @@
+<app-dashboard-shell
+  [activeOrganizationName]="activeOrganizationName()"
+  [pageTitleKey]="'asset-management.title'"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccess()"
+  (signedOut)="logout()"
+>
+  <nav class="asset-tabs" aria-label="Asset sections">
+    <a class="active">{{ 'asset-management.tabs.cold-room' | translate }}</a>
+    <a>{{ 'asset-management.tabs.transport' | translate }}</a>
+    <a>{{ 'asset-management.tabs.sensor' | translate }}</a>
+    <a>{{ 'asset-management.tabs.gateway' | translate }}</a>
+    <a>{{ 'asset-management.tabs.settings' | translate }}</a>
+  </nav>
+
+  <div class="assets-toolbar">
+    <label class="search-box">
+      <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
+      <input
+        type="search"
+        [value]="searchTerm()"
+        [placeholder]="'asset-management.search' | translate"
+        (input)="updateSearchTerm($any($event.target).value)"
+      />
+    </label>
+
+    @if (canManageAssets()) {
+      <button type="button" class="primary-action" (click)="toggleForm()">
+        <mat-icon aria-hidden="true">{{ formVisible() ? 'close' : 'add' }}</mat-icon>
+        <span>
+          {{ (formVisible() ? 'asset-management.form.close' : 'asset-management.form.open') | translate }}
+        </span>
+      </button>
+    }
+  </div>
+
+  @if (feedback() === 'success') {
+    <p class="feedback success">{{ 'asset-management.feedback.created' | translate }}</p>
+  }
+
+  @if (feedback() === 'duplicate-id') {
+    <p class="feedback error">{{ 'asset-management.feedback.duplicate-id' | translate }}</p>
+  }
+
+  @if (feedback() === 'server-error' || assetManagementStore.error()) {
+    <p class="feedback error">{{ 'asset-management.feedback.server-error' | translate }}</p>
+  }
+
+  @if (formVisible() && canManageAssets()) {
+    <section class="form-card" aria-labelledby="cold-room-form-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="cold-room-form-title">{{ 'asset-management.form.title' | translate }}</h2>
+          <p>{{ 'asset-management.form.subtitle' | translate }}</p>
+        </div>
+      </div>
+
+      <form class="cold-room-form" [formGroup]="coldRoomForm" (ngSubmit)="submit()">
+        <label class="form-field">
+          <span>{{ 'asset-management.form.internal-id' | translate }}</span>
+          <input type="text" formControlName="internalId" placeholder="CR-42312" />
+          @if (hasControlError('internalId')) {
+            <small>{{ 'asset-management.form.internal-id-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.form.name' | translate }}</span>
+          <input
+            type="text"
+            formControlName="name"
+            [placeholder]="'asset-management.form.name-placeholder' | translate"
+          />
+          @if (hasControlError('name')) {
+            <small>{{ 'asset-management.form.name-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.form.capacity' | translate }}</span>
+          <input type="number" min="1" formControlName="capacity" placeholder="1200" />
+          @if (hasControlError('capacity')) {
+            <small>{{ 'asset-management.form.capacity-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.form.location' | translate }}</span>
+          <input
+            type="text"
+            formControlName="location"
+            [placeholder]="'asset-management.form.location-placeholder' | translate"
+          />
+          @if (hasControlError('location')) {
+            <small>{{ 'asset-management.form.location-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field full">
+          <span>{{ 'asset-management.form.description' | translate }}</span>
+          <textarea
+            rows="3"
+            formControlName="description"
+            [placeholder]="'asset-management.form.description-placeholder' | translate"
+          ></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button type="button" class="secondary-action" (click)="toggleForm()">
+            {{ 'asset-management.form.cancel' | translate }}
+          </button>
+          <button type="submit" class="primary-action" [disabled]="creating()">
+            {{ (creating() ? 'asset-management.form.creating' : 'asset-management.form.create') | translate }}
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+
+  <section class="table-card" aria-labelledby="cold-room-table-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="cold-room-table-title">{{ 'asset-management.cold-room-title' | translate }}</h2>
+        <p>{{ 'asset-management.cold-room-subtitle' | translate }}</p>
+      </div>
+      <button type="button" class="secondary-action" (click)="loadPageData()">
+        {{ 'asset-management.reload' | translate }}
+      </button>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-state">
+        <mat-spinner diameter="34" />
+        <span>{{ 'asset-management.feedback.loading' | translate }}</span>
+      </div>
+    } @else {
+      <div class="assets-table-wrapper">
+        <table class="assets-table">
+          <colgroup>
+            <col style="width: 110px" />
+            <col style="width: 190px" />
+            <col style="width: 260px" />
+            <col style="width: 200px" />
+            <col style="width: 110px" />
+            <col style="width: 130px" />
+            <col style="width: 150px" />
+            <col style="width: 135px" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>{{ 'asset-management.table.id' | translate }}</th>
+              <th>{{ 'asset-management.table.name' | translate }}</th>
+              <th>{{ 'asset-management.table.location' | translate }}</th>
+              <th>{{ 'asset-management.table.last-incident' | translate }}</th>
+              <th>{{ 'asset-management.table.temperature' | translate }}</th>
+              <th>{{ 'asset-management.table.entry-date' | translate }}</th>
+              <th>{{ 'asset-management.table.status' | translate }}</th>
+              <th>{{ 'asset-management.table.connectivity' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (asset of filteredColdRooms(); track asset.id) {
+              <tr>
+                <td [attr.data-label]="'asset-management.table.id' | translate">{{ asset.uuid }}</td>
+                <td [attr.data-label]="'asset-management.table.name' | translate">{{ asset.name }}</td>
+                <td [attr.data-label]="'asset-management.table.location' | translate">{{ asset.location }}</td>
+                <td [attr.data-label]="'asset-management.table.last-incident' | translate">
+                  <span class="incident" [class.danger]="incidentSeverityClass(asset.lastIncident) === 'danger'"
+                        [class.warning]="incidentSeverityClass(asset.lastIncident) === 'warning'"
+                        [class.cold]="incidentSeverityClass(asset.lastIncident) === 'cold'"
+                        [class.stable]="incidentSeverityClass(asset.lastIncident) === 'stable'">
+                    <mat-icon aria-hidden="true">{{ incidentIconName(asset.lastIncident) }}</mat-icon>
+                    {{ asset.lastIncident | translate }}
+                  </span>
+                </td>
+                <td [attr.data-label]="'asset-management.table.temperature' | translate">{{ asset.currentTemperature }}</td>
+                <td [attr.data-label]="'asset-management.table.entry-date' | translate">{{ asset.entryDate }}</td>
+                <td [attr.data-label]="'asset-management.table.status' | translate">
+                  <span
+                    class="status-pill"
+                    [class.active]="asset.status === assetStatus.Active"
+                    [class.maintenance]="asset.status === assetStatus.Maintenance"
+                    [class.inactive]="asset.status === assetStatus.Inactive"
+                  >
+                    {{ statusLabelKey(asset.status) | translate }}
+                  </span>
+                </td>
+                <td [attr.data-label]="'asset-management.table.connectivity' | translate">
+                  <span
+                    class="connectivity"
+                    [class.online]="asset.connectivity === connectivityStatus.Online"
+                    [class.unstable]="asset.connectivity === connectivityStatus.Unstable"
+                    [class.offline]="asset.connectivity === connectivityStatus.Offline"
+                  >
+                    {{ connectivityLabelKey(asset.connectivity) | translate }}
+                  </span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-state">{{ 'asset-management.empty' | translate }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="table-footer">
+        <span>{{ 'asset-management.item-count' | translate: { count: filteredColdRooms().length } }}</span>
+        <div class="pager" aria-label="Pagination">
+          <button type="button" disabled>1</button>
+        </div>
+      </footer>
+    }
+  </section>
+</app-dashboard-shell>

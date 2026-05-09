@@ -153,6 +153,77 @@
       "message": "Tu rol actual puede revisar información de acceso, pero no puede crear usuarios ni actualizar roles y permisos."
     }
   },
+  "asset-management": {
+    "title": "Activos",
+    "search": "Buscar contenido...",
+    "reload": "Recargar",
+    "cold-room-title": "Cámaras frigoríficas",
+    "cold-room-subtitle": "Registra y revisa cámaras frigoríficas de la organización activa.",
+    "empty": "No hay cámaras frigoríficas para esta búsqueda.",
+    "item-count": "Ítems por página: {{ count }}",
+    "tabs": {
+      "cold-room": "Cámara",
+      "transport": "Transporte",
+      "sensor": "Sensor",
+      "gateway": "Gateway",
+      "settings": "Ajustes"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Nombre",
+      "location": "Ubicación",
+      "capacity": "Capacidad",
+      "last-incident": "Último incidente",
+      "temperature": "Temp.",
+      "entry-date": "Fecha de ingreso",
+      "status": "Estado",
+      "connectivity": "Conectividad"
+    },
+    "incidents": {
+      "high-temperature": "Temperatura alta",
+      "connection-lost": "Conexión perdida",
+      "high-humidity": "Humedad alta",
+      "low-temperature": "Temperatura baja",
+      "none": "Sin incidentes"
+    },
+    "status": {
+      "active": "Reconocido",
+      "maintenance": "Reconocido",
+      "inactive": "Sin reconocer"
+    },
+    "connectivity": {
+      "online": "En línea",
+      "unstable": "Inestable",
+      "offline": "Sin conexión"
+    },
+    "form": {
+      "open": "Nueva cámara",
+      "close": "Cerrar",
+      "title": "Registrar cámara frigorífica",
+      "subtitle": "Crea una cámara frigorífica para la organización activa.",
+      "internal-id": "ID interno",
+      "internal-id-error": "Ingresa un ID de cámara válido.",
+      "name": "Nombre",
+      "name-placeholder": "Cámara 21",
+      "name-error": "Ingresa al menos 3 caracteres.",
+      "capacity": "Capacidad (kg)",
+      "capacity-error": "Ingresa una capacidad mayor a cero.",
+      "location": "Ubicación",
+      "location-placeholder": "San Miguel - Plaza Center",
+      "location-error": "Ingresa al menos 3 caracteres.",
+      "description": "Descripción",
+      "description-placeholder": "Notas operativas de la cámara",
+      "cancel": "Cancelar",
+      "create": "Crear cámara",
+      "creating": "Creando..."
+    },
+    "feedback": {
+      "created": "Cámara creada correctamente.",
+      "duplicate-id": "Ya existe una cámara con este ID.",
+      "server-error": "No se pudo cargar la información de activos. Inténtalo nuevamente.",
+      "loading": "Cargando información de activos..."
+    }
+  },
   "sign-up": {
     "title": "Crear cuenta",
     "organization-name": "Nombre de la organización",
