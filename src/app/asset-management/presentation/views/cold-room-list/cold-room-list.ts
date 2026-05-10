@@ -17,7 +17,7 @@ import { IdentityAccessStore } from '../../../../identity-access/application/ide
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
 import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
 
-type ColdRoomFeedback = 'idle' | 'success' | 'duplicate-id' | 'server-error';
+type AssetFeedback = 'idle' | 'success' | 'duplicate-id' | 'server-error';
 
 @Component({
   selector: 'app-cold-room-list',
@@ -34,12 +34,17 @@ export class ColdRoomList implements OnInit {
   private readonly identityAccessApi = inject(IdentityAccessApi);
   private readonly router = inject(Router);
 
+  protected readonly assetTypeTabs = [
+    AssetType.ColdRoom,
+    AssetType.Transport,
+  ];
   protected readonly identityLoading = signal(false);
   protected readonly creating = signal(false);
   protected readonly submitted = signal(false);
   protected readonly formVisible = signal(false);
-  protected readonly feedback = signal<ColdRoomFeedback>('idle');
+  protected readonly feedback = signal<AssetFeedback>('idle');
   protected readonly searchTerm = signal('');
+  protected readonly selectedAssetType = signal<AssetType>(AssetType.ColdRoom);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -73,7 +78,7 @@ export class ColdRoomList implements OnInit {
       .includes('roles-permissions.permissions.manage-assets');
   });
 
-  protected readonly coldRooms = computed(() => {
+  protected readonly selectedAssets = computed(() => {
     const organizationId = this.activeOrganizationId();
 
     if (!organizationId) {
@@ -81,18 +86,18 @@ export class ColdRoomList implements OnInit {
     }
 
     return this.assets().filter((asset) => {
-      return asset.organizationId === organizationId && asset.type === AssetType.ColdRoom;
+      return asset.organizationId === organizationId && asset.type === this.selectedAssetType();
     });
   });
 
-  protected readonly filteredColdRooms = computed(() => {
+  protected readonly filteredAssets = computed(() => {
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
 
     if (!normalizedSearch) {
-      return this.coldRooms();
+      return this.selectedAssets();
     }
 
-    return this.coldRooms().filter((asset) => {
+    return this.selectedAssets().filter((asset) => {
       return [
         asset.uuid,
         asset.name,
@@ -139,6 +144,19 @@ export class ColdRoomList implements OnInit {
     this.searchTerm.set(value);
   }
 
+  protected selectAssetType(assetType: AssetType): void {
+    if (this.selectedAssetType() === assetType) {
+      return;
+    }
+
+    this.selectedAssetType.set(assetType);
+    this.searchTerm.set('');
+    this.formVisible.set(false);
+    this.feedback.set('idle');
+    this.submitted.set(false);
+    this.resetForm();
+  }
+
   protected toggleForm(): void {
     this.feedback.set('idle');
     this.formVisible.update((visible) => !visible);
@@ -161,7 +179,7 @@ export class ColdRoomList implements OnInit {
     }
 
     const internalId = this.coldRoomForm.controls.internalId.value.trim().toUpperCase();
-    const duplicatedInternalId = this.coldRooms().some(
+    const duplicatedInternalId = this.selectedAssets().some(
       (asset) => asset.uuid.toLowerCase() === internalId.toLowerCase(),
     );
 
@@ -175,7 +193,7 @@ export class ColdRoomList implements OnInit {
       nextId,
       organizationId,
       internalId,
-      AssetType.ColdRoom,
+      this.selectedAssetType(),
       this.coldRoomForm.controls.name.value.trim(),
       this.coldRoomForm.controls.location.value.trim(),
       Number(this.coldRoomForm.controls.capacity.value),
@@ -196,16 +214,54 @@ export class ColdRoomList implements OnInit {
           this.feedback.set('success');
           this.submitted.set(false);
           this.formVisible.set(false);
-          this.coldRoomForm.reset({
-            internalId: '',
-            name: '',
-            capacity: 0,
-            location: '',
-            description: '',
-          });
+          this.resetForm();
         },
         error: () => this.feedback.set('server-error'),
       });
+  }
+
+  protected assetTypeLabelKey(assetType: AssetType): string {
+    return `asset-management.tabs.${assetType}`;
+  }
+
+  protected pageTitleKey(): string {
+    return `asset-management.sections.${this.selectedAssetType()}.title`;
+  }
+
+  protected pageSubtitleKey(): string {
+    return `asset-management.sections.${this.selectedAssetType()}.subtitle`;
+  }
+
+  protected formTitleKey(): string {
+    return `asset-management.sections.${this.selectedAssetType()}.form-title`;
+  }
+
+  protected formSubtitleKey(): string {
+    return `asset-management.sections.${this.selectedAssetType()}.form-subtitle`;
+  }
+
+  protected formOpenKey(): string {
+    return `asset-management.sections.${this.selectedAssetType()}.form-open`;
+  }
+
+  protected formCreateKey(): string {
+    return `asset-management.sections.${this.selectedAssetType()}.form-create`;
+  }
+
+  protected formCreatedKey(): string {
+    return `asset-management.sections.${this.selectedAssetType()}.feedback-created`;
+  }
+
+  protected formDuplicateKey(): string {
+    return `asset-management.sections.${this.selectedAssetType()}.feedback-duplicate`;
+  }
+
+  protected internalIdPlaceholder(): string {
+    return this.selectedAssetType() === AssetType.Transport ? 'TR-10001' : 'CR-42312';
+  }
+
+  protected namePlaceholderKey(): string {
+    return `asset-management.sections.${this.selectedAssetType()}.name-placeholder`;
   }
 
   protected statusLabelKey(status: AssetStatus): string {
@@ -260,5 +316,15 @@ export class ColdRoomList implements OnInit {
       month: 'short',
       year: 'numeric',
     }).format(new Date());
+  }
+
+  private resetForm(): void {
+    this.coldRoomForm.reset({
+      internalId: '',
+      name: '',
+      capacity: 0,
+      location: '',
+      description: '',
+    });
   }
 }

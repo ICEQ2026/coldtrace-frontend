@@ -9,15 +9,21 @@
   margin-top: 26px;
 }
 
-.asset-tabs a {
+.asset-tabs a,
+.asset-tabs button {
+  background: transparent;
+  border: 0;
   color: #98a2b3;
+  cursor: pointer;
   font-size: 12px;
   font-weight: 800;
   line-height: 20px;
+  padding: 0;
   text-decoration: none;
 }
 
-.asset-tabs a.active {
+.asset-tabs a.active,
+.asset-tabs button.active {
   color: #98a2b3;
   text-decoration: underline;
 }

@@ -168,6 +168,30 @@
       "gateway": "Gateway",
       "settings": "Settings"
     },
+    "sections": {
+      "cold-room": {
+        "title": "Cold Room",
+        "subtitle": "Register and review cold rooms from the active organization.",
+        "form-open": "New cold room",
+        "form-title": "Register cold room",
+        "form-subtitle": "Create a cold room for the active organization.",
+        "form-create": "Create cold room",
+        "feedback-created": "Cold room created successfully.",
+        "feedback-duplicate": "A cold room with this ID already exists.",
+        "name-placeholder": "Cold Room 21"
+      },
+      "transport": {
+        "title": "Transport",
+        "subtitle": "Register and review refrigerated transport units from the active organization.",
+        "form-open": "New transport",
+        "form-title": "Register transport unit",
+        "form-subtitle": "Create a refrigerated transport unit for the active organization.",
+        "form-create": "Create transport",
+        "feedback-created": "Transport unit created successfully.",
+        "feedback-duplicate": "A transport unit with this ID already exists.",
+        "name-placeholder": "Truck 08"
+      }
+    },
     "table": {
       "id": "ID",
       "name": "Name",
@@ -197,14 +221,10 @@
       "offline": "Offline"
     },
     "form": {
-      "open": "New cold room",
       "close": "Close",
-      "title": "Register cold room",
-      "subtitle": "Create a cold room for the active organization.",
       "internal-id": "Internal ID",
-      "internal-id-error": "Enter a valid cold room ID.",
+      "internal-id-error": "Enter a valid asset ID.",
       "name": "Name",
-      "name-placeholder": "Cold Room 21",
       "name-error": "Enter at least 3 characters.",
       "capacity": "Capacity (kg)",
       "capacity-error": "Enter a capacity greater than zero.",
@@ -214,12 +234,9 @@
       "description": "Description",
       "description-placeholder": "Cold room operating notes",
       "cancel": "Cancel",
-      "create": "Create cold room",
       "creating": "Creating..."
     },
     "feedback": {
-      "created": "Cold room created successfully.",
-      "duplicate-id": "A cold room with this ID already exists.",
       "server-error": "We could not load asset data. Try again later.",
       "loading": "Loading asset data..."
     }
