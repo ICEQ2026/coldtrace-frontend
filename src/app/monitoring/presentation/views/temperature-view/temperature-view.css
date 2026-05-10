@@ -1,0 +1,21 @@
+.view-wrapper { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+.view-header { display: flex; align-items: center; gap: 8px; }
+.view-header h2 { margin: 0; font-size: 20px; font-weight: 600; }
+.asset-grid { display: flex; flex-wrap: wrap; gap: 16px; }
+.asset-card {
+  background: #fff; border-radius: 12px; padding: 20px;
+  min-width: 180px; flex: 1;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  display: flex; flex-direction: column; gap: 8px;
+  border-left: 4px solid #4caf50;
+}
+.asset-card.out-of-range { border-left-color: #f44336; background: #fff8f8; }
+.asset-card-header { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #555; }
+.asset-card:not(.out-of-range) .asset-card-header mat-icon { color: #4caf50; }
+.asset-card.out-of-range .asset-card-header mat-icon { color: #f44336; }
+.asset-name { font-weight: 500; }
+.temperature-value { font-size: 32px; font-weight: 700; }
+.asset-card-badge { font-size: 12px; padding: 2px 8px; border-radius: 12px; width: fit-content; }
+.badge-ok    { background: #e8f5e9; color: #2e7d32; }
+.badge-alert { background: #ffebee; color: #c62828; }
+.view-empty { color: #888; font-style: italic; }

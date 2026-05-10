@@ -1,0 +1,135 @@
+<app-dashboard-shell
+  [pageTitleKey]="'monitoring.operational.title'"
+  [activeOrganizationName]="activeOrganizationName()"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="monitoringStore.assetsWithAlerts()"
+  (signedOut)="logout()">
+
+  <div class="op-wrapper">
+
+    @if (monitoringStore.loading() || assetStore.loading() || identityLoading()) {
+      <mat-spinner diameter="40"></mat-spinner>
+    }
+
+    <!-- Métricas principales -->
+    <section class="metrics-grid" aria-label="{{ 'monitoring.operational.metrics' | translate }}">
+
+      <div class="metric-card">
+        <mat-icon class="metric-icon icon-blue">sensors</mat-icon>
+        <div class="metric-body">
+          <span class="metric-value">{{ orgAssets().length }}</span>
+          <span class="metric-label">{{ 'monitoring.operational.metric-assets' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <mat-icon class="metric-icon icon-green">wifi</mat-icon>
+        <div class="metric-body">
+          <span class="metric-value">{{ onlineCount() }}</span>
+          <span class="metric-label">{{ 'monitoring.operational.metric-online' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="metric-card" [ngClass]="{ 'card-warn': offlineCount() > 0 }">
+        <mat-icon class="metric-icon" [ngClass]="offlineCount() > 0 ? 'icon-red' : 'icon-grey'">
+          wifi_off
+        </mat-icon>
+        <div class="metric-body">
+          <span class="metric-value">{{ offlineCount() }}</span>
+          <span class="metric-label">{{ 'monitoring.operational.metric-offline' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="metric-card" [ngClass]="{ 'card-alert': monitoringStore.assetsWithAlerts() > 0 }">
+        <mat-icon class="metric-icon"
+          [ngClass]="monitoringStore.assetsWithAlerts() > 0 ? 'icon-orange' : 'icon-grey'">
+          warning
+        </mat-icon>
+        <div class="metric-body">
+          <span class="metric-value">{{ monitoringStore.assetsWithAlerts() }}</span>
+          <span class="metric-label">{{ 'monitoring.operational.metric-alerts' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <mat-icon class="metric-icon icon-blue">thermostat</mat-icon>
+        <div class="metric-body">
+          <span class="metric-value">{{ monitoringStore.readings().length }}</span>
+          <span class="metric-label">{{ 'monitoring.operational.metric-readings' | translate }}</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Lecturas recientes -->
+    <section class="recent-section">
+      <h3 class="section-title">{{ 'monitoring.operational.recent-readings' | translate }}</h3>
+
+      @if (recentReadings().length === 0) {
+        <p class="view-empty">{{ 'monitoring.operational.no-readings' | translate }}</p>
+      } @else {
+        <div class="recent-table-wrapper">
+          <table class="recent-table">
+            <thead>
+              <tr>
+                <th>{{ 'monitoring.operational.col-asset' | translate }}</th>
+                <th>{{ 'monitoring.operational.col-temperature' | translate }}</th>
+                <th>{{ 'monitoring.operational.col-humidity' | translate }}</th>
+                <th>{{ 'monitoring.operational.col-date' | translate }}</th>
+                <th>{{ 'monitoring.operational.col-status' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of recentReadings(); track r.id) {
+                <tr [ngClass]="{ 'row-alert': r.isOutOfRange }">
+                  <td>{{ getAssetName(r.assetId) }}</td>
+                  <td>{{ r.temperature }} °C</td>
+                  <td>{{ r.humidity !== null ? (r.humidity + ' %') : '—' }}</td>
+                  <td>{{ r.recordedAt }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="r.isOutOfRange ? 'badge-alert' : 'badge-ok'">
+                      {{ (r.isOutOfRange
+                           ? 'monitoring.status.out-of-range'
+                           : 'monitoring.status.normal') | translate }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <!-- Accesos rápidos -->
+    <section class="quick-actions">
+      <h3 class="section-title">{{ 'monitoring.operational.quick-actions' | translate }}</h3>
+      <div class="actions-row">
+        <button mat-raised-button color="primary" (click)="navigateTo('temperature')">
+          <mat-icon>thermostat</mat-icon>
+          {{ 'monitoring.dashboard.nav-temperature' | translate }}
+        </button>
+        <button mat-raised-button color="primary" (click)="navigateTo('humidity')">
+          <mat-icon>water_drop</mat-icon>
+          {{ 'monitoring.dashboard.nav-humidity' | translate }}
+        </button>
+        <button mat-raised-button color="primary" (click)="navigateTo('history')">
+          <mat-icon>history</mat-icon>
+          {{ 'monitoring.dashboard.nav-history' | translate }}
+        </button>
+        <button mat-raised-button color="warn" (click)="navigateTo('alerts')">
+          <mat-icon>notification_important</mat-icon>
+          {{ 'monitoring.dashboard.nav-alerts' | translate }}
+        </button>
+        <button mat-raised-button color="primary" (click)="navigateTo('sync')">
+          <mat-icon>cloud_upload</mat-icon>
+          {{ 'monitoring.dashboard.nav-sync' | translate }}
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+</app-dashboard-shell>

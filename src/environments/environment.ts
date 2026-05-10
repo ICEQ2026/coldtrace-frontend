@@ -10,5 +10,6 @@ export const environment = {
   platformProviderAssetSettingsEndpointPath: '/asset-settings',
   platformProviderSignUpEndpointPath: '/authentication/sign-up',
   platformProviderSignInEndpointPath: '/authentication/sign-in',
-  platformProviderPasswordResetEndpointPath: '/password-reset-requests'
+  platformProviderPasswordResetEndpointPath: '/password-reset-requests',
+  platformProviderSensorReadingsEndpointPath: '/sensor-readings'
 };

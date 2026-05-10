@@ -1,0 +1,47 @@
+<app-dashboard-shell
+  [pageTitleKey]="'monitoring.connectivity.title'"
+  [activeOrganizationName]="activeOrganizationName()"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="monitoringStore.assetsWithAlerts()"
+  (signedOut)="logout()">
+
+  <div class="view-wrapper">
+    <div class="view-header">
+      <button mat-icon-button (click)="goBack()" aria-label="{{ 'monitoring.back' | translate }}">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>{{ 'monitoring.connectivity.title' | translate }}</h2>
+    </div>
+
+    @if (monitoringStore.loading() || identityLoading()) {
+      <mat-spinner diameter="40"></mat-spinner>
+    }
+
+    @if (monitoredAssets.length === 0 && !monitoringStore.loading()) {
+      <p class="view-empty">{{ 'monitoring.connectivity.no-data' | translate }}</p>
+    }
+
+    <div class="connectivity-grid">
+      @for (asset of monitoredAssets; track asset.id) {
+        <div class="connectivity-card"
+          [ngClass]="{
+            'status-online':   asset.connectivity === connectivityStatus.Online,
+            'status-offline':  asset.connectivity === connectivityStatus.Offline,
+            'status-unstable': asset.connectivity === connectivityStatus.Unstable
+          }">
+          <mat-icon class="conn-icon">{{ connectivityIcon(asset.connectivity) }}</mat-icon>
+          <div class="conn-info">
+            <span class="conn-name">{{ asset.name }}</span>
+            <span class="conn-location">{{ asset.location }}</span>
+            <span class="conn-badge">
+              {{ ('asset-management.connectivity.' + asset.connectivity) | translate }}
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+</app-dashboard-shell>

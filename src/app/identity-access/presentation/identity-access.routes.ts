@@ -15,11 +15,9 @@ const userAccessList = () =>
   import('./views/user-access-list/user-access-list').then((m) => m.UserAccessList);
 
 export const identityAccessRoutes: Routes = [
-  {
-    path: 'dashboard',
-    loadComponent: dashboardPlaceholder,
-    title: 'ColdTrace - Dashboard',
-    data: { pageTitleKey: 'roles-permissions.main-page-title' },
+  { path: 'dashboard',
+    redirectTo: '/monitoring/operational',
+    pathMatch: 'full'
   },
   {
     path: 'assets',
@@ -34,9 +32,8 @@ export const identityAccessRoutes: Routes = [
   },
   {
     path: 'monitoring',
-    loadComponent: dashboardPlaceholder,
-    title: 'ColdTrace - Monitoring',
-    data: { pageTitleKey: 'roles-permissions.monitoring-page-title' },
+    redirectTo: '/monitoring/dashboard',
+    pathMatch: 'full',
   },
   {
     path: 'reports',

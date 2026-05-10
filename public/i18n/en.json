@@ -411,5 +411,97 @@
       "duplicate-email": "This email is already registered.",
       "server-error": "We could not create the account. Try again later."
     }
+  },
+  "monitoring": {
+    "back": "Back",
+    "status": {
+      "normal": "Normal",
+      "out-of-range": "Out of range",
+      "high-humidity": "High humidity",
+      "unknown": "Unknown"
+    },
+    "dashboard": {
+      "title": "Monitoring",
+      "card-assets": "Monitored assets",
+      "card-alerts": "Assets with alerts",
+      "card-readings": "Total readings",
+      "nav-temperature": "Temperature",
+      "nav-humidity": "Humidity",
+      "nav-history": "Reading history",
+      "nav-alerts": "Alerts",
+      "nav-connectivity": "Connectivity",
+      "nav-sync": "Offline Sync"
+    },
+    "temperature": {
+      "title": "Real-time Temperature",
+      "no-data": "No temperature readings available."
+    },
+    "humidity": {
+      "title": "Real-time Humidity",
+      "no-data": "No humidity readings available."
+    },
+    "history": {
+      "title": "Reading History",
+      "select-asset": "Select an asset to view its history:",
+      "select-prompt": "Select an asset above to load its readings.",
+      "no-readings": "No readings found for this asset.",
+      "col-date": "Date",
+      "col-temperature": "Temperature",
+      "col-humidity": "Humidity",
+      "col-status": "Status",
+      "date-from": "From",
+      "date-to": "To",
+      "clear-filter": "Clear",
+      "date-error": "Start date cannot be after end date."
+    },
+    "alerts": {
+      "title": "Temperature Alerts",
+      "no-alerts": "No out-of-range readings detected.",
+      "col-asset": "Asset",
+      "col-temperature": "Temperature",
+      "col-humidity": "Humidity",
+      "col-date": "Recorded at"
+    },
+    "connectivity": {
+      "title": "Connectivity Status",
+      "no-data": "No monitored assets found."
+    },
+    "sync": {
+      "title": "Offline Data Sync",
+      "pending": "Pending",
+      "synced": "Synced",
+      "failed": "Failed",
+      "sync-all": "Sync all pending",
+      "sync-one": "Sync this reading",
+      "no-data": "No offline readings found.",
+      "col-asset": "Asset",
+      "col-temperature": "Temperature",
+      "col-humidity": "Humidity",
+      "col-date": "Recorded at",
+      "col-status": "Sync status",
+      "col-action": "Action",
+      "status": {
+        "pending": "Pending",
+        "synced": "Synced",
+        "failed": "Failed"
+      }
+    },
+    "operational": {
+      "title": "Overview",
+      "metrics": "Key metrics",
+      "metric-assets": "Total assets",
+      "metric-online": "Online",
+      "metric-offline": "Offline",
+      "metric-alerts": "Assets with alerts",
+      "metric-readings": "Total readings",
+      "recent-readings": "Recent readings",
+      "no-readings": "No readings available.",
+      "quick-actions": "Quick access",
+      "col-asset": "Asset",
+      "col-temperature": "Temperature",
+      "col-humidity": "Humidity",
+      "col-date": "Date",
+      "col-status": "Status"
+    }
   }
 }

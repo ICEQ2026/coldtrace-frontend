@@ -1,0 +1,95 @@
+<app-dashboard-shell
+  [pageTitleKey]="'monitoring.history.title'"
+  [activeOrganizationName]="activeOrganizationName()"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="monitoringStore.assetsWithAlerts()"
+  (signedOut)="logout()">
+
+  <div class="view-wrapper">
+    <div class="view-header">
+      <button mat-icon-button (click)="goBack()" aria-label="{{ 'monitoring.back' | translate }}">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>{{ 'monitoring.history.title' | translate }}</h2>
+    </div>
+
+    @if (monitoringStore.loading() || identityLoading()) {
+      <mat-spinner diameter="40"></mat-spinner>
+    }
+
+    <!-- Selector de activo -->
+    <div class="asset-selector">
+      <span class="selector-label">{{ 'monitoring.history.select-asset' | translate }}</span>
+      <div class="selector-pills">
+        @for (assetId of assetIds; track assetId) {
+          <button mat-raised-button
+            [color]="selectedAssetId() === assetId ? 'primary' : ''"
+            (click)="selectAsset(assetId)">
+            {{ getAssetName(assetId) }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Filtro de fechas (US020) -->
+    @if (selectedAssetId() !== null) {
+      <div class="date-filter">
+        <div class="date-filter-fields">
+          <div class="date-field">
+            <label for="dateFrom">{{ 'monitoring.history.date-from' | translate }}</label>
+            <input id="dateFrom" type="date" [(ngModel)]="dateFrom" (change)="applyFilter()" />
+          </div>
+          <div class="date-field">
+            <label for="dateTo">{{ 'monitoring.history.date-to' | translate }}</label>
+            <input id="dateTo" type="date" [(ngModel)]="dateTo" (change)="applyFilter()" />
+          </div>
+          <button mat-raised-button (click)="clearFilter()">
+            <mat-icon>clear</mat-icon>
+            {{ 'monitoring.history.clear-filter' | translate }}
+          </button>
+        </div>
+        @if (dateError) {
+          <p class="date-error">{{ dateError | translate }}</p>
+        }
+      </div>
+
+      @if (historyForSelected.length === 0) {
+        <p class="view-empty">{{ 'monitoring.history.no-readings' | translate }}</p>
+      } @else {
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>{{ 'monitoring.history.col-date' | translate }}</th>
+                <th>{{ 'monitoring.history.col-temperature' | translate }}</th>
+                <th>{{ 'monitoring.history.col-humidity' | translate }}</th>
+                <th>{{ 'monitoring.history.col-status' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (reading of historyForSelected; track reading.id) {
+                <tr [ngClass]="{ 'row-alert': reading.isOutOfRange }">
+                  <td>{{ reading.recordedAt }}</td>
+                  <td>{{ reading.temperature }} °C</td>
+                  <td>{{ reading.humidity !== null ? (reading.humidity + ' %') : '—' }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="reading.isOutOfRange ? 'badge-alert' : 'badge-ok'">
+                      {{ (reading.isOutOfRange
+                            ? 'monitoring.status.out-of-range'
+                            : 'monitoring.status.normal') | translate }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    } @else {
+      <p class="view-empty">{{ 'monitoring.history.select-prompt' | translate }}</p>
+    }
+  </div>
+
+</app-dashboard-shell>

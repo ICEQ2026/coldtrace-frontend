@@ -1,0 +1,46 @@
+<app-dashboard-shell
+  [pageTitleKey]="'monitoring.temperature.title'"
+  [activeOrganizationName]="activeOrganizationName()"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="monitoringStore.assetsWithAlerts()"
+  (signedOut)="logout()">
+
+  <div class="view-wrapper">
+    <div class="view-header">
+      <button mat-icon-button (click)="goBack()" aria-label="{{ 'monitoring.back' | translate }}">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>{{ 'monitoring.temperature.title' | translate }}</h2>
+    </div>
+
+    @if (monitoringStore.loading() || identityLoading()) {
+      <mat-spinner diameter="40"></mat-spinner>
+    }
+
+    @if (!monitoringStore.loading() && assetIds.length === 0) {
+      <p class="view-empty">{{ 'monitoring.temperature.no-data' | translate }}</p>
+    }
+
+    <div class="asset-grid">
+      @for (assetId of assetIds; track assetId) {
+        <div class="asset-card" [ngClass]="{ 'out-of-range': isOutOfRange(assetId) }">
+          <div class="asset-card-header">
+            <mat-icon>{{ isOutOfRange(assetId) ? 'warning' : 'check_circle' }}</mat-icon>
+            <span class="asset-name">{{ getAsset(assetId)?.name ?? ('Asset #' + assetId) }}</span>
+          </div>
+          <div class="asset-card-value">
+            <span class="temperature-value">
+              {{ getLatestTemperature(assetId) !== null ? (getLatestTemperature(assetId) + ' °C') : '—' }}
+            </span>
+          </div>
+          <div class="asset-card-badge" [ngClass]="isOutOfRange(assetId) ? 'badge-alert' : 'badge-ok'">
+            {{ (isOutOfRange(assetId) ? 'monitoring.status.out-of-range' : 'monitoring.status.normal') | translate }}
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+</app-dashboard-shell>

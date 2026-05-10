@@ -1,0 +1,101 @@
+<app-dashboard-shell
+  [pageTitleKey]="'monitoring.sync.title'"
+  [activeOrganizationName]="activeOrganizationName()"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="monitoringStore.assetsWithAlerts()"
+  (signedOut)="logout()">
+
+  <div class="view-wrapper">
+    <div class="view-header">
+      <button mat-icon-button (click)="goBack()" aria-label="{{ 'monitoring.back' | translate }}">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>{{ 'monitoring.sync.title' | translate }}</h2>
+    </div>
+
+    @if (monitoringStore.loading() || identityLoading() || syncing()) {
+      <mat-spinner diameter="40"></mat-spinner>
+    }
+
+    <!-- Resumen de estados -->
+    <div class="sync-summary">
+      <div class="sync-chip chip-pending">
+        <mat-icon>sync</mat-icon>
+        <span>{{ monitoringStore.pendingCount() }} {{ 'monitoring.sync.pending' | translate }}</span>
+      </div>
+      <div class="sync-chip chip-synced">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ monitoringStore.syncedCount() }} {{ 'monitoring.sync.synced' | translate }}</span>
+      </div>
+      <div class="sync-chip chip-failed">
+        <mat-icon>error</mat-icon>
+        <span>{{ monitoringStore.failedCount() }} {{ 'monitoring.sync.failed' | translate }}</span>
+      </div>
+    </div>
+
+    <!-- Botón sincronizar todos -->
+    @if (monitoringStore.pendingCount() > 0) {
+      <div>
+        <button mat-raised-button color="primary" (click)="syncAll()" [disabled]="syncing()">
+          <mat-icon>cloud_upload</mat-icon>
+          {{ 'monitoring.sync.sync-all' | translate }}
+        </button>
+      </div>
+    }
+
+    <!-- Tabla de lecturas offline -->
+    @if (monitoringStore.offlineReadings().length === 0) {
+      <p class="view-empty">{{ 'monitoring.sync.no-data' | translate }}</p>
+    } @else {
+      <div class="sync-table-wrapper">
+        <table class="sync-table">
+          <thead>
+            <tr>
+              <th>{{ 'monitoring.sync.col-asset' | translate }}</th>
+              <th>{{ 'monitoring.sync.col-temperature' | translate }}</th>
+              <th>{{ 'monitoring.sync.col-humidity' | translate }}</th>
+              <th>{{ 'monitoring.sync.col-date' | translate }}</th>
+              <th>{{ 'monitoring.sync.col-status' | translate }}</th>
+              <th>{{ 'monitoring.sync.col-action' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of monitoringStore.offlineReadings(); track r.id) {
+              <tr [ngClass]="{
+                'row-pending': r.isPending,
+                'row-failed':  r.isFailed,
+                'row-synced':  r.isSynced
+              }">
+                <td>{{ getAssetName(r.assetId) }}</td>
+                <td>{{ r.temperature }} °C</td>
+                <td>{{ r.humidity !== null ? (r.humidity + ' %') : '—' }}</td>
+                <td>{{ r.recordedAt }}</td>
+                <td>
+                  <div class="status-cell" [ngClass]="{
+                    'status-pending': r.isPending,
+                    'status-synced':  r.isSynced,
+                    'status-failed':  r.isFailed
+                  }">
+                    <mat-icon>{{ statusIcon(r.syncStatus) }}</mat-icon>
+                    <span>{{ ('monitoring.sync.status.' + r.syncStatus) | translate }}</span>
+                  </div>
+                </td>
+                <td>
+                  @if (r.isPending) {
+                    <button mat-icon-button (click)="syncOne(r.id)"
+                      aria-label="{{ 'monitoring.sync.sync-one' | translate }}">
+                      <mat-icon>cloud_upload</mat-icon>
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+</app-dashboard-shell>

@@ -1,0 +1,46 @@
+<app-dashboard-shell
+  [pageTitleKey]="'monitoring.humidity.title'"
+  [activeOrganizationName]="activeOrganizationName()"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="monitoringStore.assetsWithAlerts()"
+  (signedOut)="logout()">
+
+  <div class="view-wrapper">
+    <div class="view-header">
+      <button mat-icon-button (click)="goBack()" aria-label="{{ 'monitoring.back' | translate }}">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>{{ 'monitoring.humidity.title' | translate }}</h2>
+    </div>
+
+    @if (monitoringStore.loading() || identityLoading()) {
+      <mat-spinner diameter="40"></mat-spinner>
+    }
+
+    @if (!monitoringStore.loading() && assetIds.length === 0) {
+      <p class="view-empty">{{ 'monitoring.humidity.no-data' | translate }}</p>
+    }
+
+    <div class="asset-grid">
+      @for (assetId of assetIds; track assetId) {
+        <div class="asset-card" [ngClass]="{ 'high-humidity': isHighHumidity(assetId) }">
+          <div class="asset-card-header">
+            <mat-icon>{{ isHighHumidity(assetId) ? 'warning' : 'water_drop' }}</mat-icon>
+            <span class="asset-name">{{ getAssetName(assetId) }}</span>
+          </div>
+          <div class="asset-card-value">
+            <span class="humidity-value">
+              {{ getLatestHumidity(assetId) !== null ? (getLatestHumidity(assetId) + ' %') : '—' }}
+            </span>
+          </div>
+          <div class="asset-card-badge" [ngClass]="isHighHumidity(assetId) ? 'badge-alert' : 'badge-ok'">
+            {{ (isHighHumidity(assetId) ? 'monitoring.status.high-humidity' : 'monitoring.status.normal') | translate }}
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+</app-dashboard-shell>

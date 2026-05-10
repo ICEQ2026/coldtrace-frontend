@@ -1,14 +1,14 @@
 {
   "organizations": [
     {
-      "id": 1,
+      "id": "1",
       "legalName": "Mauricio Pajes Organization",
       "commercialName": "Mauricio Pajes Organization",
       "taxId": "",
       "contactEmail": "mpajes2006@gmail.com"
     },
     {
-      "id": 2,
+      "id": "2",
       "legalName": "My Chifa",
       "commercialName": "My Chifa",
       "taxId": "",
@@ -17,31 +17,31 @@
   ],
   "roles": [
     {
-      "id": 5,
+      "id": "5",
       "name": "super-admin",
       "label": "Super Administrator",
       "permissions": []
     },
     {
-      "id": 1,
+      "id": "1",
       "name": "administrator",
       "label": "Administrator",
       "permissions": []
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "operations-manager",
       "label": "Operations Manager",
       "permissions": []
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "operator",
       "label": "Operator",
       "permissions": []
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "auditor",
       "label": "Auditor",
       "permissions": []
@@ -49,7 +49,7 @@
   ],
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "uuid": "USR-1",
       "organizationUserId": 1,
       "firstName": "Mauricio",
@@ -59,7 +59,7 @@
       "roleId": 5
     },
     {
-      "id": 2,
+      "id": "2",
       "uuid": "USR-2",
       "organizationUserId": 2,
       "firstName": "Laura",
@@ -69,7 +69,7 @@
       "roleId": 2
     },
     {
-      "id": 3,
+      "id": "3",
       "uuid": "USR-3",
       "organizationUserId": 3,
       "firstName": "Andrés",
@@ -79,7 +79,7 @@
       "roleId": 2
     },
     {
-      "id": 4,
+      "id": "4",
       "uuid": "USR-4",
       "organizationUserId": 4,
       "firstName": "Ricardo",
@@ -89,7 +89,7 @@
       "roleId": 4
     },
     {
-      "id": 5,
+      "id": "5",
       "uuid": "USR-5",
       "organizationUserId": 5,
       "firstName": "Sofía",
@@ -99,7 +99,7 @@
       "roleId": 3
     },
     {
-      "id": 6,
+      "id": "6",
       "uuid": "USR-6",
       "organizationUserId": 6,
       "firstName": "Jorge",
@@ -109,7 +109,7 @@
       "roleId": 4
     },
     {
-      "id": 7,
+      "id": "7",
       "uuid": "USR-7",
       "organizationUserId": 7,
       "firstName": "Cristian",
@@ -119,7 +119,7 @@
       "roleId": 3
     },
     {
-      "id": 8,
+      "id": "8",
       "uuid": "USR-8",
       "organizationUserId": 1,
       "firstName": "Leonardo",
@@ -127,11 +127,31 @@
       "email": "leonardo@chifa.com",
       "organizationId": 2,
       "roleId": 5
+    },
+    {
+      "id": "E7L8VdPKZ-M",
+      "uuid": "USR-9",
+      "organizationUserId": 1,
+      "firstName": "My",
+      "lastName": "Chifa",
+      "email": "leonardoo@chifa.com",
+      "organizationId": "vAf8kklEZuo",
+      "roleId": "5"
+    },
+    {
+      "id": "t6EMxBaRGzo",
+      "uuid": "USR-NaN",
+      "organizationUserId": 1,
+      "firstName": "leonardoo@chifa.com",
+      "lastName": "",
+      "email": "leonardooo@chifa.com",
+      "organizationId": "FFHL1zWQhl8",
+      "roleId": "5"
     }
   ],
   "assets": [
     {
-      "id": 1,
+      "id": "1",
       "organizationId": 1,
       "uuid": "CR-42312",
       "type": "cold-room",
@@ -142,12 +162,12 @@
       "description": "Main dairy and beverage storage room.",
       "status": "inactive",
       "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "10.8°C",
+      "currentTemperature": "13.4°C",
       "entryDate": "13 Dec 2026",
       "connectivity": "online"
     },
     {
-      "id": 2,
+      "id": "2",
       "organizationId": 1,
       "uuid": "CR-99321",
       "type": "cold-room",
@@ -157,13 +177,13 @@
       "capacity": 980,
       "description": "Prepared food storage room.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "7.4°C",
+      "lastIncident": "asset-management.incidents.high-temperature",
+      "currentTemperature": "8.1°C",
       "entryDate": "14 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
-      "id": 3,
+      "id": "3",
       "organizationId": 1,
       "uuid": "CR-55211",
       "type": "cold-room",
@@ -174,12 +194,12 @@
       "description": "Clinical supplies cold room.",
       "status": "maintenance",
       "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "11.7°C",
+      "currentTemperature": "14.0°C",
       "entryDate": "07 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
-      "id": 4,
+      "id": "4",
       "organizationId": 1,
       "uuid": "CR-78123",
       "type": "cold-room",
@@ -189,13 +209,13 @@
       "capacity": 720,
       "description": "Restaurant frozen storage.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.low-temperature",
-      "currentTemperature": "-5.6°C",
+      "lastIncident": "asset-management.incidents.high-temperature",
+      "currentTemperature": "9.0°C",
       "entryDate": "06 Dec 2026",
       "connectivity": "online"
     },
     {
-      "id": 5,
+      "id": "5",
       "organizationId": 1,
       "uuid": "CR-33452",
       "type": "cold-room",
@@ -206,12 +226,12 @@
       "description": "Pharmacy inventory refrigeration.",
       "status": "active",
       "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "11.3°C",
+      "currentTemperature": "12.7°C",
       "entryDate": "31 Nov 2026",
       "connectivity": "online"
     },
     {
-      "id": 6,
+      "id": "6",
       "organizationId": 1,
       "uuid": "CR-11892",
       "type": "cold-room",
@@ -222,12 +242,12 @@
       "description": "Minimarket cold products room.",
       "status": "inactive",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "2.6°C",
+      "currentTemperature": "6.7°C",
       "entryDate": "13 Dec 2026",
       "connectivity": "online"
     },
     {
-      "id": 7,
+      "id": "7",
       "organizationId": 1,
       "uuid": "CR-44219",
       "type": "cold-room",
@@ -237,13 +257,13 @@
       "capacity": 1500,
       "description": "Secondary warehouse cold room.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.low-temperature",
-      "currentTemperature": "-8.9°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "-2.2°C",
       "entryDate": "14 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
-      "id": 8,
+      "id": "8",
       "organizationId": 1,
       "uuid": "CR-99123",
       "type": "cold-room",
@@ -253,13 +273,13 @@
       "capacity": 860,
       "description": "Seafood storage room.",
       "status": "maintenance",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "10.5°C",
+      "lastIncident": "asset-management.incidents.high-humidity",
+      "currentTemperature": "0.6°C",
       "entryDate": "07 Dec 2026",
       "connectivity": "online"
     },
     {
-      "id": 9,
+      "id": "9",
       "organizationId": 1,
       "uuid": "CR-77234",
       "type": "cold-room",
@@ -269,13 +289,13 @@
       "capacity": 700,
       "description": "Market cold room.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "-2.8°C",
+      "lastIncident": "asset-management.incidents.high-temperature",
+      "currentTemperature": "10.4°C",
       "entryDate": "06 Dec 2026",
       "connectivity": "online"
     },
     {
-      "id": 10,
+      "id": "10",
       "organizationId": 1,
       "uuid": "CR-88934",
       "type": "cold-room",
@@ -285,13 +305,13 @@
       "capacity": 540,
       "description": "University laboratory cold room.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "6.6°C",
+      "lastIncident": "asset-management.incidents.low-temperature",
+      "currentTemperature": "-9.0°C",
       "entryDate": "31 Nov 2026",
       "connectivity": "online"
     },
     {
-      "id": 11,
+      "id": "11",
       "organizationId": 1,
       "uuid": "CR-11452",
       "type": "cold-room",
@@ -301,13 +321,13 @@
       "capacity": 1800,
       "description": "Port storage refrigeration chamber.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.connection-lost",
-      "currentTemperature": "—",
+      "lastIncident": "asset-management.incidents.high-temperature",
+      "currentTemperature": "12.4°C",
       "entryDate": "13 Dec 2026",
-      "connectivity": "offline"
+      "connectivity": "online"
     },
     {
-      "id": 12,
+      "id": "12",
       "organizationId": 1,
       "uuid": "CR-22534",
       "type": "cold-room",
@@ -318,12 +338,12 @@
       "description": "Fish market storage chamber.",
       "status": "inactive",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "6.3°C",
+      "currentTemperature": "0.7°C",
       "entryDate": "14 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
-      "id": 13,
+      "id": "13",
       "organizationId": 1,
       "uuid": "CR-78124",
       "type": "cold-room",
@@ -333,13 +353,13 @@
       "capacity": 820,
       "description": "Hotel kitchen cold room.",
       "status": "maintenance",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "5.3°C",
+      "lastIncident": "asset-management.incidents.low-temperature",
+      "currentTemperature": "-6.6°C",
       "entryDate": "07 Dec 2026",
       "connectivity": "online"
     },
     {
-      "id": 14,
+      "id": "14",
       "organizationId": 1,
       "uuid": "CR-99322",
       "type": "cold-room",
@@ -349,13 +369,13 @@
       "capacity": 480,
       "description": "Clinic supplies storage.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "10.8°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "7.6°C",
       "entryDate": "06 Dec 2026",
       "connectivity": "online"
     },
     {
-      "id": 15,
+      "id": "15",
       "organizationId": 1,
       "uuid": "CR-88935",
       "type": "cold-room",
@@ -365,13 +385,13 @@
       "capacity": 790,
       "description": "Market hall refrigeration.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-humidity",
-      "currentTemperature": "-4.4°C",
+      "lastIncident": "asset-management.incidents.high-temperature",
+      "currentTemperature": "8.4°C",
       "entryDate": "31 Nov 2026",
       "connectivity": "online"
     },
     {
-      "id": 16,
+      "id": "16",
       "organizationId": 1,
       "uuid": "CR-77235",
       "type": "cold-room",
@@ -381,13 +401,13 @@
       "capacity": 1400,
       "description": "Distribution center cold room.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "4.8°C",
+      "lastIncident": "asset-management.incidents.high-temperature",
+      "currentTemperature": "10.8°C",
       "entryDate": "13 Dec 2026",
       "connectivity": "online"
     },
     {
-      "id": 17,
+      "id": "17",
       "organizationId": 1,
       "uuid": "CR-11453",
       "type": "cold-room",
@@ -398,12 +418,12 @@
       "description": "Plaza center cold storage.",
       "status": "inactive",
       "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "10.8°C",
+      "currentTemperature": "9.2°C",
       "entryDate": "14 Dec 2026",
       "connectivity": "online"
     },
     {
-      "id": 18,
+      "id": "18",
       "organizationId": 1,
       "uuid": "CR-99124",
       "type": "cold-room",
@@ -413,13 +433,13 @@
       "capacity": 1340,
       "description": "Warehouse C cold room.",
       "status": "maintenance",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "-1.0°C",
+      "lastIncident": "asset-management.incidents.high-temperature",
+      "currentTemperature": "9.8°C",
       "entryDate": "07 Dec 2026",
       "connectivity": "online"
     },
     {
-      "id": 19,
+      "id": "19",
       "organizationId": 1,
       "uuid": "CR-55212",
       "type": "cold-room",
@@ -429,13 +449,13 @@
       "capacity": 1900,
       "description": "Airport cargo cold room.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-humidity",
-      "currentTemperature": "3.0°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "7.7°C",
       "entryDate": "06 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
-      "id": 20,
+      "id": "20",
       "organizationId": 1,
       "uuid": "CR-88936",
       "type": "cold-room",
@@ -445,13 +465,13 @@
       "capacity": 760,
       "description": "Corporate kitchen cold room.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "11.6°C",
+      "lastIncident": "asset-management.incidents.high-humidity",
+      "currentTemperature": "7.3°C",
       "entryDate": "31 Nov 2026",
       "connectivity": "online"
     },
     {
-      "id": 21,
+      "id": "21",
       "organizationId": 2,
       "uuid": "CR-10001",
       "type": "cold-room",
@@ -467,7 +487,7 @@
       "connectivity": "online"
     },
     {
-      "id": 22,
+      "id": "22",
       "organizationId": 1,
       "uuid": "TR-10001",
       "type": "transport",
@@ -477,13 +497,13 @@
       "capacity": 2200,
       "description": "Refrigerated unit for northern Lima deliveries.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "2.7°C",
+      "lastIncident": "asset-management.incidents.high-humidity",
+      "currentTemperature": "-0.0°C",
       "entryDate": "09 May 2026",
       "connectivity": "online"
     },
     {
-      "id": 23,
+      "id": "23",
       "organizationId": 1,
       "uuid": "TR-10002",
       "type": "transport",
@@ -493,13 +513,13 @@
       "capacity": 3100,
       "description": "Port delivery refrigerated unit.",
       "status": "maintenance",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "12.2°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "6.4°C",
       "entryDate": "08 May 2026",
-      "connectivity": "unstable"
+      "connectivity": "online"
     },
     {
-      "id": 24,
+      "id": "24",
       "organizationId": 1,
       "uuid": "TR-10003",
       "type": "transport",
@@ -509,13 +529,13 @@
       "capacity": 980,
       "description": "Urban refrigerated van.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-humidity",
-      "currentTemperature": "5.7°C",
+      "lastIncident": "asset-management.incidents.connection-lost",
+      "currentTemperature": "—",
       "entryDate": "07 May 2026",
-      "connectivity": "unstable"
+      "connectivity": "offline"
     },
     {
-      "id": 25,
+      "id": "25",
       "organizationId": 1,
       "uuid": "TR-10004",
       "type": "transport",
@@ -525,13 +545,13 @@
       "capacity": 2600,
       "description": "Warehouse replenishment unit.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "3.5°C",
+      "lastIncident": "asset-management.incidents.high-temperature",
+      "currentTemperature": "9.5°C",
       "entryDate": "06 May 2026",
       "connectivity": "unstable"
     },
     {
-      "id": 26,
+      "id": "26",
       "organizationId": 1,
       "uuid": "TR-10005",
       "type": "transport",
@@ -541,13 +561,13 @@
       "capacity": 1100,
       "description": "Corporate route refrigerated van.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "12.8°C",
+      "lastIncident": "asset-management.incidents.connection-lost",
+      "currentTemperature": "—",
       "entryDate": "05 May 2026",
-      "connectivity": "online"
+      "connectivity": "offline"
     },
     {
-      "id": 27,
+      "id": "27",
       "organizationId": 2,
       "uuid": "TR-20001",
       "type": "transport",
@@ -565,7 +585,7 @@
   ],
   "gateways": [
     {
-      "id": 1,
+      "id": "1",
       "organizationId": 1,
       "uuid": "GW-001",
       "name": "Main Warehouse Gateway",
@@ -574,16 +594,16 @@
       "status": "active"
     },
     {
-      "id": 2,
+      "id": "2",
       "organizationId": 1,
       "uuid": "GW-002",
       "name": "Transport Dock Gateway",
       "location": "Callao - Port Storage",
       "network": "LTE",
-      "status": "active"
+      "status": "maintenance"
     },
     {
-      "id": 3,
+      "id": "3",
       "organizationId": 1,
       "uuid": "GW-003",
       "name": "Cold Room Backup Gateway",
@@ -592,7 +612,7 @@
       "status": "active"
     },
     {
-      "id": 4,
+      "id": "4",
       "organizationId": 1,
       "uuid": "GW-004",
       "name": "South Route Gateway",
@@ -601,7 +621,7 @@
       "status": "active"
     },
     {
-      "id": 5,
+      "id": "5",
       "organizationId": 2,
       "uuid": "GW-201",
       "name": "Chifa Delivery Gateway",
@@ -613,7 +633,7 @@
   "password-reset-requests": [],
   "asset-settings": [
     {
-      "id": 1,
+      "id": "1",
       "organizationId": 1,
       "uuid": "CFG-001",
       "assetTypes": [
@@ -636,7 +656,7 @@
       "weightUnit": "kg"
     },
     {
-      "id": 2,
+      "id": "2",
       "organizationId": 2,
       "uuid": "CFG-002",
       "assetTypes": [
@@ -659,7 +679,7 @@
   ],
   "iot-devices": [
     {
-      "id": 1,
+      "id": "1",
       "organizationId": 1,
       "uuid": "SN-001",
       "deviceType": "temperature-sensor",
@@ -667,12 +687,12 @@
       "measurementType": "Temperature",
       "assetId": 1,
       "status": "linked",
-      "calibrationStatus": "compliant",
+      "calibrationStatus": "expired",
       "lastCalibrationDate": "01 May 2026",
       "nextCalibrationDate": "01 Nov 2026"
     },
     {
-      "id": 2,
+      "id": "2",
       "organizationId": 1,
       "uuid": "SN-002",
       "deviceType": "humidity-sensor",
@@ -685,20 +705,20 @@
       "nextCalibrationDate": "10 Jun 2026"
     },
     {
-      "id": 3,
+      "id": "3",
       "organizationId": 1,
       "uuid": "SN-003",
       "deviceType": "temperature-sensor",
       "model": "TraceSense M2",
       "measurementType": "Temperature",
       "assetId": 3,
-      "status": "offline",
+      "status": "linked",
       "calibrationStatus": "compliant",
       "lastCalibrationDate": "09 May 2026",
       "nextCalibrationDate": "09 Nov 2026"
     },
     {
-      "id": 4,
+      "id": "4",
       "organizationId": 1,
       "uuid": "SN-004",
       "deviceType": "humidity-sensor",
@@ -706,12 +726,12 @@
       "measurementType": "Temperature / Humidity",
       "assetId": 2,
       "status": "linked",
-      "calibrationStatus": "compliant",
+      "calibrationStatus": "due-soon",
       "lastCalibrationDate": "-",
       "nextCalibrationDate": "-"
     },
     {
-      "id": 5,
+      "id": "5",
       "organizationId": 1,
       "uuid": "SN-005",
       "deviceType": "camera",
@@ -719,12 +739,12 @@
       "measurementType": "Temperature",
       "assetId": 22,
       "status": "linked",
-      "calibrationStatus": "unknown",
+      "calibrationStatus": "compliant",
       "lastCalibrationDate": "12 Nov 2025",
       "nextCalibrationDate": "12 Apr 2026"
     },
     {
-      "id": 6,
+      "id": "6",
       "organizationId": 2,
       "uuid": "SN-201",
       "deviceType": "temperature-sensor",
@@ -736,5 +756,233 @@
       "lastCalibrationDate": "09 May 2026",
       "nextCalibrationDate": "09 Nov 2026"
     }
-  ]
+  ],
+  "sensor-readings": [
+    {
+      "id": "1",
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 10.8,
+      "humidity": 72,
+      "recordedAt": "2026-05-10T08:00:00Z",
+      "status": "out-of-range"
+    },
+    {
+      "id": "2",
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 9.5,
+      "humidity": 70,
+      "recordedAt": "2026-05-10T07:45:00Z",
+      "status": "out-of-range"
+    },
+    {
+      "id": "3",
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 7.8,
+      "humidity": 68,
+      "recordedAt": "2026-05-10T07:30:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "4",
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 6.2,
+      "humidity": 65,
+      "recordedAt": "2026-05-10T07:15:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "5",
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 5.9,
+      "humidity": 63,
+      "recordedAt": "2026-05-10T07:00:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "6",
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": 7.4,
+      "humidity": 60,
+      "recordedAt": "2026-05-10T08:00:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "7",
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": 7.1,
+      "humidity": 59,
+      "recordedAt": "2026-05-10T07:45:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "8",
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": 6.8,
+      "humidity": 58,
+      "recordedAt": "2026-05-10T07:30:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "9",
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": 7,
+      "humidity": 61,
+      "recordedAt": "2026-05-10T07:15:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "10",
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": 7.3,
+      "humidity": 62,
+      "recordedAt": "2026-05-10T07:00:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "11",
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 11.7,
+      "humidity": 88,
+      "recordedAt": "2026-05-10T08:00:00Z",
+      "status": "out-of-range"
+    },
+    {
+      "id": "12",
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 11.2,
+      "humidity": 86,
+      "recordedAt": "2026-05-10T07:45:00Z",
+      "status": "out-of-range"
+    },
+    {
+      "id": "13",
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 10.5,
+      "humidity": 84,
+      "recordedAt": "2026-05-10T07:30:00Z",
+      "status": "out-of-range"
+    },
+    {
+      "id": "14",
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 9.1,
+      "humidity": 81,
+      "recordedAt": "2026-05-10T07:15:00Z",
+      "status": "out-of-range"
+    },
+    {
+      "id": "15",
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 7.9,
+      "humidity": 78,
+      "recordedAt": "2026-05-10T07:00:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "16",
+      "assetId": 4,
+      "iotDeviceId": 1,
+      "temperature": -5.6,
+      "humidity": 55,
+      "recordedAt": "2026-05-10T08:00:00Z",
+      "status": "out-of-range"
+    },
+    {
+      "id": "17",
+      "assetId": 4,
+      "iotDeviceId": 1,
+      "temperature": -4.8,
+      "humidity": 53,
+      "recordedAt": "2026-05-10T07:45:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "18",
+      "assetId": 4,
+      "iotDeviceId": 1,
+      "temperature": -4.2,
+      "humidity": 52,
+      "recordedAt": "2026-05-10T07:30:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "19",
+      "assetId": 4,
+      "iotDeviceId": 1,
+      "temperature": -3.9,
+      "humidity": 51,
+      "recordedAt": "2026-05-10T07:15:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "20",
+      "assetId": 4,
+      "iotDeviceId": 1,
+      "temperature": -4.1,
+      "humidity": 50,
+      "recordedAt": "2026-05-10T07:00:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "21",
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 2.7,
+      "humidity": 58,
+      "recordedAt": "2026-05-10T08:00:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "22",
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 3.1,
+      "humidity": 60,
+      "recordedAt": "2026-05-10T07:45:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "23",
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 2.9,
+      "humidity": 59,
+      "recordedAt": "2026-05-10T07:30:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "24",
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 2.5,
+      "humidity": 57,
+      "recordedAt": "2026-05-10T07:15:00Z",
+      "status": "normal"
+    },
+    {
+      "id": "25",
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 2.8,
+      "humidity": 58,
+      "recordedAt": "2026-05-10T07:00:00Z",
+      "status": "normal"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

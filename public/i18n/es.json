@@ -411,5 +411,97 @@
       "duplicate-email": "Este correo ya está registrado.",
       "server-error": "No se pudo crear la cuenta. Inténtalo nuevamente."
     }
+  },
+  "monitoring": {
+    "back": "Volver",
+    "status": {
+      "normal": "Normal",
+      "out-of-range": "Fuera de rango",
+      "high-humidity": "Humedad alta",
+      "unknown": "Desconocido"
+    },
+    "dashboard": {
+      "title": "Monitoreo",
+      "card-assets": "Activos monitoreados",
+      "card-alerts": "Activos con alertas",
+      "card-readings": "Lecturas totales",
+      "nav-temperature": "Temperatura",
+      "nav-humidity": "Humedad",
+      "nav-history": "Historial de lecturas",
+      "nav-alerts": "Alertas",
+      "nav-connectivity": "Conectividad",
+      "nav-sync": "Sincronización offline"
+    },
+    "temperature": {
+      "title": "Temperatura en tiempo real",
+      "no-data": "No hay lecturas de temperatura disponibles."
+    },
+    "humidity": {
+      "title": "Humedad en tiempo real",
+      "no-data": "No hay lecturas de humedad disponibles."
+    },
+    "history": {
+      "title": "Historial de lecturas",
+      "select-asset": "Selecciona un activo para ver su historial:",
+      "select-prompt": "Selecciona un activo para cargar sus lecturas.",
+      "no-readings": "No se encontraron lecturas para este activo.",
+      "col-date": "Fecha",
+      "col-temperature": "Temperatura",
+      "col-humidity": "Humedad",
+      "col-status": "Estado",
+      "date-from": "Desde",
+      "date-to": "Hasta",
+      "clear-filter": "Limpiar",
+      "date-error": "La fecha de inicio no puede ser posterior a la de fin."
+    },
+    "alerts": {
+      "title": "Alertas de temperatura",
+      "no-alerts": "No se detectaron lecturas fuera de rango.",
+      "col-asset": "Activo",
+      "col-temperature": "Temperatura",
+      "col-humidity": "Humedad",
+      "col-date": "Registrado el"
+    },
+    "connectivity": {
+      "title": "Estado de conectividad",
+      "no-data": "No se encontraron activos monitoreados."
+    },
+    "sync": {
+      "title": "Sincronización offline",
+      "pending": "Pendientes",
+      "synced": "Sincronizados",
+      "failed": "Fallidos",
+      "sync-all": "Sincronizar todos",
+      "sync-one": "Sincronizar esta lectura",
+      "no-data": "No hay lecturas offline.",
+      "col-asset": "Activo",
+      "col-temperature": "Temperatura",
+      "col-humidity": "Humedad",
+      "col-date": "Registrado el",
+      "col-status": "Estado de sync",
+      "col-action": "Acción",
+      "status": {
+        "pending": "Pendiente",
+        "synced": "Sincronizado",
+        "failed": "Fallido"
+      }
+    },
+    "operational": {
+      "title": "Resumen operativo",
+      "metrics": "Métricas clave",
+      "metric-assets": "Total de activos",
+      "metric-online": "En línea",
+      "metric-offline": "Sin conexión",
+      "metric-alerts": "Activos con alertas",
+      "metric-readings": "Lecturas totales",
+      "recent-readings": "Lecturas recientes",
+      "no-readings": "No hay lecturas disponibles.",
+      "quick-actions": "Acceso rápido",
+      "col-asset": "Activo",
+      "col-temperature": "Temperatura",
+      "col-humidity": "Humedad",
+      "col-date": "Fecha",
+      "col-status": "Estado"
+    }
   }
 }

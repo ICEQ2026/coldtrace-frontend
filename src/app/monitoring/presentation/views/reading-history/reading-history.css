@@ -1,0 +1,40 @@
+.view-wrapper { padding: 24px; display: flex; flex-direction: column; gap: 24px; }
+.view-header  { display: flex; align-items: center; gap: 8px; }
+.view-header h2 { margin: 0; font-size: 20px; font-weight: 600; }
+
+.asset-selector { display: flex; flex-direction: column; gap: 10px; }
+.selector-label { font-size: 14px; font-weight: 500; color: #555; }
+.selector-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Filtro de fechas */
+.date-filter { display: flex; flex-direction: column; gap: 8px; }
+.date-filter-fields {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px;
+}
+.date-field { display: flex; flex-direction: column; gap: 4px; }
+.date-field label { font-size: 13px; font-weight: 500; color: #555; }
+.date-field input[type="date"] {
+  padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;
+  font-size: 14px; color: #333;
+}
+.date-field input[type="date"]:focus {
+  outline: none; border-color: #3f51b5;
+}
+.date-error { color: #c62828; font-size: 13px; margin: 0; }
+
+/* Tabla */
+.history-table-wrapper { overflow-x: auto; }
+.history-table {
+  width: 100%; border-collapse: collapse; background: #fff;
+  border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden;
+}
+.history-table thead tr { background: #3f51b5; color: #fff; }
+.history-table th,
+.history-table td { padding: 12px 16px; text-align: left; font-size: 14px; }
+.history-table tbody tr:nth-child(even) { background: #f5f5f5; }
+.history-table tbody tr.row-alert { background: #fff8f8; }
+
+.badge { font-size: 12px; padding: 2px 8px; border-radius: 12px; }
+.badge-ok    { background: #e8f5e9; color: #2e7d32; }
+.badge-alert { background: #ffebee; color: #c62828; }
+.view-empty { color: #888; font-style: italic; }

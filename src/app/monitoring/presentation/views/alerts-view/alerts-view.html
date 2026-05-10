@@ -1,0 +1,60 @@
+<app-dashboard-shell
+  [pageTitleKey]="'monitoring.alerts.title'"
+  [activeOrganizationName]="activeOrganizationName()"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="monitoringStore.assetsWithAlerts()"
+  (signedOut)="logout()">
+
+  <div class="view-wrapper">
+    <div class="view-header">
+      <button mat-icon-button (click)="goBack()" aria-label="{{ 'monitoring.back' | translate }}">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h2>{{ 'monitoring.alerts.title' | translate }}</h2>
+    </div>
+
+    @if (monitoringStore.loading() || identityLoading()) {
+      <mat-spinner diameter="40"></mat-spinner>
+    }
+
+    @if (monitoringStore.outOfRangeReadings().length === 0 && !monitoringStore.loading()) {
+      <div class="no-alerts-banner">
+        <mat-icon>check_circle</mat-icon>
+        <span>{{ 'monitoring.alerts.no-alerts' | translate }}</span>
+      </div>
+    }
+
+    @if (monitoringStore.outOfRangeReadings().length > 0) {
+      <div class="alerts-table-wrapper">
+        <table class="alerts-table">
+          <thead>
+            <tr>
+              <th>{{ 'monitoring.alerts.col-asset' | translate }}</th>
+              <th>{{ 'monitoring.alerts.col-temperature' | translate }}</th>
+              <th>{{ 'monitoring.alerts.col-humidity' | translate }}</th>
+              <th>{{ 'monitoring.alerts.col-date' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (reading of monitoringStore.outOfRangeReadings(); track reading.id) {
+              <tr class="alert-row">
+                <td>
+                  <div class="asset-cell">
+                    <mat-icon class="alert-icon">warning</mat-icon>
+                    {{ getAssetName(reading.assetId) }}
+                  </div>
+                </td>
+                <td class="temp-cell">{{ reading.temperature }} °C</td>
+                <td>{{ reading.humidity }} %</td>
+                <td>{{ reading.recordedAt }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+</app-dashboard-shell>

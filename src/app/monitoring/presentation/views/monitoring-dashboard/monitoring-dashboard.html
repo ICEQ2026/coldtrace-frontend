@@ -1,0 +1,71 @@
+<app-dashboard-shell
+  [pageTitleKey]="'monitoring.dashboard.title'"
+  [activeOrganizationName]="activeOrganizationName()"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="monitoringStore.assetsWithAlerts()"
+  (signedOut)="logout()">
+
+  <div class="dashboard-wrapper">
+
+    @if (monitoringStore.loading() || identityLoading()) {
+      <mat-spinner diameter="40"></mat-spinner>
+    }
+
+    @if (monitoringStore.error()) {
+      <p class="dashboard-error">{{ monitoringStore.error() }}</p>
+    }
+
+    <section class="summary-grid">
+      <div class="summary-card">
+        <mat-icon class="card-icon">sensors</mat-icon>
+        <div class="card-body">
+          <span class="card-value">{{ monitoringStore.totalAssets() }}</span>
+          <span class="card-label">{{ 'monitoring.dashboard.card-assets' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="summary-card alert-card" [ngClass]="{ 'has-alerts': monitoringStore.assetsWithAlerts() > 0 }">
+        <mat-icon class="card-icon">warning</mat-icon>
+        <div class="card-body">
+          <span class="card-value">{{ monitoringStore.assetsWithAlerts() }}</span>
+          <span class="card-label">{{ 'monitoring.dashboard.card-alerts' | translate }}</span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <mat-icon class="card-icon">thermostat</mat-icon>
+        <div class="card-body">
+          <span class="card-value">{{ monitoringStore.readings().length }}</span>
+          <span class="card-label">{{ 'monitoring.dashboard.card-readings' | translate }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="nav-grid">
+      <button mat-raised-button color="primary" (click)="navigateTo('temperature')">
+        <mat-icon>thermostat</mat-icon>
+        {{ 'monitoring.dashboard.nav-temperature' | translate }}
+      </button>
+      <button mat-raised-button color="primary" (click)="navigateTo('humidity')">
+        <mat-icon>water_drop</mat-icon>
+        {{ 'monitoring.dashboard.nav-humidity' | translate }}
+      </button>
+      <button mat-raised-button color="primary" (click)="navigateTo('history')">
+        <mat-icon>history</mat-icon>
+        {{ 'monitoring.dashboard.nav-history' | translate }}
+      </button>
+      <button mat-raised-button color="warn" (click)="navigateTo('alerts')">
+        <mat-icon>notification_important</mat-icon>
+        {{ 'monitoring.dashboard.nav-alerts' | translate }}
+      </button>
+      <button mat-raised-button color="primary" (click)="navigateTo('connectivity')">
+        <mat-icon>wifi</mat-icon>
+        {{ 'monitoring.dashboard.nav-connectivity' | translate }}
+      </button>
+    </section>
+
+  </div>
+
+</app-dashboard-shell>
