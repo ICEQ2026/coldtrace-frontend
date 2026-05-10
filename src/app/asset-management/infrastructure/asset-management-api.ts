@@ -8,11 +8,8 @@ import { Gateway } from '../domain/model/gateway.entity';
 import { IoTDevice } from '../domain/model/iot-device.entity';
 import { AssetSettingsApiEndpoint } from './asset-settings-api-endpoint';
 import { AssetsApiEndpoint } from './assets-api-endpoint';
-import { AssetResource } from './assets-response';
 import { GatewaysApiEndpoint } from './gateways-api-endpoint';
-import { GatewayResource } from './gateways-response';
 import { IoTDevicesApiEndpoint } from './iot-devices-api-endpoint';
-import { IoTDeviceResource } from './iot-devices-response';
 
 @Injectable({ providedIn: 'root' })
 export class AssetManagementApi extends BaseApi {
@@ -41,10 +38,6 @@ export class AssetManagementApi extends BaseApi {
     return this.assetsEndpoint.update(asset, asset.id);
   }
 
-  patchAsset(assetId: number, resource: Partial<AssetResource>): Observable<Asset> {
-    return this.assetsEndpoint.patch(assetId, resource);
-  }
-
   getIoTDevices(): Observable<IoTDevice[]> {
     return this.iotDevicesEndpoint.getAll();
   }
@@ -57,13 +50,6 @@ export class AssetManagementApi extends BaseApi {
     return this.iotDevicesEndpoint.update(iotDevice, iotDevice.id);
   }
 
-  patchIoTDevice(
-    iotDeviceId: number,
-    resource: Partial<IoTDeviceResource>,
-  ): Observable<IoTDevice> {
-    return this.iotDevicesEndpoint.patch(iotDeviceId, resource);
-  }
-
   getGateways(): Observable<Gateway[]> {
     return this.gatewaysEndpoint.getAll();
   }
@@ -74,10 +60,6 @@ export class AssetManagementApi extends BaseApi {
 
   updateGateway(gateway: Gateway): Observable<Gateway> {
     return this.gatewaysEndpoint.update(gateway, gateway.id);
-  }
-
-  patchGateway(gatewayId: number, resource: Partial<GatewayResource>): Observable<Gateway> {
-    return this.gatewaysEndpoint.patch(gatewayId, resource);
   }
 
   getAssetSettings(): Observable<AssetSettings[]> {

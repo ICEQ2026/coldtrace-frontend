@@ -616,7 +616,7 @@ export class ColdRoomList implements OnInit, OnDestroy {
     this.pendingAssetStatuses.update((statuses) => ({ ...statuses, [asset.id]: nextStatus }));
     this.updatingAssetId.set(asset.id);
     this.assetManagementStore
-      .patchAsset(asset.id, { status: nextStatus })
+      .updateAsset(this.nextAsset(asset, { status: nextStatus }))
       .pipe(
         finalize(() => {
           this.updatingAssetId.set(null);
@@ -1020,30 +1020,110 @@ export class ColdRoomList implements OnInit, OnDestroy {
     const connectivity = this.randomConnectivity();
     const currentTemperature = this.randomTemperature(connectivity, settings);
     const lastIncident = this.randomIncident(currentTemperature, connectivity, settings);
-    this.assetManagementStore.patchAsset(asset.id, {
-      lastIncident,
-      currentTemperature,
-      connectivity,
-    }).subscribe({
-      error: () => undefined,
-    });
+    this.assetManagementStore
+      .updateAsset(
+        this.nextAsset(asset, {
+          lastIncident,
+          currentTemperature,
+          connectivity,
+        }),
+      )
+      .subscribe({
+        error: () => undefined,
+      });
   }
 
   private updateIoTDeviceTelemetry(iotDevice: IoTDevice): void {
-    this.assetManagementStore.patchIoTDevice(iotDevice.id, {
-      status: this.randomIoTDeviceStatus(iotDevice),
-      calibrationStatus: this.randomCalibrationStatus(),
-    }).subscribe({
-      error: () => undefined,
-    });
+    this.assetManagementStore
+      .updateIoTDevice(
+        this.nextIoTDevice(iotDevice, {
+          status: this.randomIoTDeviceStatus(iotDevice),
+          calibrationStatus: this.randomCalibrationStatus(),
+        }),
+      )
+      .subscribe({
+        error: () => undefined,
+      });
   }
 
   private updateGatewayTelemetry(gateway: Gateway): void {
-    this.assetManagementStore.patchGateway(gateway.id, {
-      status: this.randomGatewayStatus(),
-    }).subscribe({
-      error: () => undefined,
-    });
+    this.assetManagementStore
+      .updateGateway(
+        this.nextGateway(gateway, {
+          status: this.randomGatewayStatus(),
+        }),
+      )
+      .subscribe({
+        error: () => undefined,
+      });
+  }
+
+  private nextAsset(
+    asset: Asset,
+    fields: Partial<{
+      status: AssetStatus;
+      lastIncident: string;
+      currentTemperature: string;
+      connectivity: ConnectivityStatus;
+    }>,
+  ): Asset {
+    return new Asset(
+      asset.id,
+      asset.organizationId,
+      asset.uuid,
+      asset.type,
+      asset.gatewayId,
+      asset.name,
+      asset.location,
+      asset.capacity,
+      asset.description,
+      fields.status ?? asset.status,
+      fields.lastIncident ?? asset.lastIncident,
+      fields.currentTemperature ?? asset.currentTemperature,
+      asset.entryDate,
+      fields.connectivity ?? asset.connectivity,
+    );
+  }
+
+  private nextIoTDevice(
+    iotDevice: IoTDevice,
+    fields: Partial<{
+      assetId: number | null;
+      status: IoTDeviceStatus;
+      calibrationStatus: CalibrationStatus;
+      nextCalibrationDate: string;
+    }>,
+  ): IoTDevice {
+    return new IoTDevice(
+      iotDevice.id,
+      iotDevice.organizationId,
+      iotDevice.uuid,
+      iotDevice.deviceType,
+      iotDevice.model,
+      iotDevice.measurementType,
+      fields.assetId ?? iotDevice.assetId,
+      fields.status ?? iotDevice.status,
+      fields.calibrationStatus ?? iotDevice.calibrationStatus,
+      iotDevice.lastCalibrationDate,
+      fields.nextCalibrationDate ?? iotDevice.nextCalibrationDate,
+    );
+  }
+
+  private nextGateway(
+    gateway: Gateway,
+    fields: Partial<{
+      status: GatewayStatus;
+    }>,
+  ): Gateway {
+    return new Gateway(
+      gateway.id,
+      gateway.organizationId,
+      gateway.uuid,
+      gateway.name,
+      gateway.location,
+      gateway.network,
+      fields.status ?? gateway.status,
+    );
   }
 
   private randomTemperature(connectivity: ConnectivityStatus, settings: AssetSettings): string {
@@ -1201,5 +1281,4 @@ export class ColdRoomList implements OnInit, OnDestroy {
 
     return candidate;
   }
-
 }

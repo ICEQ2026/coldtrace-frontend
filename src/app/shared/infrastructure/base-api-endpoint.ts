@@ -51,13 +51,6 @@ export abstract class BaseApiEndpoint<
     );
   }
 
-  patch(id: number, resource: Partial<TResource>): Observable<TEntity> {
-    return this.http.patch<TResource>(`${this.endpointUrl}/${id}`, resource).pipe(
-      map((updated) => this.assembler.toEntityFromResource(updated)),
-      catchError(this.handleError('Failed to patch entity')),
-    );
-  }
-
   delete(id: number): Observable<void> {
     return this.http
       .delete<void>(`${this.endpointUrl}/${id}`)
