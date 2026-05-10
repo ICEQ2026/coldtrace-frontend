@@ -238,12 +238,21 @@
         "model": "Modelo",
         "measurement": "Medición",
         "asset": "Activo",
-        "status": "Estado"
+        "status": "Estado",
+        "calibration": "Calibración",
+        "last-calibration": "Última calibración",
+        "next-calibration": "Próxima calibración"
       },
       "status": {
         "available": "Disponible",
         "linked": "Vinculado",
         "offline": "Sin conexión"
+      },
+      "calibration-status": {
+        "compliant": "Conforme",
+        "due-soon": "Por vencer",
+        "expired": "Vencido",
+        "unknown": "Desconocido"
       }
     },
     "gateways": {
