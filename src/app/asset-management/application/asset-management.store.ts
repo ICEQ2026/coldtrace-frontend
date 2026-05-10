@@ -3,31 +3,10 @@ import { Observable, tap } from 'rxjs';
 import { Asset } from '../domain/model/asset.entity';
 import { AssetSettings } from '../domain/model/asset-settings.entity';
 import { AssetStatus } from '../domain/model/asset-status.enum';
-import { CalibrationStatus } from '../domain/model/calibration-status.enum';
 import { ConnectivityStatus } from '../domain/model/connectivity-status.enum';
 import { Gateway } from '../domain/model/gateway.entity';
-import { GatewayStatus } from '../domain/model/gateway-status.enum';
 import { IoTDevice } from '../domain/model/iot-device.entity';
-import { IoTDeviceStatus } from '../domain/model/iot-device-status.enum';
 import { AssetManagementApi } from '../infrastructure/asset-management-api';
-
-type AssetFieldPatch = Partial<{
-  status: AssetStatus;
-  lastIncident: string;
-  currentTemperature: string;
-  connectivity: ConnectivityStatus;
-}>;
-
-type IoTDeviceFieldPatch = Partial<{
-  assetId: number | null;
-  status: IoTDeviceStatus;
-  calibrationStatus: CalibrationStatus;
-  nextCalibrationDate: string;
-}>;
-
-type GatewayFieldPatch = Partial<{
-  status: GatewayStatus;
-}>;
 
 @Injectable({ providedIn: 'root' })
 export class AssetManagementStore {
@@ -94,18 +73,6 @@ export class AssetManagementStore {
     );
   }
 
-  patchAsset(assetId: number, fields: AssetFieldPatch): Observable<Asset> {
-    return this.assetManagementApi.patchAsset(assetId, fields).pipe(
-      tap((updatedAsset) => {
-        this.assetsSignal.update((assets) =>
-          assets.map((currentAsset) =>
-            currentAsset.id === updatedAsset.id ? updatedAsset : currentAsset,
-          ),
-        );
-      }),
-    );
-  }
-
   loadIoTDevices(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -142,18 +109,6 @@ export class AssetManagementStore {
     );
   }
 
-  patchIoTDevice(iotDeviceId: number, fields: IoTDeviceFieldPatch): Observable<IoTDevice> {
-    return this.assetManagementApi.patchIoTDevice(iotDeviceId, fields).pipe(
-      tap((updatedIoTDevice) => {
-        this.iotDevicesSignal.update((iotDevices) =>
-          iotDevices.map((currentIoTDevice) =>
-            currentIoTDevice.id === updatedIoTDevice.id ? updatedIoTDevice : currentIoTDevice,
-          ),
-        );
-      }),
-    );
-  }
-
   loadGateways(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -180,18 +135,6 @@ export class AssetManagementStore {
 
   updateGateway(gateway: Gateway): Observable<Gateway> {
     return this.assetManagementApi.updateGateway(gateway).pipe(
-      tap((updatedGateway) => {
-        this.gatewaysSignal.update((gateways) =>
-          gateways.map((currentGateway) =>
-            currentGateway.id === updatedGateway.id ? updatedGateway : currentGateway,
-          ),
-        );
-      }),
-    );
-  }
-
-  patchGateway(gatewayId: number, fields: GatewayFieldPatch): Observable<Gateway> {
-    return this.assetManagementApi.patchGateway(gatewayId, fields).pipe(
       tap((updatedGateway) => {
         this.gatewaysSignal.update((gateways) =>
           gateways.map((currentGateway) =>
