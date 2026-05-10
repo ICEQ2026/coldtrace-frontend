@@ -536,5 +536,85 @@
       "connectivity": "online"
     }
   ],
+  "sensors": [
+    {
+      "id": 1,
+      "organizationId": 1,
+      "uuid": "SN-001",
+      "model": "TempSense T100",
+      "measurementType": "Temperature",
+      "assetId": 1,
+      "gatewayId": null,
+      "status": "linked",
+      "calibrationStatus": "compliant",
+      "lastCalibrationDate": "01 May 2026",
+      "nextCalibrationDate": "01 Nov 2026"
+    },
+    {
+      "id": 2,
+      "organizationId": 1,
+      "uuid": "SN-002",
+      "model": "HumidSense H200",
+      "measurementType": "Temperature / Humidity",
+      "assetId": 3,
+      "gatewayId": null,
+      "status": "linked",
+      "calibrationStatus": "due-soon",
+      "lastCalibrationDate": "10 Feb 2026",
+      "nextCalibrationDate": "10 Jun 2026"
+    },
+    {
+      "id": 3,
+      "organizationId": 1,
+      "uuid": "SN-003",
+      "model": "TraceSense M2",
+      "measurementType": "Temperature",
+      "assetId": null,
+      "gatewayId": null,
+      "status": "available",
+      "calibrationStatus": "compliant",
+      "lastCalibrationDate": "09 May 2026",
+      "nextCalibrationDate": "09 Nov 2026"
+    },
+    {
+      "id": 4,
+      "organizationId": 1,
+      "uuid": "SN-004",
+      "model": "TraceSense M2",
+      "measurementType": "Temperature / Humidity",
+      "assetId": null,
+      "gatewayId": null,
+      "status": "available",
+      "calibrationStatus": "unknown",
+      "lastCalibrationDate": "-",
+      "nextCalibrationDate": "-"
+    },
+    {
+      "id": 5,
+      "organizationId": 1,
+      "uuid": "SN-005",
+      "model": "ColdLink C1",
+      "measurementType": "Temperature",
+      "assetId": 22,
+      "gatewayId": null,
+      "status": "linked",
+      "calibrationStatus": "expired",
+      "lastCalibrationDate": "12 Nov 2025",
+      "nextCalibrationDate": "12 Apr 2026"
+    },
+    {
+      "id": 6,
+      "organizationId": 2,
+      "uuid": "SN-201",
+      "model": "TempSense T100",
+      "measurementType": "Temperature",
+      "assetId": 21,
+      "gatewayId": null,
+      "status": "linked",
+      "calibrationStatus": "compliant",
+      "lastCalibrationDate": "09 May 2026",
+      "nextCalibrationDate": "09 Nov 2026"
+    }
+  ],
   "password-reset-requests": []
 }
