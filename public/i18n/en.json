@@ -153,6 +153,77 @@
       "message": "Your current role can review access information, but it cannot create users or update roles and permissions."
     }
   },
+  "asset-management": {
+    "title": "Assets",
+    "search": "Search content...",
+    "reload": "Reload",
+    "cold-room-title": "Cold Room",
+    "cold-room-subtitle": "Register and review cold rooms from the active organization.",
+    "empty": "No cold rooms match this search.",
+    "item-count": "Item per page: {{ count }}",
+    "tabs": {
+      "cold-room": "Cold Room",
+      "transport": "Transport",
+      "sensor": "Sensor",
+      "gateway": "Gateway",
+      "settings": "Settings"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "location": "Ubication",
+      "capacity": "Capacity",
+      "last-incident": "Last incident",
+      "temperature": "Temp.",
+      "entry-date": "Entry date",
+      "status": "Status",
+      "connectivity": "Connectivity"
+    },
+    "incidents": {
+      "high-temperature": "High temperature",
+      "connection-lost": "Connection lost",
+      "high-humidity": "High humidity",
+      "low-temperature": "Low temperature",
+      "none": "No incidents"
+    },
+    "status": {
+      "active": "Acknowledged",
+      "maintenance": "Acknowledged",
+      "inactive": "Unacknowledged"
+    },
+    "connectivity": {
+      "online": "Online",
+      "unstable": "Unstable",
+      "offline": "Offline"
+    },
+    "form": {
+      "open": "New cold room",
+      "close": "Close",
+      "title": "Register cold room",
+      "subtitle": "Create a cold room for the active organization.",
+      "internal-id": "Internal ID",
+      "internal-id-error": "Enter a valid cold room ID.",
+      "name": "Name",
+      "name-placeholder": "Cold Room 21",
+      "name-error": "Enter at least 3 characters.",
+      "capacity": "Capacity (kg)",
+      "capacity-error": "Enter a capacity greater than zero.",
+      "location": "Ubication",
+      "location-placeholder": "San Miguel - Plaza Center",
+      "location-error": "Enter at least 3 characters.",
+      "description": "Description",
+      "description-placeholder": "Cold room operating notes",
+      "cancel": "Cancel",
+      "create": "Create cold room",
+      "creating": "Creating..."
+    },
+    "feedback": {
+      "created": "Cold room created successfully.",
+      "duplicate-id": "A cold room with this ID already exists.",
+      "server-error": "We could not load asset data. Try again later.",
+      "loading": "Loading asset data..."
+    }
+  },
   "sign-up": {
     "title": "Create your account",
     "organization-name": "Organization name",

@@ -18,7 +18,7 @@ export class Layout {
   protected readonly currentUrl = signal(this.router.url);
   private readonly shellRoutePaths = [
     '/identity-access/dashboard',
-    '/identity-access/assets',
+    '/asset-management/assets',
     '/identity-access/alerts',
     '/identity-access/monitoring',
     '/identity-access/reports',
