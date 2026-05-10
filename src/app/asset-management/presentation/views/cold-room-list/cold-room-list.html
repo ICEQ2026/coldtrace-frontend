@@ -218,6 +218,111 @@
     </section>
   }
 
+  @if (selectedTab() === 'gateway') {
+    <section class="table-card" aria-labelledby="gateway-pair-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="gateway-pair-title">{{ 'asset-management.gateways.title' | translate }}</h2>
+          <p>{{ 'asset-management.gateways.subtitle' | translate }}</p>
+        </div>
+        <button type="button" class="secondary-action" (click)="loadPageData()">
+          {{ 'asset-management.reload' | translate }}
+        </button>
+      </div>
+
+      @if (canManageAssets()) {
+        <div class="link-panel">
+          <label class="form-field">
+            <span>{{ 'asset-management.gateways.gateway' | translate }}</span>
+            <select
+              [value]="selectedGatewayId() ?? ''"
+              (change)="updateSelectedGateway($any($event.target).value)"
+            >
+              <option value="">{{ 'asset-management.gateways.select-gateway' | translate }}</option>
+              @for (gateway of availableGateways(); track gateway.id) {
+                <option [value]="gateway.id">{{ gateway.uuid }} - {{ gateway.name }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="form-field">
+            <span>{{ 'asset-management.gateways.sensor' | translate }}</span>
+            <select
+              [value]="selectedGatewaySensorId() ?? ''"
+              (change)="updateSelectedGatewaySensor($any($event.target).value)"
+            >
+              <option value="">{{ 'asset-management.gateways.select-sensor' | translate }}</option>
+              @for (sensor of gatewayReadySensors(); track sensor.id) {
+                <option [value]="sensor.id">{{ sensor.uuid }} - {{ sensor.model }}</option>
+              }
+            </select>
+          </label>
+
+          <div class="form-actions link-actions">
+            <button
+              type="button"
+              class="primary-action"
+              [disabled]="!selectedGatewayId() || !selectedGatewaySensorId() || pairingGateway()"
+              (click)="pairGateway()"
+            >
+              {{ (pairingGateway() ? 'asset-management.gateways.pairing' : 'asset-management.gateways.pair') | translate }}
+            </button>
+          </div>
+        </div>
+      }
+
+      <div class="assets-table-wrapper">
+        <table class="assets-table gateway-table">
+          <colgroup>
+            <col style="width: 130px" />
+            <col style="width: 190px" />
+            <col style="width: 220px" />
+            <col style="width: 170px" />
+            <col style="width: 240px" />
+            <col style="width: 140px" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>{{ 'asset-management.gateways.table.id' | translate }}</th>
+              <th>{{ 'asset-management.gateways.table.name' | translate }}</th>
+              <th>{{ 'asset-management.gateways.table.location' | translate }}</th>
+              <th>{{ 'asset-management.gateways.table.network' | translate }}</th>
+              <th>{{ 'asset-management.gateways.table.sensor' | translate }}</th>
+              <th>{{ 'asset-management.gateways.table.status' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (gateway of organizationGateways(); track gateway.id) {
+              <tr>
+                <td [attr.data-label]="'asset-management.gateways.table.id' | translate">{{ gateway.uuid }}</td>
+                <td [attr.data-label]="'asset-management.gateways.table.name' | translate">{{ gateway.name }}</td>
+                <td [attr.data-label]="'asset-management.gateways.table.location' | translate">{{ gateway.location }}</td>
+                <td [attr.data-label]="'asset-management.gateways.table.network' | translate">{{ gateway.network }}</td>
+                <td [attr.data-label]="'asset-management.gateways.table.sensor' | translate">
+                  {{ sensorNameForGateway(gateway) | translate }}
+                </td>
+                <td [attr.data-label]="'asset-management.gateways.table.status' | translate">
+                  <span
+                    class="status-pill"
+                    [class.active]="gateway.status === gatewayStatus.Paired"
+                    [class.maintenance]="gateway.status === gatewayStatus.Available"
+                    [class.inactive]="gateway.status === gatewayStatus.Offline"
+                  >
+                    {{ 'asset-management.gateways.status.' + gateway.status | translate }}
+                  </span>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="empty-state">{{ 'asset-management.gateways.empty' | translate }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
   @if (isAssetTab()) {
   <section class="table-card" aria-labelledby="cold-room-table-title">
     <div class="section-heading">

@@ -224,6 +224,10 @@
   min-width: 860px;
 }
 
+.gateway-table {
+  min-width: 1020px;
+}
+
 .loading-state {
   align-items: center;
   color: #98a2b3;

@@ -10,6 +10,8 @@ import { Asset } from '../../../domain/model/asset.entity';
 import { AssetStatus } from '../../../domain/model/asset-status.enum';
 import { AssetType } from '../../../domain/model/asset-type.enum';
 import { ConnectivityStatus } from '../../../domain/model/connectivity-status.enum';
+import { Gateway } from '../../../domain/model/gateway.entity';
+import { GatewayStatus } from '../../../domain/model/gateway-status.enum';
 import { Sensor } from '../../../domain/model/sensor.entity';
 import { SensorStatus } from '../../../domain/model/sensor-status.enum';
 import { Organization } from '../../../../identity-access/domain/model/organization.entity';
@@ -31,6 +33,7 @@ type AssetManagementTab = AssetType | 'sensor' | 'gateway' | 'settings';
 export class ColdRoomList implements OnInit {
   protected readonly assetStatus = AssetStatus;
   protected readonly sensorStatus = SensorStatus;
+  protected readonly gatewayStatus = GatewayStatus;
   protected readonly connectivityStatus = ConnectivityStatus;
   protected readonly assetManagementStore = inject(AssetManagementStore);
   protected readonly identityAccessStore = inject(IdentityAccessStore);
@@ -54,7 +57,10 @@ export class ColdRoomList implements OnInit {
   protected readonly selectedTab = signal<AssetManagementTab>(AssetType.ColdRoom);
   protected readonly selectedSensorId = signal<number | null>(null);
   protected readonly selectedAssetId = signal<number | null>(null);
+  protected readonly selectedGatewayId = signal<number | null>(null);
+  protected readonly selectedGatewaySensorId = signal<number | null>(null);
   protected readonly linkingSensor = signal(false);
+  protected readonly pairingGateway = signal(false);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -72,6 +78,7 @@ export class ColdRoomList implements OnInit {
   );
   protected readonly assets = this.assetManagementStore.assets;
   protected readonly sensors = this.assetManagementStore.sensors;
+  protected readonly gateways = this.assetManagementStore.gateways;
   protected readonly activeOrganizationName = computed(() => {
     return this.identityAccessStore.currentOrganizationNameFrom(this.users(), this.organizations());
   });
@@ -127,8 +134,30 @@ export class ColdRoomList implements OnInit {
     return this.sensors().filter((sensor) => sensor.organizationId === organizationId);
   });
 
+  protected readonly organizationGateways = computed(() => {
+    const organizationId = this.activeOrganizationId();
+
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.gateways().filter((gateway) => gateway.organizationId === organizationId);
+  });
+
   protected readonly availableSensors = computed(() => {
     return this.organizationSensors().filter((sensor) => !sensor.assetId);
+  });
+
+  protected readonly gatewayReadySensors = computed(() => {
+    return this.organizationSensors().filter((sensor) => {
+      return sensor.status !== SensorStatus.Offline && !sensor.gatewayId;
+    });
+  });
+
+  protected readonly availableGateways = computed(() => {
+    return this.organizationGateways().filter((gateway) => {
+      return gateway.status === GatewayStatus.Available;
+    });
   });
 
   protected readonly filteredAssets = computed(() => {
@@ -162,6 +191,7 @@ export class ColdRoomList implements OnInit {
     this.feedback.set('idle');
     this.assetManagementStore.loadAssets();
     this.assetManagementStore.loadSensors();
+    this.assetManagementStore.loadGateways();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -198,6 +228,8 @@ export class ColdRoomList implements OnInit {
     this.submitted.set(false);
     this.selectedSensorId.set(null);
     this.selectedAssetId.set(null);
+    this.selectedGatewayId.set(null);
+    this.selectedGatewaySensorId.set(null);
     this.resetForm();
   }
 
@@ -307,9 +339,68 @@ export class ColdRoomList implements OnInit {
       });
   }
 
+  protected pairGateway(): void {
+    this.feedback.set('idle');
+
+    const gateway = this.organizationGateways().find((currentGateway) => {
+      return currentGateway.id === this.selectedGatewayId();
+    });
+    const sensor = this.organizationSensors().find((currentSensor) => {
+      return currentSensor.id === this.selectedGatewaySensorId();
+    });
+
+    if (!gateway || !sensor || gateway.status !== GatewayStatus.Available || sensor.gatewayId) {
+      this.feedback.set('duplicate-id');
+      return;
+    }
+
+    const updatedSensor = new Sensor(
+      sensor.id,
+      sensor.organizationId,
+      sensor.uuid,
+      sensor.model,
+      sensor.measurementType,
+      sensor.assetId,
+      gateway.id,
+      sensor.status,
+      sensor.calibrationStatus,
+      sensor.lastCalibrationDate,
+      sensor.nextCalibrationDate,
+    );
+    const updatedGateway = new Gateway(
+      gateway.id,
+      gateway.organizationId,
+      gateway.uuid,
+      gateway.name,
+      gateway.location,
+      gateway.network,
+      GatewayStatus.Paired,
+    );
+
+    this.pairingGateway.set(true);
+    forkJoin({
+      sensor: this.assetManagementStore.updateSensor(updatedSensor),
+      gateway: this.assetManagementStore.updateGateway(updatedGateway),
+    })
+      .pipe(finalize(() => this.pairingGateway.set(false)))
+      .subscribe({
+        next: () => {
+          this.feedback.set('success');
+          this.selectedGatewayId.set(null);
+          this.selectedGatewaySensorId.set(null);
+        },
+        error: () => this.feedback.set('server-error'),
+      });
+  }
+
   protected assetNameForSensor(sensor: Sensor): string {
     const asset = this.assets().find((currentAsset) => currentAsset.id === sensor.assetId);
     return asset ? `${asset.uuid} - ${asset.name}` : 'asset-management.sensors.unassigned';
+  }
+
+  protected sensorNameForGateway(gateway: Gateway): string {
+    const sensor = this.sensors().find((currentSensor) => currentSensor.gatewayId === gateway.id);
+    return sensor ? `${sensor.uuid} - ${sensor.model}` : 'asset-management.gateways.unassigned';
   }
 
   protected updateSelectedSensor(value: string): void {
@@ -318,6 +409,14 @@ export class ColdRoomList implements OnInit {
 
   protected updateSelectedAsset(value: string): void {
     this.selectedAssetId.set(Number(value) || null);
+  }
+
+  protected updateSelectedGateway(value: string): void {
+    this.selectedGatewayId.set(Number(value) || null);
+  }
+
+  protected updateSelectedGatewaySensor(value: string): void {
+    this.selectedGatewaySensorId.set(Number(value) || null);
   }
 
   protected assetTypeLabelKey(assetType: AssetManagementTab): string {
@@ -353,12 +452,20 @@ export class ColdRoomList implements OnInit {
       return 'asset-management.sensors.feedback-linked';
     }
 
+    if (this.selectedTab() === 'gateway') {
+      return 'asset-management.gateways.feedback-paired';
+    }
+
     return `asset-management.sections.${this.selectedAssetType()}.feedback-created`;
   }
 
   protected formDuplicateKey(): string {
     if (this.selectedTab() === 'sensor') {
       return 'asset-management.sensors.feedback-unavailable';
+    }
+
+    if (this.selectedTab() === 'gateway') {
+      return 'asset-management.gateways.feedback-unavailable';
     }
 
     return `asset-management.sections.${this.selectedAssetType()}.feedback-duplicate`;

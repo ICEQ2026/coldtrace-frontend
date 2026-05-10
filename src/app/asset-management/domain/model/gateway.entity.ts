@@ -1,0 +1,42 @@
+import { BaseEntity } from '../../../shared/domain/model/base-entity';
+import { GatewayStatus } from './gateway-status.enum';
+
+export class Gateway implements BaseEntity {
+  constructor(
+    private readonly _id: number,
+    private readonly _organizationId: number,
+    private readonly _uuid: string,
+    private readonly _name: string,
+    private readonly _location: string,
+    private readonly _network: string,
+    private readonly _status: GatewayStatus,
+  ) {}
+
+  get id(): number {
+    return this._id;
+  }
+
+  get organizationId(): number {
+    return this._organizationId;
+  }
+
+  get uuid(): string {
+    return this._uuid;
+  }
+
+  get name(): string {
+    return this._name;
+  }
+
+  get location(): string {
+    return this._location;
+  }
+
+  get network(): string {
+    return this._network;
+  }
+
+  get status(): GatewayStatus {
+    return this._status;
+  }
+}
