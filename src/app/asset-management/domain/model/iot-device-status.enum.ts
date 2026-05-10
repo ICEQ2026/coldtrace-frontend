@@ -1,4 +1,4 @@
-export enum SensorStatus {
+export enum IoTDeviceStatus {
   Available = 'available',
   Linked = 'linked',
   Offline = 'offline',

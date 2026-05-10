@@ -4,6 +4,7 @@
   [profileUserName]="profileUserName()"
   [profileRoleLabelKey]="profileRoleLabelKey()"
   [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="assetIssueCount()"
   (signedOut)="logout()"
 >
   @if (accessDenied()) {
@@ -46,11 +47,16 @@
         </div>
         <div class="table-actions">
           @if (canManageAccess()) {
-            <button type="button" class="reload-action" routerLink="/identity-access/roles-permissions/users/new">
+            <button
+              mat-stroked-button
+              type="button"
+              class="reload-action"
+              routerLink="/identity-access/roles-permissions/users/new"
+            >
               {{ 'roles-permissions.create-user' | translate }}
             </button>
           }
-          <button type="button" class="reload-action" (click)="loadAccessData()">
+          <button mat-stroked-button type="button" class="reload-action" (click)="loadAccessData()">
             {{ 'roles-permissions.reload' | translate }}
           </button>
         </div>
@@ -101,8 +107,13 @@
             </thead>
             <tbody>
               @for (row of rows(); track row.user.id) {
-                <tr [class.saved-row]="savedUserId() === row.user.id" [class.invalid-row]="invalidUserId() === row.user.id">
-                  <td [attr.data-label]="'roles-permissions.table.id' | translate">USR-{{ row.user.organizationUserId }}</td>
+                <tr
+                  [class.saved-row]="savedUserId() === row.user.id"
+                  [class.invalid-row]="invalidUserId() === row.user.id"
+                >
+                  <td [attr.data-label]="'roles-permissions.table.id' | translate">
+                    USR-{{ row.user.organizationUserId }}
+                  </td>
                   <td [attr.data-label]="'roles-permissions.table.user' | translate">
                     <strong>{{ row.user.fullName || row.user.email }}</strong>
                     <span>{{ row.user.email }}</span>
@@ -117,7 +128,9 @@
                         [disabled]="!canManageUserRole(row.user)"
                         (change)="selectRole(row.user.id, $any($event.target).value)"
                       >
-                        <option value="0">{{ 'roles-permissions.roles.unassigned' | translate }}</option>
+                        <option value="0">
+                          {{ 'roles-permissions.roles.unassigned' | translate }}
+                        </option>
                         @for (role of roles(); track role.id) {
                           <option [value]="role.id" [disabled]="isRoleOptionDisabled(role)">
                             {{ roleLabelKey(role) | translate }}
@@ -136,19 +149,23 @@
                   @if (canManageAccess()) {
                     <td [attr.data-label]="'roles-permissions.table.actions' | translate">
                       <button
+                        mat-stroked-button
                         type="button"
                         class="save-action"
                         [disabled]="!row.pending || !canManageUserRole(row.user)"
                         (click)="saveRole(row.user)"
                       >
-                        {{ (row.pending ? 'roles-permissions.save' : 'roles-permissions.saved') | translate }}
+                        {{
+                          (row.pending ? 'roles-permissions.save' : 'roles-permissions.saved')
+                            | translate
+                        }}
                       </button>
                     </td>
                   }
                 </tr>
               } @empty {
                 <tr>
-                  <td [attr.colspan]="canManageAccess() ? 6 : 4" class="empty-state">
+                  <td class="empty-state" [attr.colspan]="canManageAccess() ? 6 : 4">
                     {{ 'roles-permissions.empty' | translate }}
                   </td>
                 </tr>

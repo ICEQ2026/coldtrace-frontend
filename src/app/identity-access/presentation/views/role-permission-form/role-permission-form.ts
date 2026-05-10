@@ -1,9 +1,11 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { IdentityAccessStore } from '../../../application/identity-access.store';
 import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
+import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { Organization } from '../../../domain/model/organization.entity';
 import { Role } from '../../../domain/model/role.entity';
 import { User } from '../../../domain/model/user.entity';
@@ -13,12 +15,13 @@ type RolePermissionFeedback = 'idle' | 'server-error';
 
 @Component({
   selector: 'app-role-permission-form',
-  imports: [DashboardShell, TranslatePipe],
+  imports: [DashboardShell, MatButton, TranslatePipe],
   templateUrl: './role-permission-form.html',
   styleUrl: '../user-access-list/user-access-list.css',
 })
 export class RolePermissionForm implements OnInit {
   protected readonly identityAccessStore = inject(IdentityAccessStore);
+  protected readonly assetManagementStore = inject(AssetManagementStore);
   private readonly identityAccessApi = inject(IdentityAccessApi);
   private readonly router = inject(Router);
 
@@ -38,6 +41,9 @@ export class RolePermissionForm implements OnInit {
   protected readonly canManageAccess = computed(
     () => this.identityAccessStore.canManageAccess(this.users(), this.roles())
   );
+  protected readonly assetIssueCount = computed(() => {
+    return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
+  });
 
   ngOnInit(): void {
     this.loadRoles();
@@ -46,6 +52,7 @@ export class RolePermissionForm implements OnInit {
   protected loadRoles(): void {
     this.loading.set(true);
     this.feedback.set('idle');
+    this.assetManagementStore.loadAssets();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -93,5 +100,9 @@ export class RolePermissionForm implements OnInit {
   protected logout(): void {
     this.identityAccessStore.clearCurrentUser();
     void this.router.navigate(['/identity-access/sign-in']);
+  }
+
+  private activeOrganizationId(): number | null {
+    return this.identityAccessStore.currentOrganizationIdFrom(this.users());
   }
 }

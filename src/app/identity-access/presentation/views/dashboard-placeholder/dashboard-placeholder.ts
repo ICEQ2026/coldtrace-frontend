@@ -8,6 +8,7 @@ import { Role } from '../../../domain/model/role.entity';
 import { User } from '../../../domain/model/user.entity';
 import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
+import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 
 @Component({
   selector: 'app-dashboard-placeholder',
@@ -17,6 +18,7 @@ import { DashboardShell } from '../../../../shared/presentation/componentes/dash
 })
 export class DashboardPlaceholder implements OnInit {
   protected readonly identityAccessStore = inject(IdentityAccessStore);
+  protected readonly assetManagementStore = inject(AssetManagementStore);
   private readonly identityAccessApi = inject(IdentityAccessApi);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -37,6 +39,9 @@ export class DashboardPlaceholder implements OnInit {
   protected readonly canManageAccess = computed(
     () => this.identityAccessStore.canManageAccess(this.users(), this.roles())
   );
+  protected readonly assetIssueCount = computed(() => {
+    return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
+  });
 
   ngOnInit(): void {
     this.route.data.subscribe(data => {
@@ -52,6 +57,7 @@ export class DashboardPlaceholder implements OnInit {
 
   private loadShellData(): void {
     this.loading.set(true);
+    this.assetManagementStore.loadAssets();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -70,5 +76,9 @@ export class DashboardPlaceholder implements OnInit {
         },
         error: () => {},
       });
+  }
+
+  private activeOrganizationId(): number | null {
+    return this.identityAccessStore.currentOrganizationIdFrom(this.users());
   }
 }

@@ -13,7 +13,9 @@
       <a class="menu-item" routerLink="/asset-management/assets" routerLinkActive="active" ariaCurrentWhenActive="page">
         <mat-icon class="menu-icon" aria-hidden="true">inventory_2</mat-icon>
         <span>{{ 'roles-permissions.menu.assets' | translate }}</span>
-        <span class="counter danger">2</span>
+        @if (assetIssuesCount > 0) {
+          <span class="counter danger">{{ assetIssuesCount }}</span>
+        }
       </a>
       <a class="menu-item" routerLink="/identity-access/alerts" routerLinkActive="active" ariaCurrentWhenActive="page">
         <mat-icon class="menu-icon" aria-hidden="true">warning</mat-icon>
@@ -66,10 +68,10 @@
           <strong>{{ profileUserName }}</strong>
           <span>{{ profileRoleLabelKey | translate }}</span>
         </div>
-        <button type="button" aria-label="Settings">
+        <button mat-icon-button type="button" aria-label="Settings">
           <mat-icon aria-hidden="true">settings</mat-icon>
         </button>
-        <button type="button" aria-label="Sign out" (click)="logout()">
+        <button mat-icon-button type="button" aria-label="Sign out" (click)="logout()">
           <mat-icon aria-hidden="true">power_settings_new</mat-icon>
         </button>
       </div>

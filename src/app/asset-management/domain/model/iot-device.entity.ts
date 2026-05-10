@@ -1,17 +1,17 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 import { CalibrationStatus } from './calibration-status.enum';
-import { SensorStatus } from './sensor-status.enum';
+import { IoTDeviceStatus } from './iot-device-status.enum';
 
-export class Sensor implements BaseEntity {
+export class IoTDevice implements BaseEntity {
   constructor(
     private readonly _id: number,
     private readonly _organizationId: number,
     private readonly _uuid: string,
+    private readonly _deviceType: string,
     private readonly _model: string,
     private readonly _measurementType: string,
     private readonly _assetId: number | null,
-    private readonly _gatewayId: number | null,
-    private readonly _status: SensorStatus,
+    private readonly _status: IoTDeviceStatus,
     private readonly _calibrationStatus: CalibrationStatus,
     private readonly _lastCalibrationDate: string,
     private readonly _nextCalibrationDate: string,
@@ -29,6 +29,10 @@ export class Sensor implements BaseEntity {
     return this._uuid;
   }
 
+  get deviceType(): string {
+    return this._deviceType;
+  }
+
   get model(): string {
     return this._model;
   }
@@ -41,11 +45,7 @@ export class Sensor implements BaseEntity {
     return this._assetId;
   }
 
-  get gatewayId(): number | null {
-    return this._gatewayId;
-  }
-
-  get status(): SensorStatus {
+  get status(): IoTDeviceStatus {
     return this._status;
   }
 

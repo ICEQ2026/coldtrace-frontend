@@ -1,20 +1,20 @@
 import { CalibrationStatus } from '../domain/model/calibration-status.enum';
-import { SensorStatus } from '../domain/model/sensor-status.enum';
+import { IoTDeviceStatus } from '../domain/model/iot-device-status.enum';
 import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
 
-export interface SensorResource extends BaseResource {
+export interface IoTDeviceResource extends BaseResource {
   organizationId: number;
   uuid: string;
+  deviceType: string;
   model: string;
   measurementType: string;
   assetId: number | null;
-  gatewayId: number | null;
-  status: SensorStatus;
+  status: IoTDeviceStatus;
   calibrationStatus: CalibrationStatus;
   lastCalibrationDate: string;
   nextCalibrationDate: string;
 }
 
-export interface SensorsResponse extends BaseResponse {
-  sensors: SensorResource[];
+export interface IoTDevicesResponse extends BaseResponse {
+  iotDevices: IoTDeviceResource[];
 }

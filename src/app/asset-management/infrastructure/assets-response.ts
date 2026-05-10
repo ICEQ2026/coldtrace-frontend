@@ -7,6 +7,7 @@ export interface AssetResource extends BaseResource {
   organizationId: number;
   uuid: string;
   type: AssetType;
+  gatewayId: number | null;
   name: string;
   location: string;
   capacity: number;

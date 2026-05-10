@@ -4,6 +4,7 @@
   [profileUserName]="profileUserName()"
   [profileRoleLabelKey]="profileRoleLabelKey()"
   [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="assetIssueCount()"
   (signedOut)="logout()"
 >
   <nav class="asset-tabs" aria-label="Asset sections">
@@ -18,28 +19,27 @@
     }
   </nav>
 
-  <div class="assets-toolbar">
-    <label class="search-box">
-      <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
-      <input
-        type="search"
-        [value]="searchTerm()"
-        [placeholder]="'asset-management.search' | translate"
-        (input)="updateSearchTerm($any($event.target).value)"
-      />
-    </label>
+  @if (selectedTab() !== 'settings') {
+    <div class="assets-toolbar">
+      <label class="search-box">
+        <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
+        <input
+          type="search"
+          [value]="searchTerm()"
+          [placeholder]="'asset-management.search' | translate"
+          (input)="updateSearchTerm($any($event.target).value)"
+        />
+      </label>
 
-    @if (canManageAssets() && isAssetTab()) {
-      <button type="button" class="primary-action" (click)="toggleForm()">
-        <mat-icon aria-hidden="true">{{ formVisible() ? 'close' : 'add' }}</mat-icon>
-        <span>
-          {{ (formVisible() ? 'asset-management.form.close' : formOpenKey()) | translate }}
-        </span>
-      </button>
-    }
-  </div>
+      @if (canManageAssets() && canCreateSelectedResource()) {
+        <button mat-flat-button type="button" class="primary-action" (click)="toggleForm()">
+          {{ createButtonKey() | translate }}
+        </button>
+      }
+    </div>
+  }
 
-  @if (feedback() === 'success' || feedback() === 'updated') {
+  @if (positiveFeedback()) {
     <p class="feedback success">{{ formCreatedKey() | translate }}</p>
   }
 
@@ -63,7 +63,12 @@
       <form class="cold-room-form" [formGroup]="coldRoomForm" (ngSubmit)="submit()">
         <label class="form-field">
           <span>{{ 'asset-management.form.internal-id' | translate }}</span>
-          <input type="text" formControlName="internalId" [placeholder]="internalIdPlaceholder()" />
+          <input
+            type="text"
+            formControlName="internalId"
+            [placeholder]="internalIdPlaceholder()"
+            readonly
+          />
           @if (hasControlError('internalId')) {
             <small>{{ 'asset-management.form.internal-id-error' | translate }}</small>
           }
@@ -78,6 +83,19 @@
           />
           @if (hasControlError('name')) {
             <small>{{ 'asset-management.form.name-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.form.gateway' | translate }}</span>
+          <select formControlName="gatewayId">
+            <option [ngValue]="0">{{ 'asset-management.form.select-gateway' | translate }}</option>
+            @for (gateway of organizationGateways(); track gateway.id) {
+              <option [ngValue]="gateway.id">{{ gateway.uuid }} - {{ gateway.location }}</option>
+            }
+          </select>
+          @if (hasControlError('gatewayId')) {
+            <small>{{ 'asset-management.form.gateway-error' | translate }}</small>
           }
         </label>
 
@@ -111,10 +129,10 @@
         </label>
 
         <div class="form-actions">
-          <button type="button" class="secondary-action" (click)="toggleForm()">
+          <button mat-stroked-button type="button" class="secondary-action" (click)="toggleForm()">
             {{ 'asset-management.form.cancel' | translate }}
           </button>
-          <button type="submit" class="primary-action" [disabled]="creating()">
+          <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
             {{ (creating() ? 'asset-management.form.creating' : formCreateKey()) | translate }}
           </button>
         </div>
@@ -122,62 +140,208 @@
     </section>
   }
 
-  @if (selectedTab() === 'sensor') {
-    <section class="table-card" aria-labelledby="sensor-link-title">
+  @if (formVisible() && canManageAssets() && selectedTab() === 'iot-device') {
+    <section class="form-card" aria-labelledby="iot-device-form-title">
       <div class="section-heading">
         <div>
-          <h2 id="sensor-link-title">{{ 'asset-management.sensors.title' | translate }}</h2>
-          <p>{{ 'asset-management.sensors.subtitle' | translate }}</p>
+          <h2 id="iot-device-form-title">
+            {{ 'asset-management.iot-devices.form-title' | translate }}
+          </h2>
+          <p>{{ 'asset-management.iot-devices.form-subtitle' | translate }}</p>
         </div>
-        <button type="button" class="secondary-action" (click)="loadPageData()">
+      </div>
+
+      <form class="cold-room-form" [formGroup]="iotDeviceForm" (ngSubmit)="submitIoTDevice()">
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.internal-id' | translate }}</span>
+          <input
+            type="text"
+            formControlName="internalId"
+            [placeholder]="'asset-management.iot-devices.form.internal-id-placeholder' | translate"
+            readonly
+          />
+          @if (hasIoTDeviceControlError('internalId')) {
+            <small>{{ 'asset-management.iot-devices.form.internal-id-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.type' | translate }}</span>
+          <select formControlName="deviceType">
+            <option value="">
+              {{ 'asset-management.iot-devices.form.select-type' | translate }}
+            </option>
+            @for (deviceType of iotDeviceTypes; track deviceType) {
+              <option [value]="deviceType">{{ deviceTypeLabelKey(deviceType) | translate }}</option>
+            }
+          </select>
+          @if (hasIoTDeviceControlError('deviceType')) {
+            <small>{{ 'asset-management.iot-devices.form.type-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.model' | translate }}</span>
+          <input
+            type="text"
+            formControlName="model"
+            [placeholder]="'asset-management.iot-devices.form.model-placeholder' | translate"
+          />
+          @if (hasIoTDeviceControlError('model')) {
+            <small>{{ 'asset-management.iot-devices.form.model-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.measurement' | translate }}</span>
+          <input
+            type="text"
+            formControlName="measurementType"
+            [placeholder]="'asset-management.iot-devices.form.measurement-placeholder' | translate"
+          />
+          @if (hasIoTDeviceControlError('measurementType')) {
+            <small>{{ 'asset-management.iot-devices.form.measurement-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.asset' | translate }}</span>
+          <select formControlName="assetId">
+            <option [ngValue]="0">
+              {{ 'asset-management.iot-devices.form.unassigned' | translate }}
+            </option>
+            @for (asset of organizationAssets(); track asset.id) {
+              <option [ngValue]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.next-calibration' | translate }}</span>
+          <input
+            type="text"
+            formControlName="nextCalibrationDate"
+            [placeholder]="
+              'asset-management.iot-devices.form.next-calibration-placeholder' | translate
+            "
+          />
+        </label>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" class="secondary-action" (click)="toggleForm()">
+            {{ 'asset-management.form.cancel' | translate }}
+          </button>
+          <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
+            {{
+              (creating()
+                ? 'asset-management.form.creating'
+                : 'asset-management.iot-devices.form-create'
+              ) | translate
+            }}
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+
+  @if (formVisible() && canManageAssets() && selectedTab() === 'gateway') {
+    <section class="form-card" aria-labelledby="gateway-form-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="gateway-form-title">{{ 'asset-management.gateways.form-title' | translate }}</h2>
+          <p>{{ 'asset-management.gateways.form-subtitle' | translate }}</p>
+        </div>
+      </div>
+
+      <form class="cold-room-form" [formGroup]="gatewayForm" (ngSubmit)="submitGateway()">
+        <label class="form-field">
+          <span>{{ 'asset-management.gateways.form.internal-id' | translate }}</span>
+          <input
+            type="text"
+            formControlName="internalId"
+            [placeholder]="'asset-management.gateways.form.internal-id-placeholder' | translate"
+            readonly
+          />
+          @if (hasGatewayControlError('internalId')) {
+            <small>{{ 'asset-management.gateways.form.internal-id-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.gateways.form.name' | translate }}</span>
+          <input
+            type="text"
+            formControlName="name"
+            [placeholder]="'asset-management.gateways.form.name-placeholder' | translate"
+          />
+          @if (hasGatewayControlError('name')) {
+            <small>{{ 'asset-management.gateways.form.name-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.gateways.form.location' | translate }}</span>
+          <input
+            type="text"
+            formControlName="location"
+            [placeholder]="'asset-management.gateways.form.location-placeholder' | translate"
+          />
+          @if (hasGatewayControlError('location')) {
+            <small>{{ 'asset-management.gateways.form.location-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.gateways.form.network' | translate }}</span>
+          <input
+            type="text"
+            formControlName="network"
+            [placeholder]="'asset-management.gateways.form.network-placeholder' | translate"
+          />
+          @if (hasGatewayControlError('network')) {
+            <small>{{ 'asset-management.gateways.form.network-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.gateways.form.status' | translate }}</span>
+          <select formControlName="status">
+            @for (status of gatewayStatuses; track status) {
+              <option [value]="status">{{ gatewayStatusLabelKey(status) | translate }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" class="secondary-action" (click)="toggleForm()">
+            {{ 'asset-management.form.cancel' | translate }}
+          </button>
+          <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
+            {{
+              (creating()
+                ? 'asset-management.form.creating'
+                : 'asset-management.gateways.form-create'
+              ) | translate
+            }}
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+
+  @if (selectedTab() === 'iot-device') {
+    <section class="table-card" aria-labelledby="iot-device-table-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="iot-device-table-title">{{ 'asset-management.iot-devices.title' | translate }}</h2>
+          <p>{{ 'asset-management.iot-devices.subtitle' | translate }}</p>
+        </div>
+        <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
           {{ 'asset-management.reload' | translate }}
         </button>
       </div>
 
-      @if (canManageAssets()) {
-        <div class="link-panel">
-          <label class="form-field">
-            <span>{{ 'asset-management.sensors.sensor' | translate }}</span>
-            <select
-              [value]="selectedSensorId() ?? ''"
-              [disabled]="linkingSensor()"
-              (change)="updateSelectedSensor($any($event.target).value)"
-            >
-              <option value="">{{ 'asset-management.sensors.select-sensor' | translate }}</option>
-              @for (sensor of availableSensors(); track sensor.id) {
-                <option [value]="sensor.id">{{ sensor.uuid }} - {{ sensor.model }}</option>
-              }
-            </select>
-          </label>
-
-          <label class="form-field">
-            <span>{{ 'asset-management.sensors.asset' | translate }}</span>
-            <select
-              [value]="selectedAssetId() ?? ''"
-              [disabled]="linkingSensor()"
-              (change)="updateSelectedAsset($any($event.target).value)"
-            >
-              <option value="">{{ 'asset-management.sensors.select-asset' | translate }}</option>
-              @for (asset of organizationAssets(); track asset.id) {
-                <option [value]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
-              }
-            </select>
-          </label>
-
-          <div class="form-actions link-actions">
-            <button
-              type="button"
-              class="primary-action"
-              [disabled]="!selectedSensorId() || !selectedAssetId() || linkingSensor()"
-              (click)="linkSensor()"
-            >
-              {{ (linkingSensor() ? 'asset-management.sensors.linking' : 'asset-management.sensors.link') | translate }}
-            </button>
-          </div>
-        </div>
-      }
-
-      <div class="calibration-summary" aria-label="Sensor calibration summary">
+      <div class="calibration-summary" aria-label="IoT device calibration summary">
         @for (summary of calibrationSummary(); track summary.status) {
           <article
             class="calibration-card"
@@ -193,65 +357,75 @@
       </div>
 
       <div class="assets-table-wrapper">
-        <table class="assets-table sensor-table">
-          <colgroup>
-            <col style="width: 130px" />
-            <col style="width: 210px" />
-            <col style="width: 180px" />
-            <col style="width: 250px" />
-            <col style="width: 140px" />
-            <col style="width: 150px" />
-            <col style="width: 150px" />
-            <col style="width: 150px" />
-          </colgroup>
+        <table class="assets-table iot-device-table">
           <thead>
             <tr>
-              <th>{{ 'asset-management.sensors.table.id' | translate }}</th>
-              <th>{{ 'asset-management.sensors.table.model' | translate }}</th>
-              <th>{{ 'asset-management.sensors.table.measurement' | translate }}</th>
-              <th>{{ 'asset-management.sensors.table.asset' | translate }}</th>
-              <th>{{ 'asset-management.sensors.table.status' | translate }}</th>
-              <th>{{ 'asset-management.sensors.table.calibration' | translate }}</th>
-              <th>{{ 'asset-management.sensors.table.last-calibration' | translate }}</th>
-              <th>{{ 'asset-management.sensors.table.next-calibration' | translate }}</th>
+              <th>{{ 'asset-management.iot-devices.table.id' | translate }}</th>
+              <th>{{ 'asset-management.iot-devices.table.type' | translate }}</th>
+              <th>{{ 'asset-management.iot-devices.table.model' | translate }}</th>
+              <th>{{ 'asset-management.iot-devices.table.measurement' | translate }}</th>
+              <th>{{ 'asset-management.iot-devices.table.asset' | translate }}</th>
+              <th>{{ 'asset-management.iot-devices.table.gateway' | translate }}</th>
+              <th>{{ 'asset-management.iot-devices.table.status' | translate }}</th>
+              <th>{{ 'asset-management.iot-devices.table.calibration' | translate }}</th>
+              <th>{{ 'asset-management.iot-devices.table.next-calibration' | translate }}</th>
             </tr>
           </thead>
           <tbody>
-            @for (sensor of organizationSensors(); track sensor.id) {
+            @for (iotDevice of organizationIoTDevices(); track iotDevice.id) {
               <tr>
-                <td [attr.data-label]="'asset-management.sensors.table.id' | translate">{{ sensor.uuid }}</td>
-                <td [attr.data-label]="'asset-management.sensors.table.model' | translate">{{ sensor.model }}</td>
-                <td [attr.data-label]="'asset-management.sensors.table.measurement' | translate">{{ sensor.measurementType }}</td>
-                <td [attr.data-label]="'asset-management.sensors.table.asset' | translate">
-                  {{ assetNameForSensor(sensor) | translate }}
+                <td [attr.data-label]="'asset-management.iot-devices.table.id' | translate">
+                  {{ iotDevice.uuid }}
                 </td>
-                <td [attr.data-label]="'asset-management.sensors.table.status' | translate">
+                <td [attr.data-label]="'asset-management.iot-devices.table.type' | translate">
+                  {{ deviceTypeLabelKey(iotDevice.deviceType) | translate }}
+                </td>
+                <td [attr.data-label]="'asset-management.iot-devices.table.model' | translate">
+                  {{ iotDevice.model }}
+                </td>
+                <td [attr.data-label]="'asset-management.iot-devices.table.measurement' | translate">
+                  {{ iotDevice.measurementType }}
+                </td>
+                <td [attr.data-label]="'asset-management.iot-devices.table.asset' | translate">
+                  {{ assetNameForIoTDevice(iotDevice) | translate }}
+                </td>
+                <td [attr.data-label]="'asset-management.iot-devices.table.gateway' | translate">
+                  {{ gatewayNameForIoTDevice(iotDevice) | translate }}
+                </td>
+                <td [attr.data-label]="'asset-management.iot-devices.table.status' | translate">
                   <span
                     class="status-pill"
-                    [class.active]="sensor.status === sensorStatus.Linked"
-                    [class.maintenance]="sensor.status === sensorStatus.Available"
-                    [class.inactive]="sensor.status === sensorStatus.Offline"
+                    [class.active]="iotDevice.status === iotDeviceStatus.Linked"
+                    [class.maintenance]="iotDevice.status === iotDeviceStatus.Available"
+                    [class.inactive]="iotDevice.status === iotDeviceStatus.Offline"
                   >
-                    {{ 'asset-management.sensors.status.' + sensor.status | translate }}
+                    {{ 'asset-management.iot-devices.status.' + iotDevice.status | translate }}
                   </span>
                 </td>
-                <td [attr.data-label]="'asset-management.sensors.table.calibration' | translate">
+                <td [attr.data-label]="'asset-management.iot-devices.table.calibration' | translate">
                   <span
                     class="status-pill"
-                    [class.active]="sensor.calibrationStatus === calibrationStatus.Compliant"
-                    [class.maintenance]="sensor.calibrationStatus === calibrationStatus.DueSoon"
-                    [class.inactive]="sensor.calibrationStatus === calibrationStatus.Expired"
-                    [class.neutral]="sensor.calibrationStatus === calibrationStatus.Unknown"
+                    [class.active]="iotDevice.calibrationStatus === calibrationStatus.Compliant"
+                    [class.maintenance]="iotDevice.calibrationStatus === calibrationStatus.DueSoon"
+                    [class.inactive]="iotDevice.calibrationStatus === calibrationStatus.Expired"
+                    [class.neutral]="iotDevice.calibrationStatus === calibrationStatus.Unknown"
                   >
-                    {{ calibrationLabelKey(sensor.calibrationStatus) | translate }}
+                    {{ calibrationLabelKey(iotDevice.calibrationStatus) | translate }}
                   </span>
                 </td>
-                <td [attr.data-label]="'asset-management.sensors.table.last-calibration' | translate">{{ sensor.lastCalibrationDate }}</td>
-                <td [attr.data-label]="'asset-management.sensors.table.next-calibration' | translate">{{ sensor.nextCalibrationDate }}</td>
+                <td
+                  [attr.data-label]="
+                    'asset-management.iot-devices.table.next-calibration' | translate
+                  "
+                >
+                  {{ iotDevice.nextCalibrationDate }}
+                </td>
               </tr>
             } @empty {
               <tr>
-                <td colspan="8" class="empty-state">{{ 'asset-management.sensors.empty' | translate }}</td>
+                <td class="empty-state" colspan="9">
+                  {{ 'asset-management.iot-devices.empty' | translate }}
+                </td>
               </tr>
             }
           </tbody>
@@ -261,104 +435,67 @@
   }
 
   @if (selectedTab() === 'gateway') {
-    <section class="table-card" aria-labelledby="gateway-pair-title">
+    <section class="table-card" aria-labelledby="gateway-table-title">
       <div class="section-heading">
         <div>
-          <h2 id="gateway-pair-title">{{ 'asset-management.gateways.title' | translate }}</h2>
+          <h2 id="gateway-table-title">{{ 'asset-management.gateways.title' | translate }}</h2>
           <p>{{ 'asset-management.gateways.subtitle' | translate }}</p>
         </div>
-        <button type="button" class="secondary-action" (click)="loadPageData()">
+        <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
           {{ 'asset-management.reload' | translate }}
         </button>
       </div>
 
-      @if (canManageAssets()) {
-        <div class="link-panel">
-          <label class="form-field">
-            <span>{{ 'asset-management.gateways.gateway' | translate }}</span>
-            <select
-              [value]="selectedGatewayId() ?? ''"
-              [disabled]="pairingGateway()"
-              (change)="updateSelectedGateway($any($event.target).value)"
-            >
-              <option value="">{{ 'asset-management.gateways.select-gateway' | translate }}</option>
-              @for (gateway of availableGateways(); track gateway.id) {
-                <option [value]="gateway.id">{{ gateway.uuid }} - {{ gateway.name }}</option>
-              }
-            </select>
-          </label>
-
-          <label class="form-field">
-            <span>{{ 'asset-management.gateways.sensor' | translate }}</span>
-            <select
-              [value]="selectedGatewaySensorId() ?? ''"
-              [disabled]="pairingGateway()"
-              (change)="updateSelectedGatewaySensor($any($event.target).value)"
-            >
-              <option value="">{{ 'asset-management.gateways.select-sensor' | translate }}</option>
-              @for (sensor of gatewayReadySensors(); track sensor.id) {
-                <option [value]="sensor.id">{{ sensor.uuid }} - {{ sensor.model }}</option>
-              }
-            </select>
-          </label>
-
-          <div class="form-actions link-actions">
-            <button
-              type="button"
-              class="primary-action"
-              [disabled]="!selectedGatewayId() || !selectedGatewaySensorId() || pairingGateway()"
-              (click)="pairGateway()"
-            >
-              {{ (pairingGateway() ? 'asset-management.gateways.pairing' : 'asset-management.gateways.pair') | translate }}
-            </button>
-          </div>
-        </div>
-      }
-
       <div class="assets-table-wrapper">
         <table class="assets-table gateway-table">
-          <colgroup>
-            <col style="width: 130px" />
-            <col style="width: 190px" />
-            <col style="width: 220px" />
-            <col style="width: 170px" />
-            <col style="width: 240px" />
-            <col style="width: 140px" />
-          </colgroup>
           <thead>
             <tr>
               <th>{{ 'asset-management.gateways.table.id' | translate }}</th>
               <th>{{ 'asset-management.gateways.table.name' | translate }}</th>
               <th>{{ 'asset-management.gateways.table.location' | translate }}</th>
               <th>{{ 'asset-management.gateways.table.network' | translate }}</th>
-              <th>{{ 'asset-management.gateways.table.sensor' | translate }}</th>
+              <th>{{ 'asset-management.gateways.table.assets' | translate }}</th>
+              <th>{{ 'asset-management.gateways.table.devices' | translate }}</th>
               <th>{{ 'asset-management.gateways.table.status' | translate }}</th>
             </tr>
           </thead>
           <tbody>
             @for (gateway of organizationGateways(); track gateway.id) {
               <tr>
-                <td [attr.data-label]="'asset-management.gateways.table.id' | translate">{{ gateway.uuid }}</td>
-                <td [attr.data-label]="'asset-management.gateways.table.name' | translate">{{ gateway.name }}</td>
-                <td [attr.data-label]="'asset-management.gateways.table.location' | translate">{{ gateway.location }}</td>
-                <td [attr.data-label]="'asset-management.gateways.table.network' | translate">{{ gateway.network }}</td>
-                <td [attr.data-label]="'asset-management.gateways.table.sensor' | translate">
-                  {{ sensorNameForGateway(gateway) | translate }}
+                <td [attr.data-label]="'asset-management.gateways.table.id' | translate">
+                  {{ gateway.uuid }}
+                </td>
+                <td [attr.data-label]="'asset-management.gateways.table.name' | translate">
+                  {{ gateway.name }}
+                </td>
+                <td [attr.data-label]="'asset-management.gateways.table.location' | translate">
+                  {{ gateway.location }}
+                </td>
+                <td [attr.data-label]="'asset-management.gateways.table.network' | translate">
+                  {{ gateway.network }}
+                </td>
+                <td [attr.data-label]="'asset-management.gateways.table.assets' | translate">
+                  {{ gatewayAssetCount(gateway) }}
+                </td>
+                <td [attr.data-label]="'asset-management.gateways.table.devices' | translate">
+                  {{ gatewayDeviceCount(gateway) }}
                 </td>
                 <td [attr.data-label]="'asset-management.gateways.table.status' | translate">
                   <span
                     class="status-pill"
-                    [class.active]="gateway.status === gatewayStatus.Paired"
-                    [class.maintenance]="gateway.status === gatewayStatus.Available"
+                    [class.active]="gateway.status === gatewayStatus.Active"
+                    [class.maintenance]="gateway.status === gatewayStatus.Maintenance"
                     [class.inactive]="gateway.status === gatewayStatus.Offline"
                   >
-                    {{ 'asset-management.gateways.status.' + gateway.status | translate }}
+                    {{ gatewayStatusLabelKey(gateway.status) | translate }}
                   </span>
                 </td>
               </tr>
             } @empty {
               <tr>
-                <td colspan="6" class="empty-state">{{ 'asset-management.gateways.empty' | translate }}</td>
+                <td class="empty-state" colspan="7">
+                  {{ 'asset-management.gateways.empty' | translate }}
+                </td>
               </tr>
             }
           </tbody>
@@ -367,118 +504,271 @@
     </section>
   }
 
-  @if (isAssetTab()) {
-  <section class="table-card" aria-labelledby="cold-room-table-title">
-    <div class="section-heading">
-      <div>
-        <h2 id="cold-room-table-title">{{ pageTitleKey() | translate }}</h2>
-        <p>{{ pageSubtitleKey() | translate }}</p>
-      </div>
-      <button type="button" class="secondary-action" (click)="loadPageData()">
-        {{ 'asset-management.reload' | translate }}
-      </button>
-    </div>
-
-    @if (loading()) {
-      <div class="loading-state">
-        <mat-spinner diameter="34" />
-        <span>{{ 'asset-management.feedback.loading' | translate }}</span>
-      </div>
-    } @else {
-      <div class="assets-table-wrapper">
-        <table class="assets-table">
-          <colgroup>
-            <col style="width: 110px" />
-            <col style="width: 190px" />
-            <col style="width: 260px" />
-            <col style="width: 200px" />
-            <col style="width: 110px" />
-            <col style="width: 130px" />
-            <col style="width: 150px" />
-            <col style="width: 135px" />
-          </colgroup>
-          <thead>
-            <tr>
-              <th>{{ 'asset-management.table.id' | translate }}</th>
-              <th>{{ 'asset-management.table.name' | translate }}</th>
-              <th>{{ 'asset-management.table.location' | translate }}</th>
-              <th>{{ 'asset-management.table.last-incident' | translate }}</th>
-              <th>{{ 'asset-management.table.temperature' | translate }}</th>
-              <th>{{ 'asset-management.table.entry-date' | translate }}</th>
-              <th>{{ 'asset-management.table.status' | translate }}</th>
-              <th>{{ 'asset-management.table.connectivity' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (asset of filteredAssets(); track asset.id) {
-              <tr>
-                <td [attr.data-label]="'asset-management.table.id' | translate">{{ asset.uuid }}</td>
-                <td [attr.data-label]="'asset-management.table.name' | translate">{{ asset.name }}</td>
-                <td [attr.data-label]="'asset-management.table.location' | translate">{{ asset.location }}</td>
-                <td [attr.data-label]="'asset-management.table.last-incident' | translate">
-                  <span class="incident" [class.danger]="incidentSeverityClass(asset.lastIncident) === 'danger'"
-                        [class.warning]="incidentSeverityClass(asset.lastIncident) === 'warning'"
-                        [class.cold]="incidentSeverityClass(asset.lastIncident) === 'cold'"
-                        [class.stable]="incidentSeverityClass(asset.lastIncident) === 'stable'">
-                    <mat-icon aria-hidden="true">{{ incidentIconName(asset.lastIncident) }}</mat-icon>
-                    {{ asset.lastIncident | translate }}
-                  </span>
-                </td>
-                <td [attr.data-label]="'asset-management.table.temperature' | translate">{{ asset.currentTemperature }}</td>
-                <td [attr.data-label]="'asset-management.table.entry-date' | translate">{{ asset.entryDate }}</td>
-                <td [attr.data-label]="'asset-management.table.status' | translate">
-                  @if (canManageAssets()) {
-                    <select
-                      class="status-select"
-                      [class.active]="asset.status === assetStatus.Active"
-                      [class.maintenance]="asset.status === assetStatus.Maintenance"
-                      [class.inactive]="asset.status === assetStatus.Inactive"
-                      [value]="asset.status"
-                      [disabled]="updatingAssetId() === asset.id"
-                      (change)="updateAssetStatus(asset, $any($event.target).value)"
-                    >
-                      @for (status of assetStatuses; track status) {
-                        <option [value]="status">{{ statusLabelKey(status) | translate }}</option>
-                      }
-                    </select>
-                  } @else {
-                    <span
-                      class="status-pill"
-                      [class.active]="asset.status === assetStatus.Active"
-                      [class.maintenance]="asset.status === assetStatus.Maintenance"
-                      [class.inactive]="asset.status === assetStatus.Inactive"
-                    >
-                      {{ statusLabelKey(asset.status) | translate }}
-                    </span>
-                  }
-                </td>
-                <td [attr.data-label]="'asset-management.table.connectivity' | translate">
-                  <span
-                    class="connectivity"
-                    [class.online]="asset.connectivity === connectivityStatus.Online"
-                    [class.unstable]="asset.connectivity === connectivityStatus.Unstable"
-                    [class.offline]="asset.connectivity === connectivityStatus.Offline"
-                  >
-                    {{ connectivityLabelKey(asset.connectivity) | translate }}
-                  </span>
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="8" class="empty-state">{{ 'asset-management.empty' | translate }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
-
-      <footer class="table-footer">
-        <span>{{ 'asset-management.item-count' | translate: { count: filteredAssets().length } }}</span>
-        <div class="pager" aria-label="Pagination">
-          <button type="button" disabled>1</button>
+  @if (selectedTab() === 'settings') {
+    <section class="table-card settings-card" aria-labelledby="asset-settings-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="asset-settings-title">{{ 'asset-management.settings.title' | translate }}</h2>
+          <p>{{ 'asset-management.settings.subtitle' | translate }}</p>
         </div>
-      </footer>
-    }
-  </section>
+      </div>
+
+      <form class="settings-form" [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+        <section class="settings-section" aria-labelledby="settings-catalogs-title">
+          <h3 id="settings-catalogs-title">
+            {{ 'asset-management.settings.catalogs' | translate }}
+          </h3>
+          <label class="form-field full">
+            <span>{{ 'asset-management.settings.form.asset-types' | translate }}</span>
+            <textarea
+              rows="4"
+              formControlName="assetTypes"
+              [readonly]="!canManageAssets()"
+            ></textarea>
+            @if (hasSettingsControlError('assetTypes')) {
+              <small>{{ 'asset-management.settings.form.asset-types-error' | translate }}</small>
+            }
+          </label>
+
+          <label class="form-field full">
+            <span>{{ 'asset-management.settings.form.iot-device-types' | translate }}</span>
+            <textarea
+              rows="4"
+              formControlName="iotDeviceTypes"
+              [readonly]="!canManageAssets()"
+            ></textarea>
+            @if (hasSettingsControlError('iotDeviceTypes')) {
+              <small>{{
+                'asset-management.settings.form.iot-device-types-error' | translate
+              }}</small>
+            }
+          </label>
+        </section>
+
+        <section class="settings-section" aria-labelledby="settings-thresholds-title">
+          <h3 id="settings-thresholds-title">
+            {{ 'asset-management.settings.thresholds' | translate }}
+          </h3>
+          <label class="form-field">
+            <span>{{ 'asset-management.settings.form.minimum-temperature' | translate }}</span>
+            <input
+              type="number"
+              formControlName="minimumTemperature"
+              [readonly]="!canManageAssets()"
+            />
+            @if (hasSettingsControlError('minimumTemperature')) {
+              <small>{{ 'asset-management.settings.form.number-error' | translate }}</small>
+            }
+          </label>
+
+          <label class="form-field">
+            <span>{{ 'asset-management.settings.form.maximum-temperature' | translate }}</span>
+            <input
+              type="number"
+              formControlName="maximumTemperature"
+              [readonly]="!canManageAssets()"
+            />
+            @if (hasSettingsControlError('maximumTemperature')) {
+              <small>{{ 'asset-management.settings.form.number-error' | translate }}</small>
+            }
+          </label>
+
+          <label class="form-field">
+            <span>{{ 'asset-management.settings.form.maximum-humidity' | translate }}</span>
+            <input
+              type="number"
+              min="1"
+              max="100"
+              formControlName="maximumHumidity"
+              [readonly]="!canManageAssets()"
+            />
+            @if (hasSettingsControlError('maximumHumidity')) {
+              <small>{{ 'asset-management.settings.form.humidity-error' | translate }}</small>
+            }
+          </label>
+        </section>
+
+        <section class="settings-section" aria-labelledby="settings-units-title">
+          <h3 id="settings-units-title">{{ 'asset-management.settings.units' | translate }}</h3>
+          <label class="form-field">
+            <span>{{ 'asset-management.settings.form.calibration-frequency' | translate }}</span>
+            <input
+              type="number"
+              min="1"
+              formControlName="calibrationFrequencyDays"
+              [readonly]="!canManageAssets()"
+            />
+            @if (hasSettingsControlError('calibrationFrequencyDays')) {
+              <small>{{ 'asset-management.settings.form.frequency-error' | translate }}</small>
+            }
+          </label>
+
+          <label class="form-field">
+            <span>{{ 'asset-management.settings.form.temperature-unit' | translate }}</span>
+            <select formControlName="temperatureUnit" [disabled]="!canManageAssets()">
+              @for (unit of temperatureUnits; track unit) {
+                <option [value]="unit">{{ unit }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="form-field">
+            <span>{{ 'asset-management.settings.form.humidity-unit' | translate }}</span>
+            <input type="text" formControlName="humidityUnit" readonly />
+          </label>
+
+          <label class="form-field">
+            <span>{{ 'asset-management.settings.form.weight-unit' | translate }}</span>
+            <select formControlName="weightUnit" [disabled]="!canManageAssets()">
+              @for (unit of weightUnits; track unit) {
+                <option [value]="unit">{{ unit }}</option>
+              }
+            </select>
+          </label>
+        </section>
+
+        @if (canManageAssets()) {
+          <div class="form-actions">
+            <button mat-stroked-button type="button" class="secondary-action" (click)="resetSettingsForm()">
+              {{ 'asset-management.settings.reset' | translate }}
+            </button>
+            <button mat-flat-button type="submit" class="primary-action" [disabled]="savingSettings()">
+              {{
+                (savingSettings()
+                  ? 'asset-management.settings.saving'
+                  : 'asset-management.settings.save'
+                ) | translate
+              }}
+            </button>
+          </div>
+        }
+      </form>
+    </section>
+  }
+
+  @if (isAssetTab()) {
+    <section class="table-card" aria-labelledby="cold-room-table-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="cold-room-table-title">{{ pageTitleKey() | translate }}</h2>
+          <p>{{ pageSubtitleKey() | translate }}</p>
+        </div>
+        <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+          {{ 'asset-management.reload' | translate }}
+        </button>
+      </div>
+
+      @if (loading()) {
+        <div class="loading-state">
+          <mat-spinner diameter="34" />
+          <span>{{ 'asset-management.feedback.loading' | translate }}</span>
+        </div>
+      } @else {
+        <div class="assets-table-wrapper">
+          <table class="assets-table">
+            <thead>
+              <tr>
+                <th>{{ 'asset-management.table.id' | translate }}</th>
+                <th>{{ 'asset-management.table.name' | translate }}</th>
+                <th>{{ 'asset-management.table.gateway' | translate }}</th>
+                <th>{{ 'asset-management.table.location' | translate }}</th>
+                <th>{{ 'asset-management.table.last-incident' | translate }}</th>
+                <th>{{ 'asset-management.table.temperature' | translate }}</th>
+                <th>{{ 'asset-management.table.entry-date' | translate }}</th>
+                <th>{{ 'asset-management.table.status' | translate }}</th>
+                <th>{{ 'asset-management.table.connectivity' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (asset of filteredAssets(); track asset.id) {
+                <tr>
+                  <td [attr.data-label]="'asset-management.table.id' | translate">
+                    {{ asset.uuid }}
+                  </td>
+                  <td [attr.data-label]="'asset-management.table.name' | translate">
+                    {{ asset.name }}
+                  </td>
+                  <td [attr.data-label]="'asset-management.table.gateway' | translate">
+                    {{ gatewayNameForAsset(asset) | translate }}
+                  </td>
+                  <td [attr.data-label]="'asset-management.table.location' | translate">
+                    {{ asset.location }}
+                  </td>
+                  <td [attr.data-label]="'asset-management.table.last-incident' | translate">
+                    <span
+                      class="incident"
+                      [class.danger]="incidentSeverityClass(asset.lastIncident) === 'danger'"
+                      [class.warning]="incidentSeverityClass(asset.lastIncident) === 'warning'"
+                      [class.cold]="incidentSeverityClass(asset.lastIncident) === 'cold'"
+                      [class.stable]="incidentSeverityClass(asset.lastIncident) === 'stable'"
+                    >
+                      <mat-icon aria-hidden="true">{{ incidentIconName(asset.lastIncident) }}</mat-icon>
+                      {{ asset.lastIncident | translate }}
+                    </span>
+                  </td>
+                  <td [attr.data-label]="'asset-management.table.temperature' | translate">
+                    {{ asset.currentTemperature }}
+                  </td>
+                  <td [attr.data-label]="'asset-management.table.entry-date' | translate">
+                    {{ asset.entryDate }}
+                  </td>
+                  <td [attr.data-label]="'asset-management.table.status' | translate">
+                    @if (canManageAssets()) {
+                      <select
+                        class="status-select"
+                        [class.active]="asset.status === assetStatus.Active"
+                        [class.maintenance]="asset.status === assetStatus.Maintenance"
+                        [class.inactive]="asset.status === assetStatus.Inactive"
+                        [value]="asset.status"
+                        [disabled]="updatingAssetId() === asset.id"
+                        (change)="updateAssetStatus(asset, $any($event.target).value)"
+                      >
+                        @for (status of assetStatuses; track status) {
+                          <option [value]="status">{{ statusLabelKey(status) | translate }}</option>
+                        }
+                      </select>
+                    } @else {
+                      <span
+                        class="status-pill"
+                        [class.active]="asset.status === assetStatus.Active"
+                        [class.maintenance]="asset.status === assetStatus.Maintenance"
+                        [class.inactive]="asset.status === assetStatus.Inactive"
+                      >
+                        {{ statusLabelKey(asset.status) | translate }}
+                      </span>
+                    }
+                  </td>
+                  <td [attr.data-label]="'asset-management.table.connectivity' | translate">
+                    <span
+                      class="connectivity"
+                      [class.online]="asset.connectivity === connectivityStatus.Online"
+                      [class.unstable]="asset.connectivity === connectivityStatus.Unstable"
+                      [class.offline]="asset.connectivity === connectivityStatus.Offline"
+                    >
+                      {{ connectivityLabelKey(asset.connectivity) | translate }}
+                    </span>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td class="empty-state" colspan="9">
+                    {{ 'asset-management.empty' | translate }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <footer class="table-footer">
+          <span>{{
+            'asset-management.item-count' | translate: { count: filteredAssets().length }
+          }}</span>
+          <div class="pager" aria-label="Pagination">
+            <button mat-stroked-button type="button" disabled>1</button>
+          </div>
+        </footer>
+      }
+    </section>
   }
 </app-dashboard-shell>

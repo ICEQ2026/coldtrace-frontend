@@ -1,26 +1,41 @@
 import { computed, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { Asset } from '../domain/model/asset.entity';
+import { AssetSettings } from '../domain/model/asset-settings.entity';
+import { AssetStatus } from '../domain/model/asset-status.enum';
+import { ConnectivityStatus } from '../domain/model/connectivity-status.enum';
 import { Gateway } from '../domain/model/gateway.entity';
-import { Sensor } from '../domain/model/sensor.entity';
+import { IoTDevice } from '../domain/model/iot-device.entity';
 import { AssetManagementApi } from '../infrastructure/asset-management-api';
 
 @Injectable({ providedIn: 'root' })
 export class AssetManagementStore {
   private readonly assetsSignal = signal<Asset[]>([]);
-  private readonly sensorsSignal = signal<Sensor[]>([]);
+  private readonly iotDevicesSignal = signal<IoTDevice[]>([]);
   private readonly gatewaysSignal = signal<Gateway[]>([]);
+  private readonly assetSettingsSignal = signal<AssetSettings[]>([]);
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
 
   readonly assets = this.assetsSignal.asReadonly();
-  readonly sensors = this.sensorsSignal.asReadonly();
+  readonly iotDevices = this.iotDevicesSignal.asReadonly();
   readonly gateways = this.gatewaysSignal.asReadonly();
+  readonly assetSettings = this.assetSettingsSignal.asReadonly();
   readonly loading = this.loadingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
   readonly assetCount = computed(() => this.assets().length);
 
   constructor(private assetManagementApi: AssetManagementApi) {}
+
+  assetIssueCountFor(organizationId: number | null): number {
+    if (!organizationId) {
+      return 0;
+    }
+
+    return this.assets().filter((asset) => {
+      return asset.organizationId === organizationId && this.hasAssetIssue(asset);
+    }).length;
+  }
 
   loadAssets(): void {
     this.loadingSignal.set(true);
@@ -58,13 +73,13 @@ export class AssetManagementStore {
     );
   }
 
-  loadSensors(): void {
+  loadIoTDevices(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
 
-    this.assetManagementApi.getSensors().subscribe({
-      next: (sensors) => {
-        this.sensorsSignal.set(sensors);
+    this.assetManagementApi.getIoTDevices().subscribe({
+      next: (iotDevices) => {
+        this.iotDevicesSignal.set(iotDevices);
         this.loadingSignal.set(false);
       },
       error: (error) => {
@@ -74,12 +89,20 @@ export class AssetManagementStore {
     });
   }
 
-  updateSensor(sensor: Sensor): Observable<Sensor> {
-    return this.assetManagementApi.updateSensor(sensor).pipe(
-      tap((updatedSensor) => {
-        this.sensorsSignal.update((sensors) =>
-          sensors.map((currentSensor) =>
-            currentSensor.id === updatedSensor.id ? updatedSensor : currentSensor,
+  createIoTDevice(iotDevice: IoTDevice): Observable<IoTDevice> {
+    return this.assetManagementApi.createIoTDevice(iotDevice).pipe(
+      tap((createdIoTDevice) => {
+        this.iotDevicesSignal.update((iotDevices) => [...iotDevices, createdIoTDevice]);
+      }),
+    );
+  }
+
+  updateIoTDevice(iotDevice: IoTDevice): Observable<IoTDevice> {
+    return this.assetManagementApi.updateIoTDevice(iotDevice).pipe(
+      tap((updatedIoTDevice) => {
+        this.iotDevicesSignal.update((iotDevices) =>
+          iotDevices.map((currentIoTDevice) =>
+            currentIoTDevice.id === updatedIoTDevice.id ? updatedIoTDevice : currentIoTDevice,
           ),
         );
       }),
@@ -102,6 +125,14 @@ export class AssetManagementStore {
     });
   }
 
+  createGateway(gateway: Gateway): Observable<Gateway> {
+    return this.assetManagementApi.createGateway(gateway).pipe(
+      tap((createdGateway) => {
+        this.gatewaysSignal.update((gateways) => [...gateways, createdGateway]);
+      }),
+    );
+  }
+
   updateGateway(gateway: Gateway): Observable<Gateway> {
     return this.assetManagementApi.updateGateway(gateway).pipe(
       tap((updatedGateway) => {
@@ -111,6 +142,50 @@ export class AssetManagementStore {
           ),
         );
       }),
+    );
+  }
+
+  loadAssetSettings(): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+
+    this.assetManagementApi.getAssetSettings().subscribe({
+      next: (assetSettings) => {
+        this.assetSettingsSignal.set(assetSettings);
+        this.loadingSignal.set(false);
+      },
+      error: (error) => {
+        this.errorSignal.set(error.message);
+        this.loadingSignal.set(false);
+      },
+    });
+  }
+
+  createAssetSettings(assetSettings: AssetSettings): Observable<AssetSettings> {
+    return this.assetManagementApi.createAssetSettings(assetSettings).pipe(
+      tap((createdAssetSettings) => {
+        this.assetSettingsSignal.update((settings) => [...settings, createdAssetSettings]);
+      }),
+    );
+  }
+
+  updateAssetSettings(assetSettings: AssetSettings): Observable<AssetSettings> {
+    return this.assetManagementApi.updateAssetSettings(assetSettings).pipe(
+      tap((updatedAssetSettings) => {
+        this.assetSettingsSignal.update((settings) =>
+          settings.map((currentSettings) =>
+            currentSettings.id === updatedAssetSettings.id ? updatedAssetSettings : currentSettings,
+          ),
+        );
+      }),
+    );
+  }
+
+  private hasAssetIssue(asset: Asset): boolean {
+    return (
+      asset.lastIncident !== 'asset-management.incidents.none' ||
+      asset.connectivity !== ConnectivityStatus.Online ||
+      asset.status !== AssetStatus.Active
     );
   }
 }

@@ -1,10 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin, switchMap, throwError } from 'rxjs';
 import { IdentityAccessStore } from '../../../application/identity-access.store';
 import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
+import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { Organization } from '../../../domain/model/organization.entity';
 import { Role } from '../../../domain/model/role.entity';
 import { User } from '../../../domain/model/user.entity';
@@ -14,12 +16,13 @@ type UserFormFeedback = 'idle' | 'duplicate-email' | 'invalid-role' | 'success' 
 
 @Component({
   selector: 'app-user-form',
-  imports: [DashboardShell, ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [DashboardShell, MatButton, ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './user-form.html',
   styleUrl: './user-form.css',
 })
 export class UserForm implements OnInit {
   protected readonly identityAccessStore = inject(IdentityAccessStore);
+  protected readonly assetManagementStore = inject(AssetManagementStore);
   private readonly fb = inject(FormBuilder);
   private readonly identityAccessApi = inject(IdentityAccessApi);
   private readonly router = inject(Router);
@@ -52,6 +55,9 @@ export class UserForm implements OnInit {
   protected readonly profileRoleLabelKey = computed(
     () => this.identityAccessStore.currentRoleLabelKeyFrom(this.users(), this.roles())
   );
+  protected readonly assetIssueCount = computed(() => {
+    return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
+  });
 
   ngOnInit(): void {
     this.loadFormData();
@@ -60,6 +66,7 @@ export class UserForm implements OnInit {
   protected loadFormData(): void {
     this.loading.set(true);
     this.feedback.set('idle');
+    this.assetManagementStore.loadAssets();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
