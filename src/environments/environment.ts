@@ -5,8 +5,9 @@ export const environment = {
   platformProviderOrganizationsEndpointPath: '/organizations',
   platformProviderRolesEndpointPath: '/roles',
   platformProviderAssetsEndpointPath: '/assets',
-  platformProviderSensorsEndpointPath: '/sensors',
+  platformProviderIoTDevicesEndpointPath: '/iot-devices',
   platformProviderGatewaysEndpointPath: '/gateways',
+  platformProviderAssetSettingsEndpointPath: '/asset-settings',
   platformProviderSignUpEndpointPath: '/authentication/sign-up',
   platformProviderSignInEndpointPath: '/authentication/sign-in',
   platformProviderPasswordResetEndpointPath: '/password-reset-requests'

@@ -1,21 +1,21 @@
 import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
-import { Sensor } from '../domain/model/sensor.entity';
-import { SensorResource, SensorsResponse } from './sensors-response';
+import { IoTDevice } from '../domain/model/iot-device.entity';
+import { IoTDeviceResource, IoTDevicesResponse } from './iot-devices-response';
 
-export class SensorAssembler implements BaseAssembler<Sensor, SensorResource, SensorsResponse> {
-  toEntitiesFromResponse(response: SensorsResponse): Sensor[] {
-    return response.sensors.map((resource) => this.toEntityFromResource(resource));
+export class IoTDeviceAssembler implements BaseAssembler<IoTDevice, IoTDeviceResource, IoTDevicesResponse> {
+  toEntitiesFromResponse(response: IoTDevicesResponse): IoTDevice[] {
+    return response.iotDevices.map((resource) => this.toEntityFromResource(resource));
   }
 
-  toEntityFromResource(resource: SensorResource): Sensor {
-    return new Sensor(
+  toEntityFromResource(resource: IoTDeviceResource): IoTDevice {
+    return new IoTDevice(
       resource.id,
       resource.organizationId,
       resource.uuid,
+      resource.deviceType,
       resource.model,
       resource.measurementType,
       resource.assetId,
-      resource.gatewayId,
       resource.status,
       resource.calibrationStatus,
       resource.lastCalibrationDate,
@@ -23,15 +23,15 @@ export class SensorAssembler implements BaseAssembler<Sensor, SensorResource, Se
     );
   }
 
-  toResourceFromEntity(entity: Sensor): SensorResource {
+  toResourceFromEntity(entity: IoTDevice): IoTDeviceResource {
     return {
       id: entity.id,
       organizationId: entity.organizationId,
       uuid: entity.uuid,
+      deviceType: entity.deviceType,
       model: entity.model,
       measurementType: entity.measurementType,
       assetId: entity.assetId,
-      gatewayId: entity.gatewayId,
       status: entity.status,
       calibrationStatus: entity.calibrationStatus,
       lastCalibrationDate: entity.lastCalibrationDate,

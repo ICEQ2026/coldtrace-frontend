@@ -4,6 +4,7 @@
   [profileUserName]="profileUserName()"
   [profileRoleLabelKey]="profileRoleLabelKey()"
   [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="assetIssueCount()"
   (signedOut)="logout()"
 >
   <section class="table-card permission-editor" aria-labelledby="role-permissions-title">
@@ -12,7 +13,7 @@
         <h2 id="role-permissions-title">{{ 'roles-permissions.permissions-title' | translate }}</h2>
         <p>{{ 'roles-permissions.permissions-subtitle' | translate }}</p>
       </div>
-      <button type="button" class="reload-action" (click)="loadRoles()">
+      <button mat-stroked-button type="button" class="reload-action" (click)="loadRoles()">
         {{ 'roles-permissions.reload' | translate }}
       </button>
     </div>

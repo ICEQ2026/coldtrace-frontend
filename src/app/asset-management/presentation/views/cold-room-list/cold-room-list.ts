@@ -1,5 +1,6 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
@@ -7,14 +8,15 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { AssetManagementStore } from '../../../application/asset-management.store';
 import { Asset } from '../../../domain/model/asset.entity';
+import { AssetSettings } from '../../../domain/model/asset-settings.entity';
 import { AssetStatus } from '../../../domain/model/asset-status.enum';
 import { AssetType } from '../../../domain/model/asset-type.enum';
 import { CalibrationStatus } from '../../../domain/model/calibration-status.enum';
 import { ConnectivityStatus } from '../../../domain/model/connectivity-status.enum';
 import { Gateway } from '../../../domain/model/gateway.entity';
 import { GatewayStatus } from '../../../domain/model/gateway-status.enum';
-import { Sensor } from '../../../domain/model/sensor.entity';
-import { SensorStatus } from '../../../domain/model/sensor-status.enum';
+import { IoTDevice } from '../../../domain/model/iot-device.entity';
+import { IoTDeviceStatus } from '../../../domain/model/iot-device-status.enum';
 import { Organization } from '../../../../identity-access/domain/model/organization.entity';
 import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
@@ -22,18 +24,33 @@ import { IdentityAccessStore } from '../../../../identity-access/application/ide
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
 import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
 
-type AssetFeedback = 'idle' | 'success' | 'updated' | 'duplicate-id' | 'server-error';
-type AssetManagementTab = AssetType | 'sensor' | 'gateway' | 'settings';
+type AssetFeedback =
+  | 'idle'
+  | 'success'
+  | 'updated'
+  | 'duplicate-id'
+  | 'server-error'
+  | 'iot-device-created'
+  | 'gateway-created'
+  | 'settings-saved';
+type AssetManagementTab = AssetType | 'iot-device' | 'gateway' | 'settings';
 
 @Component({
   selector: 'app-cold-room-list',
-  imports: [DashboardShell, MatIcon, MatProgressSpinner, ReactiveFormsModule, TranslatePipe],
+  imports: [
+    DashboardShell,
+    MatButton,
+    MatIcon,
+    MatProgressSpinner,
+    ReactiveFormsModule,
+    TranslatePipe,
+  ],
   templateUrl: './cold-room-list.html',
   styleUrl: './cold-room-list.css',
 })
-export class ColdRoomList implements OnInit {
+export class ColdRoomList implements OnInit, OnDestroy {
   protected readonly assetStatus = AssetStatus;
-  protected readonly sensorStatus = SensorStatus;
+  protected readonly iotDeviceStatus = IoTDeviceStatus;
   protected readonly calibrationStatus = CalibrationStatus;
   protected readonly gatewayStatus = GatewayStatus;
   protected readonly connectivityStatus = ConnectivityStatus;
@@ -42,11 +59,13 @@ export class ColdRoomList implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly identityAccessApi = inject(IdentityAccessApi);
   private readonly router = inject(Router);
+  private readonly telemetryUpdateIntervalMs = 12000;
+  private telemetryUpdateIntervalId: ReturnType<typeof setInterval> | null = null;
 
   protected readonly assetTypeTabs: AssetManagementTab[] = [
     AssetType.ColdRoom,
     AssetType.Transport,
-    'sensor',
+    'iot-device',
     'gateway',
     'settings',
   ];
@@ -55,20 +74,29 @@ export class ColdRoomList implements OnInit {
     AssetStatus.Maintenance,
     AssetStatus.Inactive,
   ];
+  protected readonly iotDeviceTypes: string[] = [
+    'temperature-sensor',
+    'humidity-sensor',
+    'motion-sensor',
+    'camera',
+    'multi-sensor',
+  ];
+  protected readonly gatewayStatuses: GatewayStatus[] = [
+    GatewayStatus.Active,
+    GatewayStatus.Maintenance,
+    GatewayStatus.Offline,
+  ];
+  protected readonly temperatureUnits: string[] = ['°C', '°F'];
+  protected readonly weightUnits: string[] = ['kg', 'lb'];
   protected readonly identityLoading = signal(false);
   protected readonly creating = signal(false);
+  protected readonly savingSettings = signal(false);
   protected readonly updatingAssetId = signal<number | null>(null);
   protected readonly submitted = signal(false);
   protected readonly formVisible = signal(false);
   protected readonly feedback = signal<AssetFeedback>('idle');
   protected readonly searchTerm = signal('');
   protected readonly selectedTab = signal<AssetManagementTab>(AssetType.ColdRoom);
-  protected readonly selectedSensorId = signal<number | null>(null);
-  protected readonly selectedAssetId = signal<number | null>(null);
-  protected readonly selectedGatewayId = signal<number | null>(null);
-  protected readonly selectedGatewaySensorId = signal<number | null>(null);
-  protected readonly linkingSensor = signal(false);
-  protected readonly pairingGateway = signal(false);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -76,26 +104,59 @@ export class ColdRoomList implements OnInit {
   protected readonly coldRoomForm = this.fb.nonNullable.group({
     internalId: ['', [Validators.required, Validators.minLength(3)]],
     name: ['', [Validators.required, Validators.minLength(3)]],
+    gatewayId: [0, [Validators.required, Validators.min(1)]],
     capacity: [0, [Validators.required, Validators.min(1)]],
     location: ['', [Validators.required, Validators.minLength(3)]],
     description: [''],
+  });
+
+  protected readonly iotDeviceForm = this.fb.nonNullable.group({
+    internalId: ['', [Validators.required, Validators.minLength(3)]],
+    deviceType: ['', [Validators.required]],
+    model: ['', [Validators.required, Validators.minLength(3)]],
+    measurementType: ['', [Validators.required, Validators.minLength(3)]],
+    assetId: [0],
+    nextCalibrationDate: [''],
+  });
+
+  protected readonly gatewayForm = this.fb.nonNullable.group({
+    internalId: ['', [Validators.required, Validators.minLength(3)]],
+    name: ['', [Validators.required, Validators.minLength(3)]],
+    location: ['', [Validators.required, Validators.minLength(3)]],
+    network: ['', [Validators.required, Validators.minLength(2)]],
+    status: [GatewayStatus.Active, [Validators.required]],
+  });
+
+  protected readonly settingsForm = this.fb.nonNullable.group({
+    assetTypes: ['', [Validators.required, Validators.minLength(3)]],
+    iotDeviceTypes: ['', [Validators.required, Validators.minLength(3)]],
+    minimumTemperature: [-5, [Validators.required]],
+    maximumTemperature: [8, [Validators.required]],
+    maximumHumidity: [85, [Validators.required, Validators.min(1), Validators.max(100)]],
+    calibrationFrequencyDays: [180, [Validators.required, Validators.min(1)]],
+    temperatureUnit: ['°C', [Validators.required]],
+    humidityUnit: ['%', [Validators.required]],
+    weightUnit: ['kg', [Validators.required]],
   });
 
   protected readonly loading = computed(
     () => this.identityLoading() || this.assetManagementStore.loading(),
   );
   protected readonly assets = this.assetManagementStore.assets;
-  protected readonly sensors = this.assetManagementStore.sensors;
+  protected readonly iotDevices = this.assetManagementStore.iotDevices;
   protected readonly gateways = this.assetManagementStore.gateways;
+  protected readonly assetSettings = this.assetManagementStore.assetSettings;
   protected readonly activeOrganizationName = computed(() => {
     return this.identityAccessStore.currentOrganizationNameFrom(this.users(), this.organizations());
   });
-  protected readonly profileUserName = computed(() => this.identityAccessStore.currentUserNameFrom(this.users()));
-  protected readonly profileRoleLabelKey = computed(
-    () => this.identityAccessStore.currentRoleLabelKeyFrom(this.users(), this.roles()),
+  protected readonly profileUserName = computed(() =>
+    this.identityAccessStore.currentUserNameFrom(this.users()),
   );
-  protected readonly canManageAccess = computed(
-    () => this.identityAccessStore.canManageAccess(this.users(), this.roles()),
+  protected readonly profileRoleLabelKey = computed(() =>
+    this.identityAccessStore.currentRoleLabelKeyFrom(this.users(), this.roles()),
+  );
+  protected readonly canManageAccess = computed(() =>
+    this.identityAccessStore.canManageAccess(this.users(), this.roles()),
   );
   protected readonly canManageAssets = computed(() => {
     const role = this.identityAccessStore.currentRoleFrom(this.users(), this.roles());
@@ -108,6 +169,20 @@ export class ColdRoomList implements OnInit {
   });
   protected readonly isAssetTab = computed(() => {
     return this.selectedTab() === AssetType.ColdRoom || this.selectedTab() === AssetType.Transport;
+  });
+  protected readonly canCreateSelectedResource = computed(() => {
+    return (
+      this.isAssetTab() || this.selectedTab() === 'iot-device' || this.selectedTab() === 'gateway'
+    );
+  });
+  protected readonly positiveFeedback = computed(() => {
+    return [
+      'success',
+      'updated',
+      'iot-device-created',
+      'gateway-created',
+      'settings-saved',
+    ].includes(this.feedback());
   });
 
   protected readonly selectedAssets = computed(() => {
@@ -132,14 +207,18 @@ export class ColdRoomList implements OnInit {
     return this.assets().filter((asset) => asset.organizationId === organizationId);
   });
 
-  protected readonly organizationSensors = computed(() => {
+  protected readonly assetIssueCount = computed(() => {
+    return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
+  });
+
+  protected readonly organizationIoTDevices = computed(() => {
     const organizationId = this.activeOrganizationId();
 
     if (!organizationId) {
       return [];
     }
 
-    return this.sensors().filter((sensor) => sensor.organizationId === organizationId);
+    return this.iotDevices().filter((iotDevice) => iotDevice.organizationId === organizationId);
   });
 
   protected readonly organizationGateways = computed(() => {
@@ -152,20 +231,16 @@ export class ColdRoomList implements OnInit {
     return this.gateways().filter((gateway) => gateway.organizationId === organizationId);
   });
 
-  protected readonly availableSensors = computed(() => {
-    return this.organizationSensors().filter((sensor) => !sensor.assetId);
-  });
+  protected readonly activeAssetSettings = computed(() => {
+    const organizationId = this.activeOrganizationId();
 
-  protected readonly gatewayReadySensors = computed(() => {
-    return this.organizationSensors().filter((sensor) => {
-      return sensor.status !== SensorStatus.Offline && !sensor.gatewayId;
-    });
-  });
+    if (!organizationId) {
+      return null;
+    }
 
-  protected readonly availableGateways = computed(() => {
-    return this.organizationGateways().filter((gateway) => {
-      return gateway.status === GatewayStatus.Available;
-    });
+    return (
+      this.assetSettings().find((settings) => settings.organizationId === organizationId) ?? null
+    );
   });
 
   protected readonly calibrationSummary = computed(() => {
@@ -204,6 +279,7 @@ export class ColdRoomList implements OnInit {
         asset.status,
         asset.connectivity,
         asset.lastIncident,
+        this.gatewayNameForAsset(asset),
       ]
         .join(' ')
         .toLowerCase()
@@ -213,14 +289,22 @@ export class ColdRoomList implements OnInit {
 
   ngOnInit(): void {
     this.loadPageData();
+    this.startTelemetryUpdates();
+  }
+
+  ngOnDestroy(): void {
+    if (this.telemetryUpdateIntervalId) {
+      clearInterval(this.telemetryUpdateIntervalId);
+    }
   }
 
   protected loadPageData(): void {
     this.identityLoading.set(true);
     this.feedback.set('idle');
     this.assetManagementStore.loadAssets();
-    this.assetManagementStore.loadSensors();
+    this.assetManagementStore.loadIoTDevices();
     this.assetManagementStore.loadGateways();
+    this.assetManagementStore.loadAssetSettings();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -255,16 +339,19 @@ export class ColdRoomList implements OnInit {
     this.formVisible.set(false);
     this.feedback.set('idle');
     this.submitted.set(false);
-    this.selectedSensorId.set(null);
-    this.selectedAssetId.set(null);
-    this.selectedGatewayId.set(null);
-    this.selectedGatewaySensorId.set(null);
-    this.resetForm();
+    this.resetForms();
+
+    if (tab === 'settings') {
+      this.resetSettingsForm();
+    }
   }
 
   protected toggleForm(): void {
     this.feedback.set('idle');
-    this.formVisible.update((visible) => !visible);
+    this.submitted.set(false);
+    const willOpen = !this.formVisible();
+    this.formVisible.set(willOpen);
+    this.resetForms();
   }
 
   protected submit(): void {
@@ -279,6 +366,16 @@ export class ColdRoomList implements OnInit {
     const organizationId = this.activeOrganizationId();
 
     if (!organizationId) {
+      this.feedback.set('server-error');
+      return;
+    }
+
+    const gatewayId = Number(this.coldRoomForm.controls.gatewayId.value);
+    const gateway = this.organizationGateways().find(
+      (currentGateway) => currentGateway.id === gatewayId,
+    );
+
+    if (!gateway) {
       this.feedback.set('server-error');
       return;
     }
@@ -299,6 +396,7 @@ export class ColdRoomList implements OnInit {
       organizationId,
       internalId,
       this.selectedAssetType(),
+      gateway.id,
       this.coldRoomForm.controls.name.value.trim(),
       this.coldRoomForm.controls.location.value.trim(),
       Number(this.coldRoomForm.controls.capacity.value),
@@ -325,6 +423,172 @@ export class ColdRoomList implements OnInit {
       });
   }
 
+  protected submitIoTDevice(): void {
+    this.submitted.set(true);
+    this.feedback.set('idle');
+    this.iotDeviceForm.markAllAsTouched();
+
+    if (this.iotDeviceForm.invalid || !this.canManageAssets()) {
+      return;
+    }
+
+    const organizationId = this.activeOrganizationId();
+
+    if (!organizationId) {
+      this.feedback.set('server-error');
+      return;
+    }
+
+    const internalId = this.iotDeviceForm.controls.internalId.value.trim().toUpperCase();
+    const duplicatedInternalId = this.organizationIoTDevices().some((iotDevice) => {
+      return iotDevice.uuid.toLowerCase() === internalId.toLowerCase();
+    });
+
+    if (duplicatedInternalId) {
+      this.feedback.set('duplicate-id');
+      return;
+    }
+
+    const assetId = Number(this.iotDeviceForm.controls.assetId.value) || null;
+    const nextCalibrationDate = this.iotDeviceForm.controls.nextCalibrationDate.value.trim();
+    const iotDevice = new IoTDevice(
+      Math.max(...this.iotDevices().map((currentIoTDevice) => currentIoTDevice.id), 0) + 1,
+      organizationId,
+      internalId,
+      this.iotDeviceForm.controls.deviceType.value,
+      this.iotDeviceForm.controls.model.value.trim(),
+      this.iotDeviceForm.controls.measurementType.value.trim(),
+      assetId,
+      assetId ? IoTDeviceStatus.Linked : IoTDeviceStatus.Available,
+      CalibrationStatus.Unknown,
+      '—',
+      nextCalibrationDate || '—',
+    );
+
+    this.creating.set(true);
+    this.assetManagementStore
+      .createIoTDevice(iotDevice)
+      .pipe(finalize(() => this.creating.set(false)))
+      .subscribe({
+        next: () => {
+          this.feedback.set('iot-device-created');
+          this.submitted.set(false);
+          this.formVisible.set(false);
+          this.resetIoTDeviceForm();
+        },
+        error: () => this.feedback.set('server-error'),
+      });
+  }
+
+  protected submitGateway(): void {
+    this.submitted.set(true);
+    this.feedback.set('idle');
+    this.gatewayForm.markAllAsTouched();
+
+    if (this.gatewayForm.invalid || !this.canManageAssets()) {
+      return;
+    }
+
+    const organizationId = this.activeOrganizationId();
+
+    if (!organizationId) {
+      this.feedback.set('server-error');
+      return;
+    }
+
+    const internalId = this.gatewayForm.controls.internalId.value.trim().toUpperCase();
+    const duplicatedInternalId = this.organizationGateways().some((gateway) => {
+      return gateway.uuid.toLowerCase() === internalId.toLowerCase();
+    });
+
+    if (duplicatedInternalId) {
+      this.feedback.set('duplicate-id');
+      return;
+    }
+
+    const gateway = new Gateway(
+      Math.max(...this.gateways().map((currentGateway) => currentGateway.id), 0) + 1,
+      organizationId,
+      internalId,
+      this.gatewayForm.controls.name.value.trim(),
+      this.gatewayForm.controls.location.value.trim(),
+      this.gatewayForm.controls.network.value.trim(),
+      this.gatewayForm.controls.status.value,
+    );
+
+    this.creating.set(true);
+    this.assetManagementStore
+      .createGateway(gateway)
+      .pipe(finalize(() => this.creating.set(false)))
+      .subscribe({
+        next: () => {
+          this.feedback.set('gateway-created');
+          this.submitted.set(false);
+          this.formVisible.set(false);
+          this.resetGatewayForm();
+        },
+        error: () => this.feedback.set('server-error'),
+      });
+  }
+
+  protected saveSettings(): void {
+    this.submitted.set(true);
+    this.feedback.set('idle');
+    this.settingsForm.markAllAsTouched();
+
+    if (this.settingsForm.invalid || !this.canManageAssets()) {
+      return;
+    }
+
+    const organizationId = this.activeOrganizationId();
+
+    if (!organizationId) {
+      this.feedback.set('server-error');
+      return;
+    }
+
+    const currentSettings = this.activeAssetSettings() ?? this.defaultAssetSettings(organizationId);
+    const assetTypes = this.toList(this.settingsForm.controls.assetTypes.value);
+    const iotDeviceTypes = this.toList(this.settingsForm.controls.iotDeviceTypes.value);
+
+    if (!assetTypes.length || !iotDeviceTypes.length) {
+      this.settingsForm.controls.assetTypes.setErrors(
+        assetTypes.length ? null : { required: true },
+      );
+      this.settingsForm.controls.iotDeviceTypes.setErrors(
+        iotDeviceTypes.length ? null : { required: true },
+      );
+      return;
+    }
+
+    const nextSettings = new AssetSettings(
+      currentSettings.id,
+      organizationId,
+      currentSettings.uuid,
+      assetTypes,
+      iotDeviceTypes,
+      Number(this.settingsForm.controls.minimumTemperature.value),
+      Number(this.settingsForm.controls.maximumTemperature.value),
+      Number(this.settingsForm.controls.maximumHumidity.value),
+      Number(this.settingsForm.controls.calibrationFrequencyDays.value),
+      this.settingsForm.controls.temperatureUnit.value,
+      this.settingsForm.controls.humidityUnit.value,
+      this.settingsForm.controls.weightUnit.value,
+    );
+    const request = this.activeAssetSettings()
+      ? this.assetManagementStore.updateAssetSettings(nextSettings)
+      : this.assetManagementStore.createAssetSettings(nextSettings);
+
+    this.savingSettings.set(true);
+    request.pipe(finalize(() => this.savingSettings.set(false))).subscribe({
+      next: () => {
+        this.feedback.set('settings-saved');
+        this.submitted.set(false);
+      },
+      error: () => this.feedback.set('server-error'),
+    });
+  }
+
   protected updateAssetStatus(asset: Asset, value: string): void {
     this.feedback.set('idle');
 
@@ -339,6 +603,7 @@ export class ColdRoomList implements OnInit {
       asset.organizationId,
       asset.uuid,
       asset.type,
+      asset.gatewayId,
       asset.name,
       asset.location,
       asset.capacity,
@@ -363,136 +628,34 @@ export class ColdRoomList implements OnInit {
       });
   }
 
-  protected linkSensor(): void {
-    this.feedback.set('idle');
-
-    const sensor = this.organizationSensors().find((currentSensor) => {
-      return currentSensor.id === this.selectedSensorId();
-    });
-    const asset = this.organizationAssets().find((currentAsset) => {
-      return currentAsset.id === this.selectedAssetId();
-    });
-
-    if (!sensor || !asset || sensor.assetId || !this.canManageAssets()) {
-      this.feedback.set('duplicate-id');
-      return;
-    }
-
-    const updatedSensor = new Sensor(
-      sensor.id,
-      sensor.organizationId,
-      sensor.uuid,
-      sensor.model,
-      sensor.measurementType,
-      asset.id,
-      sensor.gatewayId,
-      SensorStatus.Linked,
-      sensor.calibrationStatus,
-      sensor.lastCalibrationDate,
-      sensor.nextCalibrationDate,
-    );
-
-    this.linkingSensor.set(true);
-    this.assetManagementStore
-      .updateSensor(updatedSensor)
-      .pipe(finalize(() => this.linkingSensor.set(false)))
-      .subscribe({
-        next: () => {
-          this.feedback.set('success');
-          this.selectedSensorId.set(null);
-          this.selectedAssetId.set(null);
-          this.assetManagementStore.loadSensors();
-        },
-        error: () => this.feedback.set('server-error'),
-      });
+  protected assetNameForIoTDevice(iotDevice: IoTDevice): string {
+    const asset = this.assets().find((currentAsset) => currentAsset.id === iotDevice.assetId);
+    return asset ? `${asset.uuid} - ${asset.name}` : 'asset-management.iot-devices.unassigned';
   }
 
-  protected pairGateway(): void {
-    this.feedback.set('idle');
-
-    const gateway = this.organizationGateways().find((currentGateway) => {
-      return currentGateway.id === this.selectedGatewayId();
-    });
-    const sensor = this.organizationSensors().find((currentSensor) => {
-      return currentSensor.id === this.selectedGatewaySensorId();
-    });
-
-    if (
-      !gateway ||
-      !sensor ||
-      gateway.status !== GatewayStatus.Available ||
-      sensor.gatewayId ||
-      !this.canManageAssets()
-    ) {
-      this.feedback.set('duplicate-id');
-      return;
-    }
-
-    const updatedSensor = new Sensor(
-      sensor.id,
-      sensor.organizationId,
-      sensor.uuid,
-      sensor.model,
-      sensor.measurementType,
-      sensor.assetId,
-      gateway.id,
-      sensor.status,
-      sensor.calibrationStatus,
-      sensor.lastCalibrationDate,
-      sensor.nextCalibrationDate,
-    );
-    const updatedGateway = new Gateway(
-      gateway.id,
-      gateway.organizationId,
-      gateway.uuid,
-      gateway.name,
-      gateway.location,
-      gateway.network,
-      GatewayStatus.Paired,
-    );
-
-    this.pairingGateway.set(true);
-    forkJoin({
-      sensor: this.assetManagementStore.updateSensor(updatedSensor),
-      gateway: this.assetManagementStore.updateGateway(updatedGateway),
-    })
-      .pipe(finalize(() => this.pairingGateway.set(false)))
-      .subscribe({
-        next: () => {
-          this.feedback.set('success');
-          this.selectedGatewayId.set(null);
-          this.selectedGatewaySensorId.set(null);
-          this.assetManagementStore.loadSensors();
-          this.assetManagementStore.loadGateways();
-        },
-        error: () => this.feedback.set('server-error'),
-      });
+  protected gatewayNameForAsset(asset: Asset): string {
+    return this.gatewayNameById(asset.gatewayId);
   }
 
-  protected assetNameForSensor(sensor: Sensor): string {
-    const asset = this.assets().find((currentAsset) => currentAsset.id === sensor.assetId);
-    return asset ? `${asset.uuid} - ${asset.name}` : 'asset-management.sensors.unassigned';
+  protected gatewayNameForIoTDevice(iotDevice: IoTDevice): string {
+    const asset = this.assets().find((currentAsset) => currentAsset.id === iotDevice.assetId);
+    return asset
+      ? this.gatewayNameById(asset.gatewayId)
+      : 'asset-management.iot-devices.unassigned';
   }
 
-  protected sensorNameForGateway(gateway: Gateway): string {
-    const sensor = this.sensors().find((currentSensor) => currentSensor.gatewayId === gateway.id);
-    return sensor ? `${sensor.uuid} - ${sensor.model}` : 'asset-management.gateways.unassigned';
+  protected gatewayAssetCount(gateway: Gateway): number {
+    return this.organizationAssets().filter((asset) => asset.gatewayId === gateway.id).length;
   }
 
-  protected updateSelectedSensor(value: string): void {
-    this.selectedSensorId.set(Number(value) || null);
-  }
+  protected gatewayDeviceCount(gateway: Gateway): number {
+    const assetIds = this.organizationAssets()
+      .filter((asset) => asset.gatewayId === gateway.id)
+      .map((asset) => asset.id);
 
-  protected updateSelectedAsset(value: string): void {
-    this.selectedAssetId.set(Number(value) || null);
-  }
-
-  protected updateSelectedGateway(value: string): void {
-    this.selectedGatewayId.set(Number(value) || null);
-  }
-
-  protected updateSelectedGatewaySensor(value: string): void {
-    this.selectedGatewaySensorId.set(Number(value) || null);
+    return this.organizationIoTDevices().filter((iotDevice) => {
+      return !!iotDevice.assetId && assetIds.includes(iotDevice.assetId);
+    }).length;
   }
 
   protected assetTypeLabelKey(assetType: AssetManagementTab): string {
@@ -523,29 +686,49 @@ export class ColdRoomList implements OnInit {
     return `asset-management.sections.${this.selectedAssetType()}.form-create`;
   }
 
+  protected createButtonKey(): string {
+    if (this.formVisible()) {
+      return 'asset-management.form.close';
+    }
+
+    if (this.selectedTab() === 'iot-device') {
+      return 'asset-management.iot-devices.form-open';
+    }
+
+    if (this.selectedTab() === 'gateway') {
+      return 'asset-management.gateways.form-open';
+    }
+
+    return this.formOpenKey();
+  }
+
   protected formCreatedKey(): string {
     if (this.feedback() === 'updated') {
       return 'asset-management.update.feedback-updated';
     }
 
-    if (this.selectedTab() === 'sensor') {
-      return 'asset-management.sensors.feedback-linked';
+    if (this.feedback() === 'iot-device-created') {
+      return 'asset-management.iot-devices.feedback-created';
     }
 
-    if (this.selectedTab() === 'gateway') {
-      return 'asset-management.gateways.feedback-paired';
+    if (this.feedback() === 'gateway-created') {
+      return 'asset-management.gateways.feedback-created';
+    }
+
+    if (this.feedback() === 'settings-saved') {
+      return 'asset-management.settings.feedback-saved';
     }
 
     return `asset-management.sections.${this.selectedAssetType()}.feedback-created`;
   }
 
   protected formDuplicateKey(): string {
-    if (this.selectedTab() === 'sensor') {
-      return 'asset-management.sensors.feedback-unavailable';
+    if (this.selectedTab() === 'iot-device') {
+      return 'asset-management.iot-devices.feedback-duplicate';
     }
 
     if (this.selectedTab() === 'gateway') {
-      return 'asset-management.gateways.feedback-unavailable';
+      return 'asset-management.gateways.feedback-duplicate';
     }
 
     return `asset-management.sections.${this.selectedAssetType()}.feedback-duplicate`;
@@ -568,7 +751,15 @@ export class ColdRoomList implements OnInit {
   }
 
   protected calibrationLabelKey(status: CalibrationStatus): string {
-    return `asset-management.sensors.calibration-status.${status}`;
+    return `asset-management.iot-devices.calibration-status.${status}`;
+  }
+
+  protected deviceTypeLabelKey(deviceType: string): string {
+    return `asset-management.iot-devices.device-types.${deviceType}`;
+  }
+
+  protected gatewayStatusLabelKey(status: GatewayStatus): string {
+    return `asset-management.gateways.status.${status}`;
   }
 
   protected incidentIconName(lastIncident: string): string {
@@ -600,6 +791,23 @@ export class ColdRoomList implements OnInit {
     return control.invalid && (control.touched || this.submitted());
   }
 
+  protected hasIoTDeviceControlError(
+    controlName: keyof typeof this.iotDeviceForm.controls,
+  ): boolean {
+    const control = this.iotDeviceForm.controls[controlName];
+    return control.invalid && (control.touched || this.submitted());
+  }
+
+  protected hasGatewayControlError(controlName: keyof typeof this.gatewayForm.controls): boolean {
+    const control = this.gatewayForm.controls[controlName];
+    return control.invalid && (control.touched || this.submitted());
+  }
+
+  protected hasSettingsControlError(controlName: keyof typeof this.settingsForm.controls): boolean {
+    const control = this.settingsForm.controls[controlName];
+    return control.invalid && (control.touched || this.submitted());
+  }
+
   protected logout(): void {
     this.identityAccessStore.clearCurrentUser();
     void this.router.navigate(['/identity-access/sign-in']);
@@ -618,16 +826,331 @@ export class ColdRoomList implements OnInit {
   }
 
   private calibrationCount(status: CalibrationStatus): number {
-    return this.organizationSensors().filter((sensor) => sensor.calibrationStatus === status).length;
+    return this.organizationIoTDevices().filter((iotDevice) => {
+      return iotDevice.calibrationStatus === status;
+    }).length;
+  }
+
+  private resetForms(): void {
+    this.resetForm();
+    this.resetIoTDeviceForm();
+    this.resetGatewayForm();
   }
 
   private resetForm(): void {
     this.coldRoomForm.reset({
-      internalId: '',
+      internalId: this.generatedAssetUuid(this.selectedAssetType()),
       name: '',
+      gatewayId: 0,
       capacity: 0,
       location: '',
       description: '',
     });
   }
+
+  private resetIoTDeviceForm(): void {
+    this.iotDeviceForm.reset({
+      internalId: this.generatedIoTDeviceUuid(),
+      deviceType: '',
+      model: '',
+      measurementType: '',
+      assetId: 0,
+      nextCalibrationDate: '',
+    });
+  }
+
+  private resetGatewayForm(): void {
+    this.gatewayForm.reset({
+      internalId: this.generatedGatewayUuid(),
+      name: '',
+      location: '',
+      network: '',
+      status: GatewayStatus.Active,
+    });
+  }
+
+  protected resetSettingsForm(): void {
+    const organizationId = this.activeOrganizationId();
+
+    if (!organizationId) {
+      return;
+    }
+
+    const settings = this.activeAssetSettings() ?? this.defaultAssetSettings(organizationId);
+    this.settingsForm.reset({
+      assetTypes: settings.assetTypes.join('\n'),
+      iotDeviceTypes: settings.iotDeviceTypes.join('\n'),
+      minimumTemperature: settings.minimumTemperature,
+      maximumTemperature: settings.maximumTemperature,
+      maximumHumidity: settings.maximumHumidity,
+      calibrationFrequencyDays: settings.calibrationFrequencyDays,
+      temperatureUnit: settings.temperatureUnit,
+      humidityUnit: settings.humidityUnit,
+      weightUnit: settings.weightUnit,
+    });
+  }
+
+  private defaultAssetSettings(organizationId: number): AssetSettings {
+    const nextId = Math.max(...this.assetSettings().map((settings) => settings.id), 0) + 1;
+
+    return new AssetSettings(
+      nextId,
+      organizationId,
+      `CFG-${organizationId.toString().padStart(3, '0')}`,
+      ['Cold room', 'Refrigerated transport'],
+      ['Temperature sensor', 'Humidity sensor', 'Motion sensor', 'Camera', 'Multi-sensor'],
+      -5,
+      8,
+      85,
+      180,
+      '°C',
+      '%',
+      'kg',
+    );
+  }
+
+  private toList(value: string): string[] {
+    return value
+      .split(/[\n,]/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+  }
+
+  private startTelemetryUpdates(): void {
+    if (this.telemetryUpdateIntervalId) {
+      return;
+    }
+
+    this.telemetryUpdateIntervalId = setInterval(() => {
+      this.updateVariableOperationalData();
+    }, this.telemetryUpdateIntervalMs);
+  }
+
+  private updateVariableOperationalData(): void {
+    const organizationId = this.activeOrganizationId();
+
+    if (!organizationId) {
+      return;
+    }
+
+    const settings = this.activeAssetSettings() ?? this.defaultAssetSettings(organizationId);
+    this.organizationAssets().forEach((asset) => this.updateAssetTelemetry(asset, settings));
+    this.organizationIoTDevices().forEach((iotDevice) => this.updateIoTDeviceTelemetry(iotDevice));
+    this.organizationGateways().forEach((gateway) => this.updateGatewayTelemetry(gateway));
+  }
+
+  private updateAssetTelemetry(asset: Asset, settings: AssetSettings): void {
+    if (this.updatingAssetId() === asset.id) {
+      return;
+    }
+
+    const connectivity = this.randomConnectivity();
+    const currentTemperature = this.randomTemperature(connectivity, settings);
+    const lastIncident = this.randomIncident(currentTemperature, connectivity, settings);
+    const updatedAsset = new Asset(
+      asset.id,
+      asset.organizationId,
+      asset.uuid,
+      asset.type,
+      asset.gatewayId,
+      asset.name,
+      asset.location,
+      asset.capacity,
+      asset.description,
+      asset.status,
+      lastIncident,
+      currentTemperature,
+      asset.entryDate,
+      connectivity,
+    );
+
+    this.assetManagementStore.updateAsset(updatedAsset).subscribe({
+      error: () => undefined,
+    });
+  }
+
+  private updateIoTDeviceTelemetry(iotDevice: IoTDevice): void {
+    const updatedIoTDevice = new IoTDevice(
+      iotDevice.id,
+      iotDevice.organizationId,
+      iotDevice.uuid,
+      iotDevice.deviceType,
+      iotDevice.model,
+      iotDevice.measurementType,
+      iotDevice.assetId,
+      this.randomIoTDeviceStatus(iotDevice),
+      this.randomCalibrationStatus(),
+      iotDevice.lastCalibrationDate,
+      iotDevice.nextCalibrationDate,
+    );
+
+    this.assetManagementStore.updateIoTDevice(updatedIoTDevice).subscribe({
+      error: () => undefined,
+    });
+  }
+
+  private updateGatewayTelemetry(gateway: Gateway): void {
+    const updatedGateway = new Gateway(
+      gateway.id,
+      gateway.organizationId,
+      gateway.uuid,
+      gateway.name,
+      gateway.location,
+      gateway.network,
+      this.randomGatewayStatus(),
+    );
+
+    this.assetManagementStore.updateGateway(updatedGateway).subscribe({
+      error: () => undefined,
+    });
+  }
+
+  private randomTemperature(connectivity: ConnectivityStatus, settings: AssetSettings): string {
+    if (connectivity === ConnectivityStatus.Offline) {
+      return '—';
+    }
+
+    const minimum = settings.minimumTemperature - 4;
+    const maximum = settings.maximumTemperature + 6;
+    const temperature = minimum + Math.random() * (maximum - minimum);
+    return `${temperature.toFixed(1)}${settings.temperatureUnit}`;
+  }
+
+  private randomIncident(
+    currentTemperature: string,
+    connectivity: ConnectivityStatus,
+    settings: AssetSettings,
+  ): string {
+    if (connectivity === ConnectivityStatus.Offline) {
+      return 'asset-management.incidents.connection-lost';
+    }
+
+    const temperature = Number(currentTemperature.replace(/[^\d.-]/g, ''));
+
+    if (temperature > settings.maximumTemperature) {
+      return 'asset-management.incidents.high-temperature';
+    }
+
+    if (temperature < settings.minimumTemperature) {
+      return 'asset-management.incidents.low-temperature';
+    }
+
+    return Math.random() < 0.16
+      ? 'asset-management.incidents.high-humidity'
+      : 'asset-management.incidents.none';
+  }
+
+  private randomConnectivity(): ConnectivityStatus {
+    const randomValue = Math.random();
+
+    if (randomValue < 0.72) {
+      return ConnectivityStatus.Online;
+    }
+
+    if (randomValue < 0.9) {
+      return ConnectivityStatus.Unstable;
+    }
+
+    return ConnectivityStatus.Offline;
+  }
+
+  private randomIoTDeviceStatus(iotDevice: IoTDevice): IoTDeviceStatus {
+    if (!iotDevice.assetId) {
+      return Math.random() < 0.85 ? IoTDeviceStatus.Available : IoTDeviceStatus.Offline;
+    }
+
+    return Math.random() < 0.88 ? IoTDeviceStatus.Linked : IoTDeviceStatus.Offline;
+  }
+
+  private randomCalibrationStatus(): CalibrationStatus {
+    const randomValue = Math.random();
+
+    if (randomValue < 0.58) {
+      return CalibrationStatus.Compliant;
+    }
+
+    if (randomValue < 0.78) {
+      return CalibrationStatus.DueSoon;
+    }
+
+    if (randomValue < 0.92) {
+      return CalibrationStatus.Expired;
+    }
+
+    return CalibrationStatus.Unknown;
+  }
+
+  private randomGatewayStatus(): GatewayStatus {
+    const randomValue = Math.random();
+
+    if (randomValue < 0.76) {
+      return GatewayStatus.Active;
+    }
+
+    if (randomValue < 0.9) {
+      return GatewayStatus.Maintenance;
+    }
+
+    return GatewayStatus.Offline;
+  }
+
+  private gatewayNameById(gatewayId: number | null): string {
+    const gateway = this.gateways().find((currentGateway) => currentGateway.id === gatewayId);
+    return gateway
+      ? `${gateway.uuid} - ${gateway.location}`
+      : 'asset-management.gateways.unassigned';
+  }
+
+  private generatedAssetUuid(assetType: AssetType): string {
+    const organizationId = this.activeOrganizationId();
+    const currentUuids = this.assets()
+      .filter(
+        (asset) =>
+          (!organizationId || asset.organizationId === organizationId) && asset.type === assetType,
+      )
+      .map((asset) => asset.uuid);
+
+    if (assetType === AssetType.Transport) {
+      return this.generatedUuid('TR', currentUuids, 10000 + currentUuids.length + 1, 5);
+    }
+
+    return this.generatedUuid('CR', currentUuids, currentUuids.length + 1, 5);
+  }
+
+  private generatedIoTDeviceUuid(): string {
+    const organizationId = this.activeOrganizationId();
+    const currentUuids = this.iotDevices()
+      .filter((iotDevice) => !organizationId || iotDevice.organizationId === organizationId)
+      .map((iotDevice) => iotDevice.uuid);
+
+    return this.generatedUuid('SN', currentUuids, currentUuids.length + 1, 3);
+  }
+
+  private generatedGatewayUuid(): string {
+    const organizationId = this.activeOrganizationId();
+    const currentUuids = this.gateways()
+      .filter((gateway) => !organizationId || gateway.organizationId === organizationId)
+      .map((gateway) => gateway.uuid);
+
+    return this.generatedUuid('GW', currentUuids, currentUuids.length + 1, 3);
+  }
+
+  private generatedUuid(
+    prefix: string,
+    currentUuids: string[],
+    firstNumber: number,
+    width: number,
+  ): string {
+    const normalizedUuids = new Set(currentUuids.map((uuid) => uuid.toLowerCase()));
+    let nextNumber = firstNumber;
+    let candidate = '';
+
+    do {
+      candidate = `${prefix}-${nextNumber.toString().padStart(width, '0')}`;
+      nextNumber += 1;
+    } while (normalizedUuids.has(candidate.toLowerCase()));
+
+    return candidate;
+  }
+
 }

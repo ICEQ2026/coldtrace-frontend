@@ -4,6 +4,7 @@
   [profileUserName]="profileUserName()"
   [profileRoleLabelKey]="profileRoleLabelKey()"
   [canManageAccess]="canManageAccess()"
+  [assetIssuesCount]="assetIssueCount()"
   (signedOut)="logout()"
 >
   <section class="form-card" aria-labelledby="create-user-title">
@@ -12,7 +13,7 @@
         <h2 id="create-user-title">{{ 'roles-permissions.create-user-title' | translate }}</h2>
         <p>{{ 'roles-permissions.create-user-subtitle' | translate }}</p>
       </div>
-      <a class="secondary-action" routerLink="/identity-access/roles-permissions">
+      <a mat-stroked-button class="secondary-action" routerLink="/identity-access/roles-permissions">
         {{ 'roles-permissions.form.cancel' | translate }}
       </a>
     </div>
@@ -76,10 +77,10 @@
         </label>
 
         <div class="form-actions">
-          <a class="secondary-action" routerLink="/identity-access/roles-permissions">
+          <a mat-stroked-button class="secondary-action" routerLink="/identity-access/roles-permissions">
             {{ 'roles-permissions.form.cancel' | translate }}
           </a>
-          <button type="submit" class="primary-action" [disabled]="creating()">
+          <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
             {{ (creating() ? 'roles-permissions.form.creating' : 'roles-permissions.form.create') | translate }}
           </button>
         </div>

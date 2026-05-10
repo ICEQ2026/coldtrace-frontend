@@ -1,10 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { IdentityAccessStore } from '../../../application/identity-access.store';
 import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
+import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { Organization } from '../../../domain/model/organization.entity';
 import { Role } from '../../../domain/model/role.entity';
 import { User } from '../../../domain/model/user.entity';
@@ -23,12 +25,13 @@ interface UserAccessRow {
 
 @Component({
   selector: 'app-user-access-list',
-  imports: [DashboardShell, MatIcon, RouterLink, TranslatePipe],
+  imports: [DashboardShell, MatButton, MatIcon, RouterLink, TranslatePipe],
   templateUrl: './user-access-list.html',
   styleUrl: './user-access-list.css',
 })
 export class UserAccessList implements OnInit {
   protected readonly identityAccessStore = inject(IdentityAccessStore);
+  protected readonly assetManagementStore = inject(AssetManagementStore);
   private readonly identityAccessApi = inject(IdentityAccessApi);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -43,7 +46,6 @@ export class UserAccessList implements OnInit {
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
   protected readonly selectedRoleByUserId = signal<Record<number, number>>({});
-
   protected readonly organizationUsers = computed(() => {
     const organizationId = this.activeOrganizationId();
 
@@ -51,24 +53,19 @@ export class UserAccessList implements OnInit {
       return [];
     }
 
-    return this.users().filter(user => user.organizationId === organizationId);
+    return this.users().filter((user) => user.organizationId === organizationId);
   });
 
   protected readonly rows = computed(() => {
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
     return this.organizationUsers()
-      .map(user => this.toUserAccessRow(user))
-      .filter(row => {
+      .map((user) => this.toUserAccessRow(user))
+      .filter((row) => {
         if (!normalizedSearch) {
           return true;
         }
 
-        return [
-          row.user.fullName,
-          row.user.email,
-          row.currentRole?.label,
-          row.selectedRole?.label,
-        ]
+        return [row.user.fullName, row.user.email, row.currentRole?.label, row.selectedRole?.label]
           .join(' ')
           .toLowerCase()
           .includes(normalizedSearch);
@@ -76,37 +73,45 @@ export class UserAccessList implements OnInit {
   });
 
   protected readonly administratorCount = computed(
-    () => this.organizationUsers().filter(user => {
-      const role = this.roleFor(user.roleId);
-      return (
-        this.identityAccessStore.isSuperAdministratorRole(role) ||
-        this.identityAccessStore.isAdministratorRole(role)
-      );
-    }).length
+    () =>
+      this.organizationUsers().filter((user) => {
+        const role = this.roleFor(user.roleId);
+        return (
+          this.identityAccessStore.isSuperAdministratorRole(role) ||
+          this.identityAccessStore.isAdministratorRole(role)
+        );
+      }).length,
   );
 
   protected readonly activeOrganizationName = computed(() => {
     return this.identityAccessStore.currentOrganizationNameFrom(this.users(), this.organizations());
   });
-  protected readonly profileUserName = computed(() => this.identityAccessStore.currentUserNameFrom(this.users()));
-  protected readonly profileRoleLabelKey = computed(
-    () => this.identityAccessStore.currentRoleLabelKeyFrom(this.users(), this.roles())
+  protected readonly profileUserName = computed(() =>
+    this.identityAccessStore.currentUserNameFrom(this.users()),
   );
-  protected readonly canManageAccess = computed(
-    () => this.identityAccessStore.canManageAccess(this.users(), this.roles())
+  protected readonly profileRoleLabelKey = computed(() =>
+    this.identityAccessStore.currentRoleLabelKeyFrom(this.users(), this.roles()),
+  );
+  protected readonly canManageAccess = computed(() =>
+    this.identityAccessStore.canManageAccess(this.users(), this.roles()),
   );
 
   protected readonly pendingChangeCount = computed(
-    () => Object.keys(this.selectedRoleByUserId())
-      .filter(userId => {
-        const user = this.organizationUsers().find(currentUser => currentUser.id === Number(userId));
+    () =>
+      Object.keys(this.selectedRoleByUserId()).filter((userId) => {
+        const user = this.organizationUsers().find(
+          (currentUser) => currentUser.id === Number(userId),
+        );
         return user && this.selectedRoleByUserId()[Number(userId)] !== user.roleId;
-      })
-      .length
+      }).length,
   );
 
+  protected readonly assetIssueCount = computed(() => {
+    return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
+  });
+
   ngOnInit(): void {
-    this.route.queryParamMap.subscribe(params => {
+    this.route.queryParamMap.subscribe((params) => {
       this.accessDenied.set(params.get('access') === 'denied');
     });
     this.loadAccessData();
@@ -114,7 +119,7 @@ export class UserAccessList implements OnInit {
 
   protected selectRole(userId: number, roleId: string): void {
     const nextRoleId = Number(roleId);
-    const user = this.organizationUsers().find(currentUser => currentUser.id === userId);
+    const user = this.organizationUsers().find((currentUser) => currentUser.id === userId);
     const selectedRole = this.roleFor(nextRoleId);
 
     if (
@@ -129,7 +134,7 @@ export class UserAccessList implements OnInit {
     this.feedback.set('idle');
     this.savedUserId.set(null);
     this.invalidUserId.set(null);
-    this.selectedRoleByUserId.update(current => ({
+    this.selectedRoleByUserId.update((current) => ({
       ...current,
       [userId]: nextRoleId,
     }));
@@ -163,10 +168,12 @@ export class UserAccessList implements OnInit {
 
     this.identityAccessApi.updateUser(updatedUser).subscribe({
       next: (savedUser) => {
-        this.users.update(users => users.map(currentUser => {
-          return currentUser.id === savedUser.id ? savedUser : currentUser;
-        }));
-        this.selectedRoleByUserId.update(current => {
+        this.users.update((users) =>
+          users.map((currentUser) => {
+            return currentUser.id === savedUser.id ? savedUser : currentUser;
+          }),
+        );
+        this.selectedRoleByUserId.update((current) => {
           const next = { ...current };
           delete next[user.id];
           return next;
@@ -206,6 +213,7 @@ export class UserAccessList implements OnInit {
   protected loadAccessData(): void {
     this.loading.set(true);
     this.feedback.set('idle');
+    this.assetManagementStore.loadAssets();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -251,7 +259,6 @@ export class UserAccessList implements OnInit {
   }
 
   private roleFor(roleId: number): Role | undefined {
-    return this.roles().find(role => role.id === roleId);
+    return this.roles().find((role) => role.id === roleId);
   }
-
 }

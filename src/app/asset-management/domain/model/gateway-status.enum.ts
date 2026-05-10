@@ -1,5 +1,5 @@
 export enum GatewayStatus {
-  Available = 'available',
-  Paired = 'paired',
+  Active = 'active',
+  Maintenance = 'maintenance',
   Offline = 'offline',
 }
