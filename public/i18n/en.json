@@ -331,13 +331,22 @@
       "saving": "Saving...",
       "reset": "Reset",
       "feedback-saved": "Settings updated successfully.",
+      "summary": {
+        "temperature": "Temperature range",
+        "humidity": "Humidity limit",
+        "calibration": "Calibration",
+        "days": "{{count}} days"
+      },
       "form": {
         "asset-types": "Asset types",
         "asset-types-error": "Enter at least one asset type.",
         "iot-device-types": "IoT device types",
         "iot-device-types-error": "Enter at least one device type.",
+        "list-helper": "Write one value per line.",
+        "empty-list": "No values",
         "minimum-temperature": "Minimum temperature",
         "maximum-temperature": "Maximum temperature",
+        "temperature-range-error": "Maximum temperature must be greater than minimum temperature.",
         "maximum-humidity": "Maximum humidity (%)",
         "calibration-frequency": "Calibration frequency (days)",
         "temperature-unit": "Temperature unit",

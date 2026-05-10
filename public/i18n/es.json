@@ -331,13 +331,22 @@
       "saving": "Guardando...",
       "reset": "Restablecer",
       "feedback-saved": "Ajustes actualizados correctamente.",
+      "summary": {
+        "temperature": "Rango de temperatura",
+        "humidity": "Límite de humedad",
+        "calibration": "Calibración",
+        "days": "{{count}} días"
+      },
       "form": {
         "asset-types": "Tipos de activo",
         "asset-types-error": "Ingresa al menos un tipo de activo.",
         "iot-device-types": "Tipos de dispositivo IoT",
         "iot-device-types-error": "Ingresa al menos un tipo de dispositivo.",
+        "list-helper": "Escribe un valor por línea.",
+        "empty-list": "Sin valores",
         "minimum-temperature": "Temperatura mínima",
         "maximum-temperature": "Temperatura máxima",
+        "temperature-range-error": "La temperatura máxima debe ser mayor que la mínima.",
         "maximum-humidity": "Humedad máxima (%)",
         "calibration-frequency": "Frecuencia de calibración (días)",
         "temperature-unit": "Unidad de temperatura",

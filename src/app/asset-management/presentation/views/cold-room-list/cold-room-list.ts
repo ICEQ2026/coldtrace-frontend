@@ -1,10 +1,11 @@
+import { NgClass } from '@angular/common';
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { AssetManagementStore } from '../../../application/asset-management.store';
 import { Asset } from '../../../domain/model/asset.entity';
@@ -42,6 +43,8 @@ type AssetManagementTab = AssetType | 'iot-device' | 'gateway' | 'settings';
     MatButton,
     MatIcon,
     MatProgressSpinner,
+    FormsModule,
+    NgClass,
     ReactiveFormsModule,
     TranslatePipe,
   ],
@@ -57,6 +60,7 @@ export class ColdRoomList implements OnInit, OnDestroy {
   protected readonly assetManagementStore = inject(AssetManagementStore);
   protected readonly identityAccessStore = inject(IdentityAccessStore);
   private readonly fb = inject(FormBuilder);
+  private readonly translate = inject(TranslateService);
   private readonly identityAccessApi = inject(IdentityAccessApi);
   private readonly router = inject(Router);
   private readonly telemetryUpdateIntervalMs = 12000;
@@ -92,6 +96,7 @@ export class ColdRoomList implements OnInit, OnDestroy {
   protected readonly creating = signal(false);
   protected readonly savingSettings = signal(false);
   protected readonly updatingAssetId = signal<number | null>(null);
+  protected readonly pendingAssetStatuses = signal<Record<number, AssetStatus>>({});
   protected readonly submitted = signal(false);
   protected readonly formVisible = signal(false);
   protected readonly feedback = signal<AssetFeedback>('idle');
@@ -561,14 +566,22 @@ export class ColdRoomList implements OnInit, OnDestroy {
       return;
     }
 
+    const minimumTemperature = Number(this.settingsForm.controls.minimumTemperature.value);
+    const maximumTemperature = Number(this.settingsForm.controls.maximumTemperature.value);
+
+    if (minimumTemperature >= maximumTemperature) {
+      this.settingsForm.controls.maximumTemperature.setErrors({ range: true });
+      return;
+    }
+
     const nextSettings = new AssetSettings(
       currentSettings.id,
       organizationId,
       currentSettings.uuid,
       assetTypes,
       iotDeviceTypes,
-      Number(this.settingsForm.controls.minimumTemperature.value),
-      Number(this.settingsForm.controls.maximumTemperature.value),
+      minimumTemperature,
+      maximumTemperature,
       Number(this.settingsForm.controls.maximumHumidity.value),
       Number(this.settingsForm.controls.calibrationFrequencyDays.value),
       this.settingsForm.controls.temperatureUnit.value,
@@ -584,6 +597,7 @@ export class ColdRoomList implements OnInit, OnDestroy {
       next: () => {
         this.feedback.set('settings-saved');
         this.submitted.set(false);
+        this.settingsForm.markAsPristine();
       },
       error: () => this.feedback.set('server-error'),
     });
@@ -595,34 +609,23 @@ export class ColdRoomList implements OnInit, OnDestroy {
     const nextStatus = this.assetStatuses.find((status) => status === value);
 
     if (!nextStatus || nextStatus === asset.status || !this.canManageAssets()) {
+      this.clearPendingAssetStatus(asset.id);
       return;
     }
 
-    const updatedAsset = new Asset(
-      asset.id,
-      asset.organizationId,
-      asset.uuid,
-      asset.type,
-      asset.gatewayId,
-      asset.name,
-      asset.location,
-      asset.capacity,
-      asset.description,
-      nextStatus,
-      asset.lastIncident,
-      asset.currentTemperature,
-      asset.entryDate,
-      asset.connectivity,
-    );
-
+    this.pendingAssetStatuses.update((statuses) => ({ ...statuses, [asset.id]: nextStatus }));
     this.updatingAssetId.set(asset.id);
     this.assetManagementStore
-      .updateAsset(updatedAsset)
-      .pipe(finalize(() => this.updatingAssetId.set(null)))
+      .patchAsset(asset.id, { status: nextStatus })
+      .pipe(
+        finalize(() => {
+          this.updatingAssetId.set(null);
+          this.clearPendingAssetStatus(asset.id);
+        }),
+      )
       .subscribe({
         next: () => {
           this.feedback.set('updated');
-          this.assetManagementStore.loadAssets();
         },
         error: () => this.feedback.set('server-error'),
       });
@@ -631,6 +634,10 @@ export class ColdRoomList implements OnInit, OnDestroy {
   protected assetNameForIoTDevice(iotDevice: IoTDevice): string {
     const asset = this.assets().find((currentAsset) => currentAsset.id === iotDevice.assetId);
     return asset ? `${asset.uuid} - ${asset.name}` : 'asset-management.iot-devices.unassigned';
+  }
+
+  protected displayedAssetStatus(asset: Asset): AssetStatus {
+    return this.pendingAssetStatuses()[asset.id] ?? asset.status;
   }
 
   protected gatewayNameForAsset(asset: Asset): string {
@@ -746,6 +753,10 @@ export class ColdRoomList implements OnInit, OnDestroy {
     return `asset-management.status.${status}`;
   }
 
+  protected assetStatusLabel(status: AssetStatus): string {
+    return this.translate.instant(this.statusLabelKey(status));
+  }
+
   protected connectivityLabelKey(connectivity: ConnectivityStatus): string {
     return `asset-management.connectivity.${connectivity}`;
   }
@@ -760,6 +771,67 @@ export class ColdRoomList implements OnInit, OnDestroy {
 
   protected gatewayStatusLabelKey(status: GatewayStatus): string {
     return `asset-management.gateways.status.${status}`;
+  }
+
+  protected assetStatusToneClass(status: AssetStatus): string {
+    const classByStatus: Record<AssetStatus, string> = {
+      [AssetStatus.Active]: 'tone-success',
+      [AssetStatus.Maintenance]: 'tone-warning',
+      [AssetStatus.Inactive]: 'tone-danger',
+    };
+
+    return classByStatus[status];
+  }
+
+  protected iotDeviceStatusToneClass(status: IoTDeviceStatus): string {
+    const classByStatus: Record<IoTDeviceStatus, string> = {
+      [IoTDeviceStatus.Linked]: 'tone-success',
+      [IoTDeviceStatus.Available]: 'tone-neutral',
+      [IoTDeviceStatus.Offline]: 'tone-danger',
+    };
+
+    return classByStatus[status];
+  }
+
+  protected calibrationToneClass(status: CalibrationStatus): string {
+    const classByStatus: Record<CalibrationStatus, string> = {
+      [CalibrationStatus.Compliant]: 'tone-success',
+      [CalibrationStatus.DueSoon]: 'tone-warning',
+      [CalibrationStatus.Expired]: 'tone-danger',
+      [CalibrationStatus.Unknown]: 'tone-neutral',
+    };
+
+    return classByStatus[status];
+  }
+
+  protected gatewayStatusToneClass(status: GatewayStatus): string {
+    const classByStatus: Record<GatewayStatus, string> = {
+      [GatewayStatus.Active]: 'tone-success',
+      [GatewayStatus.Maintenance]: 'tone-warning',
+      [GatewayStatus.Offline]: 'tone-danger',
+    };
+
+    return classByStatus[status];
+  }
+
+  protected settingsAssetTypeList(): string[] {
+    return this.toList(this.settingsForm.controls.assetTypes.value);
+  }
+
+  protected settingsIoTDeviceTypeList(): string[] {
+    return this.toList(this.settingsForm.controls.iotDeviceTypes.value);
+  }
+
+  protected temperatureRangeLabel(): string {
+    return `${this.settingsForm.controls.minimumTemperature.value}${this.settingsForm.controls.temperatureUnit.value} - ${this.settingsForm.controls.maximumTemperature.value}${this.settingsForm.controls.temperatureUnit.value}`;
+  }
+
+  protected humidityLimitLabel(): string {
+    return `${this.settingsForm.controls.maximumHumidity.value}${this.settingsForm.controls.humidityUnit.value}`;
+  }
+
+  protected calibrationFrequencyLabel(): string {
+    return `${this.settingsForm.controls.calibrationFrequencyDays.value}`;
   }
 
   protected incidentIconName(lastIncident: string): string {
@@ -888,6 +960,7 @@ export class ColdRoomList implements OnInit, OnDestroy {
       humidityUnit: settings.humidityUnit,
       weightUnit: settings.weightUnit,
     });
+    this.settingsForm.markAsPristine();
   }
 
   private defaultAssetSettings(organizationId: number): AssetSettings {
@@ -947,60 +1020,28 @@ export class ColdRoomList implements OnInit, OnDestroy {
     const connectivity = this.randomConnectivity();
     const currentTemperature = this.randomTemperature(connectivity, settings);
     const lastIncident = this.randomIncident(currentTemperature, connectivity, settings);
-    const updatedAsset = new Asset(
-      asset.id,
-      asset.organizationId,
-      asset.uuid,
-      asset.type,
-      asset.gatewayId,
-      asset.name,
-      asset.location,
-      asset.capacity,
-      asset.description,
-      asset.status,
+    this.assetManagementStore.patchAsset(asset.id, {
       lastIncident,
       currentTemperature,
-      asset.entryDate,
       connectivity,
-    );
-
-    this.assetManagementStore.updateAsset(updatedAsset).subscribe({
+    }).subscribe({
       error: () => undefined,
     });
   }
 
   private updateIoTDeviceTelemetry(iotDevice: IoTDevice): void {
-    const updatedIoTDevice = new IoTDevice(
-      iotDevice.id,
-      iotDevice.organizationId,
-      iotDevice.uuid,
-      iotDevice.deviceType,
-      iotDevice.model,
-      iotDevice.measurementType,
-      iotDevice.assetId,
-      this.randomIoTDeviceStatus(iotDevice),
-      this.randomCalibrationStatus(),
-      iotDevice.lastCalibrationDate,
-      iotDevice.nextCalibrationDate,
-    );
-
-    this.assetManagementStore.updateIoTDevice(updatedIoTDevice).subscribe({
+    this.assetManagementStore.patchIoTDevice(iotDevice.id, {
+      status: this.randomIoTDeviceStatus(iotDevice),
+      calibrationStatus: this.randomCalibrationStatus(),
+    }).subscribe({
       error: () => undefined,
     });
   }
 
   private updateGatewayTelemetry(gateway: Gateway): void {
-    const updatedGateway = new Gateway(
-      gateway.id,
-      gateway.organizationId,
-      gateway.uuid,
-      gateway.name,
-      gateway.location,
-      gateway.network,
-      this.randomGatewayStatus(),
-    );
-
-    this.assetManagementStore.updateGateway(updatedGateway).subscribe({
+    this.assetManagementStore.patchGateway(gateway.id, {
+      status: this.randomGatewayStatus(),
+    }).subscribe({
       error: () => undefined,
     });
   }
@@ -1092,6 +1133,14 @@ export class ColdRoomList implements OnInit, OnDestroy {
     }
 
     return GatewayStatus.Offline;
+  }
+
+  private clearPendingAssetStatus(assetId: number): void {
+    this.pendingAssetStatuses.update((statuses) => {
+      const nextStatuses = { ...statuses };
+      delete nextStatuses[assetId];
+      return nextStatuses;
+    });
   }
 
   private gatewayNameById(gatewayId: number | null): string {

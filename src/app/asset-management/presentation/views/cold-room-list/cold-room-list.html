@@ -345,10 +345,7 @@
         @for (summary of calibrationSummary(); track summary.status) {
           <article
             class="calibration-card"
-            [class.active]="summary.status === calibrationStatus.Compliant"
-            [class.maintenance]="summary.status === calibrationStatus.DueSoon"
-            [class.inactive]="summary.status === calibrationStatus.Expired"
-            [class.neutral]="summary.status === calibrationStatus.Unknown"
+            [ngClass]="calibrationToneClass(summary.status)"
           >
             <span>{{ calibrationLabelKey(summary.status) | translate }}</span>
             <strong>{{ summary.count }}</strong>
@@ -395,9 +392,7 @@
                 <td [attr.data-label]="'asset-management.iot-devices.table.status' | translate">
                   <span
                     class="status-pill"
-                    [class.active]="iotDevice.status === iotDeviceStatus.Linked"
-                    [class.maintenance]="iotDevice.status === iotDeviceStatus.Available"
-                    [class.inactive]="iotDevice.status === iotDeviceStatus.Offline"
+                    [ngClass]="iotDeviceStatusToneClass(iotDevice.status)"
                   >
                     {{ 'asset-management.iot-devices.status.' + iotDevice.status | translate }}
                   </span>
@@ -405,10 +400,7 @@
                 <td [attr.data-label]="'asset-management.iot-devices.table.calibration' | translate">
                   <span
                     class="status-pill"
-                    [class.active]="iotDevice.calibrationStatus === calibrationStatus.Compliant"
-                    [class.maintenance]="iotDevice.calibrationStatus === calibrationStatus.DueSoon"
-                    [class.inactive]="iotDevice.calibrationStatus === calibrationStatus.Expired"
-                    [class.neutral]="iotDevice.calibrationStatus === calibrationStatus.Unknown"
+                    [ngClass]="calibrationToneClass(iotDevice.calibrationStatus)"
                   >
                     {{ calibrationLabelKey(iotDevice.calibrationStatus) | translate }}
                   </span>
@@ -483,9 +475,7 @@
                 <td [attr.data-label]="'asset-management.gateways.table.status' | translate">
                   <span
                     class="status-pill"
-                    [class.active]="gateway.status === gatewayStatus.Active"
-                    [class.maintenance]="gateway.status === gatewayStatus.Maintenance"
-                    [class.inactive]="gateway.status === gatewayStatus.Offline"
+                    [ngClass]="gatewayStatusToneClass(gateway.status)"
                   >
                     {{ gatewayStatusLabelKey(gateway.status) | translate }}
                   </span>
@@ -511,128 +501,23 @@
           <h2 id="asset-settings-title">{{ 'asset-management.settings.title' | translate }}</h2>
           <p>{{ 'asset-management.settings.subtitle' | translate }}</p>
         </div>
-      </div>
-
-      <form class="settings-form" [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
-        <section class="settings-section" aria-labelledby="settings-catalogs-title">
-          <h3 id="settings-catalogs-title">
-            {{ 'asset-management.settings.catalogs' | translate }}
-          </h3>
-          <label class="form-field full">
-            <span>{{ 'asset-management.settings.form.asset-types' | translate }}</span>
-            <textarea
-              rows="4"
-              formControlName="assetTypes"
-              [readonly]="!canManageAssets()"
-            ></textarea>
-            @if (hasSettingsControlError('assetTypes')) {
-              <small>{{ 'asset-management.settings.form.asset-types-error' | translate }}</small>
-            }
-          </label>
-
-          <label class="form-field full">
-            <span>{{ 'asset-management.settings.form.iot-device-types' | translate }}</span>
-            <textarea
-              rows="4"
-              formControlName="iotDeviceTypes"
-              [readonly]="!canManageAssets()"
-            ></textarea>
-            @if (hasSettingsControlError('iotDeviceTypes')) {
-              <small>{{
-                'asset-management.settings.form.iot-device-types-error' | translate
-              }}</small>
-            }
-          </label>
-        </section>
-
-        <section class="settings-section" aria-labelledby="settings-thresholds-title">
-          <h3 id="settings-thresholds-title">
-            {{ 'asset-management.settings.thresholds' | translate }}
-          </h3>
-          <label class="form-field">
-            <span>{{ 'asset-management.settings.form.minimum-temperature' | translate }}</span>
-            <input
-              type="number"
-              formControlName="minimumTemperature"
-              [readonly]="!canManageAssets()"
-            />
-            @if (hasSettingsControlError('minimumTemperature')) {
-              <small>{{ 'asset-management.settings.form.number-error' | translate }}</small>
-            }
-          </label>
-
-          <label class="form-field">
-            <span>{{ 'asset-management.settings.form.maximum-temperature' | translate }}</span>
-            <input
-              type="number"
-              formControlName="maximumTemperature"
-              [readonly]="!canManageAssets()"
-            />
-            @if (hasSettingsControlError('maximumTemperature')) {
-              <small>{{ 'asset-management.settings.form.number-error' | translate }}</small>
-            }
-          </label>
-
-          <label class="form-field">
-            <span>{{ 'asset-management.settings.form.maximum-humidity' | translate }}</span>
-            <input
-              type="number"
-              min="1"
-              max="100"
-              formControlName="maximumHumidity"
-              [readonly]="!canManageAssets()"
-            />
-            @if (hasSettingsControlError('maximumHumidity')) {
-              <small>{{ 'asset-management.settings.form.humidity-error' | translate }}</small>
-            }
-          </label>
-        </section>
-
-        <section class="settings-section" aria-labelledby="settings-units-title">
-          <h3 id="settings-units-title">{{ 'asset-management.settings.units' | translate }}</h3>
-          <label class="form-field">
-            <span>{{ 'asset-management.settings.form.calibration-frequency' | translate }}</span>
-            <input
-              type="number"
-              min="1"
-              formControlName="calibrationFrequencyDays"
-              [readonly]="!canManageAssets()"
-            />
-            @if (hasSettingsControlError('calibrationFrequencyDays')) {
-              <small>{{ 'asset-management.settings.form.frequency-error' | translate }}</small>
-            }
-          </label>
-
-          <label class="form-field">
-            <span>{{ 'asset-management.settings.form.temperature-unit' | translate }}</span>
-            <select formControlName="temperatureUnit" [disabled]="!canManageAssets()">
-              @for (unit of temperatureUnits; track unit) {
-                <option [value]="unit">{{ unit }}</option>
-              }
-            </select>
-          </label>
-
-          <label class="form-field">
-            <span>{{ 'asset-management.settings.form.humidity-unit' | translate }}</span>
-            <input type="text" formControlName="humidityUnit" readonly />
-          </label>
-
-          <label class="form-field">
-            <span>{{ 'asset-management.settings.form.weight-unit' | translate }}</span>
-            <select formControlName="weightUnit" [disabled]="!canManageAssets()">
-              @for (unit of weightUnits; track unit) {
-                <option [value]="unit">{{ unit }}</option>
-              }
-            </select>
-          </label>
-        </section>
-
         @if (canManageAssets()) {
           <div class="form-actions">
-            <button mat-stroked-button type="button" class="secondary-action" (click)="resetSettingsForm()">
+            <button
+              mat-stroked-button
+              type="button"
+              class="secondary-action"
+              (click)="resetSettingsForm()"
+            >
               {{ 'asset-management.settings.reset' | translate }}
             </button>
-            <button mat-flat-button type="submit" class="primary-action" [disabled]="savingSettings()">
+            <button
+              mat-flat-button
+              type="submit"
+              form="asset-settings-form"
+              class="primary-action"
+              [disabled]="savingSettings()"
+            >
               {{
                 (savingSettings()
                   ? 'asset-management.settings.saving'
@@ -642,6 +527,200 @@
             </button>
           </div>
         }
+      </div>
+
+      <form
+        id="asset-settings-form"
+        class="settings-form"
+        [formGroup]="settingsForm"
+        (ngSubmit)="saveSettings()"
+      >
+        <div class="settings-summary">
+          <article class="calibration-card settings-summary-card">
+            <mat-icon aria-hidden="true">ac_unit</mat-icon>
+            <span>{{ 'asset-management.settings.summary.temperature' | translate }}</span>
+            <strong>{{ temperatureRangeLabel() }}</strong>
+          </article>
+          <article class="calibration-card settings-summary-card">
+            <mat-icon aria-hidden="true">opacity</mat-icon>
+            <span>{{ 'asset-management.settings.summary.humidity' | translate }}</span>
+            <strong>{{ humidityLimitLabel() }}</strong>
+          </article>
+          <article class="calibration-card settings-summary-card">
+            <mat-icon aria-hidden="true">event</mat-icon>
+            <span>{{ 'asset-management.settings.summary.calibration' | translate }}</span>
+            <strong>
+              {{
+                'asset-management.settings.summary.days'
+                  | translate: { count: calibrationFrequencyLabel() }
+              }}
+            </strong>
+          </article>
+        </div>
+
+        <section class="settings-section catalogs-section" aria-labelledby="settings-catalogs-title">
+          <div class="settings-section-title">
+            <mat-icon aria-hidden="true">category</mat-icon>
+            <h3 id="settings-catalogs-title">
+              {{ 'asset-management.settings.catalogs' | translate }}
+            </h3>
+          </div>
+
+          <div class="catalog-editors">
+            <label class="form-field catalog-editor">
+              <span>{{ 'asset-management.settings.form.asset-types' | translate }}</span>
+              <textarea
+                rows="4"
+                formControlName="assetTypes"
+                [readonly]="!canManageAssets()"
+              ></textarea>
+              <em>{{ 'asset-management.settings.form.list-helper' | translate }}</em>
+              @if (hasSettingsControlError('assetTypes')) {
+                <small>{{ 'asset-management.settings.form.asset-types-error' | translate }}</small>
+              }
+              <div
+                class="settings-chip-list"
+                [attr.aria-label]="'asset-management.settings.form.asset-types' | translate"
+              >
+                @for (assetType of settingsAssetTypeList(); track assetType) {
+                  <span>{{ assetType }}</span>
+                } @empty {
+                  <span class="empty-chip">
+                    {{ 'asset-management.settings.form.empty-list' | translate }}
+                  </span>
+                }
+              </div>
+            </label>
+
+            <label class="form-field catalog-editor">
+              <span>{{ 'asset-management.settings.form.iot-device-types' | translate }}</span>
+              <textarea
+                rows="4"
+                formControlName="iotDeviceTypes"
+                [readonly]="!canManageAssets()"
+              ></textarea>
+              <em>{{ 'asset-management.settings.form.list-helper' | translate }}</em>
+              @if (hasSettingsControlError('iotDeviceTypes')) {
+                <small>{{
+                  'asset-management.settings.form.iot-device-types-error' | translate
+                }}</small>
+              }
+              <div
+                class="settings-chip-list"
+                [attr.aria-label]="'asset-management.settings.form.iot-device-types' | translate"
+              >
+                @for (deviceType of settingsIoTDeviceTypeList(); track deviceType) {
+                  <span>{{ deviceType }}</span>
+                } @empty {
+                  <span class="empty-chip">
+                    {{ 'asset-management.settings.form.empty-list' | translate }}
+                  </span>
+                }
+              </div>
+            </label>
+          </div>
+        </section>
+
+        <section class="settings-section" aria-labelledby="settings-thresholds-title">
+          <div class="settings-section-title">
+            <mat-icon aria-hidden="true">tune</mat-icon>
+            <h3 id="settings-thresholds-title">
+              {{ 'asset-management.settings.thresholds' | translate }}
+            </h3>
+          </div>
+
+          <div class="settings-grid">
+            <label class="form-field">
+              <span>{{ 'asset-management.settings.form.minimum-temperature' | translate }}</span>
+              <input
+                type="number"
+                formControlName="minimumTemperature"
+                [readonly]="!canManageAssets()"
+              />
+              @if (hasSettingsControlError('minimumTemperature')) {
+                <small>{{ 'asset-management.settings.form.number-error' | translate }}</small>
+              }
+            </label>
+
+            <label class="form-field">
+              <span>{{ 'asset-management.settings.form.maximum-temperature' | translate }}</span>
+              <input
+                type="number"
+                formControlName="maximumTemperature"
+                [readonly]="!canManageAssets()"
+              />
+              @if (hasSettingsControlError('maximumTemperature')) {
+                <small>
+                  {{
+                    (settingsForm.controls.maximumTemperature.hasError('range')
+                      ? 'asset-management.settings.form.temperature-range-error'
+                      : 'asset-management.settings.form.number-error'
+                    ) | translate
+                  }}
+                </small>
+              }
+            </label>
+
+            <label class="form-field">
+              <span>{{ 'asset-management.settings.form.maximum-humidity' | translate }}</span>
+              <input
+                type="number"
+                min="1"
+                max="100"
+                formControlName="maximumHumidity"
+                [readonly]="!canManageAssets()"
+              />
+              @if (hasSettingsControlError('maximumHumidity')) {
+                <small>{{ 'asset-management.settings.form.humidity-error' | translate }}</small>
+              }
+            </label>
+          </div>
+        </section>
+
+        <section class="settings-section" aria-labelledby="settings-units-title">
+          <div class="settings-section-title">
+            <mat-icon aria-hidden="true">straighten</mat-icon>
+            <h3 id="settings-units-title">{{ 'asset-management.settings.units' | translate }}</h3>
+          </div>
+
+          <div class="settings-grid">
+            <label class="form-field">
+              <span>{{ 'asset-management.settings.form.calibration-frequency' | translate }}</span>
+              <input
+                type="number"
+                min="1"
+                formControlName="calibrationFrequencyDays"
+                [readonly]="!canManageAssets()"
+              />
+              @if (hasSettingsControlError('calibrationFrequencyDays')) {
+                <small>{{ 'asset-management.settings.form.frequency-error' | translate }}</small>
+              }
+            </label>
+
+            <label class="form-field">
+              <span>{{ 'asset-management.settings.form.temperature-unit' | translate }}</span>
+              <select formControlName="temperatureUnit" [disabled]="!canManageAssets()">
+                @for (unit of temperatureUnits; track unit) {
+                  <option [value]="unit">{{ unit }}</option>
+                }
+              </select>
+            </label>
+
+            <label class="form-field">
+              <span>{{ 'asset-management.settings.form.humidity-unit' | translate }}</span>
+              <input type="text" formControlName="humidityUnit" readonly />
+            </label>
+
+            <label class="form-field">
+              <span>{{ 'asset-management.settings.form.weight-unit' | translate }}</span>
+              <select formControlName="weightUnit" [disabled]="!canManageAssets()">
+                @for (unit of weightUnits; track unit) {
+                  <option [value]="unit">{{ unit }}</option>
+                }
+              </select>
+            </label>
+          </div>
+        </section>
       </form>
     </section>
   }
@@ -714,27 +793,31 @@
                   </td>
                   <td [attr.data-label]="'asset-management.table.status' | translate">
                     @if (canManageAssets()) {
-                      <select
-                        class="status-select"
-                        [class.active]="asset.status === assetStatus.Active"
-                        [class.maintenance]="asset.status === assetStatus.Maintenance"
-                        [class.inactive]="asset.status === assetStatus.Inactive"
-                        [value]="asset.status"
-                        [disabled]="updatingAssetId() === asset.id"
-                        (change)="updateAssetStatus(asset, $any($event.target).value)"
+                      <label
+                        class="status-select-field"
+                        [ngClass]="assetStatusToneClass(displayedAssetStatus(asset))"
+                        [class.disabled]="updatingAssetId() === asset.id"
                       >
-                        @for (status of assetStatuses; track status) {
-                          <option [value]="status">{{ statusLabelKey(status) | translate }}</option>
-                        }
-                      </select>
+                        <span>{{ assetStatusLabel(displayedAssetStatus(asset)) }}</span>
+                        <mat-icon aria-hidden="true">expand_more</mat-icon>
+                        <select
+                          [attr.aria-label]="'asset-management.table.status' | translate"
+                          [ngModel]="displayedAssetStatus(asset)"
+                          [ngModelOptions]="{ standalone: true }"
+                          [disabled]="updatingAssetId() === asset.id"
+                          (ngModelChange)="updateAssetStatus(asset, $event)"
+                        >
+                          @for (status of assetStatuses; track status) {
+                            <option [ngValue]="status">{{ assetStatusLabel(status) }}</option>
+                          }
+                        </select>
+                      </label>
                     } @else {
                       <span
                         class="status-pill"
-                        [class.active]="asset.status === assetStatus.Active"
-                        [class.maintenance]="asset.status === assetStatus.Maintenance"
-                        [class.inactive]="asset.status === assetStatus.Inactive"
+                        [ngClass]="assetStatusToneClass(displayedAssetStatus(asset))"
                       >
-                        {{ statusLabelKey(asset.status) | translate }}
+                        {{ assetStatusLabel(displayedAssetStatus(asset)) }}
                       </span>
                     }
                   </td>
