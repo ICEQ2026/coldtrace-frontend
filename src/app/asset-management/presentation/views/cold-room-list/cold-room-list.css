@@ -32,7 +32,7 @@
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 12px;
   justify-content: space-between;
   margin-top: 20px;
 }
@@ -41,15 +41,15 @@
   align-items: center;
   color: #cfd5df;
   display: flex;
-  gap: 10px;
-  min-width: min(420px, 100%);
+  gap: 8px;
+  min-width: min(320px, 100%);
 }
 
 .search-icon {
   color: #cfd5df;
-  font-size: 34px;
-  height: 34px;
-  width: 34px;
+  font-size: 26px;
+  height: 26px;
+  width: 26px;
 }
 
 .search-box input {
@@ -73,8 +73,8 @@
   font: 800 12px/20px 'Inter', Arial, sans-serif;
   gap: 8px;
   justify-content: center;
-  min-height: 38px;
-  padding: 8px 14px;
+  min-height: 34px;
+  padding: 6px 12px;
 }
 
 .primary-action {
@@ -123,7 +123,7 @@
   box-shadow: 0 1px 3px rgba(96, 108, 128, 0.14), 0 4px 4px rgba(0, 0, 0, 0.16);
   margin-top: 20px;
   max-width: 100%;
-  padding: 24px 28px;
+  padding: 20px 24px;
 }
 
 .form-card {
@@ -151,14 +151,14 @@
 
 .cold-room-form {
   display: grid;
-  gap: 18px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-  margin-top: 22px;
+  gap: 14px 18px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  margin-top: 18px;
 }
 
 .form-field {
   display: grid;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
 }
 
@@ -168,7 +168,7 @@
 
 .form-field span {
   color: #404040;
-  font: 400 16px/19px 'Varela Round', Arial, sans-serif;
+  font: 800 12px/20px 'Inter', Arial, sans-serif;
 }
 
 .form-field input,
@@ -180,13 +180,18 @@
   box-sizing: border-box;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
   color: #404040;
-  font: 400 16px/20px 'Inter', Arial, sans-serif;
+  font: 400 13px/18px 'Inter', Arial, sans-serif;
   max-width: 100%;
+  min-height: 38px;
   min-width: 0;
   outline: 0;
-  padding: 14px 16px;
+  padding: 9px 12px;
   resize: vertical;
   width: 100%;
+}
+
+.form-field textarea {
+  min-height: 88px;
 }
 
 .form-field input:focus,
@@ -203,7 +208,7 @@
 .form-actions {
   align-items: center;
   display: flex;
-  gap: 12px;
+  gap: 10px;
   grid-column: 1 / -1;
   justify-content: flex-end;
 }
@@ -211,20 +216,23 @@
 .link-panel {
   align-items: end;
   display: grid;
-  gap: 18px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-  margin-top: 22px;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(220px, 320px)) max-content;
+  justify-content: start;
+  margin-top: 18px;
 }
 
 .link-actions {
+  align-self: end;
   grid-column: auto;
+  justify-content: start;
 }
 
 .calibration-summary {
   display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
-  margin-top: 22px;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr));
+  margin-top: 18px;
 }
 
 .calibration-card {
@@ -234,7 +242,7 @@
   box-shadow: 0 1px 3px rgba(96, 108, 128, 0.05);
   display: grid;
   gap: 4px;
-  padding: 12px 14px;
+  padding: 10px 12px;
 }
 
 .calibration-card span {
@@ -244,7 +252,7 @@
 
 .calibration-card strong {
   color: #323c4d;
-  font: 800 22px/28px 'Inter', Arial, sans-serif;
+  font: 800 18px/24px 'Inter', Arial, sans-serif;
 }
 
 .calibration-card.active {
@@ -335,21 +343,34 @@
   border-radius: 3px;
   display: inline-flex;
   justify-content: center;
-  min-width: 116px;
+  min-width: 96px;
+  padding: 2px 8px;
+}
+
+.status-select {
+  border-radius: 3px;
+  color: #404040;
+  font: 400 12px/14px 'Varela Round', Arial, sans-serif;
+  min-height: 26px;
+  min-width: 128px;
+  outline: 0;
   padding: 3px 8px;
 }
 
-.status-pill.active {
+.status-pill.active,
+.status-select.active {
   background: #eaf8f0;
   border: 1px solid rgba(23, 105, 0, 0.35);
 }
 
-.status-pill.maintenance {
+.status-pill.maintenance,
+.status-select.maintenance {
   background: #fef6e5;
   border: 1px solid rgba(177, 111, 11, 0.35);
 }
 
-.status-pill.inactive {
+.status-pill.inactive,
+.status-select.inactive {
   background: #feeceb;
   border: 1px solid rgba(181, 19, 19, 0.35);
 }
@@ -407,6 +428,14 @@
 
   .cold-room-form {
     grid-template-columns: 1fr;
+  }
+
+  .link-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .link-actions {
+    justify-content: flex-start;
   }
 
   .form-card,

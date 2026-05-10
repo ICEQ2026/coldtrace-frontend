@@ -22,7 +22,7 @@ import { IdentityAccessStore } from '../../../../identity-access/application/ide
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
 import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
 
-type AssetFeedback = 'idle' | 'success' | 'duplicate-id' | 'server-error';
+type AssetFeedback = 'idle' | 'success' | 'updated' | 'duplicate-id' | 'server-error';
 type AssetManagementTab = AssetType | 'sensor' | 'gateway' | 'settings';
 
 @Component({
@@ -50,8 +50,14 @@ export class ColdRoomList implements OnInit {
     'gateway',
     'settings',
   ];
+  protected readonly assetStatuses: AssetStatus[] = [
+    AssetStatus.Active,
+    AssetStatus.Maintenance,
+    AssetStatus.Inactive,
+  ];
   protected readonly identityLoading = signal(false);
   protected readonly creating = signal(false);
+  protected readonly updatingAssetId = signal<number | null>(null);
   protected readonly submitted = signal(false);
   protected readonly formVisible = signal(false);
   protected readonly feedback = signal<AssetFeedback>('idle');
@@ -319,6 +325,44 @@ export class ColdRoomList implements OnInit {
       });
   }
 
+  protected updateAssetStatus(asset: Asset, value: string): void {
+    this.feedback.set('idle');
+
+    const nextStatus = this.assetStatuses.find((status) => status === value);
+
+    if (!nextStatus || nextStatus === asset.status || !this.canManageAssets()) {
+      return;
+    }
+
+    const updatedAsset = new Asset(
+      asset.id,
+      asset.organizationId,
+      asset.uuid,
+      asset.type,
+      asset.name,
+      asset.location,
+      asset.capacity,
+      asset.description,
+      nextStatus,
+      asset.lastIncident,
+      asset.currentTemperature,
+      asset.entryDate,
+      asset.connectivity,
+    );
+
+    this.updatingAssetId.set(asset.id);
+    this.assetManagementStore
+      .updateAsset(updatedAsset)
+      .pipe(finalize(() => this.updatingAssetId.set(null)))
+      .subscribe({
+        next: () => {
+          this.feedback.set('updated');
+          this.assetManagementStore.loadAssets();
+        },
+        error: () => this.feedback.set('server-error'),
+      });
+  }
+
   protected linkSensor(): void {
     this.feedback.set('idle');
 
@@ -329,7 +373,7 @@ export class ColdRoomList implements OnInit {
       return currentAsset.id === this.selectedAssetId();
     });
 
-    if (!sensor || !asset || sensor.assetId) {
+    if (!sensor || !asset || sensor.assetId || !this.canManageAssets()) {
       this.feedback.set('duplicate-id');
       return;
     }
@@ -357,6 +401,7 @@ export class ColdRoomList implements OnInit {
           this.feedback.set('success');
           this.selectedSensorId.set(null);
           this.selectedAssetId.set(null);
+          this.assetManagementStore.loadSensors();
         },
         error: () => this.feedback.set('server-error'),
       });
@@ -372,7 +417,13 @@ export class ColdRoomList implements OnInit {
       return currentSensor.id === this.selectedGatewaySensorId();
     });
 
-    if (!gateway || !sensor || gateway.status !== GatewayStatus.Available || sensor.gatewayId) {
+    if (
+      !gateway ||
+      !sensor ||
+      gateway.status !== GatewayStatus.Available ||
+      sensor.gatewayId ||
+      !this.canManageAssets()
+    ) {
       this.feedback.set('duplicate-id');
       return;
     }
@@ -411,6 +462,8 @@ export class ColdRoomList implements OnInit {
           this.feedback.set('success');
           this.selectedGatewayId.set(null);
           this.selectedGatewaySensorId.set(null);
+          this.assetManagementStore.loadSensors();
+          this.assetManagementStore.loadGateways();
         },
         error: () => this.feedback.set('server-error'),
       });
@@ -471,6 +524,10 @@ export class ColdRoomList implements OnInit {
   }
 
   protected formCreatedKey(): string {
+    if (this.feedback() === 'updated') {
+      return 'asset-management.update.feedback-updated';
+    }
+
     if (this.selectedTab() === 'sensor') {
       return 'asset-management.sensors.feedback-linked';
     }
