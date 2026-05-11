@@ -5,8 +5,20 @@ import { AssetSettings } from '../domain/model/asset-settings.entity';
 import { AssetStatus } from '../domain/model/asset-status.enum';
 import { ConnectivityStatus } from '../domain/model/connectivity-status.enum';
 import { Gateway } from '../domain/model/gateway.entity';
+import { GatewayStatus } from '../domain/model/gateway-status.enum';
 import { IoTDevice } from '../domain/model/iot-device.entity';
+import { IoTDeviceStatus } from '../domain/model/iot-device-status.enum';
 import { AssetManagementApi } from '../infrastructure/asset-management-api';
+
+export interface AssetOperationalSummary {
+  totalAssets: number;
+  monitoredAssets: number;
+  connectedDevices: number;
+  totalDevices: number;
+  connectedGateways: number;
+  assetsWithIssues: number;
+  connectivityIssues: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AssetManagementStore {
@@ -35,6 +47,51 @@ export class AssetManagementStore {
     return this.assets().filter((asset) => {
       return asset.organizationId === organizationId && this.hasAssetIssue(asset);
     }).length;
+  }
+
+  assetsForOrganization(organizationId: number | null): Asset[] {
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.assets().filter((asset) => asset.organizationId === organizationId);
+  }
+
+  iotDevicesForOrganization(organizationId: number | null): IoTDevice[] {
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.iotDevices().filter((iotDevice) => iotDevice.organizationId === organizationId);
+  }
+
+  gatewaysForOrganization(organizationId: number | null): Gateway[] {
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.gateways().filter((gateway) => gateway.organizationId === organizationId);
+  }
+
+  operationalSummaryFor(organizationId: number | null): AssetOperationalSummary {
+    const assets = this.assetsForOrganization(organizationId);
+    const iotDevices = this.iotDevicesForOrganization(organizationId);
+    const gateways = this.gatewaysForOrganization(organizationId);
+    const monitoredAssetIds = new Set(
+      iotDevices
+        .filter((iotDevice) => iotDevice.assetId !== null)
+        .map((iotDevice) => iotDevice.assetId),
+    );
+
+    return {
+      totalAssets: assets.length,
+      monitoredAssets: assets.filter((asset) => monitoredAssetIds.has(asset.id)).length,
+      connectedDevices: iotDevices.filter((iotDevice) => iotDevice.status === IoTDeviceStatus.Linked).length,
+      totalDevices: iotDevices.length,
+      connectedGateways: gateways.filter((gateway) => gateway.status === GatewayStatus.Active).length,
+      assetsWithIssues: assets.filter((asset) => this.hasAssetIssue(asset)).length,
+      connectivityIssues: assets.filter((asset) => asset.connectivity !== ConnectivityStatus.Online).length,
+    };
   }
 
   loadAssets(): void {

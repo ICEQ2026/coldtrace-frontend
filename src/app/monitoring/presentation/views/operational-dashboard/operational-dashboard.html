@@ -1,0 +1,140 @@
+<app-dashboard-shell
+  [pageTitleKey]="'monitoring.operational.title'"
+  [activeOrganizationName]="activeOrganizationName()"
+  [profileUserName]="profileUserName()"
+  [profileRoleLabelKey]="profileRoleLabelKey()"
+  [canManageAccess]="canManageAccessValue()"
+  [assetIssuesCount]="openAlertsCount()"
+  (signedOut)="logout()">
+
+  <div class="dashboard-content">
+    @if (monitoringStore.loading() || assetStore.loading() || identityLoading()) {
+      <div class="loading-overlay">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    }
+
+    @if (hasOperationalData()) {
+      <div class="dashboard-board">
+        <section class="primary-column">
+          <div class="temp-chart-container dashboard-card-slot">
+            <app-temperature-chart
+              [title]="'monitoring.operational.chart-temp-title'"
+              [subtitle]="'monitoring.operational.chart-temp-subtitle'"
+              [points]="temperaturePoints()">
+            </app-temperature-chart>
+          </div>
+
+          <div class="lower-grid">
+            <div class="storage-box dashboard-card-slot">
+              <app-storage-distribution [items]="storageDistribution()"></app-storage-distribution>
+            </div>
+
+            <div class="maintenance-box dashboard-card-slot">
+              <app-maintenance-list
+                [tasks]="maintenanceTasks()"
+                [completionRate]="maintenanceCompletionRate()">
+              </app-maintenance-list>
+            </div>
+          </div>
+
+          <div class="alerts-row dashboard-card-slot">
+            <app-recent-alerts [alerts]="recentAlerts()"></app-recent-alerts>
+          </div>
+        </section>
+
+        <aside class="secondary-column">
+          <div class="right-kpis">
+            <div class="feature-kpis">
+              <app-stat-card
+                [title]="monitoredAssetsKpi().title"
+                [value]="monitoredAssetsKpi().value"
+                [valueUnit]="monitoredAssetsKpi().valueUnit"
+                [size]="monitoredAssetsKpi().size"
+                [type]="monitoredAssetsKpi().type"
+                [color]="monitoredAssetsKpi().color"
+                [tooltip]="monitoredAssetsKpi().tooltip"
+                [chartData]="monitoredAssetsKpi().chartData"
+                [highlightedBar]="monitoredAssetsKpi().highlightedBar"
+                [showAnchor]="monitoredAssetsKpi().showAnchor">
+              </app-stat-card>
+
+              <app-stat-card
+                [title]="criticalAlertsKpi().title"
+                [value]="criticalAlertsKpi().value"
+                [valueUnit]="criticalAlertsKpi().valueUnit"
+                [size]="criticalAlertsKpi().size"
+                [type]="criticalAlertsKpi().type"
+                [color]="criticalAlertsKpi().color"
+                [tooltip]="criticalAlertsKpi().tooltip"
+                [chartData]="criticalAlertsKpi().chartData"
+                [highlightedBar]="criticalAlertsKpi().highlightedBar"
+                [showAnchor]="criticalAlertsKpi().showAnchor"
+                [fillWave]="criticalAlertsKpi().fillWave"
+                [waveFillColor]="criticalAlertsKpi().waveFillColor"
+                [wavePath]="criticalAlertsKpi().wavePath"
+                [waveFillPath]="criticalAlertsKpi().waveFillPath">
+              </app-stat-card>
+            </div>
+
+            <div class="compact-kpis">
+              <app-stat-card
+                [title]="activeSensorsKpi().title"
+                [trend]="activeSensorsKpi().trend"
+                [value]="activeSensorsKpi().value"
+                [valueUnit]="activeSensorsKpi().valueUnit"
+                [size]="activeSensorsKpi().size"
+                [type]="activeSensorsKpi().type"
+                [color]="activeSensorsKpi().color"
+                [tooltip]="activeSensorsKpi().tooltip"
+                [chartData]="activeSensorsKpi().chartData"
+                [highlightedBar]="activeSensorsKpi().highlightedBar"
+                [showAnchor]="activeSensorsKpi().showAnchor">
+              </app-stat-card>
+
+              <app-stat-card
+                [title]="incidentsKpi().title"
+                [trend]="incidentsKpi().trend"
+                [value]="incidentsKpi().value"
+                [valueUnit]="incidentsKpi().valueUnit"
+                [size]="incidentsKpi().size"
+                [type]="incidentsKpi().type"
+                [color]="incidentsKpi().color"
+                [tooltip]="incidentsKpi().tooltip"
+                [chartData]="incidentsKpi().chartData"
+                [highlightedBar]="incidentsKpi().highlightedBar"
+                [showAnchor]="incidentsKpi().showAnchor">
+              </app-stat-card>
+
+              <app-stat-card
+                [title]="thermalComplianceKpi().title"
+                [value]="thermalComplianceKpi().value"
+                [valueUnit]="thermalComplianceKpi().valueUnit"
+                [size]="thermalComplianceKpi().size"
+                [type]="thermalComplianceKpi().type"
+                [color]="thermalComplianceKpi().color"
+                [tooltip]="thermalComplianceKpi().tooltip"
+                [chartData]="thermalComplianceKpi().chartData"
+                [highlightedBar]="thermalComplianceKpi().highlightedBar"
+                [showAnchor]="thermalComplianceKpi().showAnchor">
+              </app-stat-card>
+            </div>
+          </div>
+
+          <div class="incidents-box dashboard-card-slot">
+            <app-incidents-chart
+              [days]="incidentDays()"
+              [timeline]="timeline()">
+            </app-incidents-chart>
+          </div>
+        </aside>
+      </div>
+    } @else if (!monitoringStore.loading() && !assetStore.loading() && !identityLoading()) {
+      <div class="empty-state">
+        <mat-icon>dashboard</mat-icon>
+        <h2>{{ 'monitoring.operational.empty-title' | translate }}</h2>
+        <p>{{ 'monitoring.operational.empty-description' | translate }}</p>
+      </div>
+    }
+  </div>
+</app-dashboard-shell>

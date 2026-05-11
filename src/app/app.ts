@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Layout } from './shared/presentation/componentes/layout/layout';
+import { Layout } from './shared/presentation/components/layout/layout';
 
 @Component({
   selector: 'app-root',

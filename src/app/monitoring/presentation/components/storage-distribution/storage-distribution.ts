@@ -1,0 +1,50 @@
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, ViewChild, inject } from '@angular/core';
+import { Chart, registerables } from 'chart.js';
+import { MatIconModule } from '@angular/material/icon';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { StorageDistributionItem } from '../../../domain/model/storage-distribution-item.entity';
+
+Chart.register(...registerables);
+
+@Component({
+  selector: 'app-storage-distribution',
+  imports: [MatIconModule, TranslateModule],
+  templateUrl: './storage-distribution.html',
+  styleUrl: './storage-distribution.css'
+})
+export class StorageDistribution implements AfterViewInit, OnChanges, OnDestroy {
+  private readonly translate = inject(TranslateService);
+  @ViewChild('canvasElement') private canvas!: ElementRef<HTMLCanvasElement>;
+
+  @Input() items: StorageDistributionItem[] = [];
+
+  private chart?: Chart;
+
+  ngAfterViewInit(): void { this.buildChart(); }
+  ngOnChanges(): void { this.buildChart(); }
+  ngOnDestroy(): void { this.chart?.destroy(); }
+
+  private buildChart(): void {
+    if (!this.canvas?.nativeElement) return;
+    this.chart?.destroy();
+    this.chart = undefined;
+
+    if (!this.items.length) return;
+
+    this.chart = new Chart(this.canvas.nativeElement, {
+      type: 'doughnut',
+      data: {
+        labels: this.items.map(item => this.translate.instant(item.label)),
+        datasets: [{
+          data: this.items.map(item => item.percentage),
+          backgroundColor: this.items.map(item => item.color),
+          borderColor: '#ffffff',
+          borderWidth: 7,
+          borderRadius: 8,
+          spacing: 0
+        }]
+      },
+      options: { cutout: '50%', rotation: -84, responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+  }
+}

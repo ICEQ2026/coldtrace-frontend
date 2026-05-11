@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { IdentityAccessStore } from '../../../application/identity-access.store';
-import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
+import { DashboardShell } from '../../../../shared/presentation/components/dashboard-shell/dashboard-shell';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { Organization } from '../../../domain/model/organization.entity';
 import { Role } from '../../../domain/model/role.entity';

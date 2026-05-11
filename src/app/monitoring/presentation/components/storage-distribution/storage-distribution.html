@@ -1,0 +1,31 @@
+<div class="premium-card distribution-card">
+  <div class="card-header">
+    <h3 class="card-title">{{ 'monitoring.operational.chart-storage-title' | translate }}</h3>
+    <button class="more-btn"><mat-icon>more_horiz</mat-icon></button>
+  </div>
+
+  <div class="card-body">
+    <div class="chart-container">
+      <canvas #canvasElement></canvas>
+    </div>
+
+    <div class="legend-container">
+      @for (item of items; track item.id) {
+        <div class="legend-row">
+          <div class="category">
+            <span class="dot" [style.background]="item.color"></span>
+            <div class="text-group">
+            <span class="cat-name">{{ item.label | translate }}</span>
+              <span class="cat-assets">{{ item.assetCount }} {{ 'monitoring.operational.unit-assets' | translate }}</span>
+            </div>
+          </div>
+          <span class="percentage">{{ item.percentage }}%</span>
+        </div>
+      }
+
+      @if (!items.length) {
+        <div class="empty-distribution">{{ 'monitoring.operational.no-assets' | translate }}</div>
+      }
+    </div>
+  </div>
+</div>

@@ -6,8 +6,6 @@ const resetPassword = () =>
   import('./views/reset-password/reset-password').then((m) => m.ResetPassword);
 const signIn = () => import('./views/sign-in/sign-in').then((m) => m.SignIn);
 const signUp = () => import('./views/sign-up/sign-up').then((m) => m.SignUp);
-const dashboardPlaceholder = () =>
-  import('./views/dashboard-placeholder/dashboard-placeholder').then((m) => m.DashboardPlaceholder);
 const rolePermissionForm = () =>
   import('./views/role-permission-form/role-permission-form').then((m) => m.RolePermissionForm);
 const userForm = () => import('./views/user-form/user-form').then((m) => m.UserForm);
@@ -17,9 +15,8 @@ const userAccessList = () =>
 export const identityAccessRoutes: Routes = [
   {
     path: 'dashboard',
-    loadComponent: dashboardPlaceholder,
-    title: 'ColdTrace - Dashboard',
-    data: { pageTitleKey: 'roles-permissions.main-page-title' },
+    redirectTo: '/monitoring/operational',
+    pathMatch: 'full',
   },
   {
     path: 'assets',
@@ -28,21 +25,18 @@ export const identityAccessRoutes: Routes = [
   },
   {
     path: 'alerts',
-    loadComponent: dashboardPlaceholder,
-    title: 'ColdTrace - Alerts',
-    data: { pageTitleKey: 'roles-permissions.alerts-page-title' },
+    redirectTo: '/monitoring/operational',
+    pathMatch: 'full',
   },
   {
     path: 'monitoring',
-    loadComponent: dashboardPlaceholder,
-    title: 'ColdTrace - Monitoring',
-    data: { pageTitleKey: 'roles-permissions.monitoring-page-title' },
+    redirectTo: '/monitoring/operational',
+    pathMatch: 'full',
   },
   {
     path: 'reports',
-    loadComponent: dashboardPlaceholder,
-    title: 'ColdTrace - Reports',
-    data: { pageTitleKey: 'roles-permissions.reports-page-title' },
+    redirectTo: '/monitoring/operational',
+    pathMatch: 'full',
   },
   {
     path: 'password-recovery',

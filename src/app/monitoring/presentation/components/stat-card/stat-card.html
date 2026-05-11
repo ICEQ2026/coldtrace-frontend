@@ -1,0 +1,52 @@
+<div class="stat-card" [ngClass]="['size-' + size, 'type-' + type]"
+  [ngStyle]="{ 'background': color.bg, 'border-color': color.border }">
+  <!-- Thought Bubble Tooltip -->
+  <div *ngIf="tooltip" class="thought-bubble" [ngStyle]="{ 'left': tooltip.position + '%' }">
+    <span class="bubble-text" [ngStyle]="{ 'color': bubbleTextColor }">{{ tooltip.text | translate }}</span>
+    <div class="bubble-tail"></div>
+  </div>
+
+  <div class="card-content">
+    <div class="header">
+      <h3 class="title" [ngStyle]="{ color: color.text }">{{ title | translate }}</h3>
+      <div class="more-btn" [ngStyle]="{ color: color.text, opacity: '0.5' }">
+        <mat-icon>more_horiz</mat-icon>
+      </div>
+    </div>
+
+    <div class="main-metric">
+      <div class="trend" *ngIf="trend" [ngStyle]="{ color: color.text, opacity: trendOpacity }">{{ trend | translate }}
+      </div>
+      <h2 class="value" [ngStyle]="{ color: color.text }">{{ value }}</h2>
+      <div class="unit" *ngIf="valueUnit" [ngStyle]="{ color: color.text, opacity: unitOpacity }">{{ valueUnit |
+        translate }}</div>
+    </div>
+  </div>
+
+  <!-- Chart Layer -->
+  <div class="chart-container" [ngClass]="{ 'is-wave': type === 'wave' }">
+    <div class="bars" *ngIf="type === 'bars'">
+      <div *ngFor="let val of chartData; let i = index" class="bar" [ngStyle]="{
+              'background-color': highlightedBar === i ? '#FFFFFF' : color.chart,
+              'height': (val / 100) * 100 + '%',
+              'opacity': highlightedBar === i ? '1' : i > (chartData.length - 6) ? '0.95' : fadedOpacity
+            }"></div>
+      <div class="anchor-dot bars-anchor" *ngIf="tooltip && showAnchor"
+        [ngStyle]="{ 'background': '#FFF', 'border-color': color.chart, 'left': tooltip.position + '%' }"></div>
+    </div>
+
+    <!-- Wave -->
+    <div class="wave" *ngIf="type === 'wave'">
+      <svg viewBox="0 0 100 40" preserveAspectRatio="none">
+        <path *ngIf="fillWave" [attr.d]="waveFillPath" class="wave-fill" [attr.fill]="waveFillColor" />
+        <path [attr.d]="wavePath" class="wave-shadow" fill="none" stroke="rgba(62, 12, 116, 0.22)" stroke-width="2.4"
+          stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"
+          transform="translate(0 1.4)" />
+        <path [attr.d]="wavePath" class="wave-line" fill="none" [attr.stroke]="color.chart" stroke-width="1.05"
+          stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
+      </svg>
+      <div class="anchor-dot wave-anchor" *ngIf="tooltip && showAnchor"
+        [ngStyle]="{ 'background': '#FFF', 'border-color': color.chart, 'left': tooltip.position + '%' }"></div>
+    </div>
+  </div>
+</div>

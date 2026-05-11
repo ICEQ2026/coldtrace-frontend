@@ -736,5 +736,972 @@
       "lastCalibrationDate": "09 May 2026",
       "nextCalibrationDate": "09 Nov 2026"
     }
+  ],
+  "sensor-readings": [
+    {
+      "id": 1,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 0.2,
+      "humidity": 72,
+      "isOutOfRange": false,
+      "recordedAt": "2026-12-13T00:00:00"
+    },
+    {
+      "id": 2,
+      "assetId": 1,
+      "iotDeviceId": 2,
+      "temperature": 1,
+      "humidity": 70,
+      "isOutOfRange": false,
+      "recordedAt": "2026-12-13T01:00:00"
+    },
+    {
+      "id": 3,
+      "assetId": 1,
+      "iotDeviceId": 3,
+      "temperature": -8.4,
+      "humidity": 68,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T02:00:00"
+    },
+    {
+      "id": 4,
+      "assetId": 1,
+      "iotDeviceId": 4,
+      "temperature": -2.8,
+      "humidity": 74,
+      "isOutOfRange": false,
+      "recordedAt": "2026-12-13T03:00:00"
+    },
+    {
+      "id": 5,
+      "assetId": 1,
+      "iotDeviceId": 5,
+      "temperature": -1.3,
+      "humidity": 76,
+      "isOutOfRange": false,
+      "recordedAt": "2026-12-13T04:00:00"
+    },
+    {
+      "id": 6,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 0.4,
+      "humidity": 71,
+      "isOutOfRange": false,
+      "recordedAt": "2026-12-13T05:00:00"
+    },
+    {
+      "id": 7,
+      "assetId": 1,
+      "iotDeviceId": 2,
+      "temperature": 2.4,
+      "humidity": 69,
+      "isOutOfRange": false,
+      "recordedAt": "2026-12-13T06:00:00"
+    },
+    {
+      "id": 8,
+      "assetId": 1,
+      "iotDeviceId": 3,
+      "temperature": 2.1,
+      "humidity": 73,
+      "isOutOfRange": false,
+      "recordedAt": "2026-12-13T07:00:00"
+    },
+    {
+      "id": 9,
+      "assetId": 1,
+      "iotDeviceId": 4,
+      "temperature": 3.1,
+      "humidity": 75,
+      "isOutOfRange": false,
+      "recordedAt": "2026-12-13T08:00:00"
+    },
+    {
+      "id": 10,
+      "assetId": 1,
+      "iotDeviceId": 5,
+      "temperature": 8.8,
+      "humidity": 78,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T09:00:00"
+    },
+    {
+      "id": 11,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 9.4,
+      "humidity": 80,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T10:00:00"
+    },
+    {
+      "id": 12,
+      "assetId": 1,
+      "iotDeviceId": 2,
+      "temperature": 9,
+      "humidity": 82,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T11:00:00"
+    },
+    {
+      "id": 13,
+      "assetId": 1,
+      "iotDeviceId": 3,
+      "temperature": 10.1,
+      "humidity": 84,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T12:00:00"
+    },
+    {
+      "id": 14,
+      "assetId": 1,
+      "iotDeviceId": 4,
+      "temperature": 12.4,
+      "humidity": 86,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T13:00:00"
+    },
+    {
+      "id": 15,
+      "assetId": 1,
+      "iotDeviceId": 5,
+      "temperature": 6.6,
+      "humidity": 77,
+      "isOutOfRange": false,
+      "recordedAt": "2026-12-13T14:00:00"
+    },
+    {
+      "id": 16,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 7.8,
+      "humidity": 79,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T15:00:00"
+    },
+    {
+      "id": 17,
+      "assetId": 1,
+      "iotDeviceId": 2,
+      "temperature": 7.4,
+      "humidity": 81,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T16:00:00"
+    },
+    {
+      "id": 18,
+      "assetId": 1,
+      "iotDeviceId": 3,
+      "temperature": 5,
+      "humidity": 83,
+      "isOutOfRange": false,
+      "recordedAt": "2026-12-13T17:00:00"
+    },
+    {
+      "id": 19,
+      "assetId": 1,
+      "iotDeviceId": 4,
+      "temperature": 6.1,
+      "humidity": 76,
+      "isOutOfRange": false,
+      "recordedAt": "2026-12-13T18:00:00"
+    },
+    {
+      "id": 20,
+      "assetId": 1,
+      "iotDeviceId": 5,
+      "temperature": 7.9,
+      "humidity": 74,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T19:00:00"
+    },
+    {
+      "id": 21,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 8.2,
+      "humidity": 73,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T20:00:00"
+    },
+    {
+      "id": 22,
+      "assetId": 2,
+      "iotDeviceId": 2,
+      "temperature": 8.1,
+      "humidity": 75,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T21:00:00"
+    },
+    {
+      "id": 23,
+      "assetId": 3,
+      "iotDeviceId": 3,
+      "temperature": 8.4,
+      "humidity": 78,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T22:00:00"
+    },
+    {
+      "id": 24,
+      "assetId": 4,
+      "iotDeviceId": 4,
+      "temperature": 8.6,
+      "humidity": 80,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T23:00:00"
+    },
+    {
+      "id": 25,
+      "assetId": 5,
+      "iotDeviceId": 5,
+      "temperature": 9.1,
+      "humidity": 82,
+      "isOutOfRange": true,
+      "recordedAt": "2026-12-13T24:00:00"
+    }
+  ],
+  "operational-dashboards": [
+    {
+      "id": 1,
+      "temperatureTitle": "Temperature",
+      "temperatureSubtitle": "Last 24h · Cold Room 01",
+      "kpis": [
+        {
+          "id": 1,
+          "key": "monitored-assets",
+          "title": "Monitored Assets",
+          "value": "24 assets",
+          "size": "large",
+          "type": "bars",
+          "color": {
+            "bg": "#3B66F5",
+            "border": "#3B66F5",
+            "text": "#FFFFFF",
+            "chart": "rgba(255,255,255,0.7)"
+          },
+          "tooltip": {
+            "text": "+2 today",
+            "position": 88
+          },
+          "chartData": [
+            60,
+            44,
+            51,
+            37,
+            58,
+            46,
+            66,
+            61,
+            41,
+            57,
+            36,
+            69,
+            54
+          ],
+          "highlightedBar": 11,
+          "showAnchor": false
+        },
+        {
+          "id": 2,
+          "key": "critical-alerts",
+          "title": "Critical Alerts",
+          "value": "3 active",
+          "size": "large",
+          "type": "wave",
+          "color": {
+            "bg": "#8B31E3",
+            "border": "#8B31E3",
+            "text": "#FFFFFF",
+            "chart": "rgba(255,255,255,0.8)"
+          },
+          "tooltip": {
+            "text": "monitoring.operational.label-open",
+            "position": 52
+          },
+          "chartData": [],
+          "highlightedBar": -1,
+          "showAnchor": true,
+          "fillWave": true,
+          "waveFillColor": "rgba(61, 12, 116, 0.16)",
+          "wavePath": "M0 32 C 6 35, 11 36, 17 31 C 23 24, 29 33, 35 34 C 42 35, 46 22, 52 25 C 56 28, 58 18, 64 20 C 70 23, 73 31, 79 27 C 84 24, 86 16, 93 15 C 96 15, 98 17, 100 16",
+          "waveFillPath": "M0 32 C 6 35, 11 36, 17 31 C 23 24, 29 33, 35 34 C 42 35, 46 22, 52 25 C 56 28, 58 18, 64 20 C 70 23, 73 31, 79 27 C 84 24, 86 16, 93 15 C 96 15, 98 17, 100 16 L100 40 L0 40 Z"
+        },
+        {
+          "id": 3,
+          "key": "active-sensors",
+          "title": "Active Sensors",
+          "trend": "+5%",
+          "value": "32 sensors",
+          "size": "small",
+          "type": "bars",
+          "color": {
+            "bg": "#D8F0FF",
+            "border": "#D8F0FF",
+            "text": "#3B66F5",
+            "chart": "#3B66F5"
+          },
+          "tooltip": {
+            "text": "monitoring.operational.label-offline",
+            "position": 82
+          },
+          "chartData": [
+            72,
+            88,
+            93,
+            82,
+            96,
+            77,
+            91,
+            86,
+            98,
+            80,
+            90
+          ],
+          "highlightedBar": 5,
+          "showAnchor": false
+        },
+        {
+          "id": 4,
+          "key": "incidents",
+          "title": "Incidents",
+          "trend": "-7%",
+          "value": "5 in progress",
+          "size": "small",
+          "type": "bars",
+          "color": {
+            "bg": "#F2E6FF",
+            "border": "#F2E6FF",
+            "text": "#8B31E3",
+            "chart": "#8B31E3"
+          },
+          "tooltip": {
+            "text": "monitoring.operational.label-recent",
+            "position": 78
+          },
+          "chartData": [
+            62,
+            78,
+            71,
+            84,
+            96,
+            87,
+            74,
+            92,
+            81,
+            69,
+            88
+          ],
+          "highlightedBar": 5,
+          "showAnchor": false
+        },
+        {
+          "id": 5,
+          "key": "thermal-compliance",
+          "title": "Thermal Compliance",
+          "value": "92%",
+          "valueUnit": "inside range",
+          "size": "small",
+          "type": "bars",
+          "color": {
+            "bg": "#E6F9EB",
+            "border": "#E6F9EB",
+            "text": "#10B981",
+            "chart": "#10B981"
+          },
+          "tooltip": {
+            "text": "monitoring.operational.label-avg",
+            "position": 85
+          },
+          "chartData": [
+            74,
+            58,
+            81,
+            63,
+            69,
+            92,
+            76,
+            87,
+            61,
+            95,
+            72
+          ],
+          "highlightedBar": 9,
+          "showAnchor": false
+        }
+      ],
+      "temperaturePoints": [
+        {
+          "id": 1,
+          "label": "00:00",
+          "temperature": 0.2,
+          "ghost": -5,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 2,
+          "label": "01:00",
+          "temperature": 1,
+          "ghost": -0.2,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 3,
+          "label": "02:00",
+          "temperature": -8.4,
+          "ghost": -0.3,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 4,
+          "label": "03:00",
+          "temperature": -2.8,
+          "ghost": -0.5,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 5,
+          "label": "04:00",
+          "temperature": -1.3,
+          "ghost": -1,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 6,
+          "label": "05:00",
+          "temperature": 0.4,
+          "ghost": 1.8,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 7,
+          "label": "06:00",
+          "temperature": 2.4,
+          "ghost": 4.1,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 8,
+          "label": "07:00",
+          "temperature": 2.1,
+          "ghost": 2.2,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 9,
+          "label": "08:00",
+          "temperature": 3.1,
+          "ghost": -3.7,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 10,
+          "label": "09:00",
+          "temperature": 8.8,
+          "ghost": -4.3,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 11,
+          "label": "10:00",
+          "temperature": 9.4,
+          "ghost": -4.4,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 12,
+          "label": "11:00",
+          "temperature": 9,
+          "ghost": -1,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 13,
+          "label": "12:00",
+          "temperature": 10.1,
+          "ghost": 0.4,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 14,
+          "label": "13:00",
+          "temperature": 12.4,
+          "ghost": -0.4,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 15,
+          "label": "14:00",
+          "temperature": 6.6,
+          "ghost": 0.6,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 16,
+          "label": "15:00",
+          "temperature": 7.8,
+          "ghost": 7.1,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 17,
+          "label": "16:00",
+          "temperature": 7.4,
+          "ghost": 8,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 18,
+          "label": "17:00",
+          "temperature": 5,
+          "ghost": 8.8,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 19,
+          "label": "18:00",
+          "temperature": 6.1,
+          "ghost": 9.3,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 20,
+          "label": "19:00",
+          "temperature": 7.9,
+          "ghost": 10,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 21,
+          "label": "20:00",
+          "temperature": 8.2,
+          "ghost": 10.5,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 22,
+          "label": "21:00",
+          "temperature": 8.1,
+          "ghost": 11,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 23,
+          "label": "22:00",
+          "temperature": 8.4,
+          "ghost": 11.4,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 24,
+          "label": "23:00",
+          "temperature": 8.6,
+          "ghost": 11.8,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        },
+        {
+          "id": 25,
+          "label": "24:00",
+          "temperature": 9.1,
+          "ghost": 12.2,
+          "maxLimit": 7.2,
+          "minLimit": -5
+        }
+      ],
+      "storageDistribution": [
+        {
+          "id": 1,
+          "label": "Frozen",
+          "assetCount": 12,
+          "percentage": 57.1,
+          "color": "#91bdff"
+        },
+        {
+          "id": 2,
+          "label": "Refrigerated",
+          "assetCount": 10,
+          "percentage": 22.9,
+          "color": "#51bd7a"
+        },
+        {
+          "id": 3,
+          "label": "Ambient",
+          "assetCount": 7,
+          "percentage": 12.9,
+          "color": "#f5bd38"
+        },
+        {
+          "id": 4,
+          "label": "Other",
+          "assetCount": 2,
+          "percentage": 7.1,
+          "color": "#9aa3af"
+        }
+      ],
+      "maintenanceTasks": [
+        {
+          "id": 1,
+          "label": "Sensor SF-01",
+          "icon": "sensors",
+          "status": "to-do"
+        },
+        {
+          "id": 2,
+          "label": "Gateway GW-02",
+          "icon": "hub",
+          "status": "doing"
+        },
+        {
+          "id": 3,
+          "label": "Sensor EF-12",
+          "icon": "sensors",
+          "status": "to-do"
+        },
+        {
+          "id": 4,
+          "label": "Gateway GW-04",
+          "icon": "hub",
+          "status": "doing"
+        },
+        {
+          "id": 5,
+          "label": "Coldroom CR-03",
+          "icon": "inventory_2",
+          "status": "done"
+        }
+      ],
+      "maintenanceCompletionRate": 78,
+      "recentAlerts": [
+        {
+          "id": 1,
+          "assetName": "Cold Room 02",
+          "type": "High temperature",
+          "value": "7.6°C",
+          "date": "13 Dec 2026",
+          "status": "Unacknowledged",
+          "severity": "warning",
+          "icon": "warning"
+        },
+        {
+          "id": 2,
+          "assetName": "Transport Unit 01",
+          "type": "Connection lost",
+          "value": "—",
+          "date": "14 Dec 2026",
+          "status": "Unacknowledged",
+          "severity": "critical",
+          "icon": "error"
+        },
+        {
+          "id": 3,
+          "assetName": "Cold Room 03",
+          "type": "High humidity",
+          "value": "88%",
+          "date": "07 Dec 2026",
+          "status": "Acknowledged",
+          "severity": "info",
+          "icon": "water_drop"
+        },
+        {
+          "id": 4,
+          "assetName": "Cold Room 01",
+          "type": "Low temperature",
+          "value": "-3.2°C",
+          "date": "06 Dec 2026",
+          "status": "Acknowledged",
+          "severity": "warning",
+          "icon": "ac_unit"
+        },
+        {
+          "id": 5,
+          "assetName": "Transport Unit 02",
+          "type": "Low temperature",
+          "value": "-3.5°C",
+          "date": "31 Nov 2026",
+          "status": "Acknowledged",
+          "severity": "warning",
+          "icon": "ac_unit"
+        }
+      ],
+      "incidentDays": [
+        {
+          "id": 1,
+          "label": "M",
+          "normal": 2,
+          "warning": 4,
+          "critical": 1,
+          "offline": 3
+        },
+        {
+          "id": 2,
+          "label": "T",
+          "normal": 3,
+          "warning": 3,
+          "critical": 2,
+          "offline": 3
+        },
+        {
+          "id": 3,
+          "label": "W",
+          "normal": 4,
+          "warning": 2,
+          "critical": 1,
+          "offline": 4
+        },
+        {
+          "id": 4,
+          "label": "T",
+          "normal": 3,
+          "warning": 3,
+          "critical": 1,
+          "offline": 4
+        },
+        {
+          "id": 5,
+          "label": "F",
+          "normal": 2,
+          "warning": 4,
+          "critical": 1,
+          "offline": 4
+        },
+        {
+          "id": 6,
+          "label": "S",
+          "normal": 8,
+          "warning": 2,
+          "critical": 2,
+          "offline": 4
+        },
+        {
+          "id": 7,
+          "label": "S",
+          "normal": 5,
+          "warning": 6,
+          "critical": 1,
+          "offline": 3
+        }
+      ],
+      "timeline": [
+        {
+          "id": 1,
+          "label": "00h",
+          "normal": 1,
+          "warning": 1,
+          "critical": 0,
+          "offline": 2
+        },
+        {
+          "id": 2,
+          "label": "01h",
+          "normal": 2,
+          "warning": 1,
+          "critical": 1,
+          "offline": 4
+        },
+        {
+          "id": 3,
+          "label": "02h",
+          "normal": 3,
+          "warning": 2,
+          "critical": 1,
+          "offline": 6
+        },
+        {
+          "id": 4,
+          "label": "03h",
+          "normal": 4,
+          "warning": 2,
+          "critical": 2,
+          "offline": 10
+        },
+        {
+          "id": 5,
+          "label": "04h",
+          "normal": 2,
+          "warning": 1,
+          "critical": 1,
+          "offline": 5
+        },
+        {
+          "id": 6,
+          "label": "05h",
+          "normal": 1,
+          "warning": 1,
+          "critical": 0,
+          "offline": 3
+        },
+        {
+          "id": 7,
+          "label": "06h",
+          "normal": 4,
+          "warning": 2,
+          "critical": 1,
+          "offline": 15
+        },
+        {
+          "id": 8,
+          "label": "07h",
+          "normal": 5,
+          "warning": 3,
+          "critical": 1,
+          "offline": 20
+        },
+        {
+          "id": 9,
+          "label": "08h",
+          "normal": 3,
+          "warning": 2,
+          "critical": 1,
+          "offline": 11
+        },
+        {
+          "id": 10,
+          "label": "09h",
+          "normal": 2,
+          "warning": 1,
+          "critical": 0,
+          "offline": 5
+        },
+        {
+          "id": 11,
+          "label": "10h",
+          "normal": 4,
+          "warning": 3,
+          "critical": 1,
+          "offline": 18
+        },
+        {
+          "id": 12,
+          "label": "11h",
+          "normal": 6,
+          "warning": 3,
+          "critical": 2,
+          "offline": 23
+        },
+        {
+          "id": 13,
+          "label": "12h",
+          "normal": 3,
+          "warning": 2,
+          "critical": 1,
+          "offline": 14
+        },
+        {
+          "id": 14,
+          "label": "13h",
+          "normal": 2,
+          "warning": 1,
+          "critical": 0,
+          "offline": 8
+        },
+        {
+          "id": 15,
+          "label": "14h",
+          "normal": 5,
+          "warning": 2,
+          "critical": 1,
+          "offline": 20
+        },
+        {
+          "id": 16,
+          "label": "15h",
+          "normal": 4,
+          "warning": 2,
+          "critical": 1,
+          "offline": 17
+        },
+        {
+          "id": 17,
+          "label": "16h",
+          "normal": 3,
+          "warning": 1,
+          "critical": 1,
+          "offline": 11
+        },
+        {
+          "id": 18,
+          "label": "17h",
+          "normal": 2,
+          "warning": 1,
+          "critical": 0,
+          "offline": 9
+        },
+        {
+          "id": 19,
+          "label": "18h",
+          "normal": 2,
+          "warning": 1,
+          "critical": 0,
+          "offline": 6
+        },
+        {
+          "id": 20,
+          "label": "19h",
+          "normal": 1,
+          "warning": 1,
+          "critical": 0,
+          "offline": 4
+        },
+        {
+          "id": 21,
+          "label": "20h",
+          "normal": 1,
+          "warning": 0,
+          "critical": 0,
+          "offline": 4
+        },
+        {
+          "id": 22,
+          "label": "21h",
+          "normal": 1,
+          "warning": 0,
+          "critical": 0,
+          "offline": 3
+        },
+        {
+          "id": 23,
+          "label": "22h",
+          "normal": 1,
+          "warning": 0,
+          "critical": 0,
+          "offline": 2
+        },
+        {
+          "id": 24,
+          "label": "23h",
+          "normal": 1,
+          "warning": 0,
+          "critical": 0,
+          "offline": 1
+        }
+      ]
+    }
   ]
 }

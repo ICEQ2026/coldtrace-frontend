@@ -23,7 +23,7 @@ import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
-import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
+import { DashboardShell } from '../../../../shared/presentation/components/dashboard-shell/dashboard-shell';
 
 type AssetFeedback =
   | 'idle'

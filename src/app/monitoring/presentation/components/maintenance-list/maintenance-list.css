@@ -1,0 +1,171 @@
+.maintenance-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px 30px 18px;
+}
+
+.card-header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.card-title {
+  color: #111827;
+  font-size: 16px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.more-btn {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #edf0f4;
+  border-radius: 10px;
+  color: #9ca3af;
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  padding: 0;
+  width: 32px;
+}
+
+.card-body {
+  align-items: start;
+  display: grid;
+  flex: 1;
+  gap: 12px;
+  grid-template-columns: minmax(116px, 1fr) 86px;
+  min-height: 0;
+  padding-top: 8px;
+}
+
+.task-column {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  min-width: 0;
+}
+
+.task-item {
+  align-items: center;
+  display: flex;
+  gap: 9px;
+  min-width: 0;
+}
+
+.device-icon {
+  color: #697386;
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+}
+
+.device-name {
+  color: #3f4a5f;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 15px;
+}
+
+.progress-column {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 2px;
+}
+
+.circular-chart {
+  height: 82px;
+  overflow: visible;
+  transform: rotate(-90deg);
+  width: 82px;
+}
+
+.circle-done,
+.circle-doing,
+.circle-progress {
+  fill: none;
+  stroke-width: 8;
+}
+
+.circle-done {
+  stroke: #e8ddf6;
+  stroke-dasharray: 264 264;
+}
+
+.circle-doing {
+  stroke: #c8a5f1;
+  stroke-dasharray: 64 264;
+  stroke-dashoffset: -130;
+  stroke-linecap: round;
+}
+
+.circle-progress {
+  stroke: #7c2fd4;
+  stroke-dasharray: 142 264;
+  stroke-dashoffset: -30;
+  stroke-linecap: round;
+}
+
+.percentage {
+  fill: #1f2937;
+  font-family: 'Inter', sans-serif;
+  font-size: 23px;
+  font-weight: 800;
+  text-anchor: middle;
+  transform: rotate(90deg);
+  transform-origin: 60px 60px;
+}
+
+.completion-label {
+  color: #9ca3af;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 11px;
+  margin-top: -2px;
+  text-align: center;
+  text-transform: uppercase;
+  width: 58px;
+}
+
+.card-footer {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  min-height: 34px;
+  padding-top: 8px;
+}
+
+.legend-dot {
+  align-items: center;
+  color: #6b7280;
+  display: flex;
+  font-size: 10px;
+  font-weight: 700;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.dot {
+  border-radius: 50%;
+  height: 10px;
+  width: 10px;
+}
+
+.purple {
+  background: #7c2fd4;
+}
+
+.blue {
+  background: #c8a5f1;
+}
+
+.gray {
+  background: #d8dde6;
+}
