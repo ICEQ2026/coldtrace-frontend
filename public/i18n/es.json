@@ -257,6 +257,14 @@
         "camera": "Cámara",
         "multi-sensor": "Multisensor"
       },
+      "measurement-parameters": {
+        "temperature": "Temperatura",
+        "humidity": "Humedad",
+        "motion": "Movimiento",
+        "image": "Imagen",
+        "battery": "Batería",
+        "signal": "Señal"
+      },
       "table": {
         "id": "ID",
         "type": "Tipo",

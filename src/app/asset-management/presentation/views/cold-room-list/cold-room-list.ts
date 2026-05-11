@@ -35,6 +35,19 @@ type AssetFeedback =
   | 'gateway-created'
   | 'settings-saved';
 type AssetManagementTab = AssetType | 'iot-device' | 'gateway' | 'settings';
+type IoTMeasurementParameter =
+  | 'temperature'
+  | 'humidity'
+  | 'motion'
+  | 'image'
+  | 'battery'
+  | 'signal';
+
+interface IoTDeviceDefinition {
+  type: string;
+  modelPlaceholder: string;
+  parameters: IoTMeasurementParameter[];
+}
 
 @Component({
   selector: 'app-cold-room-list',
@@ -78,13 +91,36 @@ export class ColdRoomList implements OnInit, OnDestroy {
     AssetStatus.Maintenance,
     AssetStatus.Inactive,
   ];
-  protected readonly iotDeviceTypes: string[] = [
-    'temperature-sensor',
-    'humidity-sensor',
-    'motion-sensor',
-    'camera',
-    'multi-sensor',
+  protected readonly iotDeviceDefinitions: IoTDeviceDefinition[] = [
+    {
+      type: 'temperature-sensor',
+      modelPlaceholder: 'TempSense T100',
+      parameters: ['temperature', 'battery', 'signal'],
+    },
+    {
+      type: 'humidity-sensor',
+      modelPlaceholder: 'HumidSense H200',
+      parameters: ['humidity', 'temperature', 'battery', 'signal'],
+    },
+    {
+      type: 'motion-sensor',
+      modelPlaceholder: 'MoveSense M100',
+      parameters: ['motion', 'battery', 'signal'],
+    },
+    {
+      type: 'camera',
+      modelPlaceholder: 'ColdCam C1',
+      parameters: ['image', 'motion', 'battery', 'signal'],
+    },
+    {
+      type: 'multi-sensor',
+      modelPlaceholder: 'TraceSense M2',
+      parameters: ['temperature', 'humidity', 'motion', 'battery', 'signal'],
+    },
   ];
+  protected readonly iotDeviceTypes = this.iotDeviceDefinitions.map(
+    (definition) => definition.type,
+  );
   protected readonly gatewayStatuses: GatewayStatus[] = [
     GatewayStatus.Active,
     GatewayStatus.Maintenance,
@@ -119,7 +155,7 @@ export class ColdRoomList implements OnInit, OnDestroy {
     internalId: ['', [Validators.required, Validators.minLength(3)]],
     deviceType: ['', [Validators.required]],
     model: ['', [Validators.required, Validators.minLength(3)]],
-    measurementType: ['', [Validators.required, Validators.minLength(3)]],
+    measurementType: ['', [Validators.required]],
     assetId: [0],
     nextCalibrationDate: [''],
   });
@@ -456,18 +492,22 @@ export class ColdRoomList implements OnInit, OnDestroy {
 
     const assetId = Number(this.iotDeviceForm.controls.assetId.value) || null;
     const nextCalibrationDate = this.iotDeviceForm.controls.nextCalibrationDate.value.trim();
+    const measurementParameters = this.measurementParametersForDeviceType(
+      this.iotDeviceForm.controls.deviceType.value,
+    );
     const iotDevice = new IoTDevice(
       Math.max(...this.iotDevices().map((currentIoTDevice) => currentIoTDevice.id), 0) + 1,
       organizationId,
       internalId,
       this.iotDeviceForm.controls.deviceType.value,
       this.iotDeviceForm.controls.model.value.trim(),
-      this.iotDeviceForm.controls.measurementType.value.trim(),
+      this.measurementTypeLabel(measurementParameters),
       assetId,
       assetId ? IoTDeviceStatus.Linked : IoTDeviceStatus.Available,
       CalibrationStatus.Unknown,
       '—',
       nextCalibrationDate || '—',
+      measurementParameters,
     );
 
     this.creating.set(true);
@@ -769,6 +809,32 @@ export class ColdRoomList implements OnInit, OnDestroy {
     return `asset-management.iot-devices.device-types.${deviceType}`;
   }
 
+  protected selectIoTDeviceType(deviceType: string): void {
+    const parameters = this.measurementParametersForDeviceType(deviceType);
+    this.iotDeviceForm.controls.measurementType.setValue(this.measurementTypeLabel(parameters));
+
+    if (!this.iotDeviceForm.controls.model.value.trim()) {
+      this.iotDeviceForm.controls.model.setValue(
+        this.iotDeviceDefinitions.find((definition) => definition.type === deviceType)
+          ?.modelPlaceholder ?? '',
+      );
+    }
+  }
+
+  protected measurementParameterLabelKey(parameter: string): string {
+    return `asset-management.iot-devices.measurement-parameters.${parameter}`;
+  }
+
+  protected measurementParametersFor(iotDevice: IoTDevice): string[] {
+    return iotDevice.measurementParameters.length
+      ? iotDevice.measurementParameters
+      : this.measurementParametersForDeviceType(iotDevice.deviceType);
+  }
+
+  protected selectedIoTDeviceParameters(): string[] {
+    return this.measurementParametersForDeviceType(this.iotDeviceForm.controls.deviceType.value);
+  }
+
   protected gatewayStatusLabelKey(status: GatewayStatus): string {
     return `asset-management.gateways.status.${status}`;
   }
@@ -989,6 +1055,19 @@ export class ColdRoomList implements OnInit, OnDestroy {
       .filter(Boolean);
   }
 
+  private measurementParametersForDeviceType(deviceType: string): IoTMeasurementParameter[] {
+    return (
+      this.iotDeviceDefinitions.find((definition) => definition.type === deviceType)?.parameters ??
+      []
+    );
+  }
+
+  private measurementTypeLabel(parameters: string[]): string {
+    return parameters
+      .map((parameter) => this.translate.instant(this.measurementParameterLabelKey(parameter)))
+      .join(' / ');
+  }
+
   private startTelemetryUpdates(): void {
     if (this.telemetryUpdateIntervalId) {
       return;
@@ -1106,6 +1185,7 @@ export class ColdRoomList implements OnInit, OnDestroy {
       fields.calibrationStatus ?? iotDevice.calibrationStatus,
       iotDevice.lastCalibrationDate,
       fields.nextCalibrationDate ?? iotDevice.nextCalibrationDate,
+      iotDevice.measurementParameters,
     );
   }
 
