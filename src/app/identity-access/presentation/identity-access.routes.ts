@@ -61,6 +61,11 @@ export const identityAccessRoutes: Routes = [
     title: 'ColdTrace - Create user',
   },
   {
+    path: 'users',
+    redirectTo: 'roles-permissions',
+    pathMatch: 'full',
+  },
+  {
     path: 'roles-permissions',
     loadComponent: userAccessList,
     title: 'ColdTrace - Roles and permissions',
