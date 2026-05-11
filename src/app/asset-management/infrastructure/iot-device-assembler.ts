@@ -2,7 +2,11 @@ import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { IoTDevice } from '../domain/model/iot-device.entity';
 import { IoTDeviceResource, IoTDevicesResponse } from './iot-devices-response';
 
-export class IoTDeviceAssembler implements BaseAssembler<IoTDevice, IoTDeviceResource, IoTDevicesResponse> {
+export class IoTDeviceAssembler implements BaseAssembler<
+  IoTDevice,
+  IoTDeviceResource,
+  IoTDevicesResponse
+> {
   toEntitiesFromResponse(response: IoTDevicesResponse): IoTDevice[] {
     return response.iotDevices.map((resource) => this.toEntityFromResource(resource));
   }
@@ -20,6 +24,7 @@ export class IoTDeviceAssembler implements BaseAssembler<IoTDevice, IoTDeviceRes
       resource.calibrationStatus,
       resource.lastCalibrationDate,
       resource.nextCalibrationDate,
+      resource.measurementParameters ?? [],
     );
   }
 
@@ -31,6 +36,7 @@ export class IoTDeviceAssembler implements BaseAssembler<IoTDevice, IoTDeviceRes
       deviceType: entity.deviceType,
       model: entity.model,
       measurementType: entity.measurementType,
+      measurementParameters: entity.measurementParameters,
       assetId: entity.assetId,
       status: entity.status,
       calibrationStatus: entity.calibrationStatus,

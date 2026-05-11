@@ -167,7 +167,10 @@
 
         <label class="form-field">
           <span>{{ 'asset-management.iot-devices.form.type' | translate }}</span>
-          <select formControlName="deviceType">
+          <select
+            formControlName="deviceType"
+            (change)="selectIoTDeviceType($any($event.target).value)"
+          >
             <option value="">
               {{ 'asset-management.iot-devices.form.select-type' | translate }}
             </option>
@@ -194,14 +197,14 @@
 
         <label class="form-field">
           <span>{{ 'asset-management.iot-devices.form.measurement' | translate }}</span>
-          <input
-            type="text"
-            formControlName="measurementType"
-            [placeholder]="'asset-management.iot-devices.form.measurement-placeholder' | translate"
-          />
-          @if (hasIoTDeviceControlError('measurementType')) {
-            <small>{{ 'asset-management.iot-devices.form.measurement-error' | translate }}</small>
-          }
+          <div class="parameter-list">
+            @for (parameter of selectedIoTDeviceParameters(); track parameter) {
+              <span>{{ measurementParameterLabelKey(parameter) | translate }}</span>
+            } @empty {
+              <span>{{ 'asset-management.iot-devices.form.select-type' | translate }}</span>
+            }
+          </div>
+          <input type="hidden" formControlName="measurementType" />
         </label>
 
         <label class="form-field">
@@ -333,7 +336,9 @@
     <section class="table-card" aria-labelledby="iot-device-table-title">
       <div class="section-heading">
         <div>
-          <h2 id="iot-device-table-title">{{ 'asset-management.iot-devices.title' | translate }}</h2>
+          <h2 id="iot-device-table-title">
+            {{ 'asset-management.iot-devices.title' | translate }}
+          </h2>
           <p>{{ 'asset-management.iot-devices.subtitle' | translate }}</p>
         </div>
         <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
@@ -343,10 +348,7 @@
 
       <div class="calibration-summary" aria-label="IoT device calibration summary">
         @for (summary of calibrationSummary(); track summary.status) {
-          <article
-            class="calibration-card"
-            [ngClass]="calibrationToneClass(summary.status)"
-          >
+          <article class="calibration-card" [ngClass]="calibrationToneClass(summary.status)">
             <span>{{ calibrationLabelKey(summary.status) | translate }}</span>
             <strong>{{ summary.count }}</strong>
           </article>
@@ -380,8 +382,14 @@
                 <td [attr.data-label]="'asset-management.iot-devices.table.model' | translate">
                   {{ iotDevice.model }}
                 </td>
-                <td [attr.data-label]="'asset-management.iot-devices.table.measurement' | translate">
-                  {{ iotDevice.measurementType }}
+                <td
+                  [attr.data-label]="'asset-management.iot-devices.table.measurement' | translate"
+                >
+                  <div class="parameter-list compact">
+                    @for (parameter of measurementParametersFor(iotDevice); track parameter) {
+                      <span>{{ measurementParameterLabelKey(parameter) | translate }}</span>
+                    }
+                  </div>
                 </td>
                 <td [attr.data-label]="'asset-management.iot-devices.table.asset' | translate">
                   {{ assetNameForIoTDevice(iotDevice) | translate }}
@@ -390,14 +398,13 @@
                   {{ gatewayNameForIoTDevice(iotDevice) | translate }}
                 </td>
                 <td [attr.data-label]="'asset-management.iot-devices.table.status' | translate">
-                  <span
-                    class="status-pill"
-                    [ngClass]="iotDeviceStatusToneClass(iotDevice.status)"
-                  >
+                  <span class="status-pill" [ngClass]="iotDeviceStatusToneClass(iotDevice.status)">
                     {{ 'asset-management.iot-devices.status.' + iotDevice.status | translate }}
                   </span>
                 </td>
-                <td [attr.data-label]="'asset-management.iot-devices.table.calibration' | translate">
+                <td
+                  [attr.data-label]="'asset-management.iot-devices.table.calibration' | translate"
+                >
                   <span
                     class="status-pill"
                     [ngClass]="calibrationToneClass(iotDevice.calibrationStatus)"
@@ -473,10 +480,7 @@
                   {{ gatewayDeviceCount(gateway) }}
                 </td>
                 <td [attr.data-label]="'asset-management.gateways.table.status' | translate">
-                  <span
-                    class="status-pill"
-                    [ngClass]="gatewayStatusToneClass(gateway.status)"
-                  >
+                  <span class="status-pill" [ngClass]="gatewayStatusToneClass(gateway.status)">
                     {{ gatewayStatusLabelKey(gateway.status) | translate }}
                   </span>
                 </td>
@@ -558,7 +562,10 @@
           </article>
         </div>
 
-        <section class="settings-section catalogs-section" aria-labelledby="settings-catalogs-title">
+        <section
+          class="settings-section catalogs-section"
+          aria-labelledby="settings-catalogs-title"
+        >
           <div class="settings-section-title">
             <mat-icon aria-hidden="true">category</mat-icon>
             <h3 id="settings-catalogs-title">
@@ -781,7 +788,9 @@
                       [class.cold]="incidentSeverityClass(asset.lastIncident) === 'cold'"
                       [class.stable]="incidentSeverityClass(asset.lastIncident) === 'stable'"
                     >
-                      <mat-icon aria-hidden="true">{{ incidentIconName(asset.lastIncident) }}</mat-icon>
+                      <mat-icon aria-hidden="true">{{
+                        incidentIconName(asset.lastIncident)
+                      }}</mat-icon>
                       {{ asset.lastIncident | translate }}
                     </span>
                   </td>

@@ -141,10 +141,10 @@
       "capacity": 1200,
       "description": "Main dairy and beverage storage room.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "10.8°C",
+      "lastIncident": "asset-management.incidents.connection-lost",
+      "currentTemperature": "8.2°C",
       "entryDate": "13 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "offline"
     },
     {
       "id": 2,
@@ -158,7 +158,7 @@
       "description": "Prepared food storage room.",
       "status": "inactive",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "7.4°C",
+      "currentTemperature": "-4.6°C",
       "entryDate": "14 Dec 2026",
       "connectivity": "online"
     },
@@ -174,7 +174,7 @@
       "description": "Clinical supplies cold room.",
       "status": "maintenance",
       "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "11.7°C",
+      "currentTemperature": "8.4°C",
       "entryDate": "07 Dec 2026",
       "connectivity": "online"
     },
@@ -189,8 +189,8 @@
       "capacity": 720,
       "description": "Restaurant frozen storage.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.low-temperature",
-      "currentTemperature": "-5.6°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "-3.0°C",
       "entryDate": "06 Dec 2026",
       "connectivity": "online"
     },
@@ -206,9 +206,9 @@
       "description": "Pharmacy inventory refrigeration.",
       "status": "active",
       "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "11.3°C",
+      "currentTemperature": "8.2°C",
       "entryDate": "31 Nov 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
       "id": 6,
@@ -221,10 +221,10 @@
       "capacity": 600,
       "description": "Minimarket cold products room.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "2.6°C",
+      "lastIncident": "asset-management.incidents.connection-lost",
+      "currentTemperature": "—",
       "entryDate": "13 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "offline"
     },
     {
       "id": 7,
@@ -237,8 +237,8 @@
       "capacity": 1500,
       "description": "Secondary warehouse cold room.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.low-temperature",
-      "currentTemperature": "-8.9°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "-4.4°C",
       "entryDate": "14 Dec 2026",
       "connectivity": "online"
     },
@@ -253,8 +253,8 @@
       "capacity": 860,
       "description": "Seafood storage room.",
       "status": "maintenance",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "10.5°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "4.2°C",
       "entryDate": "07 Dec 2026",
       "connectivity": "online"
     },
@@ -270,9 +270,9 @@
       "description": "Market cold room.",
       "status": "active",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "-2.8°C",
+      "currentTemperature": "-0.2°C",
       "entryDate": "06 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
       "id": 10,
@@ -286,7 +286,7 @@
       "description": "University laboratory cold room.",
       "status": "active",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "6.6°C",
+      "currentTemperature": "1.2°C",
       "entryDate": "31 Nov 2026",
       "connectivity": "online"
     },
@@ -301,10 +301,10 @@
       "capacity": 1800,
       "description": "Port storage refrigeration chamber.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.connection-lost",
-      "currentTemperature": "—",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "0.8°C",
       "entryDate": "13 Dec 2026",
-      "connectivity": "offline"
+      "connectivity": "unstable"
     },
     {
       "id": 12,
@@ -317,8 +317,8 @@
       "capacity": 960,
       "description": "Fish market storage chamber.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "6.3°C",
+      "lastIncident": "asset-management.incidents.high-humidity",
+      "currentTemperature": "-2.5°C",
       "entryDate": "14 Dec 2026",
       "connectivity": "online"
     },
@@ -334,7 +334,7 @@
       "description": "Hotel kitchen cold room.",
       "status": "maintenance",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "5.3°C",
+      "currentTemperature": "-0.2°C",
       "entryDate": "07 Dec 2026",
       "connectivity": "online"
     },
@@ -349,10 +349,10 @@
       "capacity": 480,
       "description": "Clinic supplies storage.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "10.8°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "-2.7°C",
       "entryDate": "06 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
       "id": 15,
@@ -365,8 +365,8 @@
       "capacity": 790,
       "description": "Market hall refrigeration.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-humidity",
-      "currentTemperature": "-4.4°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "0.8°C",
       "entryDate": "31 Nov 2026",
       "connectivity": "online"
     },
@@ -382,7 +382,7 @@
       "description": "Distribution center cold room.",
       "status": "inactive",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "4.8°C",
+      "currentTemperature": "-4.6°C",
       "entryDate": "13 Dec 2026",
       "connectivity": "online"
     },
@@ -397,10 +397,10 @@
       "capacity": 1020,
       "description": "Plaza center cold storage.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "10.8°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "0.5°C",
       "entryDate": "14 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
       "id": 18,
@@ -413,8 +413,8 @@
       "capacity": 1340,
       "description": "Warehouse C cold room.",
       "status": "maintenance",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "-1.0°C",
+      "lastIncident": "asset-management.incidents.low-temperature",
+      "currentTemperature": "-7.0°C",
       "entryDate": "07 Dec 2026",
       "connectivity": "online"
     },
@@ -429,8 +429,8 @@
       "capacity": 1900,
       "description": "Airport cargo cold room.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-humidity",
-      "currentTemperature": "3.0°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "6.6°C",
       "entryDate": "06 Dec 2026",
       "connectivity": "online"
     },
@@ -445,8 +445,8 @@
       "capacity": 760,
       "description": "Corporate kitchen cold room.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "11.6°C",
+      "lastIncident": "asset-management.incidents.high-humidity",
+      "currentTemperature": "-0.5°C",
       "entryDate": "31 Nov 2026",
       "connectivity": "online"
     },
@@ -477,8 +477,8 @@
       "capacity": 2200,
       "description": "Refrigerated unit for northern Lima deliveries.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "2.7°C",
+      "lastIncident": "asset-management.incidents.high-temperature",
+      "currentTemperature": "8.3°C",
       "entryDate": "09 May 2026",
       "connectivity": "online"
     },
@@ -493,8 +493,8 @@
       "capacity": 3100,
       "description": "Port delivery refrigerated unit.",
       "status": "maintenance",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "12.2°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "1.4°C",
       "entryDate": "08 May 2026",
       "connectivity": "unstable"
     },
@@ -509,10 +509,10 @@
       "capacity": 980,
       "description": "Urban refrigerated van.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-humidity",
-      "currentTemperature": "5.7°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "7.1°C",
       "entryDate": "07 May 2026",
-      "connectivity": "unstable"
+      "connectivity": "online"
     },
     {
       "id": 25,
@@ -526,9 +526,9 @@
       "description": "Warehouse replenishment unit.",
       "status": "inactive",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "3.5°C",
+      "currentTemperature": "3.8°C",
       "entryDate": "06 May 2026",
-      "connectivity": "unstable"
+      "connectivity": "online"
     },
     {
       "id": 26,
@@ -541,8 +541,8 @@
       "capacity": 1100,
       "description": "Corporate route refrigerated van.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "12.8°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "2.8°C",
       "entryDate": "05 May 2026",
       "connectivity": "online"
     },
@@ -598,7 +598,7 @@
       "name": "South Route Gateway",
       "location": "Villa El Salvador - Distribution",
       "network": "LTE",
-      "status": "active"
+      "status": "maintenance"
     },
     {
       "id": 5,
@@ -678,6 +678,10 @@
       "deviceType": "humidity-sensor",
       "model": "HumidSense H200",
       "measurementType": "Temperature / Humidity",
+      "measurementParameters": [
+        "temperature",
+        "humidity"
+      ],
       "assetId": 3,
       "status": "linked",
       "calibrationStatus": "compliant",
@@ -692,7 +696,7 @@
       "model": "TraceSense M2",
       "measurementType": "Temperature",
       "assetId": 3,
-      "status": "offline",
+      "status": "linked",
       "calibrationStatus": "compliant",
       "lastCalibrationDate": "09 May 2026",
       "nextCalibrationDate": "09 Nov 2026"
@@ -704,6 +708,10 @@
       "deviceType": "humidity-sensor",
       "model": "TraceSense M2",
       "measurementType": "Temperature / Humidity",
+      "measurementParameters": [
+        "temperature",
+        "humidity"
+      ],
       "assetId": 2,
       "status": "linked",
       "calibrationStatus": "compliant",
@@ -717,6 +725,9 @@
       "deviceType": "camera",
       "model": "ColdLink C1",
       "measurementType": "Temperature",
+      "measurementParameters": [
+        "temperature"
+      ],
       "assetId": 22,
       "status": "linked",
       "calibrationStatus": "unknown",
@@ -729,12 +740,17 @@
       "uuid": "SN-201",
       "deviceType": "temperature-sensor",
       "model": "TempSense T100",
-      "measurementType": "Temperature",
+      "measurementType": "Temperature / Battery / Signal",
       "assetId": 21,
       "status": "linked",
       "calibrationStatus": "due-soon",
       "lastCalibrationDate": "09 May 2026",
-      "nextCalibrationDate": "09 Nov 2026"
+      "nextCalibrationDate": "09 Nov 2026",
+      "measurementParameters": [
+        "temperature",
+        "battery",
+        "signal"
+      ]
     }
   ]
 }
