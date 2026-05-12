@@ -8,10 +8,10 @@
     @if (alertsStore.feedback()) {
       <div
         class="feedback-banner"
-        [class.feedback-success]="alertsStore.feedback() === 'alerts.incident-list.feedback-recognized' || alertsStore.feedback() === 'alerts.incident-list.feedback-closed'"
-        [class.feedback-error]="alertsStore.feedback() !== 'alerts.incident-list.feedback-recognized' && alertsStore.feedback() !== 'alerts.incident-list.feedback-closed'"
+        [class.feedback-success]="isSuccessFeedback(alertsStore.feedback()!)"
+        [class.feedback-error]="!isSuccessFeedback(alertsStore.feedback()!)"
       >
-        <mat-icon>{{ alertsStore.feedback() === 'alerts.incident-list.feedback-recognized' || alertsStore.feedback() === 'alerts.incident-list.feedback-closed' ? 'check_circle' : 'error_outline' }}</mat-icon>
+        <mat-icon>{{ isSuccessFeedback(alertsStore.feedback()!) ? 'check_circle' : 'error_outline' }}</mat-icon>
         <span>{{ alertsStore.feedback()! | translate }}</span>
       </div>
     }
@@ -28,6 +28,9 @@
         <span class="open-count">
           {{ alertsStore.openIncidentsCount() }} {{ 'alerts.incident-list.status-open' | translate }}
         </span>
+        <span class="escalated-count">
+          {{ alertsStore.escalatedIncidentsCount() }} {{ 'alerts.incident-list.escalated-count' | translate }}
+        </span>
       </div>
 
       <div class="table-container">
@@ -41,6 +44,7 @@
               <th>{{ 'alerts.incident-list.col-status' | translate }}</th>
               <th>{{ 'alerts.incident-list.col-condition' | translate }}</th>
               <th>{{ 'alerts.incident-list.col-source' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-escalation' | translate }}</th>
               <th>{{ 'alerts.incident-list.col-recognized-by' | translate }}</th>
               @if (canResolveAlerts()) {
                 <th>{{ 'alerts.incident-list.col-actions' | translate }}</th>
@@ -88,10 +92,48 @@
                     {{ sourceLabelKey(incident) | translate }}
                   </span>
                 </td>
+                <td>
+                  <div class="escalation-cell">
+                    <span
+                      class="escalation-pill"
+                      [class.escalation-none]="incident.escalationStatus === 'none'"
+                      [class.escalation-pending]="incident.isPendingEscalationConfiguration"
+                      [class.escalation-escalated]="incident.isEscalated"
+                      [class.escalation-reviewed]="incident.escalationStatus === 'reviewed'"
+                    >
+                      {{ escalationLabelKey(incident) | translate }}
+                    </span>
+                    @if (incident.isEscalated) {
+                      <small>
+                        {{ 'alerts.incident-list.escalation-level' | translate }} {{ incident.escalationLevel }}
+                        · {{ escalationTargetLabelKey(incident) | translate }}
+                      </small>
+                    } @else if (incident.isPendingEscalationConfiguration) {
+                      <small>{{ 'alerts.incident-list.escalation-no-policy' | translate }}</small>
+                    } @else if (incident.escalationPolicyMinutes) {
+                      <small>
+                        {{ incident.escalationPolicyMinutes }} {{ 'alerts.incident-list.escalation-minutes' | translate }}
+                      </small>
+                    }
+                  </div>
+                </td>
                 <td class="recognized-by">{{ incident.recognizedBy ?? '—' }}</td>
                 @if (canResolveAlerts()) {
                   <td>
-                    @if (incident.isOpen) {
+                    @if (incident.isEscalated || incident.isPendingEscalationConfiguration) {
+                      <button
+                        id="review-escalation-{{ incident.id }}"
+                        class="review-escalation-btn"
+                        [disabled]="alertsStore.reviewingEscalationId() === incident.id"
+                        (click)="reviewEscalation(incident)"
+                      >
+                        @if (alertsStore.reviewingEscalationId() === incident.id) {
+                          <mat-spinner diameter="14" />
+                        } @else {
+                          {{ 'alerts.incident-list.action-review-escalation' | translate }}
+                        }
+                      </button>
+                    } @else if (incident.isOpen) {
                       <button
                         id="recognize-incident-{{ incident.id }}"
                         class="recognize-btn"
@@ -123,7 +165,7 @@
               </tr>
             } @empty {
               <tr>
-                <td [attr.colspan]="canResolveAlerts() ? 9 : 8" class="empty-cell">
+                <td [attr.colspan]="canResolveAlerts() ? 10 : 9" class="empty-cell">
                   <mat-icon class="empty-icon">check_circle</mat-icon>
                   <p class="empty-title">{{ 'alerts.incident-list.empty-title' | translate }}</p>
                   <p class="empty-description">{{ 'alerts.incident-list.empty-description' | translate }}</p>

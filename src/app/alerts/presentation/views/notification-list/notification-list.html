@@ -46,6 +46,18 @@
               <div class="notification-title-line">
                 <span>{{ notification.assetName }}</span>
                 <small>{{ notificationChannelLabelKey(notification) | translate }}</small>
+                @if (incidentForNotification(notification); as incident) {
+                  @if (incident.escalationStatus !== 'none') {
+                    <small
+                      class="notification-escalation"
+                      [class.notification-escalated]="incident.isEscalated"
+                      [class.notification-escalation-pending]="incident.isPendingEscalationConfiguration"
+                      [class.notification-escalation-reviewed]="incident.escalationStatus === 'reviewed'"
+                    >
+                      {{ escalationLabelKey(incident) | translate }}
+                    </small>
+                  }
+                }
               </div>
               <p>{{ notification.message }}</p>
               <small>

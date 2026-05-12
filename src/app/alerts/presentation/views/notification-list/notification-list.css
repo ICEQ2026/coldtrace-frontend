@@ -143,6 +143,7 @@
 .notification-title-line {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
@@ -158,6 +159,27 @@
   color: #9CA3AF;
   font-size: 11px;
   font-weight: 600;
+}
+
+.notification-title-line .notification-escalation {
+  border-radius: 999px;
+  color: #4B5563;
+  padding: 2px 8px;
+}
+
+.notification-title-line .notification-escalated {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.notification-title-line .notification-escalation-pending {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.notification-title-line .notification-escalation-reviewed {
+  background: #DCFCE7;
+  color: #15803D;
 }
 
 .notification-content p {
