@@ -864,5 +864,30 @@
         "monthly-summary": "Monthly report"
       }
     }
+  },
+  "alerts": {
+    "incident-list": {
+      "page-title": "Incidents",
+      "title": "Active Incidents",
+      "subtitle": "Critical and warning alerts requiring acknowledgment.",
+      "col-asset": "Asset",
+      "col-type": "Type",
+      "col-value": "Value",
+      "col-detected": "Detected",
+      "col-status": "Status",
+      "col-recognized-by": "Recognized by",
+      "col-actions": "Actions",
+      "action-recognize": "Recognize",
+      "status-open": "Open",
+      "status-recognized": "Recognized",
+      "status-closed": "Closed",
+      "feedback-recognized": "Incident recognized successfully.",
+      "feedback-already-recognized": "This incident has already been recognized.",
+      "feedback-error": "Could not recognize the incident. Please try again.",
+      "access-title": "Insufficient authorization",
+      "access-description": "Your current role does not include permissions to recognize incidents.",
+      "empty-title": "No active incidents",
+      "empty-description": "All monitored assets are operating within normal parameters."
+    }
   }
 }
