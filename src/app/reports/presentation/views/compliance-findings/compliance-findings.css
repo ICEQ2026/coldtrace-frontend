@@ -1,0 +1,52 @@
+@import '../sanitary-compliance/sanitary-compliance.css';
+
+.filter-card {
+  grid-template-columns: repeat(4, minmax(170px, 1fr));
+}
+
+.accent-gray {
+  --accent-text: #606c80;
+}
+
+.data-table {
+  min-width: 1040px;
+}
+
+.severity-pill,
+.status-pill {
+  border-radius: 16px;
+  display: inline-flex !important;
+  padding: 3px 8px;
+}
+
+.severity-observation {
+  background: #fff8e8;
+  color: #b16f0b !important;
+}
+
+.severity-potential-non-compliance {
+  background: #feeceb;
+  color: #b51313 !important;
+}
+
+.severity-limitation {
+  background: #eef1f5;
+  color: #606c80 !important;
+}
+
+.status-open {
+  background: #fff8e8;
+  color: #b16f0b !important;
+}
+
+.status-closed {
+  background: #eaf8f0;
+  color: #176900 !important;
+}
+
+.row-action {
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  min-height: 30px;
+}

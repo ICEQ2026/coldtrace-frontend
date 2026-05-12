@@ -88,6 +88,10 @@ export class Layout implements OnInit {
       return 'reports.compliance.page-title';
     }
 
+    if (currentUrl.includes('/reports/findings')) {
+      return 'reports.findings.page-title';
+    }
+
     if (currentUrl.includes('/identity-access/reports') || currentUrl.includes('/reports')) {
       return 'reports.daily-log.page-title';
     }

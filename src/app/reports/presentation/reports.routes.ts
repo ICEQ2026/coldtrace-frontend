@@ -7,6 +7,8 @@ const operationalHistory = () =>
   import('./views/operational-history/operational-history').then((m) => m.OperationalHistory);
 const sanitaryCompliance = () =>
   import('./views/sanitary-compliance/sanitary-compliance').then((m) => m.SanitaryCompliance);
+const complianceFindings = () =>
+  import('./views/compliance-findings/compliance-findings').then((m) => m.ComplianceFindings);
 
 export const reportsRoutes: Routes = [
   {
@@ -28,6 +30,11 @@ export const reportsRoutes: Routes = [
     path: 'compliance',
     loadComponent: sanitaryCompliance,
     title: 'ColdTrace - Sanitary Compliance',
+  },
+  {
+    path: 'findings',
+    loadComponent: complianceFindings,
+    title: 'ColdTrace - Compliance Findings',
   },
   { path: '', redirectTo: 'daily-log', pathMatch: 'full' },
 ];
