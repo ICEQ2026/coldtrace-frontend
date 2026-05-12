@@ -18,6 +18,10 @@ export class AlertsApi extends BaseApi {
     return this.incidentsEndpoint.getAll();
   }
 
+  createIncident(incident: Incident): Observable<Incident> {
+    return this.incidentsEndpoint.create(incident);
+  }
+
   updateIncident(incident: Incident): Observable<Incident> {
     return this.incidentsEndpoint.update(incident, incident.id);
   }

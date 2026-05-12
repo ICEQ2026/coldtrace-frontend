@@ -222,6 +222,30 @@
   color: #B45309;
 }
 
+.source-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.source-generated {
+  background: #DBEAFE;
+  color: #1D4ED8;
+}
+
+.source-initial {
+  background: #F3F4F6;
+  color: #4B5563;
+}
+
+.source-pending {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
 /* Recognize button */
 .recognize-btn,
 .close-shortcut-btn {

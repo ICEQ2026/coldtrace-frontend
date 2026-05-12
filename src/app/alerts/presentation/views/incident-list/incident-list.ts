@@ -148,6 +148,18 @@ export class IncidentList implements OnInit {
       : 'alerts.incident-list.condition-active';
   }
 
+  protected sourceLabelKey(incident: Incident): string {
+    if (incident.isPendingReview) {
+      return 'alerts.incident-list.source-pending-review';
+    }
+
+    if (incident.isGenerated) {
+      return 'alerts.incident-list.source-generated';
+    }
+
+    return 'alerts.incident-list.source-initial';
+  }
+
   protected typeLabelKey(incident: Incident): string {
     return `alerts.incident-list.type-${incident.type}`;
   }

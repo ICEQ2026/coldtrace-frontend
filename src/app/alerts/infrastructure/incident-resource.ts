@@ -1,5 +1,11 @@
 import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
-import { IncidentSeverity, IncidentStatus, IncidentType } from '../domain/model/incident.entity';
+import {
+  IncidentReviewStatus,
+  IncidentSeverity,
+  IncidentSource,
+  IncidentStatus,
+  IncidentType,
+} from '../domain/model/incident.entity';
 
 export interface IncidentResource extends BaseResource {
   organizationId: number;
@@ -17,6 +23,10 @@ export interface IncidentResource extends BaseResource {
   closureEvidence?: string | null;
   closedBy?: string | null;
   closedAt?: string | null;
+  conditionKey?: string | null;
+  source?: IncidentSource;
+  sourceReadingId?: number | null;
+  reviewStatus?: IncidentReviewStatus;
 }
 
 export interface IncidentsResponse extends BaseResponse {

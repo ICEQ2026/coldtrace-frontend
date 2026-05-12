@@ -3,6 +3,8 @@ import { BaseEntity } from '../../../shared/domain/model/base-entity';
 export type IncidentStatus = 'open' | 'recognized' | 'closed';
 export type IncidentSeverity = 'warning' | 'critical';
 export type IncidentType = 'temperature' | 'humidity' | 'connectivity' | 'other';
+export type IncidentSource = 'initial-data' | 'sensor-reading' | 'manual';
+export type IncidentReviewStatus = 'complete' | 'pending-review';
 
 export class Incident implements BaseEntity {
   private _id: number;
@@ -21,6 +23,10 @@ export class Incident implements BaseEntity {
   private _closureEvidence: string | null;
   private _closedBy: string | null;
   private _closedAt: string | null;
+  private _conditionKey: string | null;
+  private _source: IncidentSource;
+  private _sourceReadingId: number | null;
+  private _reviewStatus: IncidentReviewStatus;
 
   constructor(incident: {
     id: number;
@@ -39,6 +45,10 @@ export class Incident implements BaseEntity {
     closureEvidence: string | null;
     closedBy: string | null;
     closedAt: string | null;
+    conditionKey: string | null;
+    source: IncidentSource;
+    sourceReadingId: number | null;
+    reviewStatus: IncidentReviewStatus;
   }) {
     this._id = incident.id;
     this._organizationId = incident.organizationId;
@@ -56,6 +66,10 @@ export class Incident implements BaseEntity {
     this._closureEvidence = incident.closureEvidence;
     this._closedBy = incident.closedBy;
     this._closedAt = incident.closedAt;
+    this._conditionKey = incident.conditionKey;
+    this._source = incident.source;
+    this._sourceReadingId = incident.sourceReadingId;
+    this._reviewStatus = incident.reviewStatus;
   }
 
   get id(): number { return this._id; }
@@ -74,9 +88,15 @@ export class Incident implements BaseEntity {
   get closureEvidence(): string | null { return this._closureEvidence; }
   get closedBy(): string | null { return this._closedBy; }
   get closedAt(): string | null { return this._closedAt; }
+  get conditionKey(): string | null { return this._conditionKey; }
+  get source(): IncidentSource { return this._source; }
+  get sourceReadingId(): number | null { return this._sourceReadingId; }
+  get reviewStatus(): IncidentReviewStatus { return this._reviewStatus; }
 
   get isOpen(): boolean { return this._status === 'open'; }
   get isRecognized(): boolean { return this._status === 'recognized'; }
   get isClosed(): boolean { return this._status === 'closed'; }
   get isConditionStable(): boolean { return this._conditionStable; }
+  get isGenerated(): boolean { return this._source === 'sensor-reading'; }
+  get isPendingReview(): boolean { return this._reviewStatus === 'pending-review'; }
 }
