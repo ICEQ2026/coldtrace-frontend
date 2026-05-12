@@ -9,6 +9,7 @@ export const environment = {
   platformProviderGatewaysEndpointPath: '/gateways',
   platformProviderAssetSettingsEndpointPath: '/asset-settings',
   platformProviderMaintenanceSchedulesEndpointPath: '/maintenance-schedules',
+  platformProviderTechnicalServiceRequestsEndpointPath: '/technical-service-requests',
   platformProviderSensorReadingsEndpointPath: '/sensor-readings',
   platformProviderReportsEndpointPath: '/reports',
   platformProviderSignUpEndpointPath: '/authentication/sign-up',

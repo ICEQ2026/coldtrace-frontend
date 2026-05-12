@@ -2,19 +2,27 @@ import { computed, Injectable, signal } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { MaintenanceSchedule } from '../domain/model/maintenance-schedule.entity';
 import { MaintenanceScheduleStatus } from '../domain/model/maintenance-schedule-status.enum';
+import { TechnicalServiceRequest } from '../domain/model/technical-service-request.entity';
+import { TechnicalServiceStatus } from '../domain/model/technical-service-status.enum';
 import { MaintenanceManagementApi } from '../infrastructure/maintenance-management-api';
 
 @Injectable({ providedIn: 'root' })
 export class MaintenanceManagementStore {
   private readonly maintenanceSchedulesSignal = signal<MaintenanceSchedule[]>([]);
+  private readonly technicalServiceRequestsSignal = signal<TechnicalServiceRequest[]>([]);
   private readonly loadingSignal = signal(false);
   private readonly errorSignal = signal<string | null>(null);
 
   readonly maintenanceSchedules = this.maintenanceSchedulesSignal.asReadonly();
+  readonly technicalServiceRequests = this.technicalServiceRequestsSignal.asReadonly();
   readonly loading = this.loadingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
   readonly pendingCount = computed(() => {
     return this.maintenanceSchedules().filter((schedule) => this.isOpenSchedule(schedule)).length;
+  });
+  readonly openTechnicalServiceCount = computed(() => {
+    return this.technicalServiceRequests().filter((request) => this.isOpenTechnicalService(request))
+      .length;
   });
 
   constructor(private maintenanceManagementApi: MaintenanceManagementApi) {}
@@ -26,6 +34,22 @@ export class MaintenanceManagementStore {
     this.maintenanceManagementApi.getMaintenanceSchedules().subscribe({
       next: (maintenanceSchedules) => {
         this.maintenanceSchedulesSignal.set(maintenanceSchedules);
+        this.loadingSignal.set(false);
+      },
+      error: (error) => {
+        this.errorSignal.set(error.message);
+        this.loadingSignal.set(false);
+      },
+    });
+  }
+
+  loadTechnicalServiceRequests(): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+
+    this.maintenanceManagementApi.getTechnicalServiceRequests().subscribe({
+      next: (technicalServiceRequests) => {
+        this.technicalServiceRequestsSignal.set(technicalServiceRequests);
         this.loadingSignal.set(false);
       },
       error: (error) => {
@@ -59,6 +83,34 @@ export class MaintenanceManagementStore {
     );
   }
 
+  createTechnicalServiceRequest(
+    technicalServiceRequest: TechnicalServiceRequest,
+  ): Observable<TechnicalServiceRequest> {
+    return this.maintenanceManagementApi
+      .createTechnicalServiceRequest(technicalServiceRequest)
+      .pipe(
+        tap((createdRequest) => {
+          this.technicalServiceRequestsSignal.update((requests) => [...requests, createdRequest]);
+        }),
+      );
+  }
+
+  updateTechnicalServiceRequest(
+    technicalServiceRequest: TechnicalServiceRequest,
+  ): Observable<TechnicalServiceRequest> {
+    return this.maintenanceManagementApi
+      .updateTechnicalServiceRequest(technicalServiceRequest)
+      .pipe(
+        tap((updatedRequest) => {
+          this.technicalServiceRequestsSignal.update((requests) =>
+            requests.map((request) =>
+              request.id === updatedRequest.id ? updatedRequest : request,
+            ),
+          );
+        }),
+      );
+  }
+
   schedulesForOrganization(organizationId: number | null): MaintenanceSchedule[] {
     if (!organizationId) {
       return [];
@@ -85,10 +137,31 @@ export class MaintenanceManagementStore {
     });
   }
 
+  technicalServicesForOrganization(organizationId: number | null): TechnicalServiceRequest[] {
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.technicalServiceRequests().filter(
+      (request) => request.organizationId === organizationId,
+    );
+  }
+
+  nextTechnicalServiceRequestId(): number {
+    return Math.max(...this.technicalServiceRequests().map((request) => request.id), 0) + 1;
+  }
+
   private isOpenSchedule(schedule: MaintenanceSchedule): boolean {
     return (
       schedule.status === MaintenanceScheduleStatus.Scheduled ||
       schedule.status === MaintenanceScheduleStatus.Pending
+    );
+  }
+
+  private isOpenTechnicalService(request: TechnicalServiceRequest): boolean {
+    return (
+      request.status === TechnicalServiceStatus.Open ||
+      request.status === TechnicalServiceStatus.PendingReview
     );
   }
 }
