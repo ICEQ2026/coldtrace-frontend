@@ -1,0 +1,166 @@
+<section class="daily-log-page" aria-labelledby="daily-log-title">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <div class="page-heading">
+    <div>
+      <span class="section-kicker">{{ activeOrganizationName() }}</span>
+      <h1 id="daily-log-title">{{ 'reports.daily-log.title' | translate }}</h1>
+      <p>{{ 'reports.daily-log.subtitle' | translate }}</p>
+    </div>
+
+    <div class="heading-actions">
+      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'reports.daily-log.reload' | translate }}
+      </button>
+      <button mat-flat-button type="button" class="primary-action" (click)="generateDailyLog()">
+        <mat-icon aria-hidden="true">article</mat-icon>
+        {{ 'reports.daily-log.generate' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (feedback() === 'generated') {
+    <p class="feedback success">{{ 'reports.daily-log.feedback-generated' | translate }}</p>
+  }
+
+  @if (feedback() === 'server-error' || reportsStore.error() || monitoringStore.error()) {
+    <p class="feedback error">{{ 'reports.daily-log.feedback-error' | translate }}</p>
+  }
+
+  <section class="filter-card" aria-label="Daily log filters">
+    <label class="filter-field">
+      <span>{{ 'reports.daily-log.filter-date' | translate }}</span>
+      <input
+        type="date"
+        [value]="effectiveDate()"
+        [max]="maxDate()"
+        (input)="updateDate($any($event.target).value)"
+      />
+    </label>
+
+    <label class="filter-field">
+      <span>{{ 'reports.daily-log.filter-asset' | translate }}</span>
+      <select [value]="selectedAssetId()" (change)="selectAsset($any($event.target).value)">
+        <option [value]="0">{{ 'reports.daily-log.all-assets' | translate }}</option>
+        @for (asset of organizationAssets(); track asset.id) {
+          <option [value]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
+        }
+      </select>
+    </label>
+
+    <div class="filter-meta">
+      <span>{{ 'reports.daily-log.generated-reports' | translate }}</span>
+      <strong>{{ generatedReportsCount() }}</strong>
+    </div>
+  </section>
+
+  <section class="summary-grid" aria-label="Daily log summary">
+    <article class="summary-card accent-blue">
+      <span>{{ 'reports.daily-log.summary-assets' | translate }}</span>
+      <strong>{{ dailyLog().monitoredAssets }}</strong>
+    </article>
+    <article class="summary-card accent-green">
+      <span>{{ 'reports.daily-log.summary-readings' | translate }}</span>
+      <strong>{{ dailyLog().totalReadings }}</strong>
+    </article>
+    <article class="summary-card accent-amber">
+      <span>{{ 'reports.daily-log.summary-compliance' | translate }}</span>
+      <strong>{{ dailyLog().complianceRate }}%</strong>
+    </article>
+    <article class="summary-card accent-red">
+      <span>{{ 'reports.daily-log.summary-incomplete' | translate }}</span>
+      <strong>{{ dailyLog().incompleteAssets }}</strong>
+    </article>
+  </section>
+
+  @if (dailyLog().hasIncompleteData && hasEntries()) {
+    <section class="observation-banner" aria-live="polite">
+      <mat-icon aria-hidden="true">error_outline</mat-icon>
+      <div>
+        <h2>{{ 'reports.daily-log.observation-title' | translate }}</h2>
+        <p>
+          {{
+            'reports.daily-log.observation-description'
+              | translate: { count: dailyLog().incompleteAssets }
+          }}
+        </p>
+      </div>
+    </section>
+  }
+
+  <section class="table-card" aria-labelledby="daily-log-table-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="daily-log-table-title">{{ 'reports.daily-log.table-title' | translate }}</h2>
+        <p>{{ 'reports.daily-log.table-subtitle' | translate: { date: effectiveDate() } }}</p>
+      </div>
+    </div>
+
+    @if (hasEntries()) {
+      <div class="daily-log-table-wrapper">
+        <table class="daily-log-table">
+          <thead>
+            <tr>
+              <th>{{ 'reports.daily-log.table.asset' | translate }}</th>
+              <th>{{ 'reports.daily-log.table.location' | translate }}</th>
+              <th>{{ 'reports.daily-log.table.readings' | translate }}</th>
+              <th>{{ 'reports.daily-log.table.temperature' | translate }}</th>
+              <th>{{ 'reports.daily-log.table.humidity' | translate }}</th>
+              <th>{{ 'reports.daily-log.table.out-of-range' | translate }}</th>
+              <th>{{ 'reports.daily-log.table.window' | translate }}</th>
+              <th>{{ 'reports.daily-log.table.status' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (entry of filteredEntries(); track trackEntry($index, entry)) {
+              <tr>
+                <td>
+                  <strong>{{ entry.assetName }}</strong>
+                  <span>#{{ entry.assetId }}</span>
+                </td>
+                <td>{{ entry.assetLocation }}</td>
+                <td>
+                  <strong>{{ entry.totalReadings }} / {{ entry.expectedReadings }}</strong>
+                  <small>
+                    {{
+                      'reports.daily-log.expected-readings'
+                        | translate: { count: entry.expectedReadings }
+                    }}
+                  </small>
+                </td>
+                <td>{{ formatTemperature(entry.averageTemperature) }}</td>
+                <td>{{ formatHumidity(entry.averageHumidity) }}</td>
+                <td>{{ entry.outOfRangeCount }}</td>
+                <td>{{ formatTimeRange(entry) }}</td>
+                <td>
+                  <span class="status-pill" [ngClass]="statusClass(entry.status)">
+                    {{ statusLabelKey(entry.status) | translate }}
+                  </span>
+                  @if (entry.missingReadings > 0) {
+                    <small>
+                      {{
+                        'reports.daily-log.missing-readings'
+                          | translate: { count: entry.missingReadings }
+                      }}
+                    </small>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="empty-state">
+        <mat-icon aria-hidden="true">event_busy</mat-icon>
+        <h2>{{ 'reports.daily-log.empty-title' | translate }}</h2>
+        <p>{{ 'reports.daily-log.empty-description' | translate }}</p>
+      </div>
+    }
+  </section>
+</section>
