@@ -5,7 +5,6 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin, switchMap, throwError } from 'rxjs';
 import { IdentityAccessStore } from '../../../application/identity-access.store';
-import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { Organization } from '../../../domain/model/organization.entity';
 import { Role } from '../../../domain/model/role.entity';
@@ -16,7 +15,7 @@ type UserFormFeedback = 'idle' | 'duplicate-email' | 'invalid-role' | 'success' 
 
 @Component({
   selector: 'app-user-form',
-  imports: [DashboardShell, MatButton, ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [MatButton, ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './user-form.html',
   styleUrl: './user-form.css',
 })

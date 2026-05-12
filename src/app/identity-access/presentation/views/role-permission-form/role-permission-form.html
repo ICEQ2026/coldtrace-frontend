@@ -1,13 +1,4 @@
-<app-dashboard-shell
-  [activeOrganizationName]="activeOrganizationName()"
-  [pageTitleKey]="'roles-permissions.permissions-page-title'"
-  [profileUserName]="profileUserName()"
-  [profileRoleLabelKey]="profileRoleLabelKey()"
-  [canManageAccess]="canManageAccess()"
-  [assetIssuesCount]="assetIssueCount()"
-  (signedOut)="logout()"
->
-  <section class="table-card permission-editor" aria-labelledby="role-permissions-title">
+<section class="table-card permission-editor" aria-labelledby="role-permissions-title">
     <div class="table-heading">
       <div>
         <h2 id="role-permissions-title">{{ 'roles-permissions.permissions-title' | translate }}</h2>
@@ -48,5 +39,4 @@
         }
       </div>
     }
-  </section>
-</app-dashboard-shell>
+</section>

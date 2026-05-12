@@ -9,7 +9,7 @@ export class GatewayAssembler implements BaseAssembler<Gateway, GatewayResource,
 
   toEntityFromResource(resource: GatewayResource): Gateway {
     return new Gateway(
-      resource.id,
+      Number(resource.id),
       resource.organizationId,
       resource.uuid,
       resource.name,

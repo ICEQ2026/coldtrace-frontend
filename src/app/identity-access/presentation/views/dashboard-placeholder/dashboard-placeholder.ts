@@ -7,12 +7,11 @@ import { Organization } from '../../../domain/model/organization.entity';
 import { Role } from '../../../domain/model/role.entity';
 import { User } from '../../../domain/model/user.entity';
 import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
-import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 
 @Component({
   selector: 'app-dashboard-placeholder',
-  imports: [DashboardShell, TranslatePipe],
+  imports: [TranslatePipe],
   templateUrl: './dashboard-placeholder.html',
   styleUrl: './dashboard-placeholder.css',
 })

@@ -13,7 +13,7 @@ export class OrganizationAssembler implements BaseAssembler<
 
   toEntityFromResource(resource: OrganizationResource): Organization {
     return new Organization(
-      resource.id,
+      Number(resource.id),
       resource.legalName,
       resource.commercialName,
       resource.taxId,

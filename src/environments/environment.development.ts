@@ -8,6 +8,7 @@ export const environment = {
   platformProviderIoTDevicesEndpointPath: '/iot-devices',
   platformProviderGatewaysEndpointPath: '/gateways',
   platformProviderAssetSettingsEndpointPath: '/asset-settings',
+  platformProviderSensorReadingsEndpointPath: '/sensor-readings',
   platformProviderSignUpEndpointPath: '/authentication/sign-up',
   platformProviderSignInEndpointPath: '/authentication/sign-in',
   platformProviderPasswordResetEndpointPath: '/password-reset-requests'

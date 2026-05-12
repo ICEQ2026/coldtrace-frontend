@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { IdentityAccessStore } from '../../../application/identity-access.store';
-import { DashboardShell } from '../../../../shared/presentation/componentes/dashboard-shell/dashboard-shell';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { Organization } from '../../../domain/model/organization.entity';
 import { Role } from '../../../domain/model/role.entity';
@@ -15,7 +14,7 @@ type RolePermissionFeedback = 'idle' | 'server-error';
 
 @Component({
   selector: 'app-role-permission-form',
-  imports: [DashboardShell, MatButton, TranslatePipe],
+  imports: [MatButton, TranslatePipe],
   templateUrl: './role-permission-form.html',
   styleUrl: '../user-access-list/user-access-list.css',
 })

@@ -1,0 +1,33 @@
+<div class="premium-card maintenance-card">
+  <div class="card-header">
+    <h3 class="card-title">{{ 'monitoring.operational.maintenance-title' | translate }}</h3>
+    <button class="more-btn"><mat-icon>more_horiz</mat-icon></button>
+  </div>
+
+  <div class="card-body">
+    <div class="task-column">
+      @for (task of tasks; track task.id) {
+        <div class="task-item">
+          <mat-icon class="device-icon">{{ task.icon }}</mat-icon>
+          <span class="device-name">{{ task.label }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="progress-column">
+      <svg viewBox="0 0 120 120" class="circular-chart">
+        <circle class="circle-done" cx="60" cy="60" r="42" />
+        <circle class="circle-doing" cx="60" cy="60" r="42" />
+        <circle class="circle-progress" cx="60" cy="60" r="42" [attr.stroke-dasharray]="progressDashArray" />
+        <text x="60" y="67" class="percentage">{{ completionRate }}%</text>
+      </svg>
+      <span class="completion-label">{{ 'monitoring.operational.completion-rate' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="legend-dot"><span class="dot purple"></span>{{ 'monitoring.operational.task-to-do' | translate }}</div>
+    <div class="legend-dot"><span class="dot blue"></span>{{ 'monitoring.operational.task-doing' | translate }}</div>
+    <div class="legend-dot"><span class="dot gray"></span>{{ 'monitoring.operational.task-done' | translate }}</div>
+  </div>
+</div>

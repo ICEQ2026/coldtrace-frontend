@@ -1,13 +1,4 @@
-<app-dashboard-shell
-  [activeOrganizationName]="activeOrganizationName()"
-  [pageTitleKey]="'roles-permissions.title'"
-  [profileUserName]="profileUserName()"
-  [profileRoleLabelKey]="profileRoleLabelKey()"
-  [canManageAccess]="canManageAccess()"
-  [assetIssuesCount]="assetIssueCount()"
-  (signedOut)="logout()"
->
-  @if (accessDenied()) {
+@if (accessDenied()) {
     <section class="access-denied">
       <mat-icon class="denied-icon" aria-hidden="true">block</mat-icon>
       <h2>{{ 'roles-permissions.denied.title' | translate }}</h2>
@@ -175,5 +166,4 @@
         </div>
       }
     </section>
-  }
-</app-dashboard-shell>
+}

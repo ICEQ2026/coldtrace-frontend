@@ -11,7 +11,7 @@ export class AssetSettingsAssembler
 
   toEntityFromResource(resource: AssetSettingsResource): AssetSettings {
     return new AssetSettings(
-      resource.id,
+      Number(resource.id),
       resource.organizationId,
       resource.uuid,
       resource.assetTypes,

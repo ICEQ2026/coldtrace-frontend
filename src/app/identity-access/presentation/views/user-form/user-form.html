@@ -1,13 +1,4 @@
-<app-dashboard-shell
-  [activeOrganizationName]="activeOrganizationName()"
-  [pageTitleKey]="'roles-permissions.create-user-page-title'"
-  [profileUserName]="profileUserName()"
-  [profileRoleLabelKey]="profileRoleLabelKey()"
-  [canManageAccess]="canManageAccess()"
-  [assetIssuesCount]="assetIssueCount()"
-  (signedOut)="logout()"
->
-  <section class="form-card" aria-labelledby="create-user-title">
+<section class="form-card" aria-labelledby="create-user-title">
     <div class="table-heading">
       <div>
         <h2 id="create-user-title">{{ 'roles-permissions.create-user-title' | translate }}</h2>
@@ -86,5 +77,4 @@
         </div>
       </form>
     }
-  </section>
-</app-dashboard-shell>
+</section>

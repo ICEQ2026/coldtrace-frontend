@@ -9,7 +9,7 @@ export class AssetAssembler implements BaseAssembler<Asset, AssetResource, Asset
 
   toEntityFromResource(resource: AssetResource): Asset {
     return new Asset(
-      resource.id,
+      Number(resource.id),
       resource.organizationId,
       resource.uuid,
       resource.type,

@@ -1,0 +1,190 @@
+<main class="access-page">
+  <aside class="side-panel">
+    <div class="sidebar-top">
+      <div class="brand-section">
+        <img src="coldtrace-icon.png" alt="ColdTrace" class="logo-img" />
+        <div class="brand-text">
+          <span class="brand-name">ColdTrace</span>
+          <span class="brand-sub">{{ activeOrganizationName }}</span>
+        </div>
+      </div>
+
+      <nav class="side-menu">
+        <a class="menu-item" routerLink="/identity-access/dashboard" routerLinkActive="active">
+          <mat-icon class="menu-icon">dashboard</mat-icon>
+          <span class="menu-label">{{ 'dashboard-shell.nav-main' | translate }}</span>
+        </a>
+
+        <a class="menu-item" routerLink="/asset-management/assets" routerLinkActive="active">
+          <mat-icon class="menu-icon">inventory_2</mat-icon>
+          <span class="menu-label">{{ 'dashboard-shell.nav-assets' | translate }}</span>
+          @if (assetIssuesCount > 0) {
+            <span class="counter badge-red">{{ assetIssuesCount }}</span>
+          }
+        </a>
+
+        <a class="menu-item" routerLink="/identity-access/alerts" routerLinkActive="active">
+          <mat-icon class="menu-icon">warning</mat-icon>
+          <span class="menu-label">{{ 'dashboard-shell.nav-alerts' | translate }}</span>
+        </a>
+
+        <a class="menu-item" routerLink="/monitoring/operational" routerLinkActive="active">
+          <mat-icon class="menu-icon">sensors</mat-icon>
+          <span class="menu-label">{{ 'dashboard-shell.nav-monitoring' | translate }}</span>
+        </a>
+
+        <div class="menu-group" routerLinkActive="active-group">
+          <a class="menu-item" routerLink="/identity-access/users" routerLinkActive="active">
+            <mat-icon class="menu-icon">admin_panel_settings</mat-icon>
+            <span class="menu-label">{{ 'dashboard-shell.nav-access' | translate }}</span>
+          </a>
+          <div class="sub-menu">
+            <a class="sub-menu-link" routerLink="/identity-access/users" routerLinkActive="active">
+              {{ 'dashboard-shell.nav-users' | translate }}
+            </a>
+            @if (canManageAccess) {
+              <a
+                class="sub-menu-link"
+                routerLink="/identity-access/roles-permissions/users/new"
+                routerLinkActive="active"
+              >
+                {{ 'dashboard-shell.nav-new-user' | translate }}
+              </a>
+              <a
+                class="sub-menu-link"
+                routerLink="/identity-access/roles-permissions/permissions"
+                routerLinkActive="active"
+              >
+                {{ 'dashboard-shell.nav-permissions' | translate }}
+              </a>
+            }
+          </div>
+        </div>
+
+        <a class="menu-item">
+          <mat-icon class="menu-icon">chat</mat-icon>
+          <span class="menu-label">{{ 'dashboard-shell.nav-chats' | translate }}</span>
+        </a>
+
+        <a class="menu-item">
+          <mat-icon class="menu-icon">settings</mat-icon>
+          <span class="menu-label">{{ 'dashboard-shell.nav-settings' | translate }}</span>
+        </a>
+
+        <a class="menu-item" routerLink="/identity-access/reports" routerLinkActive="active">
+          <mat-icon class="menu-icon">description</mat-icon>
+          <span class="menu-label">{{ 'dashboard-shell.nav-reports' | translate }}</span>
+        </a>
+
+        <a class="menu-item">
+          <mat-icon class="menu-icon">notifications</mat-icon>
+          <span class="menu-label">{{ 'dashboard-shell.nav-notifications' | translate }}</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="team-list">
+        <div class="team-member">
+          <div class="member-avatar">
+            <span class="avatar-face">LM</span>
+            <span class="status-dot online"></span>
+          </div>
+          <span class="member-name">Laura Mendoza</span>
+          <mat-icon class="member-action camera-icon">videocam</mat-icon>
+        </div>
+
+        <div class="team-member">
+          <div class="member-avatar">
+            <span class="avatar-face">AS</span>
+            <span class="status-dot online"></span>
+          </div>
+          <span class="member-name">Andrés Silva</span>
+        </div>
+
+        <div class="team-member">
+          <div class="member-avatar">
+            <span class="avatar-face">RT</span>
+            <span class="status-dot busy"></span>
+          </div>
+          <span class="member-name">Ricardo Torres</span>
+          <mat-icon class="member-action chat-icon">chat_bubble</mat-icon>
+        </div>
+
+        <div class="team-member">
+          <div class="member-avatar">
+            <span class="avatar-face">SR</span>
+            <span class="status-dot online"></span>
+          </div>
+          <span class="member-name">Sofía Rojas</span>
+        </div>
+
+        <div class="team-member">
+          <div class="member-avatar">
+            <span class="avatar-face">JC</span>
+          </div>
+          <span class="member-name">Jorge Castillo</span>
+        </div>
+      </div>
+
+      <app-language-switcher />
+
+      <div class="drag-upload">
+        <mat-icon class="upload-icon">download</mat-icon>
+        <span class="upload-text">{{ 'dashboard-shell.download-report' | translate }}</span>
+      </div>
+
+      <div class="toggle-control theme-toggle">
+        <div class="toggle-option active">
+          <mat-icon>light_mode</mat-icon>
+          <span>{{ 'dashboard-shell.theme-light' | translate }}</span>
+        </div>
+        <div class="toggle-option">
+          <mat-icon>dark_mode</mat-icon>
+          <span>{{ 'dashboard-shell.theme-dark' | translate }}</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- WORKSPACE -->
+  <section class="workspace">
+    <header class="topbar">
+      <nav class="top-tabs">
+        <a class="tab active">{{ pageTitleKey | translate }}</a>
+        <a class="tab">{{ 'dashboard-shell.top-overview' | translate }}</a>
+        <a class="tab">{{ 'dashboard-shell.top-insights' | translate }}</a>
+        <a class="tab">{{ 'dashboard-shell.top-notifications' | translate }}</a>
+        <a class="tab">{{ 'dashboard-shell.top-settings' | translate }}</a>
+      </nav>
+
+      <div class="search-section">
+        <div class="search-input-wrapper">
+          <mat-icon>search</mat-icon>
+          <input type="text" [placeholder]="'dashboard-shell.search-placeholder' | translate" />
+        </div>
+      </div>
+
+      <div class="user-profile">
+        <div class="avatar-wrapper">
+          <div class="avatar-container">
+            <mat-icon class="avatar-placeholder">person</mat-icon>
+          </div>
+          <span class="profile-status"></span>
+        </div>
+        <div class="profile-meta">
+          <span class="name">{{ profileUserName }}</span>
+          <span class="role">{{ profileRoleLabelKey | translate }}</span>
+        </div>
+        <div class="user-actions">
+          <button mat-icon-button><mat-icon>settings</mat-icon></button>
+          <button mat-icon-button (click)="logout()"><mat-icon>logout</mat-icon></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="content-scroll">
+      <ng-content />
+    </div>
+  </section>
+</main>
