@@ -105,11 +105,6 @@
           }
         </div>
 
-        <a class="menu-item">
-          <mat-icon class="menu-icon">chat</mat-icon>
-          <span class="menu-label">{{ 'dashboard-shell.nav-chats' | translate }}</span>
-        </a>
-
         <div
           class="menu-group"
           routerLinkActive="active-group"
@@ -212,49 +207,6 @@
     </div>
 
     <div class="sidebar-footer">
-      <div class="team-list">
-        <div class="team-member">
-          <div class="member-avatar">
-            <span class="avatar-face">LM</span>
-            <span class="status-dot online"></span>
-          </div>
-          <span class="member-name">Laura Mendoza</span>
-          <mat-icon class="member-action camera-icon">videocam</mat-icon>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar">
-            <span class="avatar-face">AS</span>
-            <span class="status-dot online"></span>
-          </div>
-          <span class="member-name">Andrés Silva</span>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar">
-            <span class="avatar-face">RT</span>
-            <span class="status-dot busy"></span>
-          </div>
-          <span class="member-name">Ricardo Torres</span>
-          <mat-icon class="member-action chat-icon">chat_bubble</mat-icon>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar">
-            <span class="avatar-face">SR</span>
-            <span class="status-dot online"></span>
-          </div>
-          <span class="member-name">Sofía Rojas</span>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar">
-            <span class="avatar-face">JC</span>
-          </div>
-          <span class="member-name">Jorge Castillo</span>
-        </div>
-      </div>
-
       <app-language-switcher />
 
       <button class="drag-upload" type="button" (click)="requestMonthlyReport()">
@@ -278,21 +230,6 @@
   <!-- WORKSPACE -->
   <section class="workspace">
     <header class="topbar">
-      <nav class="top-tabs">
-        <a class="tab active">{{ pageTitleKey | translate }}</a>
-        <a class="tab">{{ 'dashboard-shell.top-overview' | translate }}</a>
-        <a class="tab">{{ 'dashboard-shell.top-insights' | translate }}</a>
-        <a class="tab">{{ 'dashboard-shell.top-notifications' | translate }}</a>
-        <a class="tab">{{ 'dashboard-shell.top-settings' | translate }}</a>
-      </nav>
-
-      <div class="search-section">
-        <div class="search-input-wrapper">
-          <mat-icon>search</mat-icon>
-          <input type="text" [placeholder]="'dashboard-shell.search-placeholder' | translate" />
-        </div>
-      </div>
-
       <div class="user-profile">
         <div class="avatar-wrapper">
           <div class="avatar-container">
