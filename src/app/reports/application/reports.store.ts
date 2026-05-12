@@ -11,6 +11,11 @@ import { Report } from '../domain/model/report.entity';
 import { ReportType } from '../domain/model/report-type.enum';
 import { DailyLog, DailyLogEntry, DailyLogStatus } from '../domain/model/daily-log.entity';
 import {
+  MonthlyReport,
+  MonthlyReportRow,
+  MonthlyReportStatus,
+} from '../domain/model/monthly-report.entity';
+import {
   OperationalHistory,
   OperationalHistoryEvent,
   OperationalHistoryFilters,
@@ -178,6 +183,43 @@ export class ReportsStore {
     );
   }
 
+  buildMonthlyReport(organizationId: number | null, month: string): MonthlyReport {
+    const safeOrganizationId = organizationId ?? 0;
+    const range = this.monthDateRange(month);
+    const assets = this.assetManagementStore.assetsForOrganization(organizationId);
+    const iotDevices = this.assetManagementStore.iotDevicesForOrganization(organizationId);
+    const monitoredAssetIds = new Set(
+      iotDevices
+        .filter((iotDevice) => iotDevice.assetId !== null)
+        .map((iotDevice) => iotDevice.assetId as number),
+    );
+    const readings = this.monitoringStore
+      .readingsForAssetIds(assets.map((asset) => asset.id))
+      .filter((reading) => this.isInDateRange(reading.recordedAt, range.fromDate, range.toDate));
+    const assetsWithReadings = new Set(readings.map((reading) => reading.assetId));
+    const reportAssets = assets.filter((asset) => {
+      return monitoredAssetIds.has(asset.id) || assetsWithReadings.has(asset.id);
+    });
+    const rows = reportAssets
+      .map((asset) => this.buildMonthlyReportRow(asset, readings))
+      .sort(
+        (a, b) =>
+          b.totalReadings - a.totalReadings ||
+          b.incidentCount - a.incidentCount ||
+          a.assetName.localeCompare(b.assetName),
+      );
+
+    return new MonthlyReport(
+      Number(month.replace('-', '')) + safeOrganizationId,
+      safeOrganizationId,
+      month,
+      range.fromDate,
+      range.toDate,
+      new Date().toISOString(),
+      rows,
+    );
+  }
+
   createDailyLogReport(organizationId: number | null, dailyLog: DailyLog): Observable<Report> {
     if (!organizationId) {
       return of(this.reportFromDailyLog(0, dailyLog));
@@ -233,12 +275,37 @@ export class ReportsStore {
     );
   }
 
-  sanitaryComplianceCsv(
-    complianceReport: SanitaryComplianceReport,
-    organizationName: string,
-  ): string {
+  createMonthlySummaryReport(
+    organizationId: number | null,
+    monthlyReport: MonthlyReport,
+  ): Observable<Report> {
+    if (!organizationId) {
+      return of(this.reportFromMonthlyReport(0, monthlyReport));
+    }
+
+    const existingReport = this.reports().find((report) => {
+      return (
+        report.organizationId === organizationId &&
+        report.type === ReportType.MonthlySummary &&
+        report.uuid === this.monthlyReportUuid(organizationId, monthlyReport.month)
+      );
+    });
+
+    if (existingReport) {
+      return of(existingReport);
+    }
+
+    const report = this.reportFromMonthlyReport(organizationId, monthlyReport);
+
+    return this.reportsApi.createReport(report).pipe(
+      tap((createdReport) => {
+        this.reportsSignal.update((reports) => [...reports, createdReport]);
+      }),
+    );
+  }
+
+  sanitaryComplianceCsv(complianceReport: SanitaryComplianceReport): string {
     const headers = [
-      'Organization',
       'From',
       'To',
       'Asset',
@@ -255,7 +322,6 @@ export class ReportsStore {
       'Status',
     ];
     const rows = complianceReport.rows.map((row) => [
-      organizationName,
       complianceReport.filters.fromDate,
       complianceReport.filters.toDate,
       row.assetName,
@@ -269,6 +335,47 @@ export class ReportsStore {
       row.averageTemperature === null ? 'N/A' : `${row.averageTemperature.toFixed(1)} C`,
       row.averageHumidity === null ? 'N/A' : `${row.averageHumidity.toFixed(0)}%`,
       `${row.complianceRate}%`,
+      row.status,
+    ]);
+
+    return [headers, ...rows]
+      .map((row) => row.map((cell) => this.csvCell(cell)).join(','))
+      .join('\n');
+  }
+
+  monthlyReportCsv(monthlyReport: MonthlyReport): string {
+    const headers = [
+      'Month',
+      'From',
+      'To',
+      'Asset',
+      'Location',
+      'Readings',
+      'Valid',
+      'Out of range',
+      'Incidents',
+      'Average temperature',
+      'Average humidity',
+      'Compliance',
+      'First reading',
+      'Last reading',
+      'Status',
+    ];
+    const rows = monthlyReport.rows.map((row) => [
+      monthlyReport.month,
+      monthlyReport.fromDate,
+      monthlyReport.toDate,
+      row.assetName,
+      row.assetLocation,
+      row.totalReadings,
+      row.validReadings,
+      row.outOfRangeCount,
+      row.incidentCount,
+      row.averageTemperature === null ? 'N/A' : `${row.averageTemperature.toFixed(1)} C`,
+      row.averageHumidity === null ? 'N/A' : `${row.averageHumidity.toFixed(0)}%`,
+      `${row.complianceRate}%`,
+      row.firstRecordedAt ?? 'N/A',
+      row.lastRecordedAt ?? 'N/A',
       row.status,
     ]);
 
@@ -362,6 +469,40 @@ export class ReportsStore {
     };
   }
 
+  private buildMonthlyReportRow(asset: Asset, readings: SensorReading[]): MonthlyReportRow {
+    const assetReadings = readings
+      .filter((reading) => reading.assetId === asset.id)
+      .sort((a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime());
+    const temperatureReadings = assetReadings
+      .map((reading) => reading.temperature)
+      .filter((value): value is number => value !== null);
+    const humidityReadings = assetReadings
+      .map((reading) => reading.humidity)
+      .filter((value): value is number => value !== null);
+    const outOfRangeCount = assetReadings.filter((reading) => reading.isOutOfRange).length;
+    const validReadings = Math.max(assetReadings.length - outOfRangeCount, 0);
+    const incidentCount = outOfRangeCount + this.complianceIncidentCount(asset);
+    const complianceRate = assetReadings.length
+      ? Math.round((validReadings / assetReadings.length) * 100)
+      : 0;
+
+    return {
+      assetId: asset.id,
+      assetName: asset.name,
+      assetLocation: asset.location,
+      totalReadings: assetReadings.length,
+      validReadings,
+      outOfRangeCount,
+      incidentCount,
+      averageTemperature: this.average(temperatureReadings),
+      averageHumidity: this.average(humidityReadings),
+      complianceRate,
+      firstRecordedAt: assetReadings[0]?.recordedAt ?? null,
+      lastRecordedAt: assetReadings[assetReadings.length - 1]?.recordedAt ?? null,
+      status: this.monthlyStatus(assetReadings.length, incidentCount),
+    };
+  }
+
   private entryStatus(totalReadings: number, missingReadings: number): DailyLogStatus {
     if (!totalReadings) {
       return 'no-data';
@@ -391,6 +532,14 @@ export class ReportsStore {
     const connectivityIncident = asset.connectivity === ConnectivityStatus.Online ? 0 : 1;
 
     return incidentCount + connectivityIncident;
+  }
+
+  private monthlyStatus(totalReadings: number, incidentCount: number): MonthlyReportStatus {
+    if (!totalReadings) {
+      return 'insufficient';
+    }
+
+    return incidentCount ? 'attention' : 'complete';
   }
 
   private expectedDailyReadingsFor(iotDevices: IoTDevice[], fallbackReadings: number): number {
@@ -661,6 +810,18 @@ export class ReportsStore {
     );
   }
 
+  private reportFromMonthlyReport(organizationId: number, monthlyReport: MonthlyReport): Report {
+    return new Report(
+      this.nextReportId(),
+      organizationId,
+      this.monthlyReportUuid(organizationId, monthlyReport.month),
+      ReportType.MonthlySummary,
+      'Monthly monitoring report',
+      monthlyReport.month,
+      new Date().toISOString(),
+    );
+  }
+
   private nextReportId(): number {
     return Math.max(...this.reports().map((report) => report.id), 0) + 1;
   }
@@ -676,6 +837,10 @@ export class ReportsStore {
     const assetKey = filters.assetId ? filters.assetId.toString().padStart(3, '0') : 'ALL';
 
     return `RPT-SC-${filters.fromDate.replaceAll('-', '')}-${filters.toDate.replaceAll('-', '')}-${assetKey}-${organizationId.toString().padStart(3, '0')}`;
+  }
+
+  private monthlyReportUuid(organizationId: number, month: string): string {
+    return `RPT-MS-${month.replace('-', '')}-${organizationId.toString().padStart(3, '0')}`;
   }
 
   private today(): string {
@@ -702,6 +867,22 @@ export class ReportsStore {
 
     const millisecondsPerDay = 86400000;
     return Math.floor((to.getTime() - from.getTime()) / millisecondsPerDay) + 1;
+  }
+
+  private monthDateRange(month: string): { fromDate: string; toDate: string } {
+    const currentDate = this.today();
+    const currentMonth = currentDate.slice(0, 7);
+    const safeMonth = month && month <= currentMonth ? month : currentMonth;
+    const firstDay = `${safeMonth}-01`;
+
+    if (safeMonth === currentMonth) {
+      return { fromDate: firstDay, toDate: currentDate };
+    }
+
+    const [year, monthNumber] = safeMonth.split('-').map(Number);
+    const lastDay = new Date(year, monthNumber, 0).getDate().toString().padStart(2, '0');
+
+    return { fromDate: firstDay, toDate: `${safeMonth}-${lastDay}` };
   }
 
   private csvCell(value: string | number): string {
