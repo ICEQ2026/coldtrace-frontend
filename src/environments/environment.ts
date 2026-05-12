@@ -12,6 +12,7 @@ export const environment = {
   platformProviderTechnicalServiceRequestsEndpointPath: '/technical-service-requests',
   platformProviderSensorReadingsEndpointPath: '/sensor-readings',
   platformProviderReportsEndpointPath: '/reports',
+  platformProviderIncidentsEndpointPath: '/incidents',
   platformProviderSignUpEndpointPath: '/authentication/sign-up',
   platformProviderSignInEndpointPath: '/authentication/sign-in',
   platformProviderPasswordResetEndpointPath: '/password-reset-requests',

@@ -1129,5 +1129,34 @@
         "monthly-summary": "Reporte mensual"
       }
     }
+  },
+  "alerts": {
+    "incident-list": {
+      "page-title": "Incidencias",
+      "title": "Incidencias activas",
+      "subtitle": "Alertas críticas y de advertencia que requieren reconocimiento.",
+      "col-asset": "Activo",
+      "col-type": "Tipo",
+      "col-value": "Valor",
+      "col-detected": "Detectado",
+      "col-status": "Estado",
+      "col-recognized-by": "Reconocido por",
+      "col-actions": "Acciones",
+      "type-temperature": "Temperatura",
+      "type-humidity": "Humedad",
+      "type-connectivity": "Conectividad",
+      "type-other": "Otro",
+      "action-recognize": "Reconocer",
+      "status-open": "Abierto",
+      "status-recognized": "Reconocido",
+      "status-closed": "Cerrado",
+      "feedback-recognized": "Incidencia reconocida correctamente.",
+      "feedback-already-recognized": "Esta incidencia ya fue reconocida.",
+      "feedback-error": "No se pudo reconocer la incidencia. Intenta de nuevo.",
+      "access-title": "Autorización insuficiente",
+      "access-description": "Tu rol actual no incluye permisos para reconocer incidencias.",
+      "empty-title": "Sin incidencias activas",
+      "empty-description": "Todos los activos monitoreados operan dentro de los parámetros normales."
+    }
   }
 }

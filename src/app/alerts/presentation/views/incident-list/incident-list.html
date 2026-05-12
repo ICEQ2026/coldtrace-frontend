@@ -1,0 +1,115 @@
+<div class="incident-list-view">
+  <div class="view-header">
+    <div class="header-text">
+      <h1 class="view-title">{{ 'alerts.incident-list.title' | translate }}</h1>
+      <p class="view-subtitle">{{ 'alerts.incident-list.subtitle' | translate }}</p>
+    </div>
+
+    @if (alertsStore.feedback()) {
+      <div
+        class="feedback-banner"
+        [class.feedback-success]="alertsStore.feedback() === 'alerts.incident-list.feedback-recognized'"
+        [class.feedback-error]="alertsStore.feedback() !== 'alerts.incident-list.feedback-recognized'"
+      >
+        <mat-icon>{{ alertsStore.feedback() === 'alerts.incident-list.feedback-recognized' ? 'check_circle' : 'error_outline' }}</mat-icon>
+        <span>{{ alertsStore.feedback()! | translate }}</span>
+      </div>
+    }
+  </div>
+
+  @if (alertsStore.loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else {
+    <div class="premium-card table-card">
+      <div class="card-header">
+        <h3 class="card-title">{{ 'alerts.incident-list.title' | translate }}</h3>
+        <span class="open-count">
+          {{ alertsStore.openIncidentsCount() }} {{ 'alerts.incident-list.status-open' | translate }}
+        </span>
+      </div>
+
+      <div class="table-container">
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th>{{ 'alerts.incident-list.col-asset' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-type' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-value' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-detected' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-status' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-recognized-by' | translate }}</th>
+              @if (canResolveAlerts()) {
+                <th>{{ 'alerts.incident-list.col-actions' | translate }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (incident of alertsStore.incidents(); track incident.id) {
+              <tr [class.recognized-row]="incident.isRecognized">
+                <td class="asset-name">{{ incident.assetName }}</td>
+                <td>
+                  <div class="type-cell" [class.crit]="incident.severity === 'critical'" [class.warn]="incident.severity === 'warning'">
+                    <mat-icon>{{ severityIcon(incident) }}</mat-icon>
+                    <span>{{ typeLabelKey(incident) | translate }}</span>
+                  </div>
+                </td>
+                <td class="value">{{ incident.value }}</td>
+                <td class="date">{{ formatDate(incident.detectedAt) }}</td>
+                <td>
+                  <span
+                    class="badge"
+                    [class.badge-open]="incident.status === 'open'"
+                    [class.badge-recognized]="incident.status === 'recognized'"
+                    [class.badge-closed]="incident.status === 'closed'"
+                  >
+                    {{ statusLabelKey(incident) | translate }}
+                  </span>
+                </td>
+                <td class="recognized-by">{{ incident.recognizedBy ?? '—' }}</td>
+                @if (canResolveAlerts()) {
+                  <td>
+                    @if (incident.isOpen) {
+                      <button
+                        id="recognize-incident-{{ incident.id }}"
+                        class="recognize-btn"
+                        [disabled]="alertsStore.recognizingId() === incident.id"
+                        (click)="recognize(incident)"
+                      >
+                        @if (alertsStore.recognizingId() === incident.id) {
+                          <mat-spinner diameter="14" />
+                        } @else {
+                          {{ 'alerts.incident-list.action-recognize' | translate }}
+                        }
+                      </button>
+                    } @else {
+                      <span class="action-done">
+                        <mat-icon>check</mat-icon>
+                      </span>
+                    }
+                  </td>
+                }
+              </tr>
+            } @empty {
+              <tr>
+                <td [attr.colspan]="canResolveAlerts() ? 7 : 6" class="empty-cell">
+                  <mat-icon class="empty-icon">check_circle</mat-icon>
+                  <p class="empty-title">{{ 'alerts.incident-list.empty-title' | translate }}</p>
+                  <p class="empty-description">{{ 'alerts.incident-list.empty-description' | translate }}</p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (!canResolveAlerts()) {
+        <div class="access-notice">
+          <mat-icon>lock</mat-icon>
+          <span>{{ 'alerts.incident-list.access-description' | translate }}</span>
+        </div>
+      }
+    </div>
+  }
+</div>

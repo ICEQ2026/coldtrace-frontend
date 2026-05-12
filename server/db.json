@@ -4591,5 +4591,72 @@
       "periodDate": "2026-05-11",
       "generatedAt": "2026-05-11T22:15:00-05:00"
     }
+  ],
+  "incidents": [
+    {
+      "id": 1,
+      "organizationId": 1,
+      "assetId": 1,
+      "assetName": "Cold Room 01",
+      "type": "temperature",
+      "severity": "critical",
+      "value": "7.8°C",
+      "detectedAt": "2026-05-12T06:30:00-05:00",
+      "status": "open",
+      "recognizedBy": null,
+      "recognizedAt": null
+    },
+    {
+      "id": 2,
+      "organizationId": 1,
+      "assetId": 3,
+      "assetName": "Cold Room 03",
+      "type": "humidity",
+      "severity": "warning",
+      "value": "86%",
+      "detectedAt": "2026-05-12T07:15:00-05:00",
+      "status": "open",
+      "recognizedBy": null,
+      "recognizedAt": null
+    },
+    {
+      "id": 3,
+      "organizationId": 1,
+      "assetId": 8,
+      "assetName": "Cold Room 08",
+      "type": "connectivity",
+      "severity": "warning",
+      "value": "Unstable",
+      "detectedAt": "2026-05-11T14:00:00-05:00",
+      "status": "recognized",
+      "recognizedBy": "Laura Mendoza",
+      "recognizedAt": "2026-05-11T14:22:00-05:00"
+    },
+    {
+      "id": 4,
+      "organizationId": 1,
+      "assetId": 22,
+      "assetName": "Truck 01",
+      "type": "temperature",
+      "severity": "critical",
+      "value": "7.2°C",
+      "detectedAt": "2026-05-10T22:30:00-05:00",
+      "status": "closed",
+      "recognizedBy": "Andrés Silva",
+      "recognizedAt": "2026-05-10T22:45:00-05:00"
+    },
+    {
+      "id": 5,
+      "organizationId": 2,
+      "assetId": 21,
+      "assetName": "Chifa Cold Room 01",
+      "type": "temperature",
+      "severity": "warning",
+      "value": "6.4°C",
+      "detectedAt": "2026-05-12T09:20:00-05:00",
+      "status": "open",
+      "recognizedBy": null,
+      "recognizedAt": null
+    }
   ]
 }
