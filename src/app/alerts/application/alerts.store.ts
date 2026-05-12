@@ -10,6 +10,7 @@ export class AlertsStore {
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
   private readonly recognizingIdSignal = signal<number | null>(null);
+  private readonly closingIdSignal = signal<number | null>(null);
   private readonly feedbackSignal = signal<string | null>(null);
 
   readonly incidents = computed(() => {
@@ -28,6 +29,7 @@ export class AlertsStore {
   readonly loading = this.loadingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
   readonly recognizingId = this.recognizingIdSignal.asReadonly();
+  readonly closingId = this.closingIdSignal.asReadonly();
   readonly feedback = this.feedbackSignal.asReadonly();
 
   readonly openIncidents = computed(() => this.incidents().filter((i) => i.isOpen));
@@ -66,6 +68,11 @@ export class AlertsStore {
       status: 'recognized',
       recognizedBy: responsibleUserName,
       recognizedAt: new Date().toISOString(),
+      conditionStable: incident.conditionStable,
+      correctiveAction: incident.correctiveAction,
+      closureEvidence: incident.closureEvidence,
+      closedBy: incident.closedBy,
+      closedAt: incident.closedAt,
     });
 
     this.recognizingIdSignal.set(incident.id);
@@ -88,6 +95,52 @@ export class AlertsStore {
     );
   }
 
+  closeIncident(
+    incident: Incident,
+    correctiveAction: string,
+    closureEvidence: string,
+    responsibleUserName: string,
+  ): Observable<Incident> {
+    const now = new Date().toISOString();
+    const closed = new Incident({
+      id: incident.id,
+      organizationId: incident.organizationId,
+      assetId: incident.assetId,
+      assetName: incident.assetName,
+      type: incident.type,
+      severity: incident.severity,
+      value: incident.value,
+      detectedAt: incident.detectedAt,
+      status: 'closed',
+      recognizedBy: incident.recognizedBy ?? responsibleUserName,
+      recognizedAt: incident.recognizedAt ?? now,
+      conditionStable: incident.conditionStable,
+      correctiveAction,
+      closureEvidence,
+      closedBy: responsibleUserName,
+      closedAt: now,
+    });
+
+    this.closingIdSignal.set(incident.id);
+    this.feedbackSignal.set(null);
+
+    return this.alertsApi.updateIncident(closed).pipe(
+      tap({
+        next: (updated) => {
+          this.incidentsSignal.update((current) =>
+            current.map((i) => (i.id === updated.id ? updated : i)),
+          );
+          this.closingIdSignal.set(null);
+          this.feedbackSignal.set('alerts.incident-list.feedback-closed');
+        },
+        error: () => {
+          this.closingIdSignal.set(null);
+          this.feedbackSignal.set('alerts.incident-list.feedback-error');
+        },
+      }),
+    );
+  }
+
   canResolveAlerts(): boolean {
     const users = this.identityAccessStore.users();
     const roles = this.identityAccessStore.roles();
@@ -99,5 +152,9 @@ export class AlertsStore {
 
   clearFeedback(): void {
     this.feedbackSignal.set(null);
+  }
+
+  setFeedback(feedback: string | null): void {
+    this.feedbackSignal.set(feedback);
   }
 }

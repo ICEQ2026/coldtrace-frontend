@@ -16,6 +16,11 @@ export class IncidentAssembler implements BaseAssembler<Incident, IncidentResour
       status: resource.status,
       recognizedBy: resource.recognizedBy,
       recognizedAt: resource.recognizedAt,
+      conditionStable: resource.conditionStable ?? false,
+      correctiveAction: resource.correctiveAction ?? null,
+      closureEvidence: resource.closureEvidence ?? null,
+      closedBy: resource.closedBy ?? null,
+      closedAt: resource.closedAt ?? null,
     });
   }
 
@@ -32,6 +37,11 @@ export class IncidentAssembler implements BaseAssembler<Incident, IncidentResour
       status: entity.status,
       recognizedBy: entity.recognizedBy,
       recognizedAt: entity.recognizedAt,
+      conditionStable: entity.conditionStable,
+      correctiveAction: entity.correctiveAction,
+      closureEvidence: entity.closureEvidence,
+      closedBy: entity.closedBy,
+      closedAt: entity.closedAt,
     };
   }
 

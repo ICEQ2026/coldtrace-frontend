@@ -12,6 +12,11 @@ export interface IncidentResource extends BaseResource {
   status: IncidentStatus;
   recognizedBy: string | null;
   recognizedAt: string | null;
+  conditionStable?: boolean;
+  correctiveAction?: string | null;
+  closureEvidence?: string | null;
+  closedBy?: string | null;
+  closedAt?: string | null;
 }
 
 export interface IncidentsResponse extends BaseResponse {

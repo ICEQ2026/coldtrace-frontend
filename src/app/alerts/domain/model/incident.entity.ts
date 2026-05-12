@@ -16,6 +16,11 @@ export class Incident implements BaseEntity {
   private _status: IncidentStatus;
   private _recognizedBy: string | null;
   private _recognizedAt: string | null;
+  private _conditionStable: boolean;
+  private _correctiveAction: string | null;
+  private _closureEvidence: string | null;
+  private _closedBy: string | null;
+  private _closedAt: string | null;
 
   constructor(incident: {
     id: number;
@@ -29,6 +34,11 @@ export class Incident implements BaseEntity {
     status: IncidentStatus;
     recognizedBy: string | null;
     recognizedAt: string | null;
+    conditionStable: boolean;
+    correctiveAction: string | null;
+    closureEvidence: string | null;
+    closedBy: string | null;
+    closedAt: string | null;
   }) {
     this._id = incident.id;
     this._organizationId = incident.organizationId;
@@ -41,6 +51,11 @@ export class Incident implements BaseEntity {
     this._status = incident.status;
     this._recognizedBy = incident.recognizedBy;
     this._recognizedAt = incident.recognizedAt;
+    this._conditionStable = incident.conditionStable;
+    this._correctiveAction = incident.correctiveAction;
+    this._closureEvidence = incident.closureEvidence;
+    this._closedBy = incident.closedBy;
+    this._closedAt = incident.closedAt;
   }
 
   get id(): number { return this._id; }
@@ -54,7 +69,14 @@ export class Incident implements BaseEntity {
   get status(): IncidentStatus { return this._status; }
   get recognizedBy(): string | null { return this._recognizedBy; }
   get recognizedAt(): string | null { return this._recognizedAt; }
+  get conditionStable(): boolean { return this._conditionStable; }
+  get correctiveAction(): string | null { return this._correctiveAction; }
+  get closureEvidence(): string | null { return this._closureEvidence; }
+  get closedBy(): string | null { return this._closedBy; }
+  get closedAt(): string | null { return this._closedAt; }
 
   get isOpen(): boolean { return this._status === 'open'; }
   get isRecognized(): boolean { return this._status === 'recognized'; }
+  get isClosed(): boolean { return this._status === 'closed'; }
+  get isConditionStable(): boolean { return this._conditionStable; }
 }
