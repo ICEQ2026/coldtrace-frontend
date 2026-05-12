@@ -561,8 +561,6 @@ export class OperationalDashboard implements OnInit {
     readings: SensorReading[],
     indexFor: (reading: SensorReading) => number,
   ): void {
-    const settings = this.currentSettings();
-
     readings.forEach((reading) => {
       const bucket = buckets[indexFor(reading)];
 
@@ -572,7 +570,7 @@ export class OperationalDashboard implements OnInit {
 
       const severity =
         reading.temperature !== null
-          ? this.getThermalSeverity(reading.temperature, settings)
+          ? this.getThermalSeverity(reading.temperature, this.settingsForReading(reading))
           : 'warning';
 
       if (severity === 'normal' && !reading.isOutOfRange) {
@@ -586,7 +584,7 @@ export class OperationalDashboard implements OnInit {
   }
 
   private alertTypeKey(reading: SensorReading): string {
-    const settings = this.currentSettings();
+    const settings = this.settingsForReading(reading);
 
     if (settings && reading.humidity !== null && reading.humidity > settings.maximumHumidity) {
       return 'monitoring.operational.type-high-humidity';
@@ -688,6 +686,10 @@ export class OperationalDashboard implements OnInit {
     }
 
     return temperature > settings.maximumTemperature ? 'device_thermostat' : 'ac_unit';
+  }
+
+  private settingsForReading(reading: SensorReading): AssetSettings | null {
+    return this.assetStore.settingsForAsset(this.activeOrganizationId(), reading.assetId) ?? null;
   }
 
   private buildSummaryBars(values: number[], size: number): number[] {

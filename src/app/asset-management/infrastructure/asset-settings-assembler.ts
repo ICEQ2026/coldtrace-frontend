@@ -2,9 +2,11 @@ import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { AssetSettings } from '../domain/model/asset-settings.entity';
 import { AssetSettingsResource, AssetSettingsResponse } from './asset-settings-response';
 
-export class AssetSettingsAssembler
-  implements BaseAssembler<AssetSettings, AssetSettingsResource, AssetSettingsResponse>
-{
+export class AssetSettingsAssembler implements BaseAssembler<
+  AssetSettings,
+  AssetSettingsResource,
+  AssetSettingsResponse
+> {
   toEntitiesFromResponse(response: AssetSettingsResponse): AssetSettings[] {
     return response.assetSettings.map((resource) => this.toEntityFromResource(resource));
   }
@@ -23,6 +25,7 @@ export class AssetSettingsAssembler
       resource.temperatureUnit,
       resource.humidityUnit,
       resource.weightUnit,
+      resource.assetId ?? null,
     );
   }
 
@@ -40,6 +43,7 @@ export class AssetSettingsAssembler
       temperatureUnit: entity.temperatureUnit,
       humidityUnit: entity.humidityUnit,
       weightUnit: entity.weightUnit,
+      assetId: entity.assetId,
     };
   }
 }
