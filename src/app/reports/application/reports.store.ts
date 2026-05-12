@@ -69,6 +69,7 @@ export class ReportsStore {
         this.loadingSignal.set(false);
       },
       error: () => {
+        // Stored reports are optional for the demo; generated views can still work from readings.
         this.reportsSignal.set([]);
         this.errorSignal.set(null);
         this.loadingSignal.set(false);
@@ -97,6 +98,7 @@ export class ReportsStore {
         .filter((iotDevice) => iotDevice.assetId !== null)
         .map((iotDevice) => iotDevice.assetId as number),
     );
+    // Include monitored assets even when readings are missing so incomplete data is visible.
     const readings = this.monitoringStore
       .readingsForAssetIds(assets.map((asset) => asset.id))
       .filter((reading) => this.dateKeyFor(reading.recordedAt) === date);
@@ -124,20 +126,27 @@ export class ReportsStore {
     filters: OperationalHistoryFilters,
   ): OperationalHistory {
     const assets = this.assetManagementStore.assetsForOrganization(organizationId);
-    const settings = this.assetManagementStore
-      .assetSettings()
-      .find((assetSettings) => assetSettings.organizationId === organizationId);
     const assetIds = assets.map((asset) => asset.id);
     const readings = this.monitoringStore
       .readingsForAssetIds(assetIds)
       .filter((reading) => this.isInDateRange(reading.recordedAt, filters.fromDate, filters.toDate))
       .filter((reading) => !filters.assetId || reading.assetId === filters.assetId);
     const readingEvents = readings.map((reading) =>
-      this.historyReadingEvent(reading, assets, settings),
+      this.historyReadingEvent(
+        reading,
+        assets,
+        this.assetManagementStore.settingsForAsset(organizationId, reading.assetId),
+      ),
     );
     const alertEvents = readings
       .filter((reading) => reading.isOutOfRange)
-      .map((reading) => this.historyAlertEvent(reading, assets, settings));
+      .map((reading) =>
+        this.historyAlertEvent(
+          reading,
+          assets,
+          this.assetManagementStore.settingsForAsset(organizationId, reading.assetId),
+        ),
+      );
     const incidentEvents = assets
       .filter((asset) => !filters.assetId || asset.id === filters.assetId)
       .flatMap((asset) => this.historyIncidentEvents(asset, filters, readings));
@@ -155,9 +164,6 @@ export class ReportsStore {
     const safeOrganizationId = organizationId ?? 0;
     const assets = this.assetManagementStore.assetsForOrganization(organizationId);
     const iotDevices = this.assetManagementStore.iotDevicesForOrganization(organizationId);
-    const assetSettings = this.assetManagementStore
-      .assetSettings()
-      .find((settings) => settings.organizationId === organizationId);
     const monitoredAssetIds = new Set(
       iotDevices
         .filter((iotDevice) => iotDevice.assetId !== null)
@@ -179,7 +185,13 @@ export class ReportsStore {
     const daysCount = this.daysInRange(filters.fromDate, filters.toDate);
     const rows = reportAssets
       .map((asset) =>
-        this.buildSanitaryComplianceRow(asset, readings, iotDevices, assetSettings, daysCount),
+        this.buildSanitaryComplianceRow(
+          asset,
+          readings,
+          iotDevices,
+          this.assetManagementStore.settingsForAsset(organizationId, asset.id),
+          daysCount,
+        ),
       )
       .sort(
         (a, b) =>
@@ -204,9 +216,6 @@ export class ReportsStore {
     const safeOrganizationId = organizationId ?? 0;
     const assets = this.assetManagementStore.assetsForOrganization(organizationId);
     const iotDevices = this.assetManagementStore.iotDevicesForOrganization(organizationId);
-    const assetSettings = this.assetManagementStore
-      .assetSettings()
-      .find((settings) => settings.organizationId === organizationId);
     const selectedAssets = assets.filter(
       (asset) => !filters.assetId || asset.id === filters.assetId,
     );
@@ -224,7 +233,7 @@ export class ReportsStore {
           asset,
           readings,
           iotDevices,
-          assetSettings,
+          this.assetManagementStore.settingsForAsset(organizationId, asset.id),
           filters,
           daysCount,
         ),
@@ -246,10 +255,7 @@ export class ReportsStore {
     );
   }
 
-  buildAuditEvidence(
-    organizationId: number | null,
-    filters: AuditEvidenceFilters,
-  ): AuditEvidence {
+  buildAuditEvidence(organizationId: number | null, filters: AuditEvidenceFilters): AuditEvidence {
     const safeOrganizationId = organizationId ?? 0;
     const assets = this.assetManagementStore.assetsForOrganization(organizationId);
     const iotDevices = this.assetManagementStore.iotDevicesForOrganization(organizationId);
@@ -286,6 +292,7 @@ export class ReportsStore {
     const periodReports = this.reportsForOrganization(organizationId).filter((report) =>
       this.reportOverlapsPeriod(report, filters),
     );
+    // Evidence items are checklist rows, not stored documents, to keep the frontend delivery local.
     const items = [
       new EvidenceItem(
         'monitoring-readings',
@@ -711,7 +718,9 @@ export class ReportsStore {
           asset,
           filters,
           'open-incident',
-          asset.connectivity === ConnectivityStatus.Offline ? 'potential-non-compliance' : 'observation',
+          asset.connectivity === ConnectivityStatus.Offline
+            ? 'potential-non-compliance'
+            : 'observation',
           'reports.findings.messages.connectivity',
           asset.connectivity,
           { status: asset.connectivity },
@@ -753,14 +762,7 @@ export class ReportsStore {
     messageParams: Record<string, string | number> = {},
     idSuffix = '',
   ): ComplianceFinding {
-    const id = [
-      organizationId,
-      asset.id,
-      filters.fromDate,
-      filters.toDate,
-      type,
-      idSuffix,
-    ]
+    const id = [organizationId, asset.id, filters.fromDate, filters.toDate, type, idSuffix]
       .filter((value) => value !== '')
       .join('-');
     const status = this.closedComplianceFindingIdsSignal().has(id)

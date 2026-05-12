@@ -6,6 +6,7 @@ export class IncidentAssembler implements BaseAssembler<Incident, IncidentResour
   toEntityFromResource(resource: IncidentResource): Incident {
     return new Incident({
       id: Number(resource.id),
+      organizationId: resource.organizationId,
       assetId: resource.assetId,
       assetName: resource.assetName,
       type: resource.type,
@@ -21,6 +22,7 @@ export class IncidentAssembler implements BaseAssembler<Incident, IncidentResour
   toResourceFromEntity(entity: Incident): IncidentResource {
     return {
       id: entity.id,
+      organizationId: entity.organizationId,
       assetId: entity.assetId,
       assetName: entity.assetName,
       type: entity.type,

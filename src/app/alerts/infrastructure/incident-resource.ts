@@ -2,6 +2,7 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
 import { IncidentSeverity, IncidentStatus, IncidentType } from '../domain/model/incident.entity';
 
 export interface IncidentResource extends BaseResource {
+  organizationId: number;
   assetId: number;
   assetName: string;
   type: IncidentType;

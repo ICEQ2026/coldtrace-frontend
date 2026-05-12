@@ -1,0 +1,71 @@
+.gauge-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 24px;
+  height: 100%;
+}
+
+.gauge-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+}
+
+.gauge-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.gauge-value {
+  transition: stroke-dasharray 0.8s ease-out;
+}
+
+.gauge-center {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.temperature-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0F172A;
+  font-family: 'Inter', sans-serif;
+}
+
+.asset-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 220px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Inter', sans-serif;
+}
+
+.detail-item mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #94A3B8;
+}
+
+.detail-label {
+  font-size: 12px;
+  color: #64748B;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.detail-value {
+  font-size: 12px;
+  color: #0F172A;
+  font-weight: 700;
+}

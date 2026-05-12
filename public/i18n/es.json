@@ -365,6 +365,107 @@
         "frequency-error": "Ingresa una frecuencia mayor a cero."
       }
     },
+    "safety-ranges": {
+      "page-title": "Rangos seguros",
+      "title": "Rangos seguros",
+      "subtitle": "Configura límites seguros de temperatura y humedad por activo monitoreado.",
+      "reload": "Recargar",
+      "save": "Guardar rango",
+      "saving": "Guardando...",
+      "reset": "Restablecer",
+      "form-title": "Configuración de rango",
+      "form-subtitle": "Selecciona un activo monitoreado o actualiza el perfil general de la organización.",
+      "feedback-saved": "Rango seguro guardado correctamente.",
+      "feedback-invalid": "Revisa los valores requeridos antes de guardar.",
+      "feedback-access-denied": "Tu rol actual no puede configurar rangos seguros.",
+      "feedback-error": "No se pudo guardar el rango. Intenta nuevamente.",
+      "access-title": "Configuración restringida",
+      "access-description": "Los usuarios sin permiso de gestión de activos pueden revisar rangos, pero no cambiarlos.",
+      "scope-default": "Perfil general de la organización",
+      "scope-default-description": "Se usa cuando un activo no tiene un rango seguro propio.",
+      "summary-assets": "Activos monitoreados",
+      "summary-profiles": "Perfiles por activo",
+      "summary-temperature": "Rango seleccionado",
+      "summary-humidity": "Límite de humedad",
+      "empty": "No hay rangos seguros registrados para esta organización.",
+      "form": {
+        "scope": "Aplicar a",
+        "default-scope": "Perfil general",
+        "selected-range": "Rango actual",
+        "minimum-temperature": "Temperatura mínima",
+        "maximum-temperature": "Temperatura máxima",
+        "maximum-humidity": "Humedad máxima (%)",
+        "number-error": "Ingresa un número válido.",
+        "humidity-error": "Ingresa un valor entre 1 y 100.",
+        "temperature-range-error": "La temperatura máxima debe ser mayor que la mínima."
+      },
+      "table-title": "Perfiles configurados",
+      "table-subtitle": "Los rangos quedan disponibles al recargar y se usan en las lecturas de monitoreo.",
+      "table": {
+        "scope": "Alcance",
+        "location": "Ubicación",
+        "temperature": "Rango de temperatura",
+        "humidity": "Límite de humedad",
+        "status": "Estado",
+        "default-status": "General",
+        "asset-status": "Por activo"
+      }
+    },
+    "operational-parameters": {
+      "page-title": "Parámetros operativos",
+      "title": "Parámetros operativos",
+      "subtitle": "Actualiza intervalos de lectura y criterios de evaluación para activos monitoreados.",
+      "reload": "Recargar",
+      "save": "Guardar parámetros",
+      "saving": "Guardando...",
+      "reset": "Restablecer",
+      "form-title": "Comportamiento de monitoreo",
+      "form-subtitle": "Selecciona un dispositivo del activo y ajusta los valores aplicados a próximas lecturas.",
+      "feedback-saved": "Parámetros operativos actualizados correctamente.",
+      "feedback-invalid": "Revisa el intervalo y al menos un criterio de evaluación antes de guardar.",
+      "feedback-incompatible": "Los parámetros seleccionados no son compatibles con el activo, dispositivo o gateway.",
+      "feedback-access-denied": "Tu rol actual no puede actualizar parámetros operativos.",
+      "feedback-error": "Se mantuvieron los parámetros anteriores porque no se pudo guardar la actualización.",
+      "access-title": "Configuración restringida",
+      "access-description": "Los usuarios sin permiso de gestión de activos pueden revisar parámetros operativos, pero no cambiarlos.",
+      "summary-assets": "Activos monitoreados",
+      "summary-devices": "Dispositivos configurados",
+      "summary-interval": "Intervalo seleccionado",
+      "summary-criteria": "Criterios activos",
+      "empty": "No hay parámetros operativos registrados para dispositivos monitoreados.",
+      "compatibility": {
+        "asset-inactive": "Selecciona un activo activo antes de aplicar cambios operativos.",
+        "device-unlinked": "El dispositivo seleccionado debe estar vinculado y disponible para este activo.",
+        "gateway-offline": "El gateway del activo está offline, por lo que no se puede aplicar la configuración.",
+        "criteria-incompatible": "Uno o más criterios no son soportados por el dispositivo seleccionado."
+      },
+      "form": {
+        "asset": "Activo",
+        "select-asset": "Seleccionar activo",
+        "device": "Dispositivo",
+        "select-device": "Seleccionar dispositivo",
+        "current-interval": "Intervalo actual",
+        "reading-frequency": "Intervalo de lectura (minutos)",
+        "frequency-error": "Ingresa un valor entre 5 y 1440 minutos.",
+        "criteria": "Criterios de evaluación",
+        "criteria-error": "Selecciona al menos un criterio."
+      },
+      "table-title": "Perfiles de dispositivo configurados",
+      "table-subtitle": "Los intervalos se usan en logs, reportes y próximas lecturas de monitoreo.",
+      "table": {
+        "asset": "Activo",
+        "location": "Ubicación",
+        "device": "Dispositivo",
+        "frequency": "Intervalo",
+        "criteria": "Criterios",
+        "status": "Estado",
+        "status-active": "Activo",
+        "status-asset-inactive": "Activo inactivo",
+        "status-device-unlinked": "Dispositivo no disponible",
+        "status-gateway-offline": "Gateway offline",
+        "status-criteria-incompatible": "Criterios incompatibles"
+      }
+    },
     "form": {
       "close": "Cerrar",
       "internal-id": "ID interno",
@@ -390,6 +491,133 @@
     "feedback": {
       "server-error": "No se pudo cargar la información de activos. Inténtalo nuevamente.",
       "loading": "Cargando información de activos..."
+    }
+  },
+  "maintenance": {
+    "preventive": {
+      "page-title": "Mantenimiento preventivo",
+      "title": "Mantenimiento preventivo",
+      "subtitle": "Programa mantenimiento planificado para activos de cadena de frío y sus dispositivos de monitoreo.",
+      "reload": "Recargar",
+      "save": "Programar mantenimiento",
+      "saving": "Programando...",
+      "reset": "Restablecer",
+      "form-title": "Programación de mantenimiento",
+      "form-subtitle": "Registra la fecha, alcance y observaciones de la próxima intervención preventiva.",
+      "feedback-scheduled": "Mantenimiento preventivo programado correctamente.",
+      "feedback-invalid": "Revisa la fecha y observaciones requeridas antes de guardar.",
+      "feedback-invalid-asset": "Selecciona un activo activo antes de programar mantenimiento.",
+      "feedback-duplicate": "Ya existe un mantenimiento abierto para este activo en el periodo seleccionado.",
+      "feedback-access-denied": "Tu rol actual no puede programar mantenimiento preventivo.",
+      "feedback-error": "No se pudo guardar la programación de mantenimiento. Intenta nuevamente.",
+      "access-title": "Programación restringida",
+      "access-description": "Los usuarios sin permiso de gestión de activos pueden revisar mantenimientos, pero no crearlos.",
+      "summary-assets": "Activos de la organización",
+      "summary-open": "Programaciones abiertas",
+      "summary-tracked": "Activos en seguimiento",
+      "summary-devices": "Dispositivos de monitoreo",
+      "empty": "No hay mantenimientos preventivos registrados para esta organización.",
+      "form": {
+        "asset": "Activo",
+        "select-asset": "Seleccionar activo",
+        "asset-error": "Selecciona un activo válido.",
+        "device": "Dispositivo",
+        "asset-level": "Mantenimiento a nivel de activo",
+        "date": "Fecha programada",
+        "date-error": "Selecciona hoy o una fecha futura.",
+        "observations": "Observaciones",
+        "observations-placeholder": "Describe el trabajo preventivo a completar.",
+        "observations-error": "Ingresa al menos 6 caracteres."
+      },
+      "table-title": "Mantenimientos preventivos programados",
+      "table-subtitle": "Las programaciones abiertas mantienen al activo bajo seguimiento operativo.",
+      "table": {
+        "id": "ID",
+        "asset": "Activo",
+        "device": "Dispositivo",
+        "asset-level": "Nivel de activo",
+        "location": "Ubicación",
+        "date": "Fecha",
+        "period": "Periodo",
+        "status": "Estado"
+      },
+      "status": {
+        "scheduled": "Programado",
+        "pending": "Pendiente",
+        "completed": "Completado",
+        "canceled": "Cancelado"
+      }
+    },
+    "technical-service": {
+      "page-title": "Servicio técnico",
+      "title": "Servicio técnico",
+      "subtitle": "Registra solicitudes correctivas y documenta evidencia de cierre técnico.",
+      "reload": "Recargar",
+      "reset": "Restablecer",
+      "create-request": "Solicitar servicio",
+      "close-request": "Guardar resultado",
+      "request-title": "Solicitud de servicio",
+      "request-subtitle": "Abre un seguimiento técnico cuando un activo presenta falla o necesidad correctiva.",
+      "closure-title": "Cierre de servicio",
+      "closure-subtitle": "Documenta la intervención y mantiene el caso abierto cuando la prueba funcional falla.",
+      "feedback-request-created": "Solicitud de servicio técnico registrada correctamente.",
+      "feedback-closed": "Servicio técnico cerrado con evidencia de intervención completada.",
+      "feedback-failed-test": "La prueba funcional falló. El servicio permanece abierto y el activo queda pendiente de revisión.",
+      "feedback-invalid": "Revisa los campos requeridos antes de guardar.",
+      "feedback-invalid-asset": "Selecciona un activo activo o en mantenimiento antes de solicitar servicio.",
+      "feedback-missing-evidence": "Completa las notas de intervención y evidencia de resultado antes de cerrar el servicio.",
+      "feedback-access-denied": "Tu rol actual no puede gestionar solicitudes de servicio técnico.",
+      "feedback-error": "No se pudo guardar la solicitud de servicio técnico. Intenta nuevamente.",
+      "access-title": "Servicio técnico restringido",
+      "access-description": "Los usuarios sin permiso de gestión de activos pueden revisar servicios, pero no crearlos ni cerrarlos.",
+      "summary-assets": "Activos disponibles",
+      "summary-open": "Servicios abiertos",
+      "summary-pending-review": "Pendientes de revisión",
+      "summary-closed": "Casos cerrados",
+      "empty": "No hay solicitudes de servicio técnico registradas para esta organización.",
+      "form": {
+        "asset": "Activo",
+        "select-asset": "Seleccionar activo",
+        "asset-error": "Selecciona un activo válido.",
+        "priority": "Prioridad",
+        "issue": "Falla o necesidad correctiva",
+        "issue-placeholder": "Describe la condición que requiere servicio técnico.",
+        "issue-error": "Ingresa al menos 8 caracteres.",
+        "open-request": "Servicio abierto",
+        "select-request": "Seleccionar servicio",
+        "request-error": "Selecciona una solicitud abierta.",
+        "intervention": "Notas de intervención",
+        "intervention-placeholder": "Describe el trabajo técnico realizado.",
+        "intervention-error": "Ingresa evidencia de intervención.",
+        "result": "Evidencia de resultado",
+        "result-placeholder": "Describe la condición final del activo.",
+        "result-error": "Ingresa evidencia del resultado.",
+        "functional-test-passed": "Prueba funcional aprobada"
+      },
+      "priority": {
+        "low": "Baja",
+        "medium": "Media",
+        "high": "Alta",
+        "critical": "Crítica"
+      },
+      "table-title": "Registros de servicio técnico",
+      "table-subtitle": "Los servicios abiertos y pendientes de revisión permanecen en seguimiento operativo.",
+      "table": {
+        "id": "ID",
+        "asset": "Activo",
+        "priority": "Prioridad",
+        "issue": "Problema",
+        "result": "Resultado",
+        "status": "Estado",
+        "pending-result": "Intervención pendiente",
+        "test-passed": "Prueba funcional aprobada",
+        "test-failed": "Prueba funcional fallida"
+      },
+      "status": {
+        "open": "Abierto",
+        "pending-review": "Pendiente de revisión",
+        "closed": "Cerrado"
+      }
     }
   },
   "sign-up": {
@@ -432,6 +660,10 @@
     "nav-permissions": "Permisos",
     "nav-chats": "Chats",
     "nav-settings": "Configuración",
+    "nav-safety-ranges": "Rangos seguros",
+    "nav-operational-parameters": "Parámetros operativos",
+    "nav-preventive-maintenance": "Mantenimiento preventivo",
+    "nav-technical-service": "Servicio técnico",
     "nav-reports": "Reportes",
     "nav-daily-log": "Bitácora diaria",
     "nav-monthly-report": "Reporte mensual",
@@ -447,7 +679,9 @@
     "top-insights": "Hallazgos",
     "top-notifications": "Notificaciones",
     "top-settings": "Configuración",
-    "search-placeholder": "Buscar contenido..."
+    "search-placeholder": "Buscar contenido...",
+    "nav-operational-dashboard": "Dashboard operativo",
+    "nav-asset-monitoring": "Monitoreo de activos"
   },
   "monitoring": {
     "operational": {
@@ -546,6 +780,37 @@
       "axis-0-mea": "0 MED",
       "empty-title": "Aún no hay datos operativos",
       "empty-description": "Agrega activos, dispositivos y lecturas para ver el dashboard operativo de esta organización."
+    },
+    "asset-monitoring": {
+      "page-title": "Monitoreo de activos",
+      "title": "Monitoreo de activos",
+      "subtitle": "Revisa lecturas en vivo, dispositivos vinculados y estado térmico por activo.",
+      "search-placeholder": "Buscar por activo, ID, ubicación o notas...",
+      "summary-assets": "Activos",
+      "summary-readings": "Con lecturas",
+      "summary-alerts": "Fuera de rango",
+      "empty": "No hay activos monitoreados para los filtros actuales.",
+      "trend-title": "Tendencia de temperatura",
+      "sensor-id": "ID de sensor",
+      "location": "Ubicación",
+      "last-reading": "Última lectura",
+      "humidity": "Humedad",
+      "asset-name": "Activo",
+      "device-model": "Modelo del dispositivo",
+      "no-device": "Sin dispositivo vinculado",
+      "no-data": "N/D",
+      "tabs": {
+        "cold-room": "Cámaras frías",
+        "transport": "Transporte"
+      },
+      "status": {
+        "normal": "En rango",
+        "no-data": "Sin datos",
+        "no-readings": "Sin lecturas disponibles"
+      },
+      "incident": {
+        "out-of-range": "Lectura fuera de rango"
+      }
     }
   },
   "reports": {
@@ -877,6 +1142,10 @@
       "col-status": "Estado",
       "col-recognized-by": "Reconocido por",
       "col-actions": "Acciones",
+      "type-temperature": "Temperatura",
+      "type-humidity": "Humedad",
+      "type-connectivity": "Conectividad",
+      "type-other": "Otro",
       "action-recognize": "Reconocer",
       "status-open": "Abierto",
       "status-recognized": "Reconocido",

@@ -1,15 +1,26 @@
 import { Routes } from '@angular/router';
 
-const dashboardPlaceholder = () =>
-  import('../../identity-access/presentation/views/dashboard-placeholder/dashboard-placeholder')
-    .then(m => m.DashboardPlaceholder);
+const operationalDashboard = () =>
+  import('./views/operational-dashboard/operational-dashboard').then(
+    (m) => m.OperationalDashboard,
+  );
+const assetMonitoringDashboard = () =>
+  import('./views/asset-monitoring-dashboard/asset-monitoring-dashboard').then(
+    (m) => m.AssetMonitoringDashboard,
+  );
 
 export const monitoringRoutes: Routes = [
   {
     path: 'operational',
-    loadComponent: dashboardPlaceholder,
+    loadComponent: operationalDashboard,
     title: 'ColdTrace - Monitoring',
     data: { pageTitleKey: 'monitoring.operational.title' },
+  },
+  {
+    path: 'assets',
+    loadComponent: assetMonitoringDashboard,
+    title: 'ColdTrace - Asset Monitoring',
+    data: { pageTitleKey: 'monitoring.asset-monitoring.page-title' },
   },
   { path: '', redirectTo: 'operational', pathMatch: 'full' },
 ];

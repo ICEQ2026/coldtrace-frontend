@@ -241,9 +241,7 @@ export class ColdRoomList implements OnInit {
       return null;
     }
 
-    return (
-      this.assetSettings().find((settings) => settings.organizationId === organizationId) ?? null
-    );
+    return this.assetManagementStore.defaultSettingsForOrganization(organizationId) ?? null;
   });
 
   protected readonly calibrationSummary = computed(() => {
@@ -865,7 +863,7 @@ export class ColdRoomList implements OnInit {
       'connection-lost': 'report',
       'high-humidity': 'warning_amber',
       'low-temperature': 'change_history',
-      'none': 'check_circle',
+      none: 'check_circle',
     };
 
     return iconByIncident[this.normalizeIncident(lastIncident)] ?? 'info';
@@ -877,7 +875,7 @@ export class ColdRoomList implements OnInit {
       'connection-lost': 'danger',
       'high-humidity': 'warning',
       'low-temperature': 'cold',
-      'none': 'stable',
+      none: 'stable',
     };
 
     return classByIncident[this.normalizeIncident(lastIncident)] ?? 'stable';
@@ -1058,7 +1056,6 @@ export class ColdRoomList implements OnInit {
       fields.connectivity ?? asset.connectivity,
     );
   }
-
 
   private clearPendingAssetStatus(assetId: number): void {
     this.pendingAssetStatuses.update((statuses) => {

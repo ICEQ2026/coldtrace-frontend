@@ -12,13 +12,25 @@ export class AlertsStore {
   private readonly recognizingIdSignal = signal<number | null>(null);
   private readonly feedbackSignal = signal<string | null>(null);
 
-  readonly incidents = this.incidentsSignal.asReadonly();
+  readonly incidents = computed(() => {
+    const organizationId = this.identityAccessStore.currentOrganizationIdFrom(
+      this.identityAccessStore.users(),
+    );
+
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.incidentsSignal().filter(
+      (incident) => incident.organizationId === organizationId,
+    );
+  });
   readonly loading = this.loadingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
   readonly recognizingId = this.recognizingIdSignal.asReadonly();
   readonly feedback = this.feedbackSignal.asReadonly();
 
-  readonly openIncidents = computed(() => this.incidentsSignal().filter((i) => i.isOpen));
+  readonly openIncidents = computed(() => this.incidents().filter((i) => i.isOpen));
   readonly openIncidentsCount = computed(() => this.openIncidents().length);
 
   constructor(
@@ -44,6 +56,7 @@ export class AlertsStore {
   recognizeIncident(incident: Incident, responsibleUserName: string): Observable<Incident> {
     const recognized = new Incident({
       id: incident.id,
+      organizationId: incident.organizationId,
       assetId: incident.assetId,
       assetName: incident.assetName,
       type: incident.type,
@@ -79,10 +92,9 @@ export class AlertsStore {
     const users = this.identityAccessStore.users();
     const roles = this.identityAccessStore.roles();
     const role = this.identityAccessStore.currentRoleFrom(users, roles);
-    return this.identityAccessStore.isPermissionSelected(
-      role!,
-      'roles-permissions.permissions.resolve-alerts',
-    );
+    return this.identityAccessStore
+      .permissionKeysForRole(role)
+      .includes('roles-permissions.permissions.resolve-alerts');
   }
 
   clearFeedback(): void {

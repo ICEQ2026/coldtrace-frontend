@@ -1,4 +1,4 @@
-import { Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
+import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { DashboardShell } from '../../../../shared/presentation/components/dashboard-shell/dashboard-shell';
 
 @Component({
@@ -18,8 +19,8 @@ import { DashboardShell } from '../../../../shared/presentation/components/dashb
 export class IncidentList implements OnInit {
   protected readonly alertsStore = inject(AlertsStore);
   protected readonly identityStore = inject(IdentityAccessStore);
+  protected readonly assetStore = inject(AssetManagementStore);
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly activeOrganizationName = computed(() =>
     this.identityStore.currentOrganizationNameFrom(
@@ -42,13 +43,18 @@ export class IncidentList implements OnInit {
       this.identityStore.roles(),
     ),
   );
-  protected readonly assetIssuesCount = computed(() => 0);
+  protected readonly assetIssuesCount = computed(() =>
+    this.assetStore.assetIssueCountFor(
+      this.identityStore.currentOrganizationIdFrom(this.identityStore.users()),
+    ),
+  );
   protected readonly canResolveAlerts = computed(() => this.alertsStore.canResolveAlerts());
 
   ngOnInit(): void {
     this.identityStore.loadUsers();
     this.identityStore.loadOrganizations();
     this.identityStore.loadRoles();
+    this.assetStore.loadAssets();
     this.alertsStore.loadIncidents();
   }
 
@@ -77,6 +83,10 @@ export class IncidentList implements OnInit {
 
   protected severityIcon(incident: Incident): string {
     return incident.severity === 'critical' ? 'error' : 'warning';
+  }
+
+  protected typeLabelKey(incident: Incident): string {
+    return `alerts.incident-list.type-${incident.type}`;
   }
 
   protected formatDate(isoDate: string): string {

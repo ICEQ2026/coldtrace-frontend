@@ -17,6 +17,7 @@ export interface DailyLogEntry {
   status: DailyLogStatus;
 }
 
+/** Daily evidence model used by the reports module to summarize asset readings. */
 export class DailyLog implements BaseEntity {
   constructor(
     public id: number,

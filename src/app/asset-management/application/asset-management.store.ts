@@ -75,6 +75,42 @@ export class AssetManagementStore {
     return this.gateways().filter((gateway) => gateway.organizationId === organizationId);
   }
 
+  assetSettingsForOrganization(organizationId: number | null): AssetSettings[] {
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.assetSettings().filter(
+      (assetSettings) => assetSettings.organizationId === organizationId,
+    );
+  }
+
+  defaultSettingsForOrganization(organizationId: number | null): AssetSettings | undefined {
+    return this.assetSettingsForOrganization(organizationId).find(
+      (assetSettings) => assetSettings.assetId === null,
+    );
+  }
+
+  settingsForAsset(
+    organizationId: number | null,
+    assetId: number | null,
+  ): AssetSettings | undefined {
+    const settings = this.assetSettingsForOrganization(organizationId);
+    const assetSpecificSettings = settings.find(
+      (assetSettings) => assetSettings.assetId !== null && assetSettings.assetId === assetId,
+    );
+
+    return (
+      assetSpecificSettings ??
+      settings.find((assetSettings) => assetSettings.assetId === null) ??
+      settings[0]
+    );
+  }
+
+  nextAssetSettingsId(): number {
+    return Math.max(...this.assetSettings().map((settings) => settings.id), 0) + 1;
+  }
+
   operationalSummaryFor(organizationId: number | null): AssetOperationalSummary {
     const assets = this.assetsForOrganization(organizationId);
     const iotDevices = this.iotDevicesForOrganization(organizationId);
@@ -88,11 +124,15 @@ export class AssetManagementStore {
     return {
       totalAssets: assets.length,
       monitoredAssets: assets.filter((asset) => monitoredAssetIds.has(asset.id)).length,
-      connectedDevices: iotDevices.filter((iotDevice) => iotDevice.status === IoTDeviceStatus.Linked).length,
+      connectedDevices: iotDevices.filter(
+        (iotDevice) => iotDevice.status === IoTDeviceStatus.Linked,
+      ).length,
       totalDevices: iotDevices.length,
-      connectedGateways: gateways.filter((gateway) => gateway.status === GatewayStatus.Active).length,
+      connectedGateways: gateways.filter((gateway) => gateway.status === GatewayStatus.Active)
+        .length,
       assetsWithIssues: assets.filter((asset) => this.hasAssetIssue(asset)).length,
-      connectivityIssues: assets.filter((asset) => asset.connectivity !== ConnectivityStatus.Online).length,
+      connectivityIssues: assets.filter((asset) => asset.connectivity !== ConnectivityStatus.Online)
+        .length,
     };
   }
 
@@ -248,12 +288,10 @@ export class AssetManagementStore {
     const assets = this.assetsForOrganization(organizationId);
     const iotDevices = this.iotDevicesForOrganization(organizationId);
     const gateways = this.gatewaysForOrganization(organizationId);
-    const settings = this.assetSettings().find(
-      (assetSettings) => assetSettings.organizationId === organizationId,
-    );
     const currentStep = this.telemetryUpdateStep % 3;
     this.telemetryUpdateStep += 1;
 
+    // Rotate simulated changes so dashboard indicators move without backend jobs.
     if (currentStep === 0) {
       const gateway = this.sampleOne(gateways);
 
@@ -291,6 +329,7 @@ export class AssetManagementStore {
 
     const gateway = gateways.find((currentGateway) => currentGateway.id === asset.gatewayId);
     const iotDevice = iotDevices.find((currentIoTDevice) => currentIoTDevice.assetId === asset.id);
+    const settings = this.settingsForAsset(organizationId, asset.id);
     const connectivity = this.randomConnectivity(gateway ?? null, iotDevice ?? null);
     const currentTemperature = this.randomTemperature(connectivity, settings);
 
@@ -385,12 +424,12 @@ export class AssetManagementStore {
     connectivity: ConnectivityStatus,
     settings: AssetSettings | undefined,
   ): string {
-    if (connectivity === ConnectivityStatus.Offline) {
+    if (connectivity === ConnectivityStatus.Offline || !settings) {
       return '—';
     }
 
-    const minimum = settings?.minimumTemperature ?? -5;
-    const maximum = settings?.maximumTemperature ?? 8;
+    const minimum = settings.minimumTemperature;
+    const maximum = settings.maximumTemperature;
     const anomalyRoll = Math.random();
     let temperature: number;
 
@@ -402,7 +441,7 @@ export class AssetManagementStore {
       temperature = this.randomNumber(maximum + 0.2, maximum + 3);
     }
 
-    return `${temperature.toFixed(1)}${settings?.temperatureUnit ?? '°C'}`;
+    return `${temperature.toFixed(1)}${settings.temperatureUnit}`;
   }
 
   private incidentFor(
@@ -414,17 +453,21 @@ export class AssetManagementStore {
       return 'connection-lost';
     }
 
+    if (!settings) {
+      return 'none';
+    }
+
     const temperature = Number(currentTemperature.replace(/[^\d.-]/g, ''));
 
-    if (settings && temperature > settings.maximumTemperature) {
+    if (temperature > settings.maximumTemperature) {
       return 'high-temperature';
     }
 
-    if (settings && temperature < settings.minimumTemperature) {
+    if (temperature < settings.minimumTemperature) {
       return 'low-temperature';
     }
 
-    return Math.random() < 0.03 ? 'high-humidity' : 'none';
+    return 'none';
   }
 
   private randomConnectivity(

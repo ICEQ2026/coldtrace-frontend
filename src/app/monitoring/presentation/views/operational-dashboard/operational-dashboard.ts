@@ -7,6 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { interval } from 'rxjs';
 
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
+import { Asset } from '../../../../asset-management/domain/model/asset.entity';
 import { AssetStatus } from '../../../../asset-management/domain/model/asset-status.enum';
 import { CalibrationStatus } from '../../../../asset-management/domain/model/calibration-status.enum';
 import { ConnectivityStatus } from '../../../../asset-management/domain/model/connectivity-status.enum';
@@ -29,6 +30,11 @@ import { DashboardKpi } from '../../components/stat-card/dashboard-kpi';
 import { StatCard } from '../../components/stat-card/stat-card';
 import { StorageDistribution } from '../../components/storage-distribution/storage-distribution';
 import { TemperatureChart } from '../../components/temperature-chart/temperature-chart';
+
+interface TemperatureLimits {
+  min: number;
+  max: number;
+}
 
 @Component({
   selector: 'app-operational-dashboard',
@@ -328,9 +334,7 @@ export class OperationalDashboard implements OnInit {
   }
 
   private buildTemperaturePoints(): TemperaturePoint[] {
-    const settings = this.currentSettings();
-    const maxLimit = settings?.maximumTemperature ?? 7.2;
-    const minLimit = settings?.minimumTemperature ?? -5;
+    const { max: maxLimit, min: minLimit } = this.currentTemperatureLimits();
     const readings = this.organizationReadings().filter((reading) => reading.temperature !== null);
     const now = new Date();
     const initialTemperature = this.averageAssetTemperature() ?? (minLimit + maxLimit) / 2;
@@ -375,7 +379,6 @@ export class OperationalDashboard implements OnInit {
       return [];
     }
 
-    const maximumTemperature = this.currentSettings()?.maximumTemperature ?? 8;
     const groups = [
       {
         id: 1,
@@ -391,7 +394,13 @@ export class OperationalDashboard implements OnInit {
         label: 'monitoring.operational.storage-refrigerated',
         count: assets.filter((asset) => {
           const temperature = this.temperatureFromAsset(asset.currentTemperature);
-          return temperature !== null && temperature > 0 && temperature <= maximumTemperature;
+          const maximumTemperature = this.maximumTemperatureForAsset(asset);
+          return (
+            temperature !== null &&
+            maximumTemperature !== null &&
+            temperature > 0 &&
+            temperature <= maximumTemperature
+          );
         }).length,
         color: '#51BD7A',
       },
@@ -400,16 +409,23 @@ export class OperationalDashboard implements OnInit {
         label: 'monitoring.operational.storage-ambient',
         count: assets.filter((asset) => {
           const temperature = this.temperatureFromAsset(asset.currentTemperature);
-          return temperature !== null && temperature > maximumTemperature;
+          const maximumTemperature = this.maximumTemperatureForAsset(asset);
+          return (
+            temperature !== null &&
+            maximumTemperature !== null &&
+            temperature > maximumTemperature
+          );
         }).length,
         color: '#F5BD38',
       },
       {
         id: 4,
         label: 'monitoring.operational.storage-other',
-        count: assets.filter(
-          (asset) => this.temperatureFromAsset(asset.currentTemperature) === null,
-        ).length,
+        count: assets.filter((asset) => {
+          const temperature = this.temperatureFromAsset(asset.currentTemperature);
+          const maximumTemperature = this.maximumTemperatureForAsset(asset);
+          return temperature === null || (temperature > 0 && maximumTemperature === null);
+        }).length,
         color: '#9AA3AF',
       },
     ];
@@ -561,8 +577,6 @@ export class OperationalDashboard implements OnInit {
     readings: SensorReading[],
     indexFor: (reading: SensorReading) => number,
   ): void {
-    const settings = this.currentSettings();
-
     readings.forEach((reading) => {
       const bucket = buckets[indexFor(reading)];
 
@@ -572,7 +586,7 @@ export class OperationalDashboard implements OnInit {
 
       const severity =
         reading.temperature !== null
-          ? this.getThermalSeverity(reading.temperature, settings)
+          ? this.getThermalSeverity(reading.temperature, this.settingsForReading(reading))
           : 'warning';
 
       if (severity === 'normal' && !reading.isOutOfRange) {
@@ -586,7 +600,7 @@ export class OperationalDashboard implements OnInit {
   }
 
   private alertTypeKey(reading: SensorReading): string {
-    const settings = this.currentSettings();
+    const settings = this.settingsForReading(reading);
 
     if (settings && reading.humidity !== null && reading.humidity > settings.maximumHumidity) {
       return 'monitoring.operational.type-high-humidity';
@@ -690,6 +704,10 @@ export class OperationalDashboard implements OnInit {
     return temperature > settings.maximumTemperature ? 'device_thermostat' : 'ac_unit';
   }
 
+  private settingsForReading(reading: SensorReading): AssetSettings | null {
+    return this.assetStore.settingsForAsset(this.activeOrganizationId(), reading.assetId) ?? null;
+  }
+
   private buildSummaryBars(values: number[], size: number): number[] {
     const baseValues = values.filter((value) => value > 0);
 
@@ -750,6 +768,56 @@ export class OperationalDashboard implements OnInit {
     }
 
     return this.average(temperatures);
+  }
+
+  private currentTemperatureLimits(): TemperatureLimits {
+    const settings = this.currentSettings();
+
+    if (settings) {
+      return {
+        min: settings.minimumTemperature,
+        max: settings.maximumTemperature,
+      };
+    }
+
+    return this.temperatureLimitsFromValues([
+      ...this.organizationReadings().map((reading) => reading.temperature),
+      ...this.organizationAssets().map((asset) => this.temperatureFromAsset(asset.currentTemperature)),
+    ]);
+  }
+
+  private maximumTemperatureForAsset(asset: Asset): number | null {
+    return (
+      this.assetStore.settingsForAsset(this.activeOrganizationId(), asset.id)?.maximumTemperature ??
+      this.currentSettings()?.maximumTemperature ??
+      null
+    );
+  }
+
+  private temperatureLimitsFromValues(values: Array<number | null>): TemperatureLimits {
+    const temperatures = values.filter(
+      (temperature): temperature is number =>
+        temperature !== null && Number.isFinite(temperature),
+    );
+
+    if (!temperatures.length) {
+      return { min: 0, max: 1 };
+    }
+
+    const min = Math.min(...temperatures);
+    const max = Math.max(...temperatures);
+
+    if (min === max) {
+      return {
+        min: Math.floor(min - 1),
+        max: Math.ceil(max + 1),
+      };
+    }
+
+    return {
+      min: Math.floor(min),
+      max: Math.ceil(max),
+    };
   }
 
   private average(values: number[]): number {

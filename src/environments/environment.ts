@@ -8,6 +8,8 @@ export const environment = {
   platformProviderIoTDevicesEndpointPath: '/iot-devices',
   platformProviderGatewaysEndpointPath: '/gateways',
   platformProviderAssetSettingsEndpointPath: '/asset-settings',
+  platformProviderMaintenanceSchedulesEndpointPath: '/maintenance-schedules',
+  platformProviderTechnicalServiceRequestsEndpointPath: '/technical-service-requests',
   platformProviderSensorReadingsEndpointPath: '/sensor-readings',
   platformProviderReportsEndpointPath: '/reports',
   platformProviderIncidentsEndpointPath: '/incidents',

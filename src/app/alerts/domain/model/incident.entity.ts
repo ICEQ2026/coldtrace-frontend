@@ -6,6 +6,7 @@ export type IncidentType = 'temperature' | 'humidity' | 'connectivity' | 'other'
 
 export class Incident implements BaseEntity {
   private _id: number;
+  private _organizationId: number;
   private _assetId: number;
   private _assetName: string;
   private _type: IncidentType;
@@ -18,6 +19,7 @@ export class Incident implements BaseEntity {
 
   constructor(incident: {
     id: number;
+    organizationId: number;
     assetId: number;
     assetName: string;
     type: IncidentType;
@@ -29,6 +31,7 @@ export class Incident implements BaseEntity {
     recognizedAt: string | null;
   }) {
     this._id = incident.id;
+    this._organizationId = incident.organizationId;
     this._assetId = incident.assetId;
     this._assetName = incident.assetName;
     this._type = incident.type;
@@ -41,6 +44,7 @@ export class Incident implements BaseEntity {
   }
 
   get id(): number { return this._id; }
+  get organizationId(): number { return this._organizationId; }
   get assetId(): number { return this._assetId; }
   get assetName(): string { return this._assetName; }
   get type(): IncidentType { return this._type; }

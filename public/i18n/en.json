@@ -365,6 +365,107 @@
         "frequency-error": "Enter a frequency greater than zero."
       }
     },
+    "safety-ranges": {
+      "page-title": "Safety ranges",
+      "title": "Safety ranges",
+      "subtitle": "Configure safe temperature and humidity limits by monitored asset.",
+      "reload": "Reload",
+      "save": "Save range",
+      "saving": "Saving...",
+      "reset": "Reset",
+      "form-title": "Range configuration",
+      "form-subtitle": "Select a monitored asset or update the organization default profile.",
+      "feedback-saved": "Safety range saved successfully.",
+      "feedback-invalid": "Review required values before saving.",
+      "feedback-access-denied": "Your current role cannot configure safety ranges.",
+      "feedback-error": "The range could not be saved. Try again.",
+      "access-title": "Restricted configuration",
+      "access-description": "Users without asset management permission can review ranges, but cannot change them.",
+      "scope-default": "Organization default",
+      "scope-default-description": "Used when an asset does not have its own safety range.",
+      "summary-assets": "Monitored assets",
+      "summary-profiles": "Asset profiles",
+      "summary-temperature": "Selected range",
+      "summary-humidity": "Humidity limit",
+      "empty": "No safety ranges registered for this organization.",
+      "form": {
+        "scope": "Apply to",
+        "default-scope": "Organization default",
+        "selected-range": "Current range",
+        "minimum-temperature": "Minimum temperature",
+        "maximum-temperature": "Maximum temperature",
+        "maximum-humidity": "Maximum humidity (%)",
+        "number-error": "Enter a valid number.",
+        "humidity-error": "Enter a value from 1 to 100.",
+        "temperature-range-error": "Maximum temperature must be greater than minimum temperature."
+      },
+      "table-title": "Configured profiles",
+      "table-subtitle": "Ranges remain available after reload and are used by monitoring readings.",
+      "table": {
+        "scope": "Scope",
+        "location": "Location",
+        "temperature": "Temperature range",
+        "humidity": "Humidity limit",
+        "status": "Status",
+        "default-status": "Default",
+        "asset-status": "Asset override"
+      }
+    },
+    "operational-parameters": {
+      "page-title": "Operational parameters",
+      "title": "Operational parameters",
+      "subtitle": "Update reading intervals and evaluation criteria for monitored assets.",
+      "reload": "Reload",
+      "save": "Save parameters",
+      "saving": "Saving...",
+      "reset": "Reset",
+      "form-title": "Monitoring behavior",
+      "form-subtitle": "Select an asset device and adjust the values applied to upcoming readings.",
+      "feedback-saved": "Operational parameters updated successfully.",
+      "feedback-invalid": "Review the interval and at least one evaluation criterion before saving.",
+      "feedback-incompatible": "The selected parameters are not compatible with the asset, device, or gateway.",
+      "feedback-access-denied": "Your current role cannot update operational parameters.",
+      "feedback-error": "The previous parameters were kept because the update could not be saved.",
+      "access-title": "Restricted configuration",
+      "access-description": "Users without asset management permission can review operational parameters, but cannot change them.",
+      "summary-assets": "Monitored assets",
+      "summary-devices": "Configured devices",
+      "summary-interval": "Selected interval",
+      "summary-criteria": "Active criteria",
+      "empty": "No operational parameters registered for monitored devices.",
+      "compatibility": {
+        "asset-inactive": "Select an active asset before applying operational changes.",
+        "device-unlinked": "The selected device must be linked and online for this asset.",
+        "gateway-offline": "The asset gateway is offline, so the configuration cannot be applied.",
+        "criteria-incompatible": "One or more criteria are not supported by the selected device."
+      },
+      "form": {
+        "asset": "Asset",
+        "select-asset": "Select asset",
+        "device": "Device",
+        "select-device": "Select device",
+        "current-interval": "Current interval",
+        "reading-frequency": "Reading interval (minutes)",
+        "frequency-error": "Enter a value from 5 to 1440 minutes.",
+        "criteria": "Evaluation criteria",
+        "criteria-error": "Select at least one criterion."
+      },
+      "table-title": "Configured device profiles",
+      "table-subtitle": "Reading intervals are used by logs, reports, and upcoming monitoring readings.",
+      "table": {
+        "asset": "Asset",
+        "location": "Location",
+        "device": "Device",
+        "frequency": "Interval",
+        "criteria": "Criteria",
+        "status": "Status",
+        "status-active": "Active",
+        "status-asset-inactive": "Inactive asset",
+        "status-device-unlinked": "Device unavailable",
+        "status-gateway-offline": "Gateway offline",
+        "status-criteria-incompatible": "Criteria mismatch"
+      }
+    },
     "form": {
       "close": "Close",
       "internal-id": "Internal ID",
@@ -390,6 +491,133 @@
     "feedback": {
       "server-error": "We could not load asset data. Try again later.",
       "loading": "Loading asset data..."
+    }
+  },
+  "maintenance": {
+    "preventive": {
+      "page-title": "Preventive maintenance",
+      "title": "Preventive maintenance",
+      "subtitle": "Schedule planned maintenance for cold-chain assets and their monitoring devices.",
+      "reload": "Reload",
+      "save": "Schedule maintenance",
+      "saving": "Scheduling...",
+      "reset": "Reset",
+      "form-title": "Maintenance schedule",
+      "form-subtitle": "Register the date, scope, and observations for the next preventive intervention.",
+      "feedback-scheduled": "Preventive maintenance was scheduled successfully.",
+      "feedback-invalid": "Review the required date and observations before saving.",
+      "feedback-invalid-asset": "Select an active asset before scheduling maintenance.",
+      "feedback-duplicate": "There is already an open maintenance schedule for this asset in the selected period.",
+      "feedback-access-denied": "Your current role cannot schedule preventive maintenance.",
+      "feedback-error": "The maintenance schedule could not be saved. Try again.",
+      "access-title": "Restricted scheduling",
+      "access-description": "Users without asset management permission can review maintenance schedules, but cannot create them.",
+      "summary-assets": "Organization assets",
+      "summary-open": "Open schedules",
+      "summary-tracked": "Tracked assets",
+      "summary-devices": "Monitoring devices",
+      "empty": "No preventive maintenance schedules registered for this organization.",
+      "form": {
+        "asset": "Asset",
+        "select-asset": "Select asset",
+        "asset-error": "Select a valid asset.",
+        "device": "Device",
+        "asset-level": "Asset-level maintenance",
+        "date": "Scheduled date",
+        "date-error": "Select today or a future date.",
+        "observations": "Observations",
+        "observations-placeholder": "Describe the preventive work to be completed.",
+        "observations-error": "Enter at least 6 characters."
+      },
+      "table-title": "Scheduled preventive maintenance",
+      "table-subtitle": "Open schedules keep the asset under operational follow-up.",
+      "table": {
+        "id": "ID",
+        "asset": "Asset",
+        "device": "Device",
+        "asset-level": "Asset level",
+        "location": "Location",
+        "date": "Date",
+        "period": "Period",
+        "status": "Status"
+      },
+      "status": {
+        "scheduled": "Scheduled",
+        "pending": "Pending",
+        "completed": "Completed",
+        "canceled": "Canceled"
+      }
+    },
+    "technical-service": {
+      "page-title": "Technical service",
+      "title": "Technical service",
+      "subtitle": "Register corrective service requests and document technical closure evidence.",
+      "reload": "Reload",
+      "reset": "Reset",
+      "create-request": "Request service",
+      "close-request": "Save service result",
+      "request-title": "Service request",
+      "request-subtitle": "Open a technical follow-up when an asset has a failure or corrective need.",
+      "closure-title": "Service closure",
+      "closure-subtitle": "Document the intervention and keep the case open when the functional test fails.",
+      "feedback-request-created": "Technical service request was registered successfully.",
+      "feedback-closed": "Technical service was closed with completed intervention evidence.",
+      "feedback-failed-test": "Functional test failed. The service remains open and the asset is pending review.",
+      "feedback-invalid": "Review the required service fields before saving.",
+      "feedback-invalid-asset": "Select a valid active or maintenance asset before requesting service.",
+      "feedback-missing-evidence": "Complete intervention notes and result evidence before closing the service.",
+      "feedback-access-denied": "Your current role cannot manage technical service requests.",
+      "feedback-error": "The technical service request could not be saved. Try again.",
+      "access-title": "Restricted technical service",
+      "access-description": "Users without asset management permission can review service records, but cannot create or close them.",
+      "summary-assets": "Service-ready assets",
+      "summary-open": "Open services",
+      "summary-pending-review": "Pending review",
+      "summary-closed": "Closed cases",
+      "empty": "No technical service requests registered for this organization.",
+      "form": {
+        "asset": "Asset",
+        "select-asset": "Select asset",
+        "asset-error": "Select a valid asset.",
+        "priority": "Priority",
+        "issue": "Failure or corrective need",
+        "issue-placeholder": "Describe the condition that requires technical service.",
+        "issue-error": "Enter at least 8 characters.",
+        "open-request": "Open service",
+        "select-request": "Select service",
+        "request-error": "Select an open service request.",
+        "intervention": "Intervention notes",
+        "intervention-placeholder": "Describe the technical work completed.",
+        "intervention-error": "Enter intervention evidence.",
+        "result": "Result evidence",
+        "result-placeholder": "Describe the resulting asset condition.",
+        "result-error": "Enter service result evidence.",
+        "functional-test-passed": "Functional test passed"
+      },
+      "priority": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "critical": "Critical"
+      },
+      "table-title": "Technical service records",
+      "table-subtitle": "Open and pending-review services remain under operational follow-up.",
+      "table": {
+        "id": "ID",
+        "asset": "Asset",
+        "priority": "Priority",
+        "issue": "Issue",
+        "result": "Result",
+        "status": "Status",
+        "pending-result": "Pending intervention",
+        "test-passed": "Functional test passed",
+        "test-failed": "Functional test failed"
+      },
+      "status": {
+        "open": "Open",
+        "pending-review": "Pending review",
+        "closed": "Closed"
+      }
     }
   },
   "sign-up": {
@@ -432,6 +660,10 @@
     "nav-permissions": "Permissions",
     "nav-chats": "Chats",
     "nav-settings": "Settings",
+    "nav-safety-ranges": "Safety ranges",
+    "nav-operational-parameters": "Operational parameters",
+    "nav-preventive-maintenance": "Preventive maintenance",
+    "nav-technical-service": "Technical service",
     "nav-reports": "Reports",
     "nav-daily-log": "Daily log",
     "nav-monthly-report": "Monthly report",
@@ -447,7 +679,9 @@
     "top-insights": "Insights",
     "top-notifications": "Notifications",
     "top-settings": "Settings",
-    "search-placeholder": "Search content..."
+    "search-placeholder": "Search content...",
+    "nav-operational-dashboard": "Operational dashboard",
+    "nav-asset-monitoring": "Asset monitoring"
   },
   "monitoring": {
     "operational": {
@@ -546,6 +780,37 @@
       "axis-0-mea": "0 MEA",
       "empty-title": "No operational data yet",
       "empty-description": "Add assets, devices, and readings to see the operational dashboard for this organization."
+    },
+    "asset-monitoring": {
+      "page-title": "Asset monitoring",
+      "title": "Asset monitoring",
+      "subtitle": "Review live readings, linked devices, and thermal status by asset.",
+      "search-placeholder": "Search by asset, ID, location, or notes...",
+      "summary-assets": "Assets",
+      "summary-readings": "With readings",
+      "summary-alerts": "Out of range",
+      "empty": "No monitored assets match the current filters.",
+      "trend-title": "Temperature trend",
+      "sensor-id": "Sensor ID",
+      "location": "Location",
+      "last-reading": "Last reading",
+      "humidity": "Humidity",
+      "asset-name": "Asset",
+      "device-model": "Device model",
+      "no-device": "No linked device",
+      "no-data": "N/A",
+      "tabs": {
+        "cold-room": "Cold rooms",
+        "transport": "Transport"
+      },
+      "status": {
+        "normal": "In range",
+        "no-data": "No data",
+        "no-readings": "No readings available"
+      },
+      "incident": {
+        "out-of-range": "Out-of-range reading"
+      }
     }
   },
   "reports": {
@@ -877,6 +1142,10 @@
       "col-status": "Status",
       "col-recognized-by": "Recognized by",
       "col-actions": "Actions",
+      "type-temperature": "Temperature",
+      "type-humidity": "Humidity",
+      "type-connectivity": "Connectivity",
+      "type-other": "Other",
       "action-recognize": "Recognize",
       "status-open": "Open",
       "status-recognized": "Recognized",

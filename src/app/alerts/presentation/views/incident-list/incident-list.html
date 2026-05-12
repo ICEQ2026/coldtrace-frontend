@@ -61,7 +61,7 @@
                   <td>
                     <div class="type-cell" [class.crit]="incident.severity === 'critical'" [class.warn]="incident.severity === 'warning'">
                       <mat-icon>{{ severityIcon(incident) }}</mat-icon>
-                      <span>{{ incident.type }}</span>
+                      <span>{{ typeLabelKey(incident) | translate }}</span>
                     </div>
                   </td>
                   <td class="value">{{ incident.value }}</td>
