@@ -433,6 +433,8 @@
     "nav-chats": "Chats",
     "nav-settings": "Configuración",
     "nav-reports": "Reportes",
+    "nav-daily-log": "Bitácora diaria",
+    "nav-history": "Historial",
     "nav-notifications": "Notificaciones",
     "download-report": "Descargar reporte mensual",
     "theme-light": "Claro",
@@ -581,6 +583,66 @@
         "complete": "Completa",
         "incomplete": "Incompleta",
         "no-data": "Sin datos"
+      }
+    },
+    "history": {
+      "page-title": "Historial",
+      "title": "Historial operativo",
+      "subtitle": "Consulta lecturas, alertas e incidencias por activo o periodo.",
+      "access-title": "Autorización insuficiente",
+      "access-description": "Tu rol actual no incluye permisos para ver el historial de reportes.",
+      "filter-from": "Desde",
+      "filter-to": "Hasta",
+      "filter-asset": "Activo",
+      "filter-type": "Tipo de evento",
+      "all-assets": "Todos los activos",
+      "summary-events": "Eventos totales",
+      "summary-readings": "Lecturas",
+      "summary-alerts": "Alertas",
+      "summary-incidents": "Incidencias",
+      "table-title": "Línea de tiempo de eventos",
+      "table-subtitle": "Eventos desde {{ from }} hasta {{ to }}",
+      "empty-title": "No hay eventos históricos",
+      "empty-description": "Ajusta el periodo, activo o tipo de evento para revisar otro tramo del historial.",
+      "table": {
+        "date": "Fecha",
+        "asset": "Activo",
+        "type": "Tipo",
+        "detail": "Detalle",
+        "value": "Valor",
+        "severity": "Severidad"
+      },
+      "types": {
+        "all": "Todos los eventos",
+        "reading": "Lectura",
+        "alert": "Alerta",
+        "incident": "Incidencia"
+      },
+      "severity": {
+        "normal": "Normal",
+        "info": "Info",
+        "warning": "Advertencia",
+        "critical": "Crítica"
+      },
+      "status": {
+        "in-range": "en rango",
+        "out-of-range": "fuera de rango"
+      },
+      "messages": {
+        "reading-in-range": "Lectura registrada dentro del rango configurado {{ range }}.",
+        "reading-out-of-range": "Lectura registrada fuera del rango configurado {{ range }}.",
+        "high-temperature": "La temperatura superó el rango configurado {{ range }}.",
+        "low-temperature": "La temperatura cayó por debajo del rango configurado {{ range }}.",
+        "high-humidity": "La humedad superó el límite configurado.",
+        "low-battery": "La batería del dispositivo cayó por debajo del umbral seguro.",
+        "low-signal": "La señal del dispositivo cayó por debajo del umbral seguro."
+      },
+      "incidents": {
+        "high-temperature": "El activo reporta actualmente una incidencia por temperatura alta.",
+        "low-temperature": "El activo reporta actualmente una incidencia por temperatura baja.",
+        "high-humidity": "El activo reporta actualmente una incidencia por humedad alta.",
+        "connection-lost": "El activo reportó una incidencia por pérdida de conexión.",
+        "connectivity": "La conectividad del activo está en estado {{ status }}."
       }
     }
   }

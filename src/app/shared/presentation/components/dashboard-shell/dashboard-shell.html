@@ -33,12 +33,24 @@
           <span class="menu-label">{{ 'dashboard-shell.nav-monitoring' | translate }}</span>
         </a>
 
-        <div class="menu-group" routerLinkActive="active-group">
-          <a class="menu-item" routerLink="/identity-access/users" routerLinkActive="active">
+        <div
+          class="menu-group"
+          routerLinkActive="active-group"
+          #accessGroup="routerLinkActive"
+          [class.open]="isAccessDropdownOpen(accessGroup.isActive)"
+        >
+          <button
+            class="menu-item menu-trigger"
+            type="button"
+            [attr.aria-expanded]="isAccessDropdownOpen(accessGroup.isActive)"
+            (click)="toggleAccessDropdown(accessGroup.isActive)"
+          >
             <mat-icon class="menu-icon">admin_panel_settings</mat-icon>
             <span class="menu-label">{{ 'dashboard-shell.nav-access' | translate }}</span>
-          </a>
-          <div class="sub-menu">
+            <mat-icon class="dropdown-icon">expand_more</mat-icon>
+          </button>
+          @if (isAccessDropdownOpen(accessGroup.isActive)) {
+          <div class="sub-menu" aria-label="Access navigation">
             <a class="sub-menu-link" routerLink="/identity-access/users" routerLinkActive="active">
               {{ 'dashboard-shell.nav-users' | translate }}
             </a>
@@ -59,6 +71,7 @@
               </a>
             }
           </div>
+          }
         </div>
 
         <a class="menu-item">
@@ -71,10 +84,33 @@
           <span class="menu-label">{{ 'dashboard-shell.nav-settings' | translate }}</span>
         </a>
 
-        <a class="menu-item" routerLink="/reports/daily-log" routerLinkActive="active">
-          <mat-icon class="menu-icon">description</mat-icon>
-          <span class="menu-label">{{ 'dashboard-shell.nav-reports' | translate }}</span>
-        </a>
+        <div
+          class="menu-group"
+          routerLinkActive="active-group"
+          #reportsGroup="routerLinkActive"
+          [class.open]="isReportsDropdownOpen(reportsGroup.isActive)"
+        >
+          <button
+            class="menu-item menu-trigger"
+            type="button"
+            [attr.aria-expanded]="isReportsDropdownOpen(reportsGroup.isActive)"
+            (click)="toggleReportsDropdown(reportsGroup.isActive)"
+          >
+            <mat-icon class="menu-icon">description</mat-icon>
+            <span class="menu-label">{{ 'dashboard-shell.nav-reports' | translate }}</span>
+            <mat-icon class="dropdown-icon">expand_more</mat-icon>
+          </button>
+          @if (isReportsDropdownOpen(reportsGroup.isActive)) {
+          <div class="sub-menu" aria-label="Reports navigation">
+            <a class="sub-menu-link" routerLink="/reports/daily-log" routerLinkActive="active">
+              {{ 'dashboard-shell.nav-daily-log' | translate }}
+            </a>
+            <a class="sub-menu-link" routerLink="/reports/history" routerLinkActive="active">
+              {{ 'dashboard-shell.nav-history' | translate }}
+            </a>
+          </div>
+          }
+        </div>
 
         <a class="menu-item">
           <mat-icon class="menu-icon">notifications</mat-icon>

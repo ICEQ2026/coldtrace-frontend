@@ -433,6 +433,8 @@
     "nav-chats": "Chats",
     "nav-settings": "Settings",
     "nav-reports": "Reports",
+    "nav-daily-log": "Daily log",
+    "nav-history": "History",
     "nav-notifications": "Notifications",
     "download-report": "Download Monthly Report",
     "theme-light": "Light",
@@ -581,6 +583,66 @@
         "complete": "Complete",
         "incomplete": "Incomplete",
         "no-data": "No data"
+      }
+    },
+    "history": {
+      "page-title": "History",
+      "title": "Operational History",
+      "subtitle": "Trace readings, alerts, and incidents by asset or period.",
+      "access-title": "Insufficient authorization",
+      "access-description": "Your current role does not include report history permissions.",
+      "filter-from": "From",
+      "filter-to": "To",
+      "filter-asset": "Asset",
+      "filter-type": "Event type",
+      "all-assets": "All assets",
+      "summary-events": "Total events",
+      "summary-readings": "Readings",
+      "summary-alerts": "Alerts",
+      "summary-incidents": "Incidents",
+      "table-title": "Historical event timeline",
+      "table-subtitle": "Events from {{ from }} to {{ to }}",
+      "empty-title": "No historical events",
+      "empty-description": "Adjust the period, asset, or event type to review another history slice.",
+      "table": {
+        "date": "Date",
+        "asset": "Asset",
+        "type": "Type",
+        "detail": "Detail",
+        "value": "Value",
+        "severity": "Severity"
+      },
+      "types": {
+        "all": "All events",
+        "reading": "Reading",
+        "alert": "Alert",
+        "incident": "Incident"
+      },
+      "severity": {
+        "normal": "Normal",
+        "info": "Info",
+        "warning": "Warning",
+        "critical": "Critical"
+      },
+      "status": {
+        "in-range": "in range",
+        "out-of-range": "out of range"
+      },
+      "messages": {
+        "reading-in-range": "Reading registered inside the configured range {{ range }}.",
+        "reading-out-of-range": "Reading registered outside the configured range {{ range }}.",
+        "high-temperature": "Temperature exceeded the configured range {{ range }}.",
+        "low-temperature": "Temperature fell below the configured range {{ range }}.",
+        "high-humidity": "Humidity exceeded the configured limit.",
+        "low-battery": "Device battery dropped below the safe threshold.",
+        "low-signal": "Device signal dropped below the safe threshold."
+      },
+      "incidents": {
+        "high-temperature": "Asset currently reports a high temperature incident.",
+        "low-temperature": "Asset currently reports a low temperature incident.",
+        "high-humidity": "Asset currently reports a high humidity incident.",
+        "connection-lost": "Asset reported a connection loss incident.",
+        "connectivity": "Asset connectivity is {{ status }}."
       }
     }
   }
