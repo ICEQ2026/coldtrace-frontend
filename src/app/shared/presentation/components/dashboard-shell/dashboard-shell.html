@@ -23,37 +23,10 @@
           }
         </a>
 
-        <div
-          class="menu-group"
-          routerLinkActive="active-group"
-          #monitoringGroup="routerLinkActive"
-          [class.open]="isMonitoringDropdownOpen(monitoringGroup.isActive)"
-        >
-          <button
-            class="menu-item menu-trigger"
-            type="button"
-            [attr.aria-expanded]="isMonitoringDropdownOpen(monitoringGroup.isActive)"
-            (click)="toggleMonitoringDropdown(monitoringGroup.isActive)"
-          >
-            <mat-icon class="menu-icon">sensors</mat-icon>
-            <span class="menu-label">{{ 'dashboard-shell.nav-monitoring' | translate }}</span>
-            <mat-icon class="dropdown-icon">expand_more</mat-icon>
-          </button>
-          @if (isMonitoringDropdownOpen(monitoringGroup.isActive)) {
-            <div class="sub-menu" aria-label="Monitoring navigation">
-              <a
-                class="sub-menu-link"
-                routerLink="/monitoring/operational"
-                routerLinkActive="active"
-              >
-                {{ 'dashboard-shell.nav-operational-dashboard' | translate }}
-              </a>
-              <a class="sub-menu-link" routerLink="/monitoring/assets" routerLinkActive="active">
-                {{ 'dashboard-shell.nav-asset-monitoring' | translate }}
-              </a>
-            </div>
-          }
-        </div>
+        <a class="menu-item" routerLink="/monitoring/assets" routerLinkActive="active">
+          <mat-icon class="menu-icon">sensors</mat-icon>
+          <span class="menu-label">{{ 'dashboard-shell.nav-monitoring' | translate }}</span>
+        </a>
 
         <a class="menu-item" routerLink="/alerts/incidents" routerLinkActive="active">
           <mat-icon class="menu-icon">warning</mat-icon>

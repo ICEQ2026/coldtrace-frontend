@@ -673,9 +673,7 @@
     "nav-notifications": "Notifications",
     "download-report": "Download Monthly Report",
     "theme-light": "Light",
-    "theme-dark": "Dark",
-    "nav-operational-dashboard": "Operational dashboard",
-    "nav-asset-monitoring": "Asset monitoring"
+    "theme-dark": "Dark"
   },
   "monitoring": {
     "operational": {

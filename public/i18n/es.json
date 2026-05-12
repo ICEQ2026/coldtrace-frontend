@@ -673,9 +673,7 @@
     "nav-notifications": "Notificaciones",
     "download-report": "Descargar reporte mensual",
     "theme-light": "Claro",
-    "theme-dark": "Oscuro",
-    "nav-operational-dashboard": "Dashboard operativo",
-    "nav-asset-monitoring": "Monitoreo de activos"
+    "theme-dark": "Oscuro"
   },
   "monitoring": {
     "operational": {

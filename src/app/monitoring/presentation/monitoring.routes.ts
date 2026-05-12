@@ -22,5 +22,5 @@ export const monitoringRoutes: Routes = [
     title: 'ColdTrace - Asset Monitoring',
     data: { pageTitleKey: 'monitoring.asset-monitoring.page-title' },
   },
-  { path: '', redirectTo: 'operational', pathMatch: 'full' },
+  { path: '', redirectTo: 'assets', pathMatch: 'full' },
 ];

@@ -34,8 +34,6 @@ export class DashboardShell {
 
   protected accessDropdownOpen = false;
   protected accessDropdownTouched = false;
-  protected monitoringDropdownOpen = false;
-  protected monitoringDropdownTouched = false;
   protected reportsDropdownOpen = false;
   protected reportsDropdownTouched = false;
   protected settingsDropdownOpen = false;
@@ -43,12 +41,6 @@ export class DashboardShell {
 
   protected isAccessDropdownOpen(isActive: boolean): boolean {
     return this.accessDropdownTouched ? this.accessDropdownOpen : isActive || this.isAccessRoute();
-  }
-
-  protected isMonitoringDropdownOpen(isActive: boolean): boolean {
-    return this.monitoringDropdownTouched
-      ? this.monitoringDropdownOpen
-      : isActive || this.isMonitoringRoute();
   }
 
   protected isReportsDropdownOpen(isActive: boolean): boolean {
@@ -66,11 +58,6 @@ export class DashboardShell {
   protected toggleAccessDropdown(isActive: boolean): void {
     this.accessDropdownOpen = !this.isAccessDropdownOpen(isActive);
     this.accessDropdownTouched = true;
-  }
-
-  protected toggleMonitoringDropdown(isActive: boolean): void {
-    this.monitoringDropdownOpen = !this.isMonitoringDropdownOpen(isActive);
-    this.monitoringDropdownTouched = true;
   }
 
   protected toggleReportsDropdown(isActive: boolean): void {
@@ -103,10 +90,6 @@ export class DashboardShell {
     const url = this.router.url;
 
     return url.includes('/reports') || url.includes('/identity-access/reports');
-  }
-
-  private isMonitoringRoute(): boolean {
-    return this.router.url.includes('/monitoring');
   }
 
   private isSettingsRoute(): boolean {
