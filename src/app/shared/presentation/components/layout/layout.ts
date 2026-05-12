@@ -71,6 +71,10 @@ export class Layout implements OnInit {
       return 'roles-permissions.alerts-page-title';
     }
 
+    if (currentUrl.includes('/reports/history')) {
+      return 'reports.history.page-title';
+    }
+
     if (currentUrl.includes('/identity-access/reports') || currentUrl.includes('/reports')) {
       return 'reports.daily-log.page-title';
     }

@@ -22,6 +22,29 @@ export class DashboardShell {
 
   @Output() signedOut = new EventEmitter<void>();
 
+  protected accessDropdownOpen = false;
+  protected accessDropdownTouched = false;
+  protected reportsDropdownOpen = false;
+  protected reportsDropdownTouched = false;
+
+  protected isAccessDropdownOpen(isActive: boolean): boolean {
+    return this.accessDropdownTouched ? this.accessDropdownOpen : isActive;
+  }
+
+  protected isReportsDropdownOpen(isActive: boolean): boolean {
+    return this.reportsDropdownTouched ? this.reportsDropdownOpen : isActive;
+  }
+
+  protected toggleAccessDropdown(isActive: boolean): void {
+    this.accessDropdownOpen = !this.isAccessDropdownOpen(isActive);
+    this.accessDropdownTouched = true;
+  }
+
+  protected toggleReportsDropdown(isActive: boolean): void {
+    this.reportsDropdownOpen = !this.isReportsDropdownOpen(isActive);
+    this.reportsDropdownTouched = true;
+  }
+
   protected logout(): void {
     this.signedOut.emit();
   }
