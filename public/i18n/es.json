@@ -679,7 +679,9 @@
     "top-insights": "Hallazgos",
     "top-notifications": "Notificaciones",
     "top-settings": "Configuración",
-    "search-placeholder": "Buscar contenido..."
+    "search-placeholder": "Buscar contenido...",
+    "nav-operational-dashboard": "Dashboard operativo",
+    "nav-asset-monitoring": "Monitoreo de activos"
   },
   "monitoring": {
     "operational": {
@@ -778,6 +780,37 @@
       "axis-0-mea": "0 MED",
       "empty-title": "Aún no hay datos operativos",
       "empty-description": "Agrega activos, dispositivos y lecturas para ver el dashboard operativo de esta organización."
+    },
+    "asset-monitoring": {
+      "page-title": "Monitoreo de activos",
+      "title": "Monitoreo de activos",
+      "subtitle": "Revisa lecturas en vivo, dispositivos vinculados y estado térmico por activo.",
+      "search-placeholder": "Buscar por activo, ID, ubicación o notas...",
+      "summary-assets": "Activos",
+      "summary-readings": "Con lecturas",
+      "summary-alerts": "Fuera de rango",
+      "empty": "No hay activos monitoreados para los filtros actuales.",
+      "trend-title": "Tendencia de temperatura",
+      "sensor-id": "ID de sensor",
+      "location": "Ubicación",
+      "last-reading": "Última lectura",
+      "humidity": "Humedad",
+      "asset-name": "Activo",
+      "device-model": "Modelo del dispositivo",
+      "no-device": "Sin dispositivo vinculado",
+      "no-data": "N/D",
+      "tabs": {
+        "cold-room": "Cámaras frías",
+        "transport": "Transporte"
+      },
+      "status": {
+        "normal": "En rango",
+        "no-data": "Sin datos",
+        "no-readings": "Sin lecturas disponibles"
+      },
+      "incident": {
+        "out-of-range": "Lectura fuera de rango"
+      }
     }
   },
   "reports": {

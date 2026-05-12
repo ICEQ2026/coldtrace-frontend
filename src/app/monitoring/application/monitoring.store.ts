@@ -209,25 +209,25 @@ export class MonitoringStore {
       return null;
     }
 
-    const minimumTemperature = settings?.minimumTemperature ?? -5;
-    const maximumTemperature = settings?.maximumTemperature ?? 8;
-    const maximumHumidity = settings?.maximumHumidity ?? 85;
     const parameters = iotDevice.measurementParameters;
-    const temperature = parameters.includes('temperature')
-      ? this.randomTemperatureReading(minimumTemperature, maximumTemperature)
+    const temperature = parameters.includes('temperature') && settings
+      ? this.randomTemperatureReading(settings.minimumTemperature, settings.maximumTemperature)
       : null;
-    const humidity = parameters.includes('humidity')
-      ? this.randomHumidityReading(maximumHumidity)
+    const humidity = parameters.includes('humidity') && settings
+      ? this.randomHumidityReading(settings.maximumHumidity)
       : null;
     const motionDetected = parameters.includes('motion') ? Math.random() < 0.18 : null;
     const imageCaptured = parameters.includes('image') ? Math.random() < 0.35 : null;
     const batteryLevel = parameters.includes('battery') ? this.randomBatteryLevel() : null;
     const signalStrength = parameters.includes('signal') ? this.randomSignalStrength() : null;
+    const environmentOutOfRange = settings
+      ? (temperature !== null &&
+          (temperature < settings.minimumTemperature || temperature > settings.maximumTemperature)) ||
+        (humidity !== null && humidity > settings.maximumHumidity)
+      : false;
     // One computed flag keeps charts, alerts, and reports aligned around the same risk rule.
     const isOutOfRange =
-      (temperature !== null &&
-        (temperature < minimumTemperature || temperature > maximumTemperature)) ||
-      (humidity !== null && humidity > maximumHumidity) ||
+      environmentOutOfRange ||
       (batteryLevel !== null && batteryLevel < 15) ||
       (signalStrength !== null && signalStrength < 35);
 
@@ -338,8 +338,10 @@ export class MonitoringStore {
   }
 
   private randomHumidityReading(maximumHumidity: number): number {
+    const normalMinimum = Math.max(0, maximumHumidity - 30);
+
     if (Math.random() < 0.94) {
-      return Math.round(this.randomNumber(55, maximumHumidity));
+      return Math.round(this.randomNumber(normalMinimum, maximumHumidity));
     }
 
     return Math.round(this.randomNumber(maximumHumidity + 1, maximumHumidity + 8));
