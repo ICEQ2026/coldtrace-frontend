@@ -437,6 +437,7 @@
     "nav-monthly-report": "Monthly report",
     "nav-history": "History",
     "nav-compliance": "Compliance",
+    "nav-findings": "Findings",
     "nav-notifications": "Notifications",
     "download-report": "Download Monthly Report",
     "theme-light": "Light",
@@ -731,6 +732,71 @@
         "compliant": "Compliant",
         "observation": "Observation",
         "insufficient": "Insufficient"
+      }
+    },
+    "findings": {
+      "page-title": "Findings",
+      "title": "Compliance Findings",
+      "subtitle": "Review missing records and potential non-compliance before an audit.",
+      "reload": "Reload",
+      "feedback-closed": "The finding was closed for the current review.",
+      "feedback-access-denied": "Your current role cannot close compliance findings.",
+      "feedback-error": "We could not evaluate compliance findings with the current data.",
+      "access-title": "Insufficient authorization",
+      "access-description": "Your current role does not include compliance review permissions.",
+      "close-access-title": "Read-only review",
+      "close-access-description": "You can inspect the evidence, but closing findings requires operational resolution permissions.",
+      "filter-from": "From",
+      "filter-to": "To",
+      "filter-asset": "Asset",
+      "filter-status": "Status",
+      "all-assets": "All assets",
+      "summary-assets": "Affected assets",
+      "summary-open": "Open findings",
+      "summary-non-compliance": "Potential non-compliance",
+      "summary-limitations": "Limited checks",
+      "limitation-title": "Incomplete evaluation",
+      "limitation-description": "{{ count }} finding(s) are marked as limitations because required monitoring context is missing.",
+      "table-title": "Findings by asset",
+      "table-subtitle": "Checks from {{ from }} to {{ to }}",
+      "close": "Close",
+      "restricted": "Restricted",
+      "empty-title": "No findings detected",
+      "empty-description": "Adjust the period, asset, or status filter to review another compliance slice.",
+      "table": {
+        "asset": "Asset",
+        "finding": "Finding",
+        "evidence": "Evidence",
+        "severity": "Severity",
+        "status": "Status",
+        "action": "Action"
+      },
+      "types": {
+        "missing-readings": "Missing readings",
+        "out-of-range": "Out of range",
+        "open-incident": "Open incident",
+        "expired-calibration": "Expired calibration",
+        "incomplete-evaluation": "Incomplete evaluation"
+      },
+      "severity": {
+        "observation": "Observation",
+        "potential-non-compliance": "Potential non-compliance",
+        "limitation": "Limitation"
+      },
+      "status": {
+        "open": "Open",
+        "closed": "Closed"
+      },
+      "status-filter": {
+        "all": "All statuses"
+      },
+      "messages": {
+        "missing-device": "{{ asset }} has no linked monitoring device for the evaluated period.",
+        "missing-settings": "{{ asset }} has no safety range configured for a complete check.",
+        "missing-readings": "{{ actual }} of {{ expected }} expected readings were found.",
+        "out-of-range": "{{ count }} reading(s) were outside the configured range.",
+        "connectivity": "Asset connectivity is {{ status }}.",
+        "expired-calibration": "Device {{ device }} has an expired calibration date: {{ date }}."
       }
     }
   }

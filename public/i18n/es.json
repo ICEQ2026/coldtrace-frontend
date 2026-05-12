@@ -437,6 +437,7 @@
     "nav-monthly-report": "Reporte mensual",
     "nav-history": "Historial",
     "nav-compliance": "Cumplimiento",
+    "nav-findings": "Hallazgos",
     "nav-notifications": "Notificaciones",
     "download-report": "Descargar reporte mensual",
     "theme-light": "Claro",
@@ -731,6 +732,71 @@
         "compliant": "Cumple",
         "observation": "Observación",
         "insufficient": "Insuficiente"
+      }
+    },
+    "findings": {
+      "page-title": "Hallazgos",
+      "title": "Hallazgos de cumplimiento",
+      "subtitle": "Revisa registros faltantes y posibles incumplimientos antes de una auditoría.",
+      "reload": "Recargar",
+      "feedback-closed": "El hallazgo se cerró para la revisión actual.",
+      "feedback-access-denied": "Tu rol actual no puede cerrar hallazgos de cumplimiento.",
+      "feedback-error": "No se pudieron evaluar los hallazgos de cumplimiento con los datos actuales.",
+      "access-title": "Autorización insuficiente",
+      "access-description": "Tu rol actual no incluye permisos para revisar cumplimiento.",
+      "close-access-title": "Revisión solo lectura",
+      "close-access-description": "Puedes inspeccionar la evidencia, pero cerrar hallazgos requiere permisos de resolución operativa.",
+      "filter-from": "Desde",
+      "filter-to": "Hasta",
+      "filter-asset": "Activo",
+      "filter-status": "Estado",
+      "all-assets": "Todos los activos",
+      "summary-assets": "Activos afectados",
+      "summary-open": "Hallazgos abiertos",
+      "summary-non-compliance": "Posibles incumplimientos",
+      "summary-limitations": "Revisiones limitadas",
+      "limitation-title": "Evaluación incompleta",
+      "limitation-description": "{{ count }} hallazgo(s) están marcados como limitaciones porque falta contexto de monitoreo requerido.",
+      "table-title": "Hallazgos por activo",
+      "table-subtitle": "Revisiones desde {{ from }} hasta {{ to }}",
+      "close": "Cerrar",
+      "restricted": "Restringido",
+      "empty-title": "No se detectaron hallazgos",
+      "empty-description": "Ajusta el periodo, activo o estado para revisar otro tramo de cumplimiento.",
+      "table": {
+        "asset": "Activo",
+        "finding": "Hallazgo",
+        "evidence": "Evidencia",
+        "severity": "Severidad",
+        "status": "Estado",
+        "action": "Acción"
+      },
+      "types": {
+        "missing-readings": "Lecturas faltantes",
+        "out-of-range": "Fuera de rango",
+        "open-incident": "Incidencia abierta",
+        "expired-calibration": "Calibración vencida",
+        "incomplete-evaluation": "Evaluación incompleta"
+      },
+      "severity": {
+        "observation": "Observación",
+        "potential-non-compliance": "Posible incumplimiento",
+        "limitation": "Limitación"
+      },
+      "status": {
+        "open": "Abierto",
+        "closed": "Cerrado"
+      },
+      "status-filter": {
+        "all": "Todos los estados"
+      },
+      "messages": {
+        "missing-device": "{{ asset }} no tiene un dispositivo de monitoreo asociado para el periodo evaluado.",
+        "missing-settings": "{{ asset }} no tiene un rango seguro configurado para una revisión completa.",
+        "missing-readings": "Se encontraron {{ actual }} de {{ expected }} lecturas esperadas.",
+        "out-of-range": "{{ count }} lectura(s) estuvieron fuera del rango configurado.",
+        "connectivity": "La conectividad del activo está en estado {{ status }}.",
+        "expired-calibration": "El dispositivo {{ device }} tiene calibración vencida: {{ date }}."
       }
     }
   }
