@@ -25,6 +25,7 @@ export class IoTDeviceAssembler implements BaseAssembler<
       resource.lastCalibrationDate,
       resource.nextCalibrationDate,
       resource.measurementParameters ?? [],
+      resource.readingFrequencySeconds ?? 3600,
     );
   }
 
@@ -37,6 +38,7 @@ export class IoTDeviceAssembler implements BaseAssembler<
       model: entity.model,
       measurementType: entity.measurementType,
       measurementParameters: entity.measurementParameters,
+      readingFrequencySeconds: entity.readingFrequencySeconds,
       assetId: entity.assetId,
       status: entity.status,
       calibrationStatus: entity.calibrationStatus,

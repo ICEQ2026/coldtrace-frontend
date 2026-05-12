@@ -9,6 +9,7 @@ export interface IoTDeviceResource extends BaseResource {
   model: string;
   measurementType: string;
   measurementParameters?: string[];
+  readingFrequencySeconds?: number;
   assetId: number | null;
   status: IoTDeviceStatus;
   calibrationStatus: CalibrationStatus;

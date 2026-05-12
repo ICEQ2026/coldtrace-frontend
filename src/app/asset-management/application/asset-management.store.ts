@@ -360,6 +360,7 @@ export class AssetManagementStore {
       iotDevice.lastCalibrationDate,
       fields.nextCalibrationDate ?? iotDevice.nextCalibrationDate,
       iotDevice.measurementParameters,
+      iotDevice.readingFrequencySeconds,
     );
   }
 
@@ -388,9 +389,19 @@ export class AssetManagementStore {
       return '—';
     }
 
-    const minimum = (settings?.minimumTemperature ?? -5) - 4;
-    const maximum = (settings?.maximumTemperature ?? 8) + 6;
-    const temperature = this.randomNumber(minimum, maximum);
+    const minimum = settings?.minimumTemperature ?? -5;
+    const maximum = settings?.maximumTemperature ?? 8;
+    const anomalyRoll = Math.random();
+    let temperature: number;
+
+    if (anomalyRoll < 0.94) {
+      temperature = this.randomNumber(minimum, maximum);
+    } else if (anomalyRoll < 0.97) {
+      temperature = this.randomNumber(minimum - 2, minimum - 0.2);
+    } else {
+      temperature = this.randomNumber(maximum + 0.2, maximum + 3);
+    }
+
     return `${temperature.toFixed(1)}${settings?.temperatureUnit ?? '°C'}`;
   }
 
@@ -413,7 +424,7 @@ export class AssetManagementStore {
       return 'low-temperature';
     }
 
-    return Math.random() < 0.12 ? 'high-humidity' : 'none';
+    return Math.random() < 0.03 ? 'high-humidity' : 'none';
   }
 
   private randomConnectivity(
@@ -429,16 +440,16 @@ export class AssetManagementStore {
     }
 
     if (gateway?.status === GatewayStatus.Maintenance) {
-      return ConnectivityStatus.Unstable;
+      return Math.random() < 0.75 ? ConnectivityStatus.Online : ConnectivityStatus.Unstable;
     }
 
     const randomValue = Math.random();
 
-    if (randomValue < 0.74) {
+    if (randomValue < 0.92) {
       return ConnectivityStatus.Online;
     }
 
-    if (randomValue < 0.9) {
+    if (randomValue < 0.98) {
       return ConnectivityStatus.Unstable;
     }
 
@@ -447,24 +458,24 @@ export class AssetManagementStore {
 
   private randomIoTDeviceStatus(iotDevice: IoTDevice): IoTDeviceStatus {
     if (!iotDevice.assetId) {
-      return Math.random() < 0.86 ? IoTDeviceStatus.Available : IoTDeviceStatus.Offline;
+      return Math.random() < 0.96 ? IoTDeviceStatus.Available : IoTDeviceStatus.Offline;
     }
 
-    return Math.random() < 0.9 ? IoTDeviceStatus.Linked : IoTDeviceStatus.Offline;
+    return Math.random() < 0.96 ? IoTDeviceStatus.Linked : IoTDeviceStatus.Offline;
   }
 
   private randomCalibrationStatus(): CalibrationStatus {
     const randomValue = Math.random();
 
-    if (randomValue < 0.6) {
+    if (randomValue < 0.76) {
       return CalibrationStatus.Compliant;
     }
 
-    if (randomValue < 0.8) {
+    if (randomValue < 0.93) {
       return CalibrationStatus.DueSoon;
     }
 
-    if (randomValue < 0.92) {
+    if (randomValue < 0.98) {
       return CalibrationStatus.Expired;
     }
 
@@ -474,11 +485,11 @@ export class AssetManagementStore {
   private randomGatewayStatus(): GatewayStatus {
     const randomValue = Math.random();
 
-    if (randomValue < 0.78) {
+    if (randomValue < 0.92) {
       return GatewayStatus.Active;
     }
 
-    if (randomValue < 0.9) {
+    if (randomValue < 0.98) {
       return GatewayStatus.Maintenance;
     }
 
