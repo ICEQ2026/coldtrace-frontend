@@ -438,6 +438,7 @@
     "nav-history": "Historial",
     "nav-compliance": "Cumplimiento",
     "nav-findings": "Hallazgos",
+    "nav-audit-evidence": "Evidencia",
     "nav-notifications": "Notificaciones",
     "download-report": "Descargar reporte mensual",
     "theme-light": "Claro",
@@ -797,6 +798,70 @@
         "out-of-range": "{{ count }} lectura(s) estuvieron fuera del rango configurado.",
         "connectivity": "La conectividad del activo está en estado {{ status }}.",
         "expired-calibration": "El dispositivo {{ device }} tiene calibración vencida: {{ date }}."
+      }
+    },
+    "audit": {
+      "page-title": "Evidencia de auditoría",
+      "title": "Evidencia de auditoría",
+      "subtitle": "Consolida monitoreo, reportes, hallazgos y evidencia correctiva para revisiones.",
+      "reload": "Recargar",
+      "export": "Exportar evidencia",
+      "feedback-exported": "La evidencia de auditoría se exportó con el periodo seleccionado.",
+      "feedback-insufficient": "El periodo seleccionado no contiene evidencia suficiente para exportar.",
+      "feedback-error": "No se pudo preparar la evidencia de auditoría con los datos actuales.",
+      "access-title": "Autorización insuficiente",
+      "access-description": "Tu rol actual no incluye permisos para preparar evidencia de auditoría.",
+      "filter-from": "Desde",
+      "filter-to": "Hasta",
+      "filter-asset": "Activo",
+      "all-assets": "Todos los activos",
+      "summary-completeness": "Checklist",
+      "summary-readings": "Lecturas",
+      "summary-reports": "Reportes",
+      "summary-pending": "Secciones faltantes",
+      "incomplete-title": "Evidencia incompleta",
+      "incomplete-description": "{{ count }} elemento(s) del checklist aún requieren evidencia antes de la revisión.",
+      "checklist-title": "Checklist de evidencia",
+      "table-subtitle": "Evidencia desde {{ from }} hasta {{ to }}",
+      "reports-title": "Reportes generados",
+      "reports-subtitle": "Archivos y registros de reporte incluidos en este paquete.",
+      "findings-title": "Hallazgos y acciones",
+      "findings-subtitle": "Observaciones de cumplimiento usadas como evidencia pendiente o correctiva.",
+      "empty-reports-title": "No hay reportes en el rango",
+      "empty-reports-description": "Genera una bitácora diaria, reporte de cumplimiento o reporte mensual para este periodo.",
+      "empty-findings-title": "No hay hallazgos en el rango",
+      "empty-findings-description": "No se detectaron hallazgos de cumplimiento para este paquete de evidencia.",
+      "table": {
+        "section": "Sección",
+        "evidence": "Evidencia",
+        "status": "Estado"
+      },
+      "checklist": {
+        "monitoring-readings": "Lecturas de monitoreo",
+        "generated-reports": "Reportes generados",
+        "compliance-findings": "Revisión de cumplimiento",
+        "incident-records": "Registros de incidencias",
+        "corrective-actions": "Acciones correctivas"
+      },
+      "status": {
+        "complete": "Completo",
+        "incomplete": "Incompleto"
+      },
+      "items": {
+        "monitoring-readings-complete": "{{ count }} lectura(s) de monitoreo disponibles.",
+        "monitoring-readings-incomplete": "No se encontraron lecturas de monitoreo para este periodo.",
+        "generated-reports-complete": "{{ count }} reporte(s) generado(s) incluidos.",
+        "generated-reports-incomplete": "No se encontraron reportes generados para este periodo.",
+        "compliance-findings-complete": "{{ count }} hallazgo(s) de cumplimiento evaluados sin limitaciones bloqueantes.",
+        "compliance-findings-incomplete": "{{ limitations }} limitación(es) impiden una evaluación completa de cumplimiento.",
+        "incident-records-complete": "{{ count }} registro(s) de incidencia incluidos o no se detectaron incidencias.",
+        "corrective-actions-complete": "{{ closed }} acción(es) correctiva(s) cerradas.",
+        "corrective-actions-incomplete": "{{ open }} hallazgo(s) abierto(s) aún requieren acción correctiva."
+      },
+      "report-type": {
+        "daily-log": "Bitácora diaria",
+        "compliance": "Reporte de cumplimiento",
+        "monthly-summary": "Reporte mensual"
       }
     }
   }

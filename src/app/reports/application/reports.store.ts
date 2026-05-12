@@ -8,6 +8,7 @@ import { ConnectivityStatus } from '../../asset-management/domain/model/connecti
 import { IoTDevice } from '../../asset-management/domain/model/iot-device.entity';
 import { SensorReading } from '../../monitoring/domain/model/sensor-reading.entity';
 import { MonitoringStore } from '../../monitoring/application/monitoring.store';
+import { AuditEvidence, AuditEvidenceFilters } from '../domain/model/audit-evidence.entity';
 import {
   ComplianceFinding,
   ComplianceFindingSeverity,
@@ -17,6 +18,7 @@ import {
   ComplianceReport,
   ComplianceReportFilters,
 } from '../domain/model/compliance-report.entity';
+import { EvidenceItem } from '../domain/model/evidence-item.entity';
 import { FindingStatus } from '../domain/model/finding-status.enum';
 import { Report } from '../domain/model/report.entity';
 import { ReportType } from '../domain/model/report-type.enum';
@@ -244,6 +246,112 @@ export class ReportsStore {
     );
   }
 
+  buildAuditEvidence(
+    organizationId: number | null,
+    filters: AuditEvidenceFilters,
+  ): AuditEvidence {
+    const safeOrganizationId = organizationId ?? 0;
+    const assets = this.assetManagementStore.assetsForOrganization(organizationId);
+    const iotDevices = this.assetManagementStore.iotDevicesForOrganization(organizationId);
+    const selectedAssets = assets.filter(
+      (asset) => !filters.assetId || asset.id === filters.assetId,
+    );
+    const selectedAssetIds = selectedAssets.map((asset) => asset.id);
+    const readings = this.monitoringStore
+      .readingsForAssetIds(selectedAssetIds)
+      .filter((reading) =>
+        this.isInDateRange(reading.recordedAt, filters.fromDate, filters.toDate),
+      );
+    const daysCount = this.daysInRange(filters.fromDate, filters.toDate);
+    const expectedReadings = selectedAssets.reduce((total, asset) => {
+      const assetDevices = iotDevices.filter((iotDevice) => iotDevice.assetId === asset.id);
+
+      return total + this.expectedDailyReadingsFor(assetDevices, 0) * daysCount;
+    }, 0);
+    const complianceReview = this.buildComplianceReport(organizationId, {
+      assetId: filters.assetId,
+      fromDate: filters.fromDate,
+      toDate: filters.toDate,
+      status: 'all',
+    });
+    const findings = complianceReview.findings;
+    const incidentCount = findings.filter((finding) => finding.type === 'open-incident').length;
+    const correctiveActionsCount = findings.filter(
+      (finding) => finding.status === FindingStatus.Closed,
+    ).length;
+    const openFindingsCount = findings.filter(
+      (finding) => finding.status === FindingStatus.Open,
+    ).length;
+    const limitationsCount = findings.filter((finding) => finding.severity === 'limitation').length;
+    const periodReports = this.reportsForOrganization(organizationId).filter((report) =>
+      this.reportOverlapsPeriod(report, filters),
+    );
+    const items = [
+      new EvidenceItem(
+        'monitoring-readings',
+        readings.length ? 'complete' : 'incomplete',
+        readings.length,
+        1,
+        readings.length
+          ? 'reports.audit.items.monitoring-readings-complete'
+          : 'reports.audit.items.monitoring-readings-incomplete',
+        { count: readings.length },
+      ),
+      new EvidenceItem(
+        'generated-reports',
+        periodReports.length ? 'complete' : 'incomplete',
+        periodReports.length,
+        1,
+        periodReports.length
+          ? 'reports.audit.items.generated-reports-complete'
+          : 'reports.audit.items.generated-reports-incomplete',
+        { count: periodReports.length },
+      ),
+      new EvidenceItem(
+        'compliance-findings',
+        limitationsCount ? 'incomplete' : 'complete',
+        findings.length,
+        0,
+        limitationsCount
+          ? 'reports.audit.items.compliance-findings-incomplete'
+          : 'reports.audit.items.compliance-findings-complete',
+        { count: findings.length, limitations: limitationsCount },
+      ),
+      new EvidenceItem(
+        'incident-records',
+        'complete',
+        incidentCount,
+        0,
+        'reports.audit.items.incident-records-complete',
+        { count: incidentCount },
+      ),
+      new EvidenceItem(
+        'corrective-actions',
+        openFindingsCount ? 'incomplete' : 'complete',
+        correctiveActionsCount,
+        openFindingsCount,
+        openFindingsCount
+          ? 'reports.audit.items.corrective-actions-incomplete'
+          : 'reports.audit.items.corrective-actions-complete',
+        { closed: correctiveActionsCount, open: openFindingsCount },
+      ),
+    ];
+
+    return new AuditEvidence(
+      Number(`${filters.fromDate.replaceAll('-', '')}${safeOrganizationId}`),
+      safeOrganizationId,
+      filters,
+      new Date().toISOString(),
+      items,
+      readings.length,
+      expectedReadings,
+      incidentCount,
+      correctiveActionsCount,
+      periodReports,
+      findings,
+    );
+  }
+
   buildMonthlyReport(organizationId: number | null, month: string): MonthlyReport {
     const safeOrganizationId = organizationId ?? 0;
     const range = this.monthDateRange(month);
@@ -449,6 +557,47 @@ export class ReportsStore {
     ]);
 
     return [headers, ...rows]
+      .map((row) => row.map((cell) => this.csvCell(cell)).join(','))
+      .join('\n');
+  }
+
+  auditEvidenceCsv(auditEvidence: AuditEvidence): string {
+    const checklistHeaders = ['Section', 'Status', 'Quantity', 'Required', 'Notes'];
+    const checklistRows = auditEvidence.items.map((item) => [
+      item.id,
+      item.status,
+      item.quantity,
+      item.requiredQuantity,
+      item.messageKey,
+    ]);
+    const reportHeaders = ['Report', 'Type', 'Period', 'Generated at'];
+    const reportRows = auditEvidence.reports.map((report) => [
+      report.title,
+      report.type,
+      report.periodDate,
+      report.generatedAt,
+    ]);
+    const findingHeaders = ['Asset', 'Type', 'Severity', 'Status', 'Evidence'];
+    const findingRows = auditEvidence.findings.map((finding) => [
+      finding.assetName,
+      finding.type,
+      finding.severity,
+      finding.status,
+      finding.evidence,
+    ]);
+
+    return [
+      ['Audit evidence', auditEvidence.filters.fromDate, auditEvidence.filters.toDate],
+      [],
+      checklistHeaders,
+      ...checklistRows,
+      [],
+      reportHeaders,
+      ...reportRows,
+      [],
+      findingHeaders,
+      ...findingRows,
+    ]
       .map((row) => row.map((cell) => this.csvCell(cell)).join(','))
       .join('\n');
   }
@@ -1041,6 +1190,23 @@ export class ReportsStore {
     const dateKey = this.dateKeyFor(value);
 
     return dateKey >= fromDate && dateKey <= toDate;
+  }
+
+  private reportOverlapsPeriod(report: Report, filters: AuditEvidenceFilters): boolean {
+    const periodDate = report.periodDate;
+
+    if (periodDate.includes(' - ')) {
+      const [fromDate, toDate] = periodDate.split(' - ');
+      return fromDate <= filters.toDate && toDate >= filters.fromDate;
+    }
+
+    if (/^\d{4}-\d{2}$/.test(periodDate)) {
+      const range = this.monthDateRange(periodDate);
+      return range.fromDate <= filters.toDate && range.toDate >= filters.fromDate;
+    }
+
+    const dateKey = this.dateKeyFor(periodDate);
+    return dateKey >= filters.fromDate && dateKey <= filters.toDate;
   }
 
   private reportFromDailyLog(organizationId: number, dailyLog: DailyLog): Report {
