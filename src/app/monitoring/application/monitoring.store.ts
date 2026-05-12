@@ -215,18 +215,18 @@ export class MonitoringStore {
     const maximumHumidity = settings?.maximumHumidity ?? 85;
     const parameters = iotDevice.measurementParameters;
     const temperature = parameters.includes('temperature')
-      ? Number(this.randomNumber(minimumTemperature - 4, maximumTemperature + 6).toFixed(1))
+      ? this.randomTemperatureReading(minimumTemperature, maximumTemperature)
       : null;
     const humidity = parameters.includes('humidity')
-      ? Math.round(this.randomNumber(55, maximumHumidity + 18))
+      ? this.randomHumidityReading(maximumHumidity)
       : null;
     const motionDetected = parameters.includes('motion') ? Math.random() < 0.18 : null;
     const imageCaptured = parameters.includes('image') ? Math.random() < 0.35 : null;
     const batteryLevel = parameters.includes('battery')
-      ? Math.round(this.randomNumber(8, 100))
+      ? this.randomBatteryLevel()
       : null;
     const signalStrength = parameters.includes('signal')
-      ? Math.round(this.randomNumber(28, 100))
+      ? this.randomSignalStrength()
       : null;
     const isOutOfRange =
       (temperature !== null &&
@@ -311,20 +311,58 @@ export class MonitoringStore {
     }
 
     if (gateway?.status === GatewayStatus.Maintenance) {
-      return ConnectivityStatus.Unstable;
+      return Math.random() < 0.75 ? ConnectivityStatus.Online : ConnectivityStatus.Unstable;
     }
 
     const randomValue = Math.random();
 
-    if (randomValue < 0.72) {
+    if (randomValue < 0.92) {
       return ConnectivityStatus.Online;
     }
 
-    if (randomValue < 0.9) {
+    if (randomValue < 0.98) {
       return ConnectivityStatus.Unstable;
     }
 
     return ConnectivityStatus.Offline;
+  }
+
+  private randomTemperatureReading(minimumTemperature: number, maximumTemperature: number): number {
+    const anomalyRoll = Math.random();
+
+    if (anomalyRoll < 0.94) {
+      return Number(this.randomNumber(minimumTemperature, maximumTemperature).toFixed(1));
+    }
+
+    if (anomalyRoll < 0.97) {
+      return Number(this.randomNumber(minimumTemperature - 2, minimumTemperature - 0.2).toFixed(1));
+    }
+
+    return Number(this.randomNumber(maximumTemperature + 0.2, maximumTemperature + 3).toFixed(1));
+  }
+
+  private randomHumidityReading(maximumHumidity: number): number {
+    if (Math.random() < 0.94) {
+      return Math.round(this.randomNumber(55, maximumHumidity));
+    }
+
+    return Math.round(this.randomNumber(maximumHumidity + 1, maximumHumidity + 8));
+  }
+
+  private randomBatteryLevel(): number {
+    if (Math.random() < 0.96) {
+      return Math.round(this.randomNumber(20, 100));
+    }
+
+    return Math.round(this.randomNumber(8, 14));
+  }
+
+  private randomSignalStrength(): number {
+    if (Math.random() < 0.96) {
+      return Math.round(this.randomNumber(40, 100));
+    }
+
+    return Math.round(this.randomNumber(28, 34));
   }
 
   private randomNumber(minimum: number, maximum: number): number {

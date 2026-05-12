@@ -39,7 +39,7 @@ export const identityAccessRoutes: Routes = [
   },
   {
     path: 'reports',
-    redirectTo: '/identity-access/dashboard',
+    redirectTo: '/reports/daily-log',
     pathMatch: 'full',
   },
   {

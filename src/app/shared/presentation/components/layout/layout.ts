@@ -30,6 +30,7 @@ export class Layout implements OnInit {
     '/identity-access/users',
     '/identity-access/roles-permissions',
     '/monitoring',
+    '/reports',
   ];
 
   protected readonly showDashboardShell = computed(() => {
@@ -70,8 +71,8 @@ export class Layout implements OnInit {
       return 'roles-permissions.alerts-page-title';
     }
 
-    if (currentUrl.includes('/identity-access/reports')) {
-      return 'roles-permissions.reports-page-title';
+    if (currentUrl.includes('/identity-access/reports') || currentUrl.includes('/reports')) {
+      return 'reports.daily-log.page-title';
     }
 
     return 'roles-permissions.main-page-title';

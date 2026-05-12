@@ -16,6 +16,7 @@ export class IoTDevice implements BaseEntity {
     private readonly _lastCalibrationDate: string,
     private readonly _nextCalibrationDate: string,
     private readonly _measurementParameters: string[] = [],
+    private readonly _readingFrequencySeconds: number = 3600,
   ) {}
 
   get id(): number {
@@ -49,6 +50,10 @@ export class IoTDevice implements BaseEntity {
           .split('/')
           .map((parameter) => parameter.trim().toLowerCase().replace(/\s+/g, '-'))
           .filter((parameter) => !!parameter);
+  }
+
+  get readingFrequencySeconds(): number {
+    return this._readingFrequencySeconds;
   }
 
   get assetId(): number | null {
