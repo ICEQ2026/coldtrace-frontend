@@ -4,6 +4,9 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, interval } from 'rxjs';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
+import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
+import { ReportsStore } from '../../../../reports/application/reports.store';
+import { MonthlyReport } from '../../../../reports/domain/model/monthly-report.entity';
 import { TELEMETRY_POLLING_INTERVAL_MS } from '../../../domain/model/polling-interval.constant';
 import { DashboardShell } from '../dashboard-shell/dashboard-shell';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
@@ -19,6 +22,8 @@ export class Layout implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly identityAccessStore = inject(IdentityAccessStore);
   private readonly assetManagementStore = inject(AssetManagementStore);
+  private readonly monitoringStore = inject(MonitoringStore);
+  private readonly reportsStore = inject(ReportsStore);
 
   protected readonly currentUrl = signal(this.router.url);
   private readonly dashboardRoutePaths = [
@@ -75,6 +80,10 @@ export class Layout implements OnInit {
       return 'reports.history.page-title';
     }
 
+    if (currentUrl.includes('/reports/monthly')) {
+      return 'reports.monthly.page-title';
+    }
+
     if (currentUrl.includes('/reports/compliance')) {
       return 'reports.compliance.page-title';
     }
@@ -115,6 +124,19 @@ export class Layout implements OnInit {
     );
   });
 
+  private readonly currentRole = computed(() => {
+    return this.identityAccessStore.currentRoleFrom(
+      this.identityAccessStore.users(),
+      this.identityAccessStore.roles(),
+    );
+  });
+
+  private readonly canDownloadReports = computed(() => {
+    return this.identityAccessStore
+      .permissionKeysForRole(this.currentRole())
+      .includes('roles-permissions.permissions.view-reports');
+  });
+
   protected readonly assetIssueCount = computed(() => {
     return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
   });
@@ -138,6 +160,28 @@ export class Layout implements OnInit {
     void this.router.navigate(['/identity-access/sign-in']);
   }
 
+  protected downloadCurrentMonthReport(): void {
+    if (!this.canDownloadReports()) {
+      void this.router.navigate(['/reports/monthly']);
+      return;
+    }
+
+    const month = this.reportsStore.currentDate().slice(0, 7);
+    const monthlyReport = this.reportsStore.buildMonthlyReport(this.activeOrganizationId(), month);
+
+    if (!monthlyReport.canDownload) {
+      void this.router.navigate(['/reports/monthly']);
+      return;
+    }
+
+    this.reportsStore
+      .createMonthlySummaryReport(this.activeOrganizationId(), monthlyReport)
+      .subscribe({
+        next: () => this.downloadMonthlyCsv(monthlyReport),
+        error: () => void this.router.navigate(['/reports/monthly']),
+      });
+  }
+
   private loadShellData(): void {
     this.identityAccessStore.loadUsers();
     this.identityAccessStore.loadOrganizations();
@@ -146,6 +190,8 @@ export class Layout implements OnInit {
     this.assetManagementStore.loadIoTDevices();
     this.assetManagementStore.loadGateways();
     this.assetManagementStore.loadAssetSettings();
+    this.monitoringStore.loadReadings();
+    this.reportsStore.loadReports();
   }
 
   private startTelemetryUpdates(): void {
@@ -156,5 +202,29 @@ export class Layout implements OnInit {
           this.assetManagementStore.updateOrganizationTelemetry(this.activeOrganizationId());
         }
       });
+  }
+
+  private downloadMonthlyCsv(monthlyReport: MonthlyReport): void {
+    const csv = this.reportsStore.monthlyReportCsv(monthlyReport);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const organizationSlug = this.fileNamePart(this.activeOrganizationName());
+
+    link.href = url;
+    link.download = `${organizationSlug}-monthly-report-${monthlyReport.month}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  private fileNamePart(value: string): string {
+    return (
+      value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)/g, '') || 'organization'
+    );
   }
 }
