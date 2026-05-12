@@ -15,21 +15,18 @@ import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
 import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
 import { ReportsStore } from '../../../application/reports.store';
+import { MonthlyReportRow, MonthlyReportStatus } from '../../../domain/model/monthly-report.entity';
 import { ReportType } from '../../../domain/model/report-type.enum';
-import {
-  SanitaryComplianceRow,
-  SanitaryComplianceStatus,
-} from '../../../domain/model/sanitary-compliance-report.entity';
 
-type ComplianceFeedback = 'idle' | 'exported' | 'insufficient' | 'server-error';
+type MonthlyReportFeedback = 'idle' | 'downloaded' | 'insufficient' | 'server-error';
 
 @Component({
-  selector: 'app-sanitary-compliance',
+  selector: 'app-monthly-report',
   imports: [FormsModule, MatButton, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
-  templateUrl: './sanitary-compliance.html',
-  styleUrl: './sanitary-compliance.css',
+  templateUrl: './monthly-report.html',
+  styleUrl: './monthly-report.css',
 })
-export class SanitaryCompliance implements OnInit {
+export class MonthlyReport implements OnInit {
   protected readonly reportsStore = inject(ReportsStore);
   protected readonly assetManagementStore = inject(AssetManagementStore);
   protected readonly monitoringStore = inject(MonitoringStore);
@@ -38,14 +35,12 @@ export class SanitaryCompliance implements OnInit {
   private readonly router = inject(Router);
 
   protected readonly identityLoading = signal(false);
-  protected readonly feedback = signal<ComplianceFeedback>('idle');
-  protected readonly selectedAssetId = signal(0);
-  protected readonly fromDate = signal('');
-  protected readonly toDate = signal('');
+  protected readonly feedback = signal<MonthlyReportFeedback>('idle');
+  protected readonly selectedMonth = signal('');
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
-  protected readonly maxDate = computed(() => this.reportsStore.currentDate());
+  protected readonly maxMonth = computed(() => this.reportsStore.currentDate().slice(0, 7));
 
   protected readonly loading = computed(() => {
     return (
@@ -64,30 +59,22 @@ export class SanitaryCompliance implements OnInit {
   protected readonly currentRole = computed(() => {
     return this.identityAccessStore.currentRoleFrom(this.users(), this.roles());
   });
-  protected readonly canExportReports = computed(() => {
+  protected readonly canDownloadReports = computed(() => {
     return this.identityAccessStore
       .permissionKeysForRole(this.currentRole())
       .includes('roles-permissions.permissions.view-reports');
   });
-  protected readonly effectiveFromDate = computed(() => this.fromDate() || this.defaultFromDate());
-  protected readonly effectiveToDate = computed(() => this.toDate() || this.maxDate());
-  protected readonly organizationAssets = computed(() => {
-    return this.assetManagementStore.assetsForOrganization(this.activeOrganizationId());
-  });
-  protected readonly complianceReport = computed(() => {
-    return this.reportsStore.buildSanitaryComplianceReport(this.activeOrganizationId(), {
-      assetId: this.selectedAssetId(),
-      fromDate: this.effectiveFromDate(),
-      toDate: this.effectiveToDate(),
-    });
+  protected readonly effectiveMonth = computed(() => this.selectedMonth() || this.maxMonth());
+  protected readonly monthlyReport = computed(() => {
+    return this.reportsStore.buildMonthlyReport(this.activeOrganizationId(), this.effectiveMonth());
   });
   protected readonly generatedReportsCount = computed(() => {
     return this.reportsStore
       .reportsForOrganization(this.activeOrganizationId())
-      .filter((report) => report.type === ReportType.Compliance).length;
+      .filter((report) => report.type === ReportType.MonthlySummary).length;
   });
-  protected readonly hasRows = computed(() => this.complianceReport().rows.length > 0);
-  protected readonly canExportReport = computed(() => this.complianceReport().canExport);
+  protected readonly hasRows = computed(() => this.monthlyReport().rows.length > 0);
+  protected readonly canDownloadReport = computed(() => this.monthlyReport().canDownload);
 
   ngOnInit(): void {
     this.loadPageData();
@@ -98,7 +85,6 @@ export class SanitaryCompliance implements OnInit {
     this.feedback.set('idle');
     this.assetManagementStore.loadAssets();
     this.assetManagementStore.loadIoTDevices();
-    this.assetManagementStore.loadAssetSettings();
     this.monitoringStore.loadReadings();
     this.reportsStore.loadReports();
 
@@ -121,46 +107,28 @@ export class SanitaryCompliance implements OnInit {
       });
   }
 
-  protected updateFromDate(value: string): void {
-    const maxDate = this.maxDate();
-    const nextDate = value > maxDate ? maxDate : value;
-    this.fromDate.set(nextDate);
-
-    if (this.effectiveToDate() < nextDate) {
-      this.toDate.set(nextDate);
-    }
-
+  protected updateMonth(value: string): void {
+    const maxMonth = this.maxMonth();
+    this.selectedMonth.set(value > maxMonth ? maxMonth : value);
     this.feedback.set('idle');
   }
 
-  protected updateToDate(value: string): void {
-    const maxDate = this.maxDate();
-    const nextDate = value > maxDate ? maxDate : value;
-    this.toDate.set(nextDate < this.effectiveFromDate() ? this.effectiveFromDate() : nextDate);
-    this.feedback.set('idle');
-  }
-
-  protected selectAsset(value: string): void {
-    this.selectedAssetId.set(Number(value));
-    this.feedback.set('idle');
-  }
-
-  protected exportComplianceReport(): void {
-    if (!this.canExportReports()) {
+  protected downloadMonthlyReport(): void {
+    if (!this.canDownloadReports()) {
       return;
     }
 
-    if (!this.canExportReport()) {
+    if (!this.canDownloadReport()) {
       this.feedback.set('insufficient');
       return;
     }
 
     this.reportsStore
-      .createSanitaryComplianceReport(this.activeOrganizationId(), this.complianceReport())
+      .createMonthlySummaryReport(this.activeOrganizationId(), this.monthlyReport())
       .subscribe({
         next: () => {
-          this.downloadComplianceCsv();
-          this.feedback.set('exported');
+          this.downloadMonthlyCsv();
+          this.feedback.set('downloaded');
         },
         error: () => this.feedback.set('server-error'),
       });
@@ -171,11 +139,11 @@ export class SanitaryCompliance implements OnInit {
     void this.router.navigate(['/identity-access/sign-in']);
   }
 
-  protected statusLabelKey(status: SanitaryComplianceStatus): string {
-    return `reports.compliance.status.${status}`;
+  protected statusLabelKey(status: MonthlyReportStatus): string {
+    return `reports.monthly.status.${status}`;
   }
 
-  protected statusClass(status: SanitaryComplianceStatus): string {
+  protected statusClass(status: MonthlyReportStatus): string {
     return `status-${status}`;
   }
 
@@ -187,38 +155,38 @@ export class SanitaryCompliance implements OnInit {
     return value === null ? 'N/A' : `${value.toFixed(0)}%`;
   }
 
-  protected trackRow(_: number, row: SanitaryComplianceRow): number {
+  protected formatTimeRange(row: MonthlyReportRow): string {
+    if (!row.firstRecordedAt || !row.lastRecordedAt) {
+      return 'N/A';
+    }
+
+    return `${this.formatDate(row.firstRecordedAt)} - ${this.formatDate(row.lastRecordedAt)}`;
+  }
+
+  protected trackRow(_: number, row: MonthlyReportRow): number {
     return row.assetId;
   }
 
-  private downloadComplianceCsv(): void {
-    const csv = this.reportsStore.sanitaryComplianceCsv(this.complianceReport());
+  private downloadMonthlyCsv(): void {
+    const csv = this.reportsStore.monthlyReportCsv(this.monthlyReport());
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    const filters = this.complianceReport().filters;
-    const assetSuffix = filters.assetId ? `-asset-${filters.assetId}` : '';
+    const month = this.monthlyReport().month;
     const organizationSlug = this.fileNamePart(this.activeOrganizationName());
 
     link.href = url;
-    link.download = `${organizationSlug}-compliance-${filters.fromDate}-${filters.toDate}${assetSuffix}.csv`;
+    link.download = `${organizationSlug}-monthly-report-${month}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   }
 
-  private defaultFromDate(): string {
-    const date = new Date(`${this.maxDate()}T00:00:00`);
-    date.setDate(date.getDate() - 6);
-
-    return this.formatDateInput(date);
-  }
-
-  private formatDateInput(date: Date): string {
-    const year = date.getFullYear();
-    const month = `${date.getMonth() + 1}`.padStart(2, '0');
-    const day = `${date.getDate()}`.padStart(2, '0');
-
-    return `${year}-${month}-${day}`;
+  private formatDate(value: string): string {
+    return new Intl.DateTimeFormat('en', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    }).format(new Date(value));
   }
 
   private fileNamePart(value: string): string {

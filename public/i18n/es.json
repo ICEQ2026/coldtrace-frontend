@@ -434,6 +434,7 @@
     "nav-settings": "Configuración",
     "nav-reports": "Reportes",
     "nav-daily-log": "Bitácora diaria",
+    "nav-monthly-report": "Reporte mensual",
     "nav-history": "Historial",
     "nav-compliance": "Cumplimiento",
     "nav-notifications": "Notificaciones",
@@ -644,6 +645,48 @@
         "high-humidity": "El activo reporta actualmente una incidencia por humedad alta.",
         "connection-lost": "El activo reportó una incidencia por pérdida de conexión.",
         "connectivity": "La conectividad del activo está en estado {{ status }}."
+      }
+    },
+    "monthly": {
+      "page-title": "Reporte mensual",
+      "title": "Reporte mensual",
+      "subtitle": "Evidencia consolidada de monitoreo e incidencias para decisiones operativas.",
+      "reload": "Recargar",
+      "download": "Descargar reporte",
+      "feedback-downloaded": "El reporte mensual se descargó con la información consolidada.",
+      "feedback-insufficient": "El mes seleccionado aún no cuenta con información consolidada suficiente.",
+      "feedback-error": "No se pudo construir el reporte mensual. Inténtalo nuevamente.",
+      "access-title": "Autorización insuficiente",
+      "access-description": "Tu rol actual no incluye permisos para descargar reportes mensuales.",
+      "filter-month": "Mes",
+      "generated-reports": "Reportes guardados",
+      "summary-assets": "Activos reportados",
+      "summary-readings": "Lecturas",
+      "summary-incidents": "Incidencias",
+      "summary-attention": "Activos por revisar",
+      "pending-title": "Reporte no disponible",
+      "pending-description": "El mes seleccionado necesita lecturas de monitoreo antes de generar el archivo.",
+      "table-title": "Monitoreo mensual por activo",
+      "table-subtitle": "Registros consolidados desde {{ from }} hasta {{ to }}",
+      "valid-readings": "{{ count }} válidas",
+      "incident-breakdown": "{{ out }} fuera de rango",
+      "empty-title": "No hay información mensual",
+      "empty-description": "Selecciona otro mes o verifica que los activos tengan lecturas de monitoreo.",
+      "table": {
+        "asset": "Activo",
+        "location": "Ubicación",
+        "readings": "Lecturas",
+        "temperature": "Temp. prom.",
+        "humidity": "Humedad prom.",
+        "incidents": "Incidencias",
+        "compliance": "Cumplimiento",
+        "window": "Ventana de evidencia",
+        "status": "Estado"
+      },
+      "status": {
+        "complete": "Completo",
+        "attention": "Revisar",
+        "insufficient": "Insuficiente"
       }
     },
     "compliance": {

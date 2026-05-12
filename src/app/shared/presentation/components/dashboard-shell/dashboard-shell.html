@@ -109,6 +109,9 @@
               <a class="sub-menu-link" routerLink="/reports/daily-log" routerLinkActive="active">
                 {{ 'dashboard-shell.nav-daily-log' | translate }}
               </a>
+              <a class="sub-menu-link" routerLink="/reports/monthly" routerLinkActive="active">
+                {{ 'dashboard-shell.nav-monthly-report' | translate }}
+              </a>
               <a class="sub-menu-link" routerLink="/reports/history" routerLinkActive="active">
                 {{ 'dashboard-shell.nav-history' | translate }}
               </a>
@@ -172,10 +175,10 @@
 
       <app-language-switcher />
 
-      <div class="drag-upload">
+      <button class="drag-upload" type="button" (click)="requestMonthlyReport()">
         <mat-icon class="upload-icon">download</mat-icon>
         <span class="upload-text">{{ 'dashboard-shell.download-report' | translate }}</span>
-      </div>
+      </button>
 
       <div class="toggle-control theme-toggle">
         <div class="toggle-option active">

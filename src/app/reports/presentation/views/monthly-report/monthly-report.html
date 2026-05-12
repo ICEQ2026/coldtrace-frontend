@@ -1,0 +1,181 @@
+<section class="page" aria-labelledby="monthly-title">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <div class="page-heading">
+    <div>
+      <span class="section-kicker">{{ activeOrganizationName() }}</span>
+      <h1 id="monthly-title">{{ 'reports.monthly.title' | translate }}</h1>
+      <p>{{ 'reports.monthly.subtitle' | translate }}</p>
+    </div>
+
+    <div class="heading-actions">
+      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'reports.monthly.reload' | translate }}
+      </button>
+      <button
+        mat-flat-button
+        type="button"
+        class="primary-action"
+        [disabled]="!canDownloadReport() || !canDownloadReports()"
+        (click)="downloadMonthlyReport()"
+      >
+        <mat-icon aria-hidden="true">download</mat-icon>
+        {{ 'reports.monthly.download' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (feedback() === 'downloaded') {
+    <p class="feedback success">{{ 'reports.monthly.feedback-downloaded' | translate }}</p>
+  }
+
+  @if (feedback() === 'insufficient') {
+    <p class="feedback warning">{{ 'reports.monthly.feedback-insufficient' | translate }}</p>
+  }
+
+  @if (feedback() === 'server-error' || reportsStore.error() || monitoringStore.error()) {
+    <p class="feedback error">{{ 'reports.monthly.feedback-error' | translate }}</p>
+  }
+
+  @if (!canDownloadReports() && !loading()) {
+    <section class="access-banner" aria-live="polite">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <div>
+        <h2>{{ 'reports.monthly.access-title' | translate }}</h2>
+        <p>{{ 'reports.monthly.access-description' | translate }}</p>
+      </div>
+    </section>
+  } @else {
+    <section class="filter-card" aria-label="Monthly report filters">
+      <label class="filter-field">
+        <span>{{ 'reports.monthly.filter-month' | translate }}</span>
+        <input
+          type="month"
+          [value]="effectiveMonth()"
+          [max]="maxMonth()"
+          (input)="updateMonth($any($event.target).value)"
+        />
+      </label>
+
+      <div class="filter-meta">
+        <span>{{ 'reports.monthly.generated-reports' | translate }}</span>
+        <strong>{{ generatedReportsCount() }}</strong>
+      </div>
+    </section>
+
+    <section class="summary-grid" aria-label="Monthly report summary">
+      <article class="summary-card accent-blue">
+        <span>{{ 'reports.monthly.summary-assets' | translate }}</span>
+        <strong>{{ monthlyReport().totalAssets }}</strong>
+      </article>
+      <article class="summary-card accent-green">
+        <span>{{ 'reports.monthly.summary-readings' | translate }}</span>
+        <strong>{{ monthlyReport().totalReadings }}</strong>
+      </article>
+      <article class="summary-card accent-amber">
+        <span>{{ 'reports.monthly.summary-incidents' | translate }}</span>
+        <strong>{{ monthlyReport().incidentCount }}</strong>
+      </article>
+      <article class="summary-card accent-red">
+        <span>{{ 'reports.monthly.summary-attention' | translate }}</span>
+        <strong>{{ monthlyReport().attentionAssets }}</strong>
+      </article>
+    </section>
+
+    @if (!canDownloadReport() && hasRows()) {
+      <section class="observation-banner" aria-live="polite">
+        <mat-icon aria-hidden="true">pending_actions</mat-icon>
+        <div>
+          <h2>{{ 'reports.monthly.pending-title' | translate }}</h2>
+          <p>{{ 'reports.monthly.pending-description' | translate }}</p>
+        </div>
+      </section>
+    }
+
+    <section class="table-card" aria-labelledby="monthly-table-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="monthly-table-title">{{ 'reports.monthly.table-title' | translate }}</h2>
+          <p>
+            {{
+              'reports.monthly.table-subtitle'
+                | translate
+                  : {
+                      from: monthlyReport().fromDate,
+                      to: monthlyReport().toDate,
+                    }
+            }}
+          </p>
+        </div>
+      </div>
+
+      @if (hasRows()) {
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ 'reports.monthly.table.asset' | translate }}</th>
+                <th>{{ 'reports.monthly.table.location' | translate }}</th>
+                <th>{{ 'reports.monthly.table.readings' | translate }}</th>
+                <th>{{ 'reports.monthly.table.temperature' | translate }}</th>
+                <th>{{ 'reports.monthly.table.humidity' | translate }}</th>
+                <th>{{ 'reports.monthly.table.incidents' | translate }}</th>
+                <th>{{ 'reports.monthly.table.compliance' | translate }}</th>
+                <th>{{ 'reports.monthly.table.window' | translate }}</th>
+                <th>{{ 'reports.monthly.table.status' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of monthlyReport().rows; track trackRow($index, row)) {
+                <tr>
+                  <td>
+                    <strong>{{ row.assetName }}</strong>
+                    <span>#{{ row.assetId }}</span>
+                  </td>
+                  <td>{{ row.assetLocation }}</td>
+                  <td>
+                    <strong>{{ row.totalReadings }}</strong>
+                    <small>
+                      {{
+                        'reports.monthly.valid-readings' | translate: { count: row.validReadings }
+                      }}
+                    </small>
+                  </td>
+                  <td>{{ formatTemperature(row.averageTemperature) }}</td>
+                  <td>{{ formatHumidity(row.averageHumidity) }}</td>
+                  <td>
+                    <strong>{{ row.incidentCount }}</strong>
+                    <small>
+                      {{
+                        'reports.monthly.incident-breakdown'
+                          | translate: { out: row.outOfRangeCount }
+                      }}
+                    </small>
+                  </td>
+                  <td>{{ row.complianceRate }}%</td>
+                  <td>{{ formatTimeRange(row) }}</td>
+                  <td>
+                    <span class="status-pill" [ngClass]="statusClass(row.status)">
+                      {{ statusLabelKey(row.status) | translate }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <mat-icon aria-hidden="true">event_busy</mat-icon>
+          <h2>{{ 'reports.monthly.empty-title' | translate }}</h2>
+          <p>{{ 'reports.monthly.empty-description' | translate }}</p>
+        </div>
+      }
+    </section>
+  }
+</section>

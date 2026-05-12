@@ -119,7 +119,9 @@
   font-size: 20px;
   height: 20px;
   margin-left: auto;
-  transition: transform 0.15s, color 0.15s;
+  transition:
+    transform 0.15s,
+    color 0.15s;
   width: 20px;
 }
 
@@ -331,10 +333,12 @@ app-language-switcher {
 }
 
 .drag-upload {
+  appearance: none;
   background: #f8fafc;
   border: 1px dashed #e2e8f0;
   border-radius: 12px;
   box-sizing: border-box;
+  cursor: pointer;
   height: 154px;
   padding: 24px 20px;
   display: flex;
@@ -345,7 +349,10 @@ app-language-switcher {
   color: #2563eb;
   font-size: 12px;
   font-weight: 700;
+  font-family: inherit;
   text-align: center;
+  text-decoration: none;
+  width: 100%;
 }
 
 .workspace {

@@ -434,6 +434,7 @@
     "nav-settings": "Settings",
     "nav-reports": "Reports",
     "nav-daily-log": "Daily log",
+    "nav-monthly-report": "Monthly report",
     "nav-history": "History",
     "nav-compliance": "Compliance",
     "nav-notifications": "Notifications",
@@ -644,6 +645,48 @@
         "high-humidity": "Asset currently reports a high humidity incident.",
         "connection-lost": "Asset reported a connection loss incident.",
         "connectivity": "Asset connectivity is {{ status }}."
+      }
+    },
+    "monthly": {
+      "page-title": "Monthly Report",
+      "title": "Monthly Report",
+      "subtitle": "Consolidated monitoring and incident evidence for operational decisions.",
+      "reload": "Reload",
+      "download": "Download report",
+      "feedback-downloaded": "Monthly report downloaded with the consolidated information.",
+      "feedback-insufficient": "The selected month does not have enough consolidated information yet.",
+      "feedback-error": "We could not build the monthly report. Try again.",
+      "access-title": "Insufficient authorization",
+      "access-description": "Your current role does not include monthly report download permissions.",
+      "filter-month": "Month",
+      "generated-reports": "Stored reports",
+      "summary-assets": "Reported assets",
+      "summary-readings": "Readings",
+      "summary-incidents": "Incidents",
+      "summary-attention": "Assets to review",
+      "pending-title": "Report not ready",
+      "pending-description": "The selected month needs monitoring readings before the file can be generated.",
+      "table-title": "Monthly monitoring by asset",
+      "table-subtitle": "Consolidated records from {{ from }} to {{ to }}",
+      "valid-readings": "{{ count }} valid",
+      "incident-breakdown": "{{ out }} out of range",
+      "empty-title": "No monthly information",
+      "empty-description": "Select another month or verify that assets have monitoring readings.",
+      "table": {
+        "asset": "Asset",
+        "location": "Location",
+        "readings": "Readings",
+        "temperature": "Avg. temp.",
+        "humidity": "Avg. humidity",
+        "incidents": "Incidents",
+        "compliance": "Compliance",
+        "window": "Evidence window",
+        "status": "Status"
+      },
+      "status": {
+        "complete": "Complete",
+        "attention": "Review",
+        "insufficient": "Insufficient"
       }
     },
     "compliance": {

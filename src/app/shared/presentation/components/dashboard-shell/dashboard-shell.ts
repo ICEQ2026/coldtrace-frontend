@@ -21,6 +21,7 @@ export class DashboardShell {
   @Input() assetIssuesCount = 0;
 
   @Output() signedOut = new EventEmitter<void>();
+  @Output() monthlyReportRequested = new EventEmitter<void>();
 
   protected accessDropdownOpen = false;
   protected accessDropdownTouched = false;
@@ -47,5 +48,9 @@ export class DashboardShell {
 
   protected logout(): void {
     this.signedOut.emit();
+  }
+
+  protected requestMonthlyReport(): void {
+    this.monthlyReportRequested.emit();
   }
 }
