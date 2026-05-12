@@ -424,12 +424,12 @@ export class AssetManagementStore {
     connectivity: ConnectivityStatus,
     settings: AssetSettings | undefined,
   ): string {
-    if (connectivity === ConnectivityStatus.Offline) {
+    if (connectivity === ConnectivityStatus.Offline || !settings) {
       return '—';
     }
 
-    const minimum = settings?.minimumTemperature ?? -5;
-    const maximum = settings?.maximumTemperature ?? 8;
+    const minimum = settings.minimumTemperature;
+    const maximum = settings.maximumTemperature;
     const anomalyRoll = Math.random();
     let temperature: number;
 
@@ -441,7 +441,7 @@ export class AssetManagementStore {
       temperature = this.randomNumber(maximum + 0.2, maximum + 3);
     }
 
-    return `${temperature.toFixed(1)}${settings?.temperatureUnit ?? '°C'}`;
+    return `${temperature.toFixed(1)}${settings.temperatureUnit}`;
   }
 
   private incidentFor(
@@ -453,17 +453,21 @@ export class AssetManagementStore {
       return 'connection-lost';
     }
 
+    if (!settings) {
+      return 'none';
+    }
+
     const temperature = Number(currentTemperature.replace(/[^\d.-]/g, ''));
 
-    if (settings && temperature > settings.maximumTemperature) {
+    if (temperature > settings.maximumTemperature) {
       return 'high-temperature';
     }
 
-    if (settings && temperature < settings.minimumTemperature) {
+    if (temperature < settings.minimumTemperature) {
       return 'low-temperature';
     }
 
-    return Math.random() < 0.03 ? 'high-humidity' : 'none';
+    return 'none';
   }
 
   private randomConnectivity(
