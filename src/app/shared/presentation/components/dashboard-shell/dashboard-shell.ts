@@ -93,6 +93,11 @@ export class DashboardShell {
   }
 
   private isSettingsRoute(): boolean {
-    return this.router.url.includes('/asset-management/safety-ranges');
+    const url = this.router.url;
+
+    return (
+      url.includes('/asset-management/safety-ranges') ||
+      url.includes('/asset-management/operational-parameters')
+    );
   }
 }
