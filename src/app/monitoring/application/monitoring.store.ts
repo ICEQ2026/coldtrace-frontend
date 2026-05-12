@@ -176,6 +176,7 @@ export class MonitoringStore {
       .assetSettings()
       .find((assetSettings) => assetSettings.organizationId === organizationId);
 
+    // Seed recent readings once so report screens have current-day evidence to process.
     this.ensureRecentReadingsForOrganization(organizationId, assets, iotDevices, settings);
 
     const monitoredAssets = assets.filter((asset) =>
@@ -228,6 +229,7 @@ export class MonitoringStore {
     const signalStrength = parameters.includes('signal')
       ? this.randomSignalStrength()
       : null;
+    // One computed flag keeps charts, alerts, and reports aligned around the same risk rule.
     const isOutOfRange =
       (temperature !== null &&
         (temperature < minimumTemperature || temperature > maximumTemperature)) ||

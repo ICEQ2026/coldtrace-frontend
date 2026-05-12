@@ -1,0 +1,245 @@
+@startuml
+' Class Diagram for ColdTrace Frontend
+
+skinparam monochrome true
+skinparam classAttributeIconSize 0
+
+' Shared infrastructure
+abstract class BaseApi
+abstract class BaseApiEndpoint {
+  #endpointUrl: string
+  +getAll()
+  +getById(id: number)
+  +create(entity)
+  +update(entity, id: number)
+  +delete(id: number)
+}
+interface BaseAssembler {
+  +toEntityFromResource(resource)
+  +toResourceFromEntity(entity)
+  +toEntitiesFromResponse(response)
+}
+
+' Identity and access
+class User {
+  +id: number
+  +organizationId: number
+  +roleId: number
+  +fullName: string
+  +email: string
+}
+
+class Organization {
+  +id: number
+  +commercialName: string
+}
+
+class Role {
+  +id: number
+  +name: RoleName
+}
+
+class IdentityAccessStore {
+  +users
+  +organizations
+  +roles
+  +currentUserName
+  +currentOrganizationName
+  +loadUsers(): void
+  +loadRoles(): void
+  +canManageAccess(users, roles): boolean
+}
+
+class IdentityAccessApi {
+  +getUsers()
+  +getOrganizations()
+  +getRoles()
+}
+
+' Asset management
+class Asset {
+  +id: number
+  +organizationId: number
+  +name: string
+  +type: AssetType
+  +status: AssetStatus
+  +connectivity: ConnectivityStatus
+}
+
+class IoTDevice {
+  +id: number
+  +organizationId: number
+  +assetId: number
+  +status: IoTDeviceStatus
+  +measurementParameters: string[]
+}
+
+class Gateway {
+  +id: number
+  +organizationId: number
+  +status: GatewayStatus
+}
+
+class AssetSettings {
+  +id: number
+  +organizationId: number
+  +minimumTemperature: number
+  +maximumTemperature: number
+  +maximumHumidity: number
+}
+
+class AssetManagementStore {
+  +assets
+  +iotDevices
+  +gateways
+  +assetSettings
+  +loadAssets(): void
+  +operationalSummaryFor(organizationId): AssetOperationalSummary
+}
+
+class AssetManagementApi {
+  +getAssets()
+  +getIoTDevices()
+  +getGateways()
+  +getAssetSettings()
+}
+
+' Monitoring
+class SensorReading {
+  +id: number
+  +assetId: number
+  +iotDeviceId: number
+  +temperature: number
+  +humidity: number
+  +isOutOfRange: boolean
+  +recordedAt: string
+}
+
+class OfflineReading {
+  +id: number
+  +syncStatus: SyncStatus
+}
+
+class MonitoringStore {
+  +readings
+  +offlineReadings
+  +totalAssets
+  +assetsWithAlerts
+  +loadReadings(): void
+  +syncAllPending(): void
+  +thermalComplianceForAssetIds(assetIds): number
+}
+
+class MonitoringApi {
+  +getSensorReadings()
+  +createSensorReading(sensorReading)
+}
+
+' Reports
+class Report {
+  +id: number
+  +organizationId: number
+  +type: ReportType
+  +createdAt: string
+}
+
+class DailyLog {
+  +date: string
+  +entries: DailyLogEntry[]
+}
+
+class OperationalHistory {
+  +filters: OperationalHistoryFilters
+  +events: OperationalHistoryEvent[]
+}
+
+class ComplianceReport {
+  +filters: ComplianceReportFilters
+  +findings: ComplianceFinding[]
+}
+
+class AuditEvidence {
+  +filters: AuditEvidenceFilters
+  +items: EvidenceItem[]
+}
+
+class ReportsStore {
+  +reports
+  +loadReports(): void
+  +buildDailyLog(organizationId, date): DailyLog
+  +buildOperationalHistory(organizationId, filters): OperationalHistory
+  +buildComplianceReport(organizationId, filters): ComplianceReport
+  +buildAuditEvidence(organizationId, filters): AuditEvidence
+}
+
+class ReportsApi {
+  +getReports()
+  +createReport(report)
+}
+
+' Presentation components
+class "<<Component>>\nDashboardShell" as DashboardShell
+class "<<Component>>\nSignIn" as SignIn
+class "<<Component>>\nSignUp" as SignUp
+class "<<Component>>\nColdRoomList" as ColdRoomList
+class "<<Component>>\nOperationalDashboard" as OperationalDashboard
+class "<<Component>>\nDailyLog" as DailyLogView
+class "<<Component>>\nMonthlyReport" as MonthlyReportView
+class "<<Component>>\nAuditEvidence" as AuditEvidenceView
+
+' Relationships
+BaseApiEndpoint ..> BaseAssembler : uses
+IdentityAccessApi --|> BaseApi
+AssetManagementApi --|> BaseApi
+MonitoringApi --|> BaseApi
+ReportsApi --|> BaseApi
+
+IdentityAccessStore --> IdentityAccessApi : loads
+AssetManagementStore --> AssetManagementApi : loads
+MonitoringStore --> MonitoringApi : loads
+MonitoringStore --> AssetManagementStore : reads assets
+ReportsStore --> ReportsApi : loads
+ReportsStore --> AssetManagementStore : reads assets
+ReportsStore --> MonitoringStore : reads readings
+
+Organization "1" o--> "*" User
+Role "1" o--> "*" User
+Organization "1" o--> "*" Asset
+Asset "1" o--> "*" IoTDevice
+Gateway "1" o--> "*" IoTDevice
+Asset "1" o--> "*" SensorReading
+IoTDevice "1" o--> "*" SensorReading
+Report <|-- DailyLog
+Report <|-- ComplianceReport
+Report <|-- AuditEvidence
+
+DashboardShell o--> SignIn
+DashboardShell o--> SignUp
+DashboardShell o--> ColdRoomList
+DashboardShell o--> OperationalDashboard
+DashboardShell o--> DailyLogView
+DashboardShell o--> MonthlyReportView
+DashboardShell o--> AuditEvidenceView
+
+' Notes
+note right of IdentityAccessStore
+  Keeps the current user, organization,
+  role label, and frontend permission matrix.
+end note
+
+note right of AssetManagementStore
+  Groups assets, devices, gateways,
+  settings, and operational summary.
+end note
+
+note right of MonitoringStore
+  Builds dashboard metrics and
+  simulated reading updates.
+end note
+
+note right of ReportsStore
+  Builds report view models from
+  assets and monitoring readings.
+end note
+
+@enduml

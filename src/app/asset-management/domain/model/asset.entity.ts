@@ -3,6 +3,7 @@ import { AssetStatus } from './asset-status.enum';
 import { AssetType } from './asset-type.enum';
 import { ConnectivityStatus } from './connectivity-status.enum';
 
+/** Refrigerated asset registered for monitoring inside one organization. */
 export class Asset implements BaseEntity {
   constructor(
     private _id: number,

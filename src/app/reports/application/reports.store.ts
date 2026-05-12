@@ -69,6 +69,7 @@ export class ReportsStore {
         this.loadingSignal.set(false);
       },
       error: () => {
+        // Stored reports are optional for the demo; generated views can still work from readings.
         this.reportsSignal.set([]);
         this.errorSignal.set(null);
         this.loadingSignal.set(false);
@@ -97,6 +98,7 @@ export class ReportsStore {
         .filter((iotDevice) => iotDevice.assetId !== null)
         .map((iotDevice) => iotDevice.assetId as number),
     );
+    // Include monitored assets even when readings are missing so incomplete data is visible.
     const readings = this.monitoringStore
       .readingsForAssetIds(assets.map((asset) => asset.id))
       .filter((reading) => this.dateKeyFor(reading.recordedAt) === date);
@@ -286,6 +288,7 @@ export class ReportsStore {
     const periodReports = this.reportsForOrganization(organizationId).filter((report) =>
       this.reportOverlapsPeriod(report, filters),
     );
+    // Evidence items are checklist rows, not stored documents, to keep the frontend delivery local.
     const items = [
       new EvidenceItem(
         'monitoring-readings',

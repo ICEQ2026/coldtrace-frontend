@@ -1,3 +1,4 @@
+/** Reading captured or simulated from an IoT device linked to a monitored asset. */
 export class SensorReading {
   constructor(
     public id: number,

@@ -1,59 +1,94 @@
-# ColdtraceFrontend
+# ColdTrace Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.9.
+ColdTrace is the frontend web application for ICEQ, a platform focused on cold-chain monitoring for food businesses. The current implementation is an Angular application that simulates the product flow with a local JSON Server API.
 
-## Development server
+The project follows the course style used in the reference applications: bounded contexts, standalone Angular components, route-level lazy loading, simple domain entities, infrastructure assemblers, and a small `server/db.json` data source for development.
 
-To start a local development server, run:
+## Current Scope
 
-```bash
-ng serve
+- Identity and access management: account creation, sign in, password recovery, users, roles, and permissions.
+- Asset management: cold rooms, transport units, IoT devices, gateways, calibration, connectivity, and asset settings.
+- Operational monitoring: dashboard KPIs, current readings, alerts, connectivity state, offline sync, charts, and maintenance widgets.
+- Reports and audit support: daily log, operational history, sanitary compliance CSV, monthly report CSV, findings, and audit evidence.
+- Local and hosted API simulation through JSON Server.
+
+## Project Structure
+
+```txt
+src/app/
+  identity-access/       Account, users, roles, permissions
+  asset-management/      Assets, devices, gateways, calibration
+  monitoring/            Dashboard, readings, alerts, offline sync
+  reports/               Daily log, history, compliance, audit evidence
+  shared/                Layout, shell, language switcher, infrastructure base classes
+server/
+  db.json                JSON Server data source
+docs/
+  user-stories.md        User stories and acceptance criteria
+  class-diagram.puml     PlantUML class diagram
+  frontend-architecture.md
+  local-api.md
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Each bounded context keeps the same internal structure:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```txt
+application/             Signal-based state store
+domain/model/            Entities, enums, and domain types
+infrastructure/          API services, endpoints, resources, assemblers
+presentation/            Routes, views, and presentation components
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Development
+
+Install dependencies:
 
 ```bash
-ng generate --help
+npm install
 ```
 
-## Building
-
-To build the project run:
+Run the JSON Server API:
 
 ```bash
-ng build
+cd server
+npm install
+npm run dev
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+Run the Angular application:
 
 ```bash
-ng test
+npm start
 ```
 
-## Running end-to-end tests
+Open:
 
-For end-to-end (e2e) testing, run:
+```txt
+http://localhost:4200
+```
+
+The development frontend uses:
+
+```txt
+http://localhost:3000
+```
+
+## Build and Test
 
 ```bash
-ng e2e
+npm run build
+npm test
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Documentation
 
-## Additional Resources
+- [User Stories](docs/user-stories.md)
+- [Class Diagram](docs/class-diagram.puml)
+- [Frontend Architecture](docs/frontend-architecture.md)
+- [Local API](docs/local-api.md)
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+## Notes
+
+- The application keeps the product-facing UI in English.
+- The local API is used only to simulate the required flows for the course delivery.
+- Real JWT authentication, real email delivery, and production backend authorization are outside the current frontend scope.

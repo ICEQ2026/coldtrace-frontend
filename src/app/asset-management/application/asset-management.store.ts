@@ -254,6 +254,7 @@ export class AssetManagementStore {
     const currentStep = this.telemetryUpdateStep % 3;
     this.telemetryUpdateStep += 1;
 
+    // Rotate simulated changes so dashboard indicators move without backend jobs.
     if (currentStep === 0) {
       const gateway = this.sampleOne(gateways);
 

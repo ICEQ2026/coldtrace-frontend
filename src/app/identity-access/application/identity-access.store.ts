@@ -28,6 +28,7 @@ export class IdentityAccessStore {
     'roles-permissions.permissions.read-only',
   ];
 
+  /** Frontend permission matrix used until real backend authorization exists. */
   private readonly defaultPermissionKeysByRoleName: Record<RoleName, string[]> = {
     [RoleName.SuperAdministrator]: [...this.availablePermissionKeys],
     [RoleName.Administrator]: this.availablePermissionKeys.filter(
@@ -144,6 +145,7 @@ export class IdentityAccessStore {
       }
     }
 
+    // The demo falls back to the seeded first user when no session service exists yet.
     return users.find(user => user.id === 1) ?? users[0];
   }
 
