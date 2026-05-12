@@ -76,8 +76,9 @@
 
 .card-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  gap: 10px;
   margin-bottom: 16px;
 }
 
@@ -86,15 +87,22 @@
   font-size: 16px;
   font-weight: 700;
   color: #111827;
+  margin-right: auto;
 }
 
-.open-count {
+.open-count,
+.escalated-count {
   font-size: 12px;
   font-weight: 600;
   color: #DC2626;
   background: #FEE2E2;
   padding: 4px 10px;
   border-radius: 20px;
+}
+
+.escalated-count {
+  background: #FEF3C7;
+  color: #B45309;
 }
 
 /* Table */
@@ -246,9 +254,55 @@
   color: #B45309;
 }
 
+.escalation-cell {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 118px;
+}
+
+.escalation-cell small {
+  color: #9CA3AF;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.escalation-pill {
+  border-radius: 5px;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+.escalation-none {
+  background: #F3F4F6;
+  color: #4B5563;
+}
+
+.escalation-pending {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+.escalation-escalated {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.escalation-reviewed {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
 /* Recognize button */
 .recognize-btn,
-.close-shortcut-btn {
+.close-shortcut-btn,
+.review-escalation-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -266,13 +320,15 @@
 }
 
 .recognize-btn:hover:not(:disabled),
-.close-shortcut-btn:hover:not(:disabled) {
+.close-shortcut-btn:hover:not(:disabled),
+.review-escalation-btn:hover:not(:disabled) {
   background: #3B66F5;
   color: #FFFFFF;
 }
 
 .recognize-btn:disabled,
-.close-shortcut-btn:disabled {
+.close-shortcut-btn:disabled,
+.review-escalation-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -284,6 +340,15 @@
 
 .close-shortcut-btn:hover:not(:disabled) {
   background: #16A34A;
+}
+
+.review-escalation-btn {
+  border-color: #D97706;
+  color: #B45309;
+}
+
+.review-escalation-btn:hover:not(:disabled) {
+  background: #D97706;
 }
 
 .action-done {

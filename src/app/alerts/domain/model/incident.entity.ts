@@ -5,6 +5,7 @@ export type IncidentSeverity = 'warning' | 'critical';
 export type IncidentType = 'temperature' | 'humidity' | 'connectivity' | 'other';
 export type IncidentSource = 'initial-data' | 'sensor-reading' | 'manual';
 export type IncidentReviewStatus = 'complete' | 'pending-review';
+export type IncidentEscalationStatus = 'none' | 'pending-configuration' | 'escalated' | 'reviewed';
 
 export class Incident implements BaseEntity {
   private _id: number;
@@ -27,6 +28,13 @@ export class Incident implements BaseEntity {
   private _source: IncidentSource;
   private _sourceReadingId: number | null;
   private _reviewStatus: IncidentReviewStatus;
+  private _escalationStatus: IncidentEscalationStatus;
+  private _escalationLevel: number;
+  private _escalationPolicyMinutes: number | null;
+  private _escalatedAt: string | null;
+  private _escalatedTo: string | null;
+  private _escalationReviewedBy: string | null;
+  private _escalationReviewedAt: string | null;
 
   constructor(incident: {
     id: number;
@@ -49,6 +57,13 @@ export class Incident implements BaseEntity {
     source: IncidentSource;
     sourceReadingId: number | null;
     reviewStatus: IncidentReviewStatus;
+    escalationStatus: IncidentEscalationStatus;
+    escalationLevel: number;
+    escalationPolicyMinutes: number | null;
+    escalatedAt: string | null;
+    escalatedTo: string | null;
+    escalationReviewedBy: string | null;
+    escalationReviewedAt: string | null;
   }) {
     this._id = incident.id;
     this._organizationId = incident.organizationId;
@@ -70,6 +85,13 @@ export class Incident implements BaseEntity {
     this._source = incident.source;
     this._sourceReadingId = incident.sourceReadingId;
     this._reviewStatus = incident.reviewStatus;
+    this._escalationStatus = incident.escalationStatus;
+    this._escalationLevel = incident.escalationLevel;
+    this._escalationPolicyMinutes = incident.escalationPolicyMinutes;
+    this._escalatedAt = incident.escalatedAt;
+    this._escalatedTo = incident.escalatedTo;
+    this._escalationReviewedBy = incident.escalationReviewedBy;
+    this._escalationReviewedAt = incident.escalationReviewedAt;
   }
 
   get id(): number { return this._id; }
@@ -92,6 +114,13 @@ export class Incident implements BaseEntity {
   get source(): IncidentSource { return this._source; }
   get sourceReadingId(): number | null { return this._sourceReadingId; }
   get reviewStatus(): IncidentReviewStatus { return this._reviewStatus; }
+  get escalationStatus(): IncidentEscalationStatus { return this._escalationStatus; }
+  get escalationLevel(): number { return this._escalationLevel; }
+  get escalationPolicyMinutes(): number | null { return this._escalationPolicyMinutes; }
+  get escalatedAt(): string | null { return this._escalatedAt; }
+  get escalatedTo(): string | null { return this._escalatedTo; }
+  get escalationReviewedBy(): string | null { return this._escalationReviewedBy; }
+  get escalationReviewedAt(): string | null { return this._escalationReviewedAt; }
 
   get isOpen(): boolean { return this._status === 'open'; }
   get isRecognized(): boolean { return this._status === 'recognized'; }
@@ -99,4 +128,8 @@ export class Incident implements BaseEntity {
   get isConditionStable(): boolean { return this._conditionStable; }
   get isGenerated(): boolean { return this._source === 'sensor-reading'; }
   get isPendingReview(): boolean { return this._reviewStatus === 'pending-review'; }
+  get isEscalated(): boolean { return this._escalationStatus === 'escalated'; }
+  get isPendingEscalationConfiguration(): boolean {
+    return this._escalationStatus === 'pending-configuration';
+  }
 }

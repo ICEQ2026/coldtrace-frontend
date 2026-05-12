@@ -1,11 +1,12 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
+import { forkJoin, map, Observable, of, retry, switchMap, tap } from 'rxjs';
 import { AssetSettings } from '../../asset-management/domain/model/asset-settings.entity';
 import { Asset } from '../../asset-management/domain/model/asset.entity';
 import { AssetManagementApi } from '../../asset-management/infrastructure/asset-management-api';
 import { IdentityAccessStore } from '../../identity-access/application/identity-access.store';
 import { SensorReading } from '../../monitoring/domain/model/sensor-reading.entity';
 import { MonitoringApi } from '../../monitoring/infrastructure/monitoring-api';
+import { EscalationPolicy } from '../domain/model/escalation-policy.entity';
 import { Incident } from '../domain/model/incident.entity';
 import { NotificationChannel } from '../domain/model/notification-channel.enum';
 import { NotificationStatus } from '../domain/model/notification-status.enum';
@@ -17,12 +18,17 @@ type GeneratedConditionKey = ThermalConditionKey | 'thermal-configuration-pendin
 
 @Injectable({ providedIn: 'root' })
 export class AlertsStore {
+  private readonly escalationPolicies = [
+    new EscalationPolicy('critical', 30, 2, 'operations-manager'),
+    new EscalationPolicy('warning', 720, 1, 'shift-supervisor'),
+  ];
   private readonly incidentsSignal = signal<Incident[]>([]);
   private readonly notificationsSignal = signal<Notification[]>([]);
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
   private readonly recognizingIdSignal = signal<number | null>(null);
   private readonly closingIdSignal = signal<number | null>(null);
+  private readonly reviewingEscalationIdSignal = signal<number | null>(null);
   private readonly feedbackSignal = signal<string | null>(null);
 
   readonly incidents = computed(() => {
@@ -55,6 +61,7 @@ export class AlertsStore {
   readonly error = this.errorSignal.asReadonly();
   readonly recognizingId = this.recognizingIdSignal.asReadonly();
   readonly closingId = this.closingIdSignal.asReadonly();
+  readonly reviewingEscalationId = this.reviewingEscalationIdSignal.asReadonly();
   readonly feedback = this.feedbackSignal.asReadonly();
 
   readonly openIncidents = computed(() => this.incidents().filter((i) => i.isOpen));
@@ -64,6 +71,12 @@ export class AlertsStore {
   );
   readonly failedNotificationsCount = computed(
     () => this.notifications().filter((notification) => notification.isFailed).length,
+  );
+  readonly escalatedIncidentsCount = computed(
+    () => this.incidents().filter((incident) => incident.isEscalated).length,
+  );
+  readonly pendingEscalationConfigurationCount = computed(
+    () => this.incidents().filter((incident) => incident.isPendingEscalationConfiguration).length,
   );
 
   constructor(
@@ -94,11 +107,12 @@ export class AlertsStore {
 
           const incidentsRequest = generatedIncidents.length
             ? forkJoin(
-              generatedIncidents.map((incident) => this.alertsApi.createIncident(incident)),
+              generatedIncidents.map((incident) => this.createIncidentWithRetry(incident)),
             ).pipe(map((createdIncidents) => [...incidents, ...createdIncidents]))
             : of(incidents);
 
           return incidentsRequest.pipe(
+            switchMap((currentIncidents) => this.applyEscalationPolicies(currentIncidents)),
             switchMap((currentIncidents) => {
               const generatedNotifications = this.generatedNotificationsFrom(
                 currentIncidents,
@@ -111,7 +125,7 @@ export class AlertsStore {
 
               return forkJoin(
                 generatedNotifications.map((notification) =>
-                  this.alertsApi.createNotification(notification),
+                  this.createNotificationWithRetry(notification),
                 ),
               ).pipe(
                 map((createdNotifications) => ({
@@ -137,33 +151,16 @@ export class AlertsStore {
   }
 
   recognizeIncident(incident: Incident, responsibleUserName: string): Observable<Incident> {
-    const recognized = new Incident({
-      id: incident.id,
-      organizationId: incident.organizationId,
-      assetId: incident.assetId,
-      assetName: incident.assetName,
-      type: incident.type,
-      severity: incident.severity,
-      value: incident.value,
-      detectedAt: incident.detectedAt,
+    const recognized = this.incidentWith(incident, {
       status: 'recognized',
       recognizedBy: responsibleUserName,
       recognizedAt: new Date().toISOString(),
-      conditionStable: incident.conditionStable,
-      correctiveAction: incident.correctiveAction,
-      closureEvidence: incident.closureEvidence,
-      closedBy: incident.closedBy,
-      closedAt: incident.closedAt,
-      conditionKey: incident.conditionKey,
-      source: incident.source,
-      sourceReadingId: incident.sourceReadingId,
-      reviewStatus: incident.reviewStatus,
     });
 
     this.recognizingIdSignal.set(incident.id);
     this.feedbackSignal.set(null);
 
-    return this.alertsApi.updateIncident(recognized).pipe(
+    return this.updateIncidentWithRetry(recognized).pipe(
       tap({
         next: (updated) => {
           this.incidentsSignal.update((current) =>
@@ -187,33 +184,25 @@ export class AlertsStore {
     responsibleUserName: string,
   ): Observable<Incident> {
     const now = new Date().toISOString();
-    const closed = new Incident({
-      id: incident.id,
-      organizationId: incident.organizationId,
-      assetId: incident.assetId,
-      assetName: incident.assetName,
-      type: incident.type,
-      severity: incident.severity,
-      value: incident.value,
-      detectedAt: incident.detectedAt,
+    const closed = this.incidentWith(incident, {
       status: 'closed',
       recognizedBy: incident.recognizedBy ?? responsibleUserName,
       recognizedAt: incident.recognizedAt ?? now,
-      conditionStable: incident.conditionStable,
       correctiveAction,
       closureEvidence,
       closedBy: responsibleUserName,
       closedAt: now,
-      conditionKey: incident.conditionKey,
-      source: incident.source,
-      sourceReadingId: incident.sourceReadingId,
-      reviewStatus: incident.reviewStatus,
+      escalationStatus: incident.isEscalated ? 'reviewed' : incident.escalationStatus,
+      escalationReviewedBy: incident.isEscalated
+        ? responsibleUserName
+        : incident.escalationReviewedBy,
+      escalationReviewedAt: incident.isEscalated ? now : incident.escalationReviewedAt,
     });
 
     this.closingIdSignal.set(incident.id);
     this.feedbackSignal.set(null);
 
-    return this.alertsApi.updateIncident(closed).pipe(
+    return this.updateIncidentWithRetry(closed).pipe(
       tap({
         next: (updated) => {
           this.incidentsSignal.update((current) =>
@@ -224,6 +213,33 @@ export class AlertsStore {
         },
         error: () => {
           this.closingIdSignal.set(null);
+          this.feedbackSignal.set('alerts.incident-list.feedback-error');
+        },
+      }),
+    );
+  }
+
+  reviewEscalation(incident: Incident, responsibleUserName: string): Observable<Incident> {
+    const reviewed = this.incidentWith(incident, {
+      escalationStatus: 'reviewed',
+      escalationReviewedBy: responsibleUserName,
+      escalationReviewedAt: new Date().toISOString(),
+    });
+
+    this.reviewingEscalationIdSignal.set(incident.id);
+    this.feedbackSignal.set(null);
+
+    return this.updateIncidentWithRetry(reviewed).pipe(
+      tap({
+        next: (updated) => {
+          this.incidentsSignal.update((current) =>
+            current.map((i) => (i.id === updated.id ? updated : i)),
+          );
+          this.reviewingEscalationIdSignal.set(null);
+          this.feedbackSignal.set('alerts.incident-list.feedback-escalation-reviewed');
+        },
+        error: () => {
+          this.reviewingEscalationIdSignal.set(null);
           this.feedbackSignal.set('alerts.incident-list.feedback-error');
         },
       }),
@@ -247,6 +263,167 @@ export class AlertsStore {
     this.feedbackSignal.set(feedback);
   }
 
+  private incidentWith(
+    incident: Incident,
+    changes: Partial<ConstructorParameters<typeof Incident>[0]>,
+  ): Incident {
+    return new Incident({
+      id: incident.id,
+      organizationId: incident.organizationId,
+      assetId: incident.assetId,
+      assetName: incident.assetName,
+      type: incident.type,
+      severity: incident.severity,
+      value: incident.value,
+      detectedAt: incident.detectedAt,
+      status: incident.status,
+      recognizedBy: incident.recognizedBy,
+      recognizedAt: incident.recognizedAt,
+      conditionStable: incident.conditionStable,
+      correctiveAction: incident.correctiveAction,
+      closureEvidence: incident.closureEvidence,
+      closedBy: incident.closedBy,
+      closedAt: incident.closedAt,
+      conditionKey: incident.conditionKey,
+      source: incident.source,
+      sourceReadingId: incident.sourceReadingId,
+      reviewStatus: incident.reviewStatus,
+      escalationStatus: incident.escalationStatus,
+      escalationLevel: incident.escalationLevel,
+      escalationPolicyMinutes: incident.escalationPolicyMinutes,
+      escalatedAt: incident.escalatedAt,
+      escalatedTo: incident.escalatedTo,
+      escalationReviewedBy: incident.escalationReviewedBy,
+      escalationReviewedAt: incident.escalationReviewedAt,
+      ...changes,
+    });
+  }
+
+  private createIncidentWithRetry(incident: Incident): Observable<Incident> {
+    return this.alertsApi.createIncident(incident).pipe(retry({ count: 2, delay: 250 }));
+  }
+
+  private updateIncidentWithRetry(incident: Incident): Observable<Incident> {
+    return this.alertsApi.updateIncident(incident).pipe(retry({ count: 2, delay: 250 }));
+  }
+
+  private createNotificationWithRetry(notification: Notification): Observable<Notification> {
+    return this.alertsApi.createNotification(notification).pipe(retry({ count: 2, delay: 250 }));
+  }
+
+  private applyEscalationPolicies(incidents: Incident[]): Observable<Incident[]> {
+    const updates = this.escalationUpdatesFrom(incidents);
+
+    if (!updates.length) {
+      return of(incidents);
+    }
+
+    return forkJoin(
+      updates.map((incident) => this.updateIncidentWithRetry(incident)),
+    ).pipe(
+      map((updatedIncidents) =>
+        incidents.map(
+          (incident) =>
+            updatedIncidents.find((updated) => updated.id === incident.id) ?? incident,
+        ),
+      ),
+    );
+  }
+
+  private escalationUpdatesFrom(incidents: Incident[]): Incident[] {
+    const now = new Date();
+    const updates: Incident[] = [];
+
+    incidents.forEach((incident) => {
+      const updated = this.incidentWithCurrentEscalation(incident, now);
+
+      if (updated && this.hasEscalationChanges(incident, updated)) {
+        updates.push(updated);
+      }
+    });
+
+    return updates;
+  }
+
+  private incidentWithCurrentEscalation(incident: Incident, now: Date): Incident | null {
+    if (incident.isClosed || incident.escalationStatus === 'reviewed') {
+      return null;
+    }
+
+    if (!incident.isOpen) {
+      return incident.escalationStatus === 'pending-configuration'
+        ? this.incidentWith(incident, {
+          escalationStatus: 'none',
+          escalationLevel: 0,
+          escalationPolicyMinutes: this.escalationPolicyFor(incident)?.waitingMinutes ?? null,
+          escalatedAt: null,
+          escalatedTo: null,
+        })
+        : null;
+    }
+
+    const policy = this.escalationPolicyFor(incident);
+
+    if (!policy) {
+      return this.incidentWith(incident, {
+        escalationStatus: 'pending-configuration',
+        escalationLevel: 0,
+        escalationPolicyMinutes: null,
+        escalatedAt: null,
+        escalatedTo: null,
+      });
+    }
+
+    if (!this.hasExceededEscalationThreshold(incident, policy, now)) {
+      return this.incidentWith(incident, {
+        escalationStatus: 'none',
+        escalationLevel: 0,
+        escalationPolicyMinutes: policy.waitingMinutes,
+        escalatedAt: null,
+        escalatedTo: null,
+      });
+    }
+
+    return this.incidentWith(incident, {
+      escalationStatus: 'escalated',
+      escalationLevel: policy.level,
+      escalationPolicyMinutes: policy.waitingMinutes,
+      escalatedAt: incident.escalatedAt ?? now.toISOString(),
+      escalatedTo: policy.targetKey,
+    });
+  }
+
+  private escalationPolicyFor(incident: Incident): EscalationPolicy | undefined {
+    return this.escalationPolicies.find((policy) => policy.appliesTo(incident));
+  }
+
+  private hasExceededEscalationThreshold(
+    incident: Incident,
+    policy: EscalationPolicy,
+    now: Date,
+  ): boolean {
+    const detectedAt = new Date(incident.detectedAt);
+
+    if (Number.isNaN(detectedAt.getTime())) {
+      return false;
+    }
+
+    const elapsedMinutes = (now.getTime() - detectedAt.getTime()) / 60000;
+    return elapsedMinutes >= policy.waitingMinutes;
+  }
+
+  private hasEscalationChanges(current: Incident, updated: Incident): boolean {
+    return (
+      current.escalationStatus !== updated.escalationStatus ||
+      current.escalationLevel !== updated.escalationLevel ||
+      current.escalationPolicyMinutes !== updated.escalationPolicyMinutes ||
+      current.escalatedAt !== updated.escalatedAt ||
+      current.escalatedTo !== updated.escalatedTo ||
+      current.escalationReviewedBy !== updated.escalationReviewedBy ||
+      current.escalationReviewedAt !== updated.escalationReviewedAt
+    );
+  }
+
   private generatedThermalIncidentsFrom(
     incidents: Incident[],
     readings: SensorReading[],
@@ -258,6 +435,7 @@ export class AlertsStore {
       ...this.pendingReviewCandidates(readings, assets, settings),
     ];
     let nextId = Math.max(...incidents.map((incident) => incident.id), 0) + 1;
+    const now = new Date();
 
     return candidates
       .filter((candidate) => {
@@ -290,9 +468,16 @@ export class AlertsStore {
           source: 'sensor-reading',
           sourceReadingId: candidate.reading.id,
           reviewStatus: candidate.reviewStatus,
+          escalationStatus: 'none',
+          escalationLevel: 0,
+          escalationPolicyMinutes: null,
+          escalatedAt: null,
+          escalatedTo: null,
+          escalationReviewedBy: null,
+          escalationReviewedAt: null,
         });
         nextId += 1;
-        return incident;
+        return this.incidentWithCurrentEscalation(incident, now) ?? incident;
       });
   }
 

@@ -25,6 +25,13 @@ export class IncidentAssembler implements BaseAssembler<Incident, IncidentResour
       source: resource.source ?? 'initial-data',
       sourceReadingId: resource.sourceReadingId ?? null,
       reviewStatus: resource.reviewStatus ?? 'complete',
+      escalationStatus: resource.escalationStatus ?? 'none',
+      escalationLevel: resource.escalationLevel ?? 0,
+      escalationPolicyMinutes: resource.escalationPolicyMinutes ?? null,
+      escalatedAt: resource.escalatedAt ?? null,
+      escalatedTo: resource.escalatedTo ?? null,
+      escalationReviewedBy: resource.escalationReviewedBy ?? null,
+      escalationReviewedAt: resource.escalationReviewedAt ?? null,
     });
   }
 
@@ -50,6 +57,13 @@ export class IncidentAssembler implements BaseAssembler<Incident, IncidentResour
       source: entity.source,
       sourceReadingId: entity.sourceReadingId,
       reviewStatus: entity.reviewStatus,
+      escalationStatus: entity.escalationStatus,
+      escalationLevel: entity.escalationLevel,
+      escalationPolicyMinutes: entity.escalationPolicyMinutes,
+      escalatedAt: entity.escalatedAt,
+      escalatedTo: entity.escalatedTo,
+      escalationReviewedBy: entity.escalationReviewedBy,
+      escalationReviewedAt: entity.escalationReviewedAt,
     };
   }
 

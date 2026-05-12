@@ -114,6 +114,19 @@ export class IncidentList implements OnInit {
       });
   }
 
+  protected reviewEscalation(incident: Incident): void {
+    if (
+      this.alertsStore.reviewingEscalationId() === incident.id ||
+      (!incident.isEscalated && !incident.isPendingEscalationConfiguration)
+    ) {
+      return;
+    }
+
+    this.alertsStore.reviewEscalation(incident, this.profileUserName()).subscribe({
+      error: () => undefined,
+    });
+  }
+
   protected selectIncidentForClosure(incident: Incident): void {
     if (incident.isClosed) {
       return;
@@ -136,6 +149,24 @@ export class IncidentList implements OnInit {
       case 'closed': return 'alerts.incident-list.status-closed';
       default: return 'alerts.incident-list.status-open';
     }
+  }
+
+  protected escalationLabelKey(incident: Incident): string {
+    return `alerts.incident-list.escalation-${incident.escalationStatus}`;
+  }
+
+  protected escalationTargetLabelKey(incident: Incident): string {
+    return incident.escalatedTo
+      ? `alerts.incident-list.escalation-target-${incident.escalatedTo}`
+      : 'alerts.incident-list.escalation-target-none';
+  }
+
+  protected isSuccessFeedback(feedback: string): boolean {
+    return [
+      'alerts.incident-list.feedback-recognized',
+      'alerts.incident-list.feedback-closed',
+      'alerts.incident-list.feedback-escalation-reviewed',
+    ].includes(feedback);
   }
 
   protected severityIcon(incident: Incident): string {
