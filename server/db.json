@@ -4604,7 +4604,12 @@
       "detectedAt": "2026-05-12T06:30:00-05:00",
       "status": "open",
       "recognizedBy": null,
-      "recognizedAt": null
+      "recognizedAt": null,
+      "conditionStable": false,
+      "correctiveAction": null,
+      "closureEvidence": null,
+      "closedBy": null,
+      "closedAt": null
     },
     {
       "id": 2,
@@ -4617,7 +4622,12 @@
       "detectedAt": "2026-05-12T07:15:00-05:00",
       "status": "open",
       "recognizedBy": null,
-      "recognizedAt": null
+      "recognizedAt": null,
+      "conditionStable": true,
+      "correctiveAction": null,
+      "closureEvidence": null,
+      "closedBy": null,
+      "closedAt": null
     },
     {
       "id": 3,
@@ -4630,7 +4640,12 @@
       "detectedAt": "2026-05-11T14:00:00-05:00",
       "status": "recognized",
       "recognizedBy": "Laura Mendoza",
-      "recognizedAt": "2026-05-11T14:22:00-05:00"
+      "recognizedAt": "2026-05-11T14:22:00-05:00",
+      "conditionStable": true,
+      "correctiveAction": null,
+      "closureEvidence": null,
+      "closedBy": null,
+      "closedAt": null
     },
     {
       "id": 4,
@@ -4643,7 +4658,12 @@
       "detectedAt": "2026-05-10T22:30:00-05:00",
       "status": "closed",
       "recognizedBy": "Andrés Silva",
-      "recognizedAt": "2026-05-10T22:45:00-05:00"
+      "recognizedAt": "2026-05-10T22:45:00-05:00",
+      "conditionStable": true,
+      "correctiveAction": "Adjusted thermostat and moved sensitive products to backup storage.",
+      "closureEvidence": "Temperature stayed at 3.9°C for 30 minutes after intervention.",
+      "closedBy": "Andrés Silva",
+      "closedAt": "2026-05-10T23:20:00-05:00"
     },
     {
       "id": 5,
@@ -4656,7 +4676,12 @@
       "detectedAt": "2026-05-12T09:20:00-05:00",
       "status": "open",
       "recognizedBy": null,
-      "recognizedAt": null
+      "recognizedAt": null,
+      "conditionStable": true,
+      "correctiveAction": null,
+      "closureEvidence": null,
+      "closedBy": null,
+      "closedAt": null
     }
   ]
 }
