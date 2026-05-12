@@ -1,0 +1,227 @@
+<section class="page" aria-labelledby="audit-title">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <div class="page-heading">
+    <div>
+      <span class="section-kicker">{{ activeOrganizationName() }}</span>
+      <h1 id="audit-title">{{ 'reports.audit.title' | translate }}</h1>
+      <p>{{ 'reports.audit.subtitle' | translate }}</p>
+    </div>
+
+    <div class="heading-actions">
+      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'reports.audit.reload' | translate }}
+      </button>
+      <button
+        mat-flat-button
+        type="button"
+        class="primary-action"
+        [disabled]="!canExportEvidence()"
+        (click)="exportEvidence()"
+      >
+        <mat-icon aria-hidden="true">download</mat-icon>
+        {{ 'reports.audit.export' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (feedback() === 'exported') {
+    <p class="feedback success">{{ 'reports.audit.feedback-exported' | translate }}</p>
+  }
+
+  @if (feedback() === 'insufficient') {
+    <p class="feedback warning">{{ 'reports.audit.feedback-insufficient' | translate }}</p>
+  }
+
+  @if (feedback() === 'server-error' || reportsStore.error() || monitoringStore.error()) {
+    <p class="feedback error">{{ 'reports.audit.feedback-error' | translate }}</p>
+  }
+
+  @if (!canPrepareEvidence() && !loading()) {
+    <section class="access-banner" aria-live="polite">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <div>
+        <h2>{{ 'reports.audit.access-title' | translate }}</h2>
+        <p>{{ 'reports.audit.access-description' | translate }}</p>
+      </div>
+    </section>
+  } @else {
+    <section class="filter-card" aria-label="Audit evidence filters">
+      <label class="filter-field">
+        <span>{{ 'reports.audit.filter-from' | translate }}</span>
+        <input
+          type="date"
+          [value]="effectiveFromDate()"
+          [max]="maxDate()"
+          (input)="updateFromDate($any($event.target).value)"
+        />
+      </label>
+
+      <label class="filter-field">
+        <span>{{ 'reports.audit.filter-to' | translate }}</span>
+        <input
+          type="date"
+          [value]="effectiveToDate()"
+          [max]="maxDate()"
+          (input)="updateToDate($any($event.target).value)"
+        />
+      </label>
+
+      <label class="filter-field">
+        <span>{{ 'reports.audit.filter-asset' | translate }}</span>
+        <select [value]="selectedAssetId()" (change)="selectAsset($any($event.target).value)">
+          <option [value]="0">{{ 'reports.audit.all-assets' | translate }}</option>
+          @for (asset of organizationAssets(); track asset.id) {
+            <option [value]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
+          }
+        </select>
+      </label>
+    </section>
+
+    <section class="summary-grid" aria-label="Audit evidence summary">
+      <article class="summary-card accent-blue">
+        <span>{{ 'reports.audit.summary-completeness' | translate }}</span>
+        <strong>{{ auditEvidence().completenessRate }}%</strong>
+      </article>
+      <article class="summary-card accent-green">
+        <span>{{ 'reports.audit.summary-readings' | translate }}</span>
+        <strong>{{ auditEvidence().readingsCount }}</strong>
+      </article>
+      <article class="summary-card accent-amber">
+        <span>{{ 'reports.audit.summary-reports' | translate }}</span>
+        <strong>{{ auditEvidence().reports.length }}</strong>
+      </article>
+      <article class="summary-card accent-red">
+        <span>{{ 'reports.audit.summary-pending' | translate }}</span>
+        <strong>{{ auditEvidence().incompleteItems }}</strong>
+      </article>
+    </section>
+
+    @if (!auditEvidence().isComplete && auditEvidence().hasEvidence) {
+      <section class="observation-banner" aria-live="polite">
+        <mat-icon aria-hidden="true">fact_check</mat-icon>
+        <div>
+          <h2>{{ 'reports.audit.incomplete-title' | translate }}</h2>
+          <p>
+            {{
+              'reports.audit.incomplete-description'
+                | translate: { count: auditEvidence().incompleteItems }
+            }}
+          </p>
+        </div>
+      </section>
+    }
+
+    <section class="table-card" aria-labelledby="audit-checklist-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="audit-checklist-title">{{ 'reports.audit.checklist-title' | translate }}</h2>
+          <p>
+            {{
+              'reports.audit.table-subtitle'
+                | translate: { from: effectiveFromDate(), to: effectiveToDate() }
+            }}
+          </p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table checklist-table">
+          <thead>
+            <tr>
+              <th>{{ 'reports.audit.table.section' | translate }}</th>
+              <th>{{ 'reports.audit.table.evidence' | translate }}</th>
+              <th>{{ 'reports.audit.table.status' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of auditEvidence().items; track trackItem($index, item)) {
+              <tr>
+                <td>
+                  <strong>{{ itemLabelKey(item) | translate }}</strong>
+                  <span>{{ item.quantity }} / {{ item.requiredQuantity }}</span>
+                </td>
+                <td>{{ item.messageKey | translate: item.messageParams }}</td>
+                <td>
+                  <span class="status-pill" [ngClass]="itemStatusClass(item)">
+                    {{ itemStatusLabelKey(item) | translate }}
+                  </span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="evidence-grid" aria-label="Audit evidence details">
+      <article class="table-card evidence-panel">
+        <div class="section-heading compact">
+          <div>
+            <h2>{{ 'reports.audit.reports-title' | translate }}</h2>
+            <p>{{ 'reports.audit.reports-subtitle' | translate }}</p>
+          </div>
+        </div>
+
+        @if (auditEvidence().reports.length) {
+          <div class="evidence-list">
+            @for (report of auditEvidence().reports; track trackReport($index, report)) {
+              <div class="evidence-row">
+                <mat-icon aria-hidden="true">description</mat-icon>
+                <div>
+                  <strong>{{ report.title }}</strong>
+                  <span>{{ reportTypeLabelKey(report) | translate }} · {{ report.periodDate }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state compact-empty">
+            <mat-icon aria-hidden="true">file_download_off</mat-icon>
+            <h2>{{ 'reports.audit.empty-reports-title' | translate }}</h2>
+            <p>{{ 'reports.audit.empty-reports-description' | translate }}</p>
+          </div>
+        }
+      </article>
+
+      <article class="table-card evidence-panel">
+        <div class="section-heading compact">
+          <div>
+            <h2>{{ 'reports.audit.findings-title' | translate }}</h2>
+            <p>{{ 'reports.audit.findings-subtitle' | translate }}</p>
+          </div>
+        </div>
+
+        @if (auditEvidence().findings.length) {
+          <div class="evidence-list">
+            @for (finding of auditEvidence().findings; track trackFinding($index, finding)) {
+              <div class="evidence-row">
+                <mat-icon aria-hidden="true">rule</mat-icon>
+                <div>
+                  <strong>{{ finding.assetName }}</strong>
+                  <span>
+                    {{ findingTypeLabelKey(finding) | translate }} ·
+                    <span class="status-pill inline-pill" [ngClass]="findingStatusClass(finding)">
+                      {{ ('reports.findings.status.' + finding.status) | translate }}
+                    </span>
+                  </span>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state compact-empty">
+            <mat-icon aria-hidden="true">task_alt</mat-icon>
+            <h2>{{ 'reports.audit.empty-findings-title' | translate }}</h2>
+            <p>{{ 'reports.audit.empty-findings-description' | translate }}</p>
+          </div>
+        }
+      </article>
+    </section>
+  }
+</section>
