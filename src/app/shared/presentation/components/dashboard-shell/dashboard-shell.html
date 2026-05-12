@@ -23,37 +23,10 @@
           }
         </a>
 
-        <div
-          class="menu-group"
-          routerLinkActive="active-group"
-          #monitoringGroup="routerLinkActive"
-          [class.open]="isMonitoringDropdownOpen(monitoringGroup.isActive)"
-        >
-          <button
-            class="menu-item menu-trigger"
-            type="button"
-            [attr.aria-expanded]="isMonitoringDropdownOpen(monitoringGroup.isActive)"
-            (click)="toggleMonitoringDropdown(monitoringGroup.isActive)"
-          >
-            <mat-icon class="menu-icon">sensors</mat-icon>
-            <span class="menu-label">{{ 'dashboard-shell.nav-monitoring' | translate }}</span>
-            <mat-icon class="dropdown-icon">expand_more</mat-icon>
-          </button>
-          @if (isMonitoringDropdownOpen(monitoringGroup.isActive)) {
-            <div class="sub-menu" aria-label="Monitoring navigation">
-              <a
-                class="sub-menu-link"
-                routerLink="/monitoring/operational"
-                routerLinkActive="active"
-              >
-                {{ 'dashboard-shell.nav-operational-dashboard' | translate }}
-              </a>
-              <a class="sub-menu-link" routerLink="/monitoring/assets" routerLinkActive="active">
-                {{ 'dashboard-shell.nav-asset-monitoring' | translate }}
-              </a>
-            </div>
-          }
-        </div>
+        <a class="menu-item" routerLink="/monitoring/assets" routerLinkActive="active">
+          <mat-icon class="menu-icon">sensors</mat-icon>
+          <span class="menu-label">{{ 'dashboard-shell.nav-monitoring' | translate }}</span>
+        </a>
 
         <a class="menu-item" routerLink="/alerts/incidents" routerLinkActive="active">
           <mat-icon class="menu-icon">warning</mat-icon>
@@ -104,11 +77,6 @@
             </div>
           }
         </div>
-
-        <a class="menu-item">
-          <mat-icon class="menu-icon">chat</mat-icon>
-          <span class="menu-label">{{ 'dashboard-shell.nav-chats' | translate }}</span>
-        </a>
 
         <div
           class="menu-group"
@@ -204,7 +172,7 @@
           }
         </div>
 
-        <a class="menu-item">
+        <a class="menu-item" routerLink="/alerts/notifications" routerLinkActive="active">
           <mat-icon class="menu-icon">notifications</mat-icon>
           <span class="menu-label">{{ 'dashboard-shell.nav-notifications' | translate }}</span>
         </a>
@@ -212,49 +180,6 @@
     </div>
 
     <div class="sidebar-footer">
-      <div class="team-list">
-        <div class="team-member">
-          <div class="member-avatar">
-            <span class="avatar-face">LM</span>
-            <span class="status-dot online"></span>
-          </div>
-          <span class="member-name">Laura Mendoza</span>
-          <mat-icon class="member-action camera-icon">videocam</mat-icon>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar">
-            <span class="avatar-face">AS</span>
-            <span class="status-dot online"></span>
-          </div>
-          <span class="member-name">Andrés Silva</span>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar">
-            <span class="avatar-face">RT</span>
-            <span class="status-dot busy"></span>
-          </div>
-          <span class="member-name">Ricardo Torres</span>
-          <mat-icon class="member-action chat-icon">chat_bubble</mat-icon>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar">
-            <span class="avatar-face">SR</span>
-            <span class="status-dot online"></span>
-          </div>
-          <span class="member-name">Sofía Rojas</span>
-        </div>
-
-        <div class="team-member">
-          <div class="member-avatar">
-            <span class="avatar-face">JC</span>
-          </div>
-          <span class="member-name">Jorge Castillo</span>
-        </div>
-      </div>
-
       <app-language-switcher />
 
       <button class="drag-upload" type="button" (click)="requestMonthlyReport()">
@@ -278,21 +203,6 @@
   <!-- WORKSPACE -->
   <section class="workspace">
     <header class="topbar">
-      <nav class="top-tabs">
-        <a class="tab active">{{ pageTitleKey | translate }}</a>
-        <a class="tab">{{ 'dashboard-shell.top-overview' | translate }}</a>
-        <a class="tab">{{ 'dashboard-shell.top-insights' | translate }}</a>
-        <a class="tab">{{ 'dashboard-shell.top-notifications' | translate }}</a>
-        <a class="tab">{{ 'dashboard-shell.top-settings' | translate }}</a>
-      </nav>
-
-      <div class="search-section">
-        <div class="search-input-wrapper">
-          <mat-icon>search</mat-icon>
-          <input type="text" [placeholder]="'dashboard-shell.search-placeholder' | translate" />
-        </div>
-      </div>
-
       <div class="user-profile">
         <div class="avatar-wrapper">
           <div class="avatar-container">

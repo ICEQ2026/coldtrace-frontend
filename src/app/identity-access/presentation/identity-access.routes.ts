@@ -34,7 +34,7 @@ export const identityAccessRoutes: Routes = [
   },
   {
     path: 'monitoring',
-    redirectTo: '/monitoring/operational',
+    redirectTo: '/monitoring/assets',
     pathMatch: 'full',
   },
   {

@@ -658,7 +658,6 @@
     "nav-users": "Usuarios",
     "nav-new-user": "Nuevo usuario",
     "nav-permissions": "Permisos",
-    "nav-chats": "Chats",
     "nav-settings": "Configuración",
     "nav-safety-ranges": "Rangos seguros",
     "nav-operational-parameters": "Parámetros operativos",
@@ -674,14 +673,7 @@
     "nav-notifications": "Notificaciones",
     "download-report": "Descargar reporte mensual",
     "theme-light": "Claro",
-    "theme-dark": "Oscuro",
-    "top-overview": "Resumen",
-    "top-insights": "Hallazgos",
-    "top-notifications": "Notificaciones",
-    "top-settings": "Configuración",
-    "search-placeholder": "Buscar contenido...",
-    "nav-operational-dashboard": "Dashboard operativo",
-    "nav-asset-monitoring": "Monitoreo de activos"
+    "theme-dark": "Oscuro"
   },
   "monitoring": {
     "operational": {
@@ -1183,6 +1175,25 @@
       "access-description": "Tu rol actual no incluye permisos para gestionar incidencias.",
       "empty-title": "Sin incidencias activas",
       "empty-description": "Todos los activos monitoreados operan dentro de los parámetros normales."
+    },
+    "notification-list": {
+      "page-title": "Notificaciones",
+      "title": "Notificaciones",
+      "subtitle": "Historial de despacho de alertas para incidencias críticas activas.",
+      "card-title": "Notificaciones de alerta",
+      "card-subtitle": "Estados simulados de entrega por app, correo y SMS.",
+      "total": "notificaciones",
+      "pending": "pendiente(s)",
+      "failed": "fallida(s)",
+      "empty-title": "Sin notificaciones despachadas",
+      "empty-description": "Las incidencias críticas crearán registros de notificación por canal.",
+      "recipient": "Destinatario:",
+      "channel-app": "App",
+      "channel-email": "Correo",
+      "channel-sms": "SMS",
+      "status-pending": "Pendiente",
+      "status-sent": "Enviada",
+      "status-failed": "Fallida"
     }
   }
 }

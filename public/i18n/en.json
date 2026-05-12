@@ -658,7 +658,6 @@
     "nav-users": "Users",
     "nav-new-user": "New user",
     "nav-permissions": "Permissions",
-    "nav-chats": "Chats",
     "nav-settings": "Settings",
     "nav-safety-ranges": "Safety ranges",
     "nav-operational-parameters": "Operational parameters",
@@ -674,14 +673,7 @@
     "nav-notifications": "Notifications",
     "download-report": "Download Monthly Report",
     "theme-light": "Light",
-    "theme-dark": "Dark",
-    "top-overview": "Overview",
-    "top-insights": "Insights",
-    "top-notifications": "Notifications",
-    "top-settings": "Settings",
-    "search-placeholder": "Search content...",
-    "nav-operational-dashboard": "Operational dashboard",
-    "nav-asset-monitoring": "Asset monitoring"
+    "theme-dark": "Dark"
   },
   "monitoring": {
     "operational": {
@@ -1183,6 +1175,25 @@
       "access-description": "Your current role does not include permissions to manage incidents.",
       "empty-title": "No active incidents",
       "empty-description": "All monitored assets are operating within normal parameters."
+    },
+    "notification-list": {
+      "page-title": "Notifications",
+      "title": "Notifications",
+      "subtitle": "Alert dispatch history for active critical incidents.",
+      "card-title": "Alert notifications",
+      "card-subtitle": "Simulated app, email and SMS delivery states.",
+      "total": "notifications",
+      "pending": "pending",
+      "failed": "failed",
+      "empty-title": "No notifications dispatched",
+      "empty-description": "Critical incidents will create notification records by channel.",
+      "recipient": "Recipient:",
+      "channel-app": "App",
+      "channel-email": "Email",
+      "channel-sms": "SMS",
+      "status-pending": "Pending",
+      "status-sent": "Sent",
+      "status-failed": "Failed"
     }
   }
 }

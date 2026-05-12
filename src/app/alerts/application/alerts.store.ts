@@ -7,6 +7,9 @@ import { IdentityAccessStore } from '../../identity-access/application/identity-
 import { SensorReading } from '../../monitoring/domain/model/sensor-reading.entity';
 import { MonitoringApi } from '../../monitoring/infrastructure/monitoring-api';
 import { Incident } from '../domain/model/incident.entity';
+import { NotificationChannel } from '../domain/model/notification-channel.enum';
+import { NotificationStatus } from '../domain/model/notification-status.enum';
+import { Notification } from '../domain/model/notification.entity';
 import { AlertsApi } from '../infrastructure/alerts-api';
 
 type ThermalConditionKey = 'high-temperature' | 'low-temperature';
@@ -15,6 +18,7 @@ type GeneratedConditionKey = ThermalConditionKey | 'thermal-configuration-pendin
 @Injectable({ providedIn: 'root' })
 export class AlertsStore {
   private readonly incidentsSignal = signal<Incident[]>([]);
+  private readonly notificationsSignal = signal<Notification[]>([]);
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
   private readonly recognizingIdSignal = signal<number | null>(null);
@@ -34,6 +38,19 @@ export class AlertsStore {
       (incident) => incident.organizationId === organizationId,
     );
   });
+  readonly notifications = computed(() => {
+    const organizationId = this.identityAccessStore.currentOrganizationIdFrom(
+      this.identityAccessStore.users(),
+    );
+
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.notificationsSignal().filter(
+      (notification) => notification.organizationId === organizationId,
+    );
+  });
   readonly loading = this.loadingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
   readonly recognizingId = this.recognizingIdSignal.asReadonly();
@@ -42,6 +59,12 @@ export class AlertsStore {
 
   readonly openIncidents = computed(() => this.incidents().filter((i) => i.isOpen));
   readonly openIncidentsCount = computed(() => this.openIncidents().length);
+  readonly pendingNotificationsCount = computed(
+    () => this.notifications().filter((notification) => notification.isPending).length,
+  );
+  readonly failedNotificationsCount = computed(
+    () => this.notifications().filter((notification) => notification.isFailed).length,
+  );
 
   constructor(
     private readonly alertsApi: AlertsApi,
@@ -55,12 +78,13 @@ export class AlertsStore {
     this.errorSignal.set(null);
     forkJoin({
       incidents: this.alertsApi.getIncidents(),
+      notifications: this.alertsApi.getNotifications(),
       readings: this.monitoringApi.getSensorReadings(),
       assets: this.assetManagementApi.getAssets(),
       settings: this.assetManagementApi.getAssetSettings(),
     })
       .pipe(
-        switchMap(({ incidents, readings, assets, settings }) => {
+        switchMap(({ incidents, notifications, readings, assets, settings }) => {
           const generatedIncidents = this.generatedThermalIncidentsFrom(
             incidents,
             readings,
@@ -68,18 +92,41 @@ export class AlertsStore {
             settings,
           );
 
-          if (!generatedIncidents.length) {
-            return of(incidents);
-          }
+          const incidentsRequest = generatedIncidents.length
+            ? forkJoin(
+              generatedIncidents.map((incident) => this.alertsApi.createIncident(incident)),
+            ).pipe(map((createdIncidents) => [...incidents, ...createdIncidents]))
+            : of(incidents);
 
-          return forkJoin(
-            generatedIncidents.map((incident) => this.alertsApi.createIncident(incident)),
-          ).pipe(map((createdIncidents) => [...incidents, ...createdIncidents]));
+          return incidentsRequest.pipe(
+            switchMap((currentIncidents) => {
+              const generatedNotifications = this.generatedNotificationsFrom(
+                currentIncidents,
+                notifications,
+              );
+
+              if (!generatedNotifications.length) {
+                return of({ incidents: currentIncidents, notifications });
+              }
+
+              return forkJoin(
+                generatedNotifications.map((notification) =>
+                  this.alertsApi.createNotification(notification),
+                ),
+              ).pipe(
+                map((createdNotifications) => ({
+                  incidents: currentIncidents,
+                  notifications: [...notifications, ...createdNotifications],
+                })),
+              );
+            }),
+          );
         }),
       )
       .subscribe({
-        next: (incidents) => {
+        next: ({ incidents, notifications }) => {
           this.incidentsSignal.set(incidents);
+          this.notificationsSignal.set(notifications);
           this.loadingSignal.set(false);
         },
         error: (error) => {
@@ -247,6 +294,92 @@ export class AlertsStore {
         nextId += 1;
         return incident;
       });
+  }
+
+  private generatedNotificationsFrom(
+    incidents: Incident[],
+    notifications: Notification[],
+  ): Notification[] {
+    const notificationChannels = [
+      NotificationChannel.App,
+      NotificationChannel.Email,
+      NotificationChannel.Sms,
+    ];
+    let nextId = Math.max(...notifications.map((notification) => notification.id), 0) + 1;
+
+    return incidents
+      .filter((incident) => incident.severity === 'critical' && !incident.isClosed)
+      .flatMap((incident) =>
+        notificationChannels
+          .filter(
+            (channel) =>
+              !notifications.some(
+                (notification) =>
+                  notification.incidentId === incident.id &&
+                  notification.channel === channel,
+              ),
+          )
+          .map((channel) => {
+            const notification = this.notificationForIncident(incident, channel, nextId);
+            nextId += 1;
+            return notification;
+          }),
+      );
+  }
+
+  private notificationForIncident(
+    incident: Incident,
+    channel: NotificationChannel,
+    id: number,
+  ): Notification {
+    const status = this.notificationStatusFor(channel);
+    const createdAt = new Date(incident.detectedAt).toISOString();
+
+    return new Notification(
+      id,
+      incident.organizationId,
+      incident.id,
+      incident.assetName,
+      channel,
+      this.notificationRecipientFor(channel),
+      `${incident.assetName} reported ${incident.value} and requires attention.`,
+      status,
+      createdAt,
+      status === NotificationStatus.Sent ? this.plusMinutes(createdAt, 2) : null,
+      status === NotificationStatus.Failed
+        ? 'Recipient phone is not configured for SMS alerts.'
+        : null,
+    );
+  }
+
+  private notificationStatusFor(channel: NotificationChannel): NotificationStatus {
+    switch (channel) {
+      case NotificationChannel.App:
+        return NotificationStatus.Sent;
+      case NotificationChannel.Email:
+        return NotificationStatus.Pending;
+      default:
+        return NotificationStatus.Failed;
+    }
+  }
+
+  private notificationRecipientFor(channel: NotificationChannel): string {
+    const currentUser = this.identityAccessStore.currentUserFrom(this.identityAccessStore.users());
+
+    switch (channel) {
+      case NotificationChannel.Email:
+        return currentUser?.email ?? 'operations@coldtrace.local';
+      case NotificationChannel.Sms:
+        return 'No phone configured';
+      default:
+        return this.identityAccessStore.currentUserNameFrom(this.identityAccessStore.users());
+    }
+  }
+
+  private plusMinutes(isoDate: string, minutes: number): string {
+    const date = new Date(isoDate);
+    date.setMinutes(date.getMinutes() + minutes);
+    return date.toISOString();
   }
 
   private latestThermalCandidates(

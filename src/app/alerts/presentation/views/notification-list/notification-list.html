@@ -1,0 +1,78 @@
+<div class="notification-list-view">
+  <div class="view-header">
+    <div class="header-text">
+      <h1 class="view-title">{{ 'alerts.notification-list.title' | translate }}</h1>
+      <p class="view-subtitle">{{ 'alerts.notification-list.subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  @if (alertsStore.loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else {
+    <div class="premium-card notification-card">
+      <div class="card-header notification-header">
+        <div>
+          <h3 class="card-title">{{ 'alerts.notification-list.card-title' | translate }}</h3>
+          <p class="notification-subtitle">{{ 'alerts.notification-list.card-subtitle' | translate }}</p>
+        </div>
+        <div class="notification-summary">
+          <span class="notification-count">
+            {{ alertsStore.notifications().length }} {{ 'alerts.notification-list.total' | translate }}
+          </span>
+          <span class="notification-count pending">
+            {{ alertsStore.pendingNotificationsCount() }} {{ 'alerts.notification-list.pending' | translate }}
+          </span>
+          <span class="notification-count failed">
+            {{ alertsStore.failedNotificationsCount() }} {{ 'alerts.notification-list.failed' | translate }}
+          </span>
+        </div>
+      </div>
+
+      <div class="notification-list">
+        @for (notification of alertsStore.notifications(); track notification.id) {
+          <div class="notification-row">
+            <div
+              class="notification-channel"
+              [class.channel-app]="notification.channel === 'app'"
+              [class.channel-email]="notification.channel === 'email'"
+              [class.channel-sms]="notification.channel === 'sms'"
+            >
+              <mat-icon>{{ notificationChannelIcon(notification) }}</mat-icon>
+            </div>
+
+            <div class="notification-content">
+              <div class="notification-title-line">
+                <span>{{ notification.assetName }}</span>
+                <small>{{ notificationChannelLabelKey(notification) | translate }}</small>
+              </div>
+              <p>{{ notification.message }}</p>
+              <small>
+                {{ 'alerts.notification-list.recipient' | translate }} {{ notification.recipient }}
+              </small>
+            </div>
+
+            <div class="notification-state">
+              <span
+                class="notification-status"
+                [class.notification-sent]="notification.isSent"
+                [class.notification-pending]="notification.isPending"
+                [class.notification-failed]="notification.isFailed"
+              >
+                {{ notificationStatusLabelKey(notification) | translate }}
+              </span>
+              <small>{{ formatDate(notification.createdAt) }}</small>
+            </div>
+          </div>
+        } @empty {
+          <div class="notification-empty">
+            <mat-icon>notifications_off</mat-icon>
+            <p>{{ 'alerts.notification-list.empty-title' | translate }}</p>
+            <small>{{ 'alerts.notification-list.empty-description' | translate }}</small>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -81,6 +81,10 @@ export class Layout implements OnInit {
       return 'monitoring.operational.title';
     }
 
+    if (currentUrl.includes('/alerts/notifications')) {
+      return 'alerts.notification-list.page-title';
+    }
+
     if (currentUrl.includes('/alerts')) {
       return 'alerts.incident-list.page-title';
     }
