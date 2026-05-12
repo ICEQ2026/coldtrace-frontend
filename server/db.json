@@ -4476,6 +4476,44 @@
       "signalStrength": null
     }
   ],
+  "maintenance-schedules": [
+    {
+      "id": 1,
+      "organizationId": 1,
+      "uuid": "PM-001",
+      "assetId": 5,
+      "iotDeviceId": 9,
+      "scheduledDate": "2026-05-20",
+      "period": "2026-05",
+      "observations": "Quarterly sensor calibration and cold room inspection.",
+      "status": "scheduled",
+      "createdAt": "2026-05-12"
+    },
+    {
+      "id": 2,
+      "organizationId": 1,
+      "uuid": "PM-002",
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "scheduledDate": "2026-06-05",
+      "period": "2026-06",
+      "observations": "Preventive review before weekly refrigerated route expansion.",
+      "status": "pending",
+      "createdAt": "2026-05-12"
+    },
+    {
+      "id": 3,
+      "organizationId": 2,
+      "uuid": "PM-003",
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "scheduledDate": "2026-05-24",
+      "period": "2026-05",
+      "observations": "Kitchen cold room sensor verification.",
+      "status": "scheduled",
+      "createdAt": "2026-05-12"
+    }
+  ],
   "reports": [
     {
       "id": 1,

@@ -97,7 +97,8 @@ export class DashboardShell {
 
     return (
       url.includes('/asset-management/safety-ranges') ||
-      url.includes('/asset-management/operational-parameters')
+      url.includes('/asset-management/operational-parameters') ||
+      url.includes('/maintenance')
     );
   }
 }
