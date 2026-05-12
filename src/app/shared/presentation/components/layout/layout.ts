@@ -68,6 +68,10 @@ export class Layout implements OnInit {
       return 'maintenance.preventive.page-title';
     }
 
+    if (currentUrl.includes('/maintenance/technical-service')) {
+      return 'maintenance.technical-service.page-title';
+    }
+
     if (currentUrl.includes('/monitoring')) {
       return 'monitoring.operational.title';
     }

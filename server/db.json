@@ -4514,6 +4514,64 @@
       "createdAt": "2026-05-12"
     }
   ],
+  "technical-service-requests": [
+    {
+      "id": 1,
+      "organizationId": 1,
+      "uuid": "TS-001",
+      "assetId": 4,
+      "priority": "high",
+      "issueDescription": "Compressor temperature recovery is slower than expected after door openings.",
+      "requestedDate": "2026-05-12",
+      "status": "open",
+      "interventionNotes": null,
+      "resultNotes": null,
+      "functionalTestPassed": null,
+      "closedAt": null
+    },
+    {
+      "id": 2,
+      "organizationId": 1,
+      "uuid": "TS-002",
+      "assetId": 8,
+      "priority": "critical",
+      "issueDescription": "Gateway reports intermittent sensor signal during seafood storage monitoring.",
+      "requestedDate": "2026-05-11",
+      "status": "pending-review",
+      "interventionNotes": "Antenna connector reseated and device restarted.",
+      "resultNotes": "Signal improved but functional verification failed after the final reading check.",
+      "functionalTestPassed": false,
+      "closedAt": null
+    },
+    {
+      "id": 3,
+      "organizationId": 1,
+      "uuid": "TS-003",
+      "assetId": 22,
+      "priority": "medium",
+      "issueDescription": "Truck sensor battery drain reported during route monitoring.",
+      "requestedDate": "2026-05-10",
+      "status": "closed",
+      "interventionNotes": "Battery module replaced and sensor mounting reviewed.",
+      "resultNotes": "Functional test passed with stable readings during route simulation.",
+      "functionalTestPassed": true,
+      "closedAt": "2026-05-12"
+    },
+    {
+      "id": 4,
+      "organizationId": 2,
+      "uuid": "TS-004",
+      "assetId": 21,
+      "priority": "low",
+      "issueDescription": "Routine technical review requested for restaurant cold room sensor housing.",
+      "requestedDate": "2026-05-12",
+      "status": "open",
+      "interventionNotes": null,
+      "resultNotes": null,
+      "functionalTestPassed": null,
+      "closedAt": null
+    }
+  ],
   "reports": [
     {
       "id": 1,
