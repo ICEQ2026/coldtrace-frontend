@@ -6,6 +6,11 @@ import { TemperaturePoint } from '../../../domain/model/temperature-point.entity
 
 Chart.register(...registerables);
 
+interface TemperatureLimits {
+  min: number;
+  max: number;
+}
+
 @Component({
   selector: 'app-temperature-chart',
   imports: [MatIconModule, TranslatePipe],
@@ -42,8 +47,7 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
     const labels = this.points.map(point => point.label);
     const temperatures = this.points.map(point => point.temperature);
     const ghostData = this.points.map(point => point.ghost);
-    const maxLimit = this.points[0]?.maxLimit ?? 7.2;
-    const minLimit = this.points[0]?.minLimit ?? -5;
+    const { max: maxLimit, min: minLimit } = this.limitsFor(this.points, [...temperatures, ...ghostData]);
     const { min: yMin, max: yMax } = this.computeYRange(temperatures, ghostData, maxLimit, minLimit);
 
     this.chart.data.labels = labels;
@@ -92,8 +96,7 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
     const labels = dashboardPoints.map(point => point.label);
     const temperatures = dashboardPoints.map(point => point.temperature);
     const ghostData = dashboardPoints.map(point => point.ghost);
-    const maxLimit = dashboardPoints[0]?.maxLimit ?? 7.2;
-    const minLimit = dashboardPoints[0]?.minLimit ?? -5;
+    const { max: maxLimit, min: minLimit } = this.limitsFor(dashboardPoints, [...temperatures, ...ghostData]);
     const { min: yMin, max: yMax } = this.computeYRange(temperatures, ghostData, maxLimit, minLimit);
 
     const ctx = this.canvas.nativeElement.getContext('2d');
@@ -236,5 +239,42 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
         }
       }
     });
+  }
+
+  private limitsFor(points: TemperaturePoint[], values: number[]): TemperatureLimits {
+    const configuredLimits = points[0];
+
+    if (
+      configuredLimits &&
+      Number.isFinite(configuredLimits.minLimit) &&
+      Number.isFinite(configuredLimits.maxLimit) &&
+      configuredLimits.minLimit < configuredLimits.maxLimit
+    ) {
+      return {
+        min: configuredLimits.minLimit,
+        max: configuredLimits.maxLimit,
+      };
+    }
+
+    const finiteValues = values.filter((value) => Number.isFinite(value));
+
+    if (!finiteValues.length) {
+      return { min: 0, max: 1 };
+    }
+
+    const min = Math.min(...finiteValues);
+    const max = Math.max(...finiteValues);
+
+    if (min === max) {
+      return {
+        min: Math.floor(min - 1),
+        max: Math.ceil(max + 1),
+      };
+    }
+
+    return {
+      min: Math.floor(min),
+      max: Math.ceil(max),
+    };
   }
 }

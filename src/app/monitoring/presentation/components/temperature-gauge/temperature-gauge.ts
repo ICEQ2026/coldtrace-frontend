@@ -17,8 +17,8 @@ export class TemperatureGauge {
   @Input() location = 'N/A';
   @Input() lastReadingTime = 'N/A';
   @Input() assetName = 'N/A';
-  @Input() minTemp = -5;
-  @Input() maxTemp = 8;
+  @Input() minTemp: number | null = null;
+  @Input() maxTemp: number | null = null;
 
   get hasTemperature(): boolean {
     return this.temperature !== null && Number.isFinite(this.temperature);
@@ -29,17 +29,19 @@ export class TemperatureGauge {
   }
 
   get gaugeColor(): string {
-    if (!this.hasTemperature) return '#CBD5E1';
-    if (this.temperature! > this.maxTemp) return '#EF4444';
-    if (this.temperature! < this.minTemp) return '#3B82F6';
+    if (!this.hasTemperature || !this.hasTemperatureRange) return '#CBD5E1';
+    if (this.temperature! > this.maxTemp!) return '#EF4444';
+    if (this.temperature! < this.minTemp!) return '#3B82F6';
     return '#22C55E';
   }
 
   get dashArray(): string {
     const totalLength = 240;
-    const range = Math.max(this.maxTemp - this.minTemp, 1);
-    const gaugeTemperature = this.hasTemperature ? this.temperature! : this.minTemp;
-    const normalized = Math.min(Math.max(gaugeTemperature - this.minTemp, 0), range);
+    const minTemp = this.hasTemperatureRange ? this.minTemp! : this.displayMinimumTemperature;
+    const maxTemp = this.hasTemperatureRange ? this.maxTemp! : this.displayMaximumTemperature;
+    const range = Math.max(maxTemp - minTemp, 1);
+    const gaugeTemperature = this.hasTemperature ? this.temperature! : minTemp;
+    const normalized = Math.min(Math.max(gaugeTemperature - minTemp, 0), range);
     const percentage = normalized / range;
     const filled = percentage * totalLength;
     return `${filled} ${totalLength}`;
@@ -47,5 +49,23 @@ export class TemperatureGauge {
 
   get temperatureText(): string {
     return this.hasTemperature ? `${this.temperature!.toFixed(1)}°C` : 'N/A';
+  }
+
+  private get hasTemperatureRange(): boolean {
+    return (
+      this.minTemp !== null &&
+      this.maxTemp !== null &&
+      Number.isFinite(this.minTemp) &&
+      Number.isFinite(this.maxTemp) &&
+      this.minTemp < this.maxTemp
+    );
+  }
+
+  private get displayMinimumTemperature(): number {
+    return this.hasTemperature ? Math.floor(this.temperature! - 1) : 0;
+  }
+
+  private get displayMaximumTemperature(): number {
+    return this.hasTemperature ? Math.ceil(this.temperature! + 1) : 1;
   }
 }

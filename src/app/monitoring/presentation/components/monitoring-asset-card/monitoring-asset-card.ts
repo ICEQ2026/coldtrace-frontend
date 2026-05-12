@@ -49,12 +49,12 @@ export class MonitoringAssetCard {
     });
   }
 
-  get minimumTemperature(): number {
-    return this.settings?.minimumTemperature ?? -5;
+  get minimumTemperature(): number | null {
+    return this.settings?.minimumTemperature ?? null;
   }
 
-  get maximumTemperature(): number {
-    return this.settings?.maximumTemperature ?? 8;
+  get maximumTemperature(): number | null {
+    return this.settings?.maximumTemperature ?? null;
   }
 
   get hasIncident(): boolean {

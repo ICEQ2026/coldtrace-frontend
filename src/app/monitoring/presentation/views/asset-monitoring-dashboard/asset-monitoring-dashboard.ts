@@ -26,6 +26,11 @@ interface AssetMonitoringItem {
   chartPoints: TemperaturePoint[];
 }
 
+interface TemperatureLimits {
+  min: number;
+  max: number;
+}
+
 @Component({
   selector: 'app-asset-monitoring-dashboard',
   standalone: true,
@@ -96,13 +101,14 @@ export class AssetMonitoringDashboard implements OnInit {
       .filter((reading) => reading.temperature !== null)
       .slice(0, 24)
       .reverse();
+    const limits = this.temperatureLimitsFor(chartReadings, settings);
 
     return {
       asset,
       device: this.linkedDeviceFor(asset),
       latestReading: readings[0] ?? null,
       settings,
-      chartPoints: chartReadings.map((reading, index) => this.toTemperaturePoint(reading, index, settings)),
+      chartPoints: chartReadings.map((reading, index) => this.toTemperaturePoint(reading, index, limits)),
     };
   }
 
@@ -117,7 +123,7 @@ export class AssetMonitoringDashboard implements OnInit {
   private toTemperaturePoint(
     reading: SensorReading,
     index: number,
-    settings: AssetSettings | undefined,
+    limits: TemperatureLimits,
   ): TemperaturePoint {
     const temperature = reading.temperature ?? 0;
 
@@ -129,9 +135,41 @@ export class AssetMonitoringDashboard implements OnInit {
       }),
       temperature,
       ghost: temperature,
-      maxLimit: settings?.maximumTemperature ?? 8,
-      minLimit: settings?.minimumTemperature ?? -5,
+      maxLimit: limits.max,
+      minLimit: limits.min,
     });
+  }
+
+  private temperatureLimitsFor(readings: SensorReading[], settings: AssetSettings | undefined): TemperatureLimits {
+    if (settings) {
+      return {
+        min: settings.minimumTemperature,
+        max: settings.maximumTemperature,
+      };
+    }
+
+    const temperatures = readings
+      .map((reading) => reading.temperature)
+      .filter((temperature): temperature is number => temperature !== null && Number.isFinite(temperature));
+
+    if (!temperatures.length) {
+      return { min: 0, max: 1 };
+    }
+
+    const min = Math.min(...temperatures);
+    const max = Math.max(...temperatures);
+
+    if (min === max) {
+      return {
+        min: Math.floor(min - 1),
+        max: Math.ceil(max + 1),
+      };
+    }
+
+    return {
+      min: Math.floor(min),
+      max: Math.ceil(max),
+    };
   }
 
   private matchesSearch(asset: Asset, query: string): boolean {
