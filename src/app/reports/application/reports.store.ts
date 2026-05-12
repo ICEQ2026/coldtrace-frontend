@@ -3,10 +3,21 @@ import { Observable, of, tap } from 'rxjs';
 import { AssetManagementStore } from '../../asset-management/application/asset-management.store';
 import { AssetSettings } from '../../asset-management/domain/model/asset-settings.entity';
 import { Asset } from '../../asset-management/domain/model/asset.entity';
+import { CalibrationStatus } from '../../asset-management/domain/model/calibration-status.enum';
 import { ConnectivityStatus } from '../../asset-management/domain/model/connectivity-status.enum';
 import { IoTDevice } from '../../asset-management/domain/model/iot-device.entity';
 import { SensorReading } from '../../monitoring/domain/model/sensor-reading.entity';
 import { MonitoringStore } from '../../monitoring/application/monitoring.store';
+import {
+  ComplianceFinding,
+  ComplianceFindingSeverity,
+  ComplianceFindingType,
+} from '../domain/model/compliance-finding.entity';
+import {
+  ComplianceReport,
+  ComplianceReportFilters,
+} from '../domain/model/compliance-report.entity';
+import { FindingStatus } from '../domain/model/finding-status.enum';
 import { Report } from '../domain/model/report.entity';
 import { ReportType } from '../domain/model/report-type.enum';
 import { DailyLog, DailyLogEntry, DailyLogStatus } from '../domain/model/daily-log.entity';
@@ -34,6 +45,7 @@ export class ReportsStore {
   private readonly reportsSignal = signal<Report[]>([]);
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
+  private readonly closedComplianceFindingIdsSignal = signal<Set<string>>(new Set());
 
   readonly reports = this.reportsSignal.asReadonly();
   readonly loading = this.loadingSignal.asReadonly();
@@ -183,6 +195,55 @@ export class ReportsStore {
     );
   }
 
+  buildComplianceReport(
+    organizationId: number | null,
+    filters: ComplianceReportFilters,
+  ): ComplianceReport {
+    const safeOrganizationId = organizationId ?? 0;
+    const assets = this.assetManagementStore.assetsForOrganization(organizationId);
+    const iotDevices = this.assetManagementStore.iotDevicesForOrganization(organizationId);
+    const assetSettings = this.assetManagementStore
+      .assetSettings()
+      .find((settings) => settings.organizationId === organizationId);
+    const selectedAssets = assets.filter(
+      (asset) => !filters.assetId || asset.id === filters.assetId,
+    );
+    const selectedAssetIds = selectedAssets.map((asset) => asset.id);
+    const readings = this.monitoringStore
+      .readingsForAssetIds(selectedAssetIds)
+      .filter((reading) =>
+        this.isInDateRange(reading.recordedAt, filters.fromDate, filters.toDate),
+      );
+    const daysCount = this.daysInRange(filters.fromDate, filters.toDate);
+    const findings = selectedAssets
+      .flatMap((asset) =>
+        this.buildComplianceFindings(
+          safeOrganizationId,
+          asset,
+          readings,
+          iotDevices,
+          assetSettings,
+          filters,
+          daysCount,
+        ),
+      )
+      .filter((finding) => filters.status === 'all' || finding.status === filters.status)
+      .sort(
+        (a, b) =>
+          this.severityWeight(b.severity) - this.severityWeight(a.severity) ||
+          a.assetName.localeCompare(b.assetName) ||
+          a.type.localeCompare(b.type),
+      );
+
+    return new ComplianceReport(
+      Number(`${filters.fromDate.replaceAll('-', '')}${safeOrganizationId}`),
+      safeOrganizationId,
+      filters,
+      new Date().toISOString(),
+      findings,
+    );
+  }
+
   buildMonthlyReport(organizationId: number | null, month: string): MonthlyReport {
     const safeOrganizationId = organizationId ?? 0;
     const range = this.monthDateRange(month);
@@ -304,6 +365,14 @@ export class ReportsStore {
     );
   }
 
+  closeComplianceFinding(findingId: string): void {
+    this.closedComplianceFindingIdsSignal.update((findingIds) => {
+      const nextFindingIds = new Set(findingIds);
+      nextFindingIds.add(findingId);
+      return nextFindingIds;
+    });
+  }
+
   sanitaryComplianceCsv(complianceReport: SanitaryComplianceReport): string {
     const headers = [
       'From',
@@ -382,6 +451,189 @@ export class ReportsStore {
     return [headers, ...rows]
       .map((row) => row.map((cell) => this.csvCell(cell)).join(','))
       .join('\n');
+  }
+
+  private buildComplianceFindings(
+    organizationId: number,
+    asset: Asset,
+    readings: SensorReading[],
+    iotDevices: IoTDevice[],
+    settings: AssetSettings | undefined,
+    filters: ComplianceReportFilters,
+    daysCount: number,
+  ): ComplianceFinding[] {
+    const assetReadings = readings.filter((reading) => reading.assetId === asset.id);
+    const assetDevices = iotDevices.filter((iotDevice) => iotDevice.assetId === asset.id);
+    const expectedReadings = assetDevices.length
+      ? this.expectedDailyReadingsFor(assetDevices, assetReadings.length) * daysCount
+      : assetReadings.length;
+    const missingReadings = Math.max(expectedReadings - assetReadings.length, 0);
+    const outOfRangeCount = assetReadings.filter((reading) => reading.isOutOfRange).length;
+    const incidentKey = this.normalizeIncident(asset.lastIncident);
+    const expiredDevices = assetDevices.filter(
+      (iotDevice) => iotDevice.calibrationStatus === CalibrationStatus.Expired,
+    );
+    const findings: ComplianceFinding[] = [];
+
+    if (!assetDevices.length) {
+      findings.push(
+        this.complianceFinding(
+          organizationId,
+          asset,
+          filters,
+          'incomplete-evaluation',
+          'limitation',
+          'reports.findings.messages.missing-device',
+          'No linked monitoring device',
+          { asset: asset.name },
+        ),
+      );
+    }
+
+    if (!settings) {
+      findings.push(
+        this.complianceFinding(
+          organizationId,
+          asset,
+          filters,
+          'incomplete-evaluation',
+          'limitation',
+          'reports.findings.messages.missing-settings',
+          'No safety range configured',
+          { asset: asset.name },
+          'settings',
+        ),
+      );
+    }
+
+    if (missingReadings > 0) {
+      findings.push(
+        this.complianceFinding(
+          organizationId,
+          asset,
+          filters,
+          'missing-readings',
+          assetReadings.length ? 'observation' : 'potential-non-compliance',
+          'reports.findings.messages.missing-readings',
+          `${assetReadings.length} / ${expectedReadings} readings`,
+          {
+            actual: assetReadings.length,
+            expected: expectedReadings,
+          },
+        ),
+      );
+    }
+
+    if (outOfRangeCount > 0) {
+      findings.push(
+        this.complianceFinding(
+          organizationId,
+          asset,
+          filters,
+          'out-of-range',
+          'potential-non-compliance',
+          'reports.findings.messages.out-of-range',
+          `${outOfRangeCount} out of range`,
+          { count: outOfRangeCount },
+        ),
+      );
+    }
+
+    if (incidentKey !== 'none') {
+      findings.push(
+        this.complianceFinding(
+          organizationId,
+          asset,
+          filters,
+          'open-incident',
+          'potential-non-compliance',
+          `reports.history.incidents.${incidentKey}`,
+          asset.currentTemperature,
+          {},
+          incidentKey,
+        ),
+      );
+    }
+
+    if (asset.connectivity !== ConnectivityStatus.Online) {
+      findings.push(
+        this.complianceFinding(
+          organizationId,
+          asset,
+          filters,
+          'open-incident',
+          asset.connectivity === ConnectivityStatus.Offline ? 'potential-non-compliance' : 'observation',
+          'reports.findings.messages.connectivity',
+          asset.connectivity,
+          { status: asset.connectivity },
+          `connectivity-${asset.connectivity}`,
+        ),
+      );
+    }
+
+    expiredDevices.forEach((iotDevice) => {
+      findings.push(
+        this.complianceFinding(
+          organizationId,
+          asset,
+          filters,
+          'expired-calibration',
+          'observation',
+          'reports.findings.messages.expired-calibration',
+          iotDevice.uuid,
+          {
+            device: iotDevice.uuid,
+            date: iotDevice.nextCalibrationDate,
+          },
+          iotDevice.uuid,
+        ),
+      );
+    });
+
+    return findings;
+  }
+
+  private complianceFinding(
+    organizationId: number,
+    asset: Asset,
+    filters: ComplianceReportFilters,
+    type: ComplianceFindingType,
+    severity: ComplianceFindingSeverity,
+    messageKey: string,
+    evidence: string,
+    messageParams: Record<string, string | number> = {},
+    idSuffix = '',
+  ): ComplianceFinding {
+    const id = [
+      organizationId,
+      asset.id,
+      filters.fromDate,
+      filters.toDate,
+      type,
+      idSuffix,
+    ]
+      .filter((value) => value !== '')
+      .join('-');
+    const status = this.closedComplianceFindingIdsSignal().has(id)
+      ? FindingStatus.Closed
+      : FindingStatus.Open;
+
+    return new ComplianceFinding(
+      id,
+      organizationId,
+      asset.id,
+      asset.name,
+      asset.location,
+      type,
+      severity,
+      status,
+      filters.fromDate,
+      filters.toDate,
+      new Date().toISOString(),
+      evidence,
+      messageKey,
+      messageParams,
+    );
   }
 
   private buildDailyLogEntry(
@@ -540,6 +792,14 @@ export class ReportsStore {
     }
 
     return incidentCount ? 'attention' : 'complete';
+  }
+
+  private severityWeight(severity: ComplianceFindingSeverity): number {
+    if (severity === 'potential-non-compliance') {
+      return 3;
+    }
+
+    return severity === 'observation' ? 2 : 1;
   }
 
   private expectedDailyReadingsFor(iotDevices: IoTDevice[], fallbackReadings: number): number {

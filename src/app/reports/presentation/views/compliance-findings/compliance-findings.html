@@ -1,0 +1,207 @@
+<section class="page" aria-labelledby="findings-title">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <div class="page-heading">
+    <div>
+      <span class="section-kicker">{{ activeOrganizationName() }}</span>
+      <h1 id="findings-title">{{ 'reports.findings.title' | translate }}</h1>
+      <p>{{ 'reports.findings.subtitle' | translate }}</p>
+    </div>
+
+    <div class="heading-actions">
+      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'reports.findings.reload' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (feedback() === 'closed') {
+    <p class="feedback success">{{ 'reports.findings.feedback-closed' | translate }}</p>
+  }
+
+  @if (feedback() === 'access-denied') {
+    <p class="feedback warning">{{ 'reports.findings.feedback-access-denied' | translate }}</p>
+  }
+
+  @if (feedback() === 'server-error' || monitoringStore.error()) {
+    <p class="feedback error">{{ 'reports.findings.feedback-error' | translate }}</p>
+  }
+
+  @if (!canViewFindings() && !loading()) {
+    <section class="access-banner" aria-live="polite">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <div>
+        <h2>{{ 'reports.findings.access-title' | translate }}</h2>
+        <p>{{ 'reports.findings.access-description' | translate }}</p>
+      </div>
+    </section>
+  } @else {
+    <section class="filter-card" aria-label="Compliance findings filters">
+      <label class="filter-field">
+        <span>{{ 'reports.findings.filter-from' | translate }}</span>
+        <input
+          type="date"
+          [value]="effectiveFromDate()"
+          [max]="maxDate()"
+          (input)="updateFromDate($any($event.target).value)"
+        />
+      </label>
+
+      <label class="filter-field">
+        <span>{{ 'reports.findings.filter-to' | translate }}</span>
+        <input
+          type="date"
+          [value]="effectiveToDate()"
+          [max]="maxDate()"
+          (input)="updateToDate($any($event.target).value)"
+        />
+      </label>
+
+      <label class="filter-field">
+        <span>{{ 'reports.findings.filter-asset' | translate }}</span>
+        <select [value]="selectedAssetId()" (change)="selectAsset($any($event.target).value)">
+          <option [value]="0">{{ 'reports.findings.all-assets' | translate }}</option>
+          @for (asset of organizationAssets(); track asset.id) {
+            <option [value]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="filter-field">
+        <span>{{ 'reports.findings.filter-status' | translate }}</span>
+        <select [value]="selectedStatus()" (change)="selectStatus($any($event.target).value)">
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">{{ option.labelKey | translate }}</option>
+          }
+        </select>
+      </label>
+    </section>
+
+    <section class="summary-grid" aria-label="Compliance findings summary">
+      <article class="summary-card accent-blue">
+        <span>{{ 'reports.findings.summary-assets' | translate }}</span>
+        <strong>{{ complianceReport().affectedAssets }}</strong>
+      </article>
+      <article class="summary-card accent-red">
+        <span>{{ 'reports.findings.summary-open' | translate }}</span>
+        <strong>{{ complianceReport().openFindings }}</strong>
+      </article>
+      <article class="summary-card accent-amber">
+        <span>{{ 'reports.findings.summary-non-compliance' | translate }}</span>
+        <strong>{{ complianceReport().potentialNonCompliance }}</strong>
+      </article>
+      <article class="summary-card accent-gray">
+        <span>{{ 'reports.findings.summary-limitations' | translate }}</span>
+        <strong>{{ complianceReport().limitations }}</strong>
+      </article>
+    </section>
+
+    @if (complianceReport().limitations > 0 && hasFindings()) {
+      <section class="observation-banner" aria-live="polite">
+        <mat-icon aria-hidden="true">rule</mat-icon>
+        <div>
+          <h2>{{ 'reports.findings.limitation-title' | translate }}</h2>
+          <p>
+            {{
+              'reports.findings.limitation-description'
+                | translate: { count: complianceReport().limitations }
+            }}
+          </p>
+        </div>
+      </section>
+    }
+
+    @if (!canCloseFindings() && hasFindings()) {
+      <section class="access-banner" aria-live="polite">
+        <mat-icon aria-hidden="true">lock</mat-icon>
+        <div>
+          <h2>{{ 'reports.findings.close-access-title' | translate }}</h2>
+          <p>{{ 'reports.findings.close-access-description' | translate }}</p>
+        </div>
+      </section>
+    }
+
+    <section class="table-card" aria-labelledby="findings-table-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="findings-table-title">{{ 'reports.findings.table-title' | translate }}</h2>
+          <p>
+            {{
+              'reports.findings.table-subtitle'
+                | translate: { from: effectiveFromDate(), to: effectiveToDate() }
+            }}
+          </p>
+        </div>
+      </div>
+
+      @if (hasFindings()) {
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ 'reports.findings.table.asset' | translate }}</th>
+                <th>{{ 'reports.findings.table.finding' | translate }}</th>
+                <th>{{ 'reports.findings.table.evidence' | translate }}</th>
+                <th>{{ 'reports.findings.table.severity' | translate }}</th>
+                <th>{{ 'reports.findings.table.status' | translate }}</th>
+                <th>{{ 'reports.findings.table.action' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (finding of complianceReport().findings; track trackFinding($index, finding)) {
+                <tr>
+                  <td>
+                    <strong>{{ finding.assetName }}</strong>
+                    <span>{{ finding.assetLocation }}</span>
+                  </td>
+                  <td>
+                    <strong>{{ typeLabelKey(finding.type) | translate }}</strong>
+                    <small>{{ finding.messageKey | translate: finding.messageParams }}</small>
+                  </td>
+                  <td>{{ finding.evidence }}</td>
+                  <td>
+                    <span class="severity-pill" [ngClass]="severityClass(finding.severity)">
+                      {{ severityLabelKey(finding.severity) | translate }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="status-pill" [ngClass]="statusClass(finding.status)">
+                      {{ statusLabelKey(finding.status) | translate }}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      mat-stroked-button
+                      type="button"
+                      class="row-action"
+                      [disabled]="finding.status === findingStatus.Closed"
+                      (click)="closeFinding(finding)"
+                    >
+                      {{
+                        (canCloseFindings()
+                          ? 'reports.findings.close'
+                          : 'reports.findings.restricted'
+                        ) | translate
+                      }}
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <mat-icon aria-hidden="true">task_alt</mat-icon>
+          <h2>{{ 'reports.findings.empty-title' | translate }}</h2>
+          <p>{{ 'reports.findings.empty-description' | translate }}</p>
+        </div>
+      }
+    </section>
+  }
+</section>
