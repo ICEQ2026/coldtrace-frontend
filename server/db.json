@@ -141,8 +141,8 @@
       "capacity": 1200,
       "description": "Main dairy and beverage storage room.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "6.3°C",
+      "lastIncident": "asset-management.incidents.high-temperature",
+      "currentTemperature": "10.0°C",
       "entryDate": "13 Dec 2026",
       "connectivity": "unstable"
     },
@@ -157,10 +157,10 @@
       "capacity": 980,
       "description": "Prepared food storage room.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "11.6°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "0.2°C",
       "entryDate": "14 Dec 2026",
-      "connectivity": "unstable"
+      "connectivity": "online"
     },
     {
       "id": "3",
@@ -173,8 +173,8 @@
       "capacity": 650,
       "description": "Clinical supplies cold room.",
       "status": "maintenance",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "0.3°C",
+      "lastIncident": "asset-management.incidents.low-temperature",
+      "currentTemperature": "-6.1°C",
       "entryDate": "07 Dec 2026",
       "connectivity": "online"
     },
@@ -190,7 +190,7 @@
       "description": "Restaurant frozen storage.",
       "status": "active",
       "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "8.6°C",
+      "currentTemperature": "10.5°C",
       "entryDate": "06 Dec 2026",
       "connectivity": "online"
     },
@@ -205,10 +205,10 @@
       "capacity": 430,
       "description": "Pharmacy inventory refrigeration.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.connection-lost",
-      "currentTemperature": "—",
+      "lastIncident": "asset-management.incidents.high-humidity",
+      "currentTemperature": "-4.0°C",
       "entryDate": "31 Nov 2026",
-      "connectivity": "offline"
+      "connectivity": "unstable"
     },
     {
       "id": "6",
@@ -221,10 +221,10 @@
       "capacity": 600,
       "description": "Minimarket cold products room.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "2.1°C",
+      "lastIncident": "asset-management.incidents.high-humidity",
+      "currentTemperature": "3.6°C",
       "entryDate": "13 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
       "id": "7",
@@ -237,8 +237,8 @@
       "capacity": 1500,
       "description": "Secondary warehouse cold room.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "7.4°C",
+      "lastIncident": "asset-management.incidents.high-humidity",
+      "currentTemperature": "4.3°C",
       "entryDate": "14 Dec 2026",
       "connectivity": "online"
     },
@@ -253,10 +253,10 @@
       "capacity": 860,
       "description": "Seafood storage room.",
       "status": "maintenance",
-      "lastIncident": "asset-management.incidents.connection-lost",
-      "currentTemperature": "—",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "0.2°C",
       "entryDate": "07 Dec 2026",
-      "connectivity": "offline"
+      "connectivity": "unstable"
     },
     {
       "id": "9",
@@ -269,10 +269,10 @@
       "capacity": 700,
       "description": "Market cold room.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-humidity",
-      "currentTemperature": "6.2°C",
+      "lastIncident": "asset-management.incidents.connection-lost",
+      "currentTemperature": "—",
       "entryDate": "06 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "offline"
     },
     {
       "id": "10",
@@ -286,7 +286,7 @@
       "description": "University laboratory cold room.",
       "status": "active",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "-4.2°C",
+      "currentTemperature": "0.3°C",
       "entryDate": "31 Nov 2026",
       "connectivity": "online"
     },
@@ -302,9 +302,9 @@
       "description": "Port storage refrigeration chamber.",
       "status": "inactive",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "3.6°C",
+      "currentTemperature": "-2.7°C",
       "entryDate": "13 Dec 2026",
-      "connectivity": "unstable"
+      "connectivity": "online"
     },
     {
       "id": "12",
@@ -318,7 +318,7 @@
       "description": "Fish market storage chamber.",
       "status": "inactive",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "-4.5°C",
+      "currentTemperature": "3.9°C",
       "entryDate": "14 Dec 2026",
       "connectivity": "online"
     },
@@ -334,7 +334,7 @@
       "description": "Hotel kitchen cold room.",
       "status": "maintenance",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "-4.7°C",
+      "currentTemperature": "8.0°C",
       "entryDate": "07 Dec 2026",
       "connectivity": "online"
     },
@@ -349,10 +349,10 @@
       "capacity": 480,
       "description": "Clinic supplies storage.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.low-temperature",
-      "currentTemperature": "-7.2°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "-3.3°C",
       "entryDate": "06 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
       "id": "15",
@@ -382,9 +382,9 @@
       "description": "Distribution center cold room.",
       "status": "inactive",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "-3.2°C",
+      "currentTemperature": "2.5°C",
       "entryDate": "13 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
       "id": "17",
@@ -398,7 +398,7 @@
       "description": "Plaza center cold storage.",
       "status": "inactive",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "4.7°C",
+      "currentTemperature": "3.0°C",
       "entryDate": "14 Dec 2026",
       "connectivity": "online"
     },
@@ -414,9 +414,9 @@
       "description": "Warehouse C cold room.",
       "status": "maintenance",
       "lastIncident": "asset-management.incidents.high-humidity",
-      "currentTemperature": "-2.2°C",
+      "currentTemperature": "-3.8°C",
       "entryDate": "07 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
       "id": "19",
@@ -429,10 +429,10 @@
       "capacity": 1900,
       "description": "Airport cargo cold room.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.low-temperature",
-      "currentTemperature": "-7.9°C",
+      "lastIncident": "asset-management.incidents.connection-lost",
+      "currentTemperature": "—",
       "entryDate": "06 Dec 2026",
-      "connectivity": "online"
+      "connectivity": "offline"
     },
     {
       "id": "20",
@@ -446,7 +446,7 @@
       "description": "Corporate kitchen cold room.",
       "status": "active",
       "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "2.9°C",
+      "currentTemperature": "-3.5°C",
       "entryDate": "31 Nov 2026",
       "connectivity": "online"
     },
@@ -477,10 +477,10 @@
       "capacity": 2200,
       "description": "Refrigerated unit for northern Lima deliveries.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "8.2°C",
+      "lastIncident": "asset-management.incidents.low-temperature",
+      "currentTemperature": "-6.6°C",
       "entryDate": "09 May 2026",
-      "connectivity": "unstable"
+      "connectivity": "online"
     },
     {
       "id": "23",
@@ -493,10 +493,10 @@
       "capacity": 3100,
       "description": "Port delivery refrigerated unit.",
       "status": "maintenance",
-      "lastIncident": "asset-management.incidents.low-temperature",
-      "currentTemperature": "-6.0°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "5.9°C",
       "entryDate": "08 May 2026",
-      "connectivity": "online"
+      "connectivity": "unstable"
     },
     {
       "id": "24",
@@ -509,8 +509,8 @@
       "capacity": 980,
       "description": "Urban refrigerated van.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.none",
-      "currentTemperature": "4.3°C",
+      "lastIncident": "asset-management.incidents.low-temperature",
+      "currentTemperature": "-6.2°C",
       "entryDate": "07 May 2026",
       "connectivity": "online"
     },
@@ -525,8 +525,8 @@
       "capacity": 2600,
       "description": "Warehouse replenishment unit.",
       "status": "inactive",
-      "lastIncident": "asset-management.incidents.high-humidity",
-      "currentTemperature": "-3.8°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "3.3°C",
       "entryDate": "06 May 2026",
       "connectivity": "online"
     },
@@ -541,8 +541,8 @@
       "capacity": 1100,
       "description": "Corporate route refrigerated van.",
       "status": "active",
-      "lastIncident": "asset-management.incidents.high-temperature",
-      "currentTemperature": "13.2°C",
+      "lastIncident": "asset-management.incidents.none",
+      "currentTemperature": "1.3°C",
       "entryDate": "05 May 2026",
       "connectivity": "online"
     },
@@ -561,6 +561,22 @@
       "currentTemperature": "-6.6°C",
       "entryDate": "09 May 2026",
       "connectivity": "unstable"
+    },
+    {
+      "id": 28,
+      "organizationId": 1,
+      "uuid": "CR-00021",
+      "type": "cold-room",
+      "gatewayId": 2,
+      "name": "Cold Room 21",
+      "location": "San Miguel = UPC",
+      "capacity": 1200,
+      "description": "",
+      "status": "active",
+      "lastIncident": "connection-lost",
+      "currentTemperature": "—",
+      "entryDate": "11 May 2026",
+      "connectivity": "offline"
     }
   ],
   "gateways": [
@@ -571,7 +587,7 @@
       "name": "Main Warehouse Gateway",
       "location": "San Miguel - Plaza San Miguel",
       "network": "LTE / Wi-Fi",
-      "status": "maintenance"
+      "status": "active"
     },
     {
       "id": "2",
@@ -580,7 +596,7 @@
       "name": "Transport Dock Gateway",
       "location": "Callao - Port Storage",
       "network": "LTE",
-      "status": "maintenance"
+      "status": "active"
     },
     {
       "id": "3",
@@ -598,7 +614,7 @@
       "name": "South Route Gateway",
       "location": "Villa El Salvador - Distribution",
       "network": "LTE",
-      "status": "active"
+      "status": "maintenance"
     },
     {
       "id": "5",
@@ -666,8 +682,8 @@
       "model": "TempSense T100",
       "measurementType": "Temperature",
       "assetId": 1,
-      "status": "offline",
-      "calibrationStatus": "due-soon",
+      "status": "linked",
+      "calibrationStatus": "expired",
       "lastCalibrationDate": "01 May 2026",
       "nextCalibrationDate": "01 Nov 2026"
     },
@@ -679,8 +695,8 @@
       "model": "HumidSense H200",
       "measurementType": "Temperature / Humidity",
       "assetId": 3,
-      "status": "linked",
-      "calibrationStatus": "unknown",
+      "status": "offline",
+      "calibrationStatus": "compliant",
       "lastCalibrationDate": "10 Feb 2026",
       "nextCalibrationDate": "10 Jun 2026"
     },
@@ -691,9 +707,13 @@
       "deviceType": "temperature-sensor",
       "model": "TraceSense M2",
       "measurementType": "Temperature",
+      "measurementParameters": [
+        "temperature"
+      ],
+      "readingFrequencySeconds": 3600,
       "assetId": 3,
       "status": "linked",
-      "calibrationStatus": "due-soon",
+      "calibrationStatus": "compliant",
       "lastCalibrationDate": "09 May 2026",
       "nextCalibrationDate": "09 Nov 2026"
     },
@@ -705,8 +725,8 @@
       "model": "TraceSense M2",
       "measurementType": "Temperature / Humidity",
       "assetId": 2,
-      "status": "linked",
-      "calibrationStatus": "expired",
+      "status": "offline",
+      "calibrationStatus": "compliant",
       "lastCalibrationDate": "-",
       "nextCalibrationDate": "-"
     },
@@ -719,7 +739,7 @@
       "measurementType": "Temperature",
       "assetId": 22,
       "status": "linked",
-      "calibrationStatus": "expired",
+      "calibrationStatus": "compliant",
       "lastCalibrationDate": "12 Nov 2025",
       "nextCalibrationDate": "12 Apr 2026"
     },
@@ -735,241 +755,403 @@
       "calibrationStatus": "due-soon",
       "lastCalibrationDate": "09 May 2026",
       "nextCalibrationDate": "09 Nov 2026",
+      "readingFrequencySeconds": 3600,
       "measurementParameters": [
         "temperature",
         "battery",
         "signal"
       ]
+    },
+    {
+      "id": 7,
+      "organizationId": 1,
+      "uuid": "SN-006",
+      "deviceType": "temperature-sensor",
+      "model": "TempSense T100",
+      "measurementType": "Temperature / Humidity",
+      "measurementParameters": [
+        "temperature",
+        "humidity"
+      ],
+      "readingFrequencySeconds": 3600,
+      "assetId": 6,
+      "status": "linked",
+      "calibrationStatus": "compliant",
+      "lastCalibrationDate": "11 May 2026",
+      "nextCalibrationDate": "11 Nov 2026"
+    },
+    {
+      "id": 8,
+      "organizationId": 1,
+      "uuid": "SN-007",
+      "deviceType": "temperature-sensor",
+      "model": "TempSense T100",
+      "measurementType": "Temperature / Humidity",
+      "measurementParameters": [
+        "temperature",
+        "humidity"
+      ],
+      "readingFrequencySeconds": 3600,
+      "assetId": 4,
+      "status": "linked",
+      "calibrationStatus": "compliant",
+      "lastCalibrationDate": "11 May 2026",
+      "nextCalibrationDate": "11 Nov 2026"
+    },
+    {
+      "id": 9,
+      "organizationId": 1,
+      "uuid": "SN-008",
+      "deviceType": "temperature-sensor",
+      "model": "TraceSense M2",
+      "measurementType": "Temperature",
+      "measurementParameters": [
+        "temperature"
+      ],
+      "readingFrequencySeconds": 3600,
+      "assetId": 5,
+      "status": "linked",
+      "calibrationStatus": "compliant",
+      "lastCalibrationDate": "11 May 2026",
+      "nextCalibrationDate": "11 Nov 2026"
+    },
+    {
+      "id": 10,
+      "organizationId": 1,
+      "uuid": "SN-009",
+      "deviceType": "humidity-sensor",
+      "model": "HumidSense H200",
+      "measurementType": "Temperature / Humidity",
+      "measurementParameters": [
+        "temperature",
+        "humidity"
+      ],
+      "readingFrequencySeconds": 3600,
+      "assetId": 7,
+      "status": "linked",
+      "calibrationStatus": "due-soon",
+      "lastCalibrationDate": "11 May 2026",
+      "nextCalibrationDate": "11 Nov 2026"
+    },
+    {
+      "id": 11,
+      "organizationId": 1,
+      "uuid": "SN-010",
+      "deviceType": "multi-sensor",
+      "model": "TraceSense M2",
+      "measurementType": "Temperature / Humidity",
+      "measurementParameters": [
+        "temperature",
+        "humidity"
+      ],
+      "readingFrequencySeconds": 3600,
+      "assetId": 8,
+      "status": "linked",
+      "calibrationStatus": "compliant",
+      "lastCalibrationDate": "11 May 2026",
+      "nextCalibrationDate": "11 Nov 2026"
+    },
+    {
+      "id": 12,
+      "organizationId": 1,
+      "uuid": "SN-011",
+      "deviceType": "temperature-sensor",
+      "model": "TempSense T100",
+      "measurementType": "Temperature",
+      "measurementParameters": [
+        "temperature"
+      ],
+      "readingFrequencySeconds": 3600,
+      "assetId": 9,
+      "status": "linked",
+      "calibrationStatus": "compliant",
+      "lastCalibrationDate": "11 May 2026",
+      "nextCalibrationDate": "11 Nov 2026"
+    },
+    {
+      "id": 13,
+      "organizationId": 1,
+      "uuid": "SN-012",
+      "deviceType": "temperature-sensor",
+      "model": "TempSense T100",
+      "measurementType": "Temperature / Humidity",
+      "measurementParameters": [
+        "temperature",
+        "humidity"
+      ],
+      "readingFrequencySeconds": 3600,
+      "assetId": 10,
+      "status": "linked",
+      "calibrationStatus": "compliant",
+      "lastCalibrationDate": "11 May 2026",
+      "nextCalibrationDate": "11 Nov 2026"
+    },
+    {
+      "id": 14,
+      "organizationId": 1,
+      "uuid": "SN-013",
+      "deviceType": "humidity-sensor",
+      "model": "HumidSense H200",
+      "measurementType": "Temperature / Humidity",
+      "measurementParameters": [
+        "temperature",
+        "humidity"
+      ],
+      "readingFrequencySeconds": 3600,
+      "assetId": 11,
+      "status": "linked",
+      "calibrationStatus": "due-soon",
+      "lastCalibrationDate": "11 May 2026",
+      "nextCalibrationDate": "11 Nov 2026"
+    },
+    {
+      "id": 15,
+      "organizationId": 1,
+      "uuid": "SN-014",
+      "deviceType": "temperature-sensor",
+      "model": "ColdLink C1",
+      "measurementType": "Temperature / Battery / Signal",
+      "measurementParameters": [
+        "temperature",
+        "battery",
+        "signal"
+      ],
+      "readingFrequencySeconds": 3600,
+      "assetId": 23,
+      "status": "linked",
+      "calibrationStatus": "compliant",
+      "lastCalibrationDate": "11 May 2026",
+      "nextCalibrationDate": "11 Nov 2026"
     }
   ],
   "sensor-readings": [
     {
-      "id": "1",
+      "id": 1,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 0.2,
       "humidity": 72,
       "isOutOfRange": false,
-      "recordedAt": "2026-12-13T00:00:00"
+      "recordedAt": "2026-05-11T00:00:00"
     },
     {
-      "id": "2",
+      "id": 2,
       "assetId": 1,
       "iotDeviceId": 2,
       "temperature": 1,
       "humidity": 70,
       "isOutOfRange": false,
-      "recordedAt": "2026-12-13T01:00:00"
+      "recordedAt": "2026-05-11T01:00:00"
     },
     {
-      "id": "3",
+      "id": 3,
       "assetId": 1,
       "iotDeviceId": 3,
       "temperature": -8.4,
       "humidity": 68,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T02:00:00"
+      "recordedAt": "2026-05-11T02:00:00"
     },
     {
-      "id": "4",
+      "id": 4,
       "assetId": 1,
       "iotDeviceId": 4,
       "temperature": -2.8,
       "humidity": 74,
       "isOutOfRange": false,
-      "recordedAt": "2026-12-13T03:00:00"
+      "recordedAt": "2026-05-11T03:00:00"
     },
     {
-      "id": "5",
+      "id": 5,
       "assetId": 1,
       "iotDeviceId": 5,
       "temperature": -1.3,
       "humidity": 76,
       "isOutOfRange": false,
-      "recordedAt": "2026-12-13T04:00:00"
+      "recordedAt": "2026-05-11T04:00:00"
     },
     {
-      "id": "6",
+      "id": 6,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 0.4,
       "humidity": 71,
       "isOutOfRange": false,
-      "recordedAt": "2026-12-13T05:00:00"
+      "recordedAt": "2026-05-11T05:00:00"
     },
     {
-      "id": "7",
+      "id": 7,
       "assetId": 1,
       "iotDeviceId": 2,
       "temperature": 2.4,
       "humidity": 69,
       "isOutOfRange": false,
-      "recordedAt": "2026-12-13T06:00:00"
+      "recordedAt": "2026-05-11T06:00:00"
     },
     {
-      "id": "8",
+      "id": 8,
       "assetId": 1,
       "iotDeviceId": 3,
       "temperature": 2.1,
       "humidity": 73,
       "isOutOfRange": false,
-      "recordedAt": "2026-12-13T07:00:00"
+      "recordedAt": "2026-05-11T07:00:00"
     },
     {
-      "id": "9",
+      "id": 9,
       "assetId": 1,
       "iotDeviceId": 4,
       "temperature": 3.1,
       "humidity": 75,
       "isOutOfRange": false,
-      "recordedAt": "2026-12-13T08:00:00"
+      "recordedAt": "2026-05-11T08:00:00"
     },
     {
-      "id": "10",
+      "id": 10,
       "assetId": 1,
       "iotDeviceId": 5,
       "temperature": 8.8,
       "humidity": 78,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T09:00:00"
+      "recordedAt": "2026-05-11T09:00:00"
     },
     {
-      "id": "11",
+      "id": 11,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 9.4,
       "humidity": 80,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T10:00:00"
+      "recordedAt": "2026-05-11T10:00:00"
     },
     {
-      "id": "12",
+      "id": 12,
       "assetId": 1,
       "iotDeviceId": 2,
       "temperature": 9,
       "humidity": 82,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T11:00:00"
+      "recordedAt": "2026-05-11T11:00:00"
     },
     {
-      "id": "13",
+      "id": 13,
       "assetId": 1,
       "iotDeviceId": 3,
       "temperature": 10.1,
       "humidity": 84,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T12:00:00"
+      "recordedAt": "2026-05-11T12:00:00"
     },
     {
-      "id": "14",
+      "id": 14,
       "assetId": 1,
       "iotDeviceId": 4,
       "temperature": 12.4,
       "humidity": 86,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T13:00:00"
+      "recordedAt": "2026-05-11T13:00:00"
     },
     {
-      "id": "15",
+      "id": 15,
       "assetId": 1,
       "iotDeviceId": 5,
       "temperature": 6.6,
       "humidity": 77,
       "isOutOfRange": false,
-      "recordedAt": "2026-12-13T14:00:00"
+      "recordedAt": "2026-05-11T14:00:00"
     },
     {
-      "id": "16",
+      "id": 16,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 7.8,
       "humidity": 79,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T15:00:00"
+      "recordedAt": "2026-05-11T15:00:00"
     },
     {
-      "id": "17",
+      "id": 17,
       "assetId": 1,
       "iotDeviceId": 2,
       "temperature": 7.4,
       "humidity": 81,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T16:00:00"
+      "recordedAt": "2026-05-11T16:00:00"
     },
     {
-      "id": "18",
+      "id": 18,
       "assetId": 1,
       "iotDeviceId": 3,
       "temperature": 5,
       "humidity": 83,
       "isOutOfRange": false,
-      "recordedAt": "2026-12-13T17:00:00"
+      "recordedAt": "2026-05-11T17:00:00"
     },
     {
-      "id": "19",
+      "id": 19,
       "assetId": 1,
       "iotDeviceId": 4,
       "temperature": 6.1,
       "humidity": 76,
       "isOutOfRange": false,
-      "recordedAt": "2026-12-13T18:00:00"
+      "recordedAt": "2026-05-11T18:00:00"
     },
     {
-      "id": "20",
+      "id": 20,
       "assetId": 1,
       "iotDeviceId": 5,
       "temperature": 7.9,
       "humidity": 74,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T19:00:00"
+      "recordedAt": "2026-05-11T19:00:00"
     },
     {
-      "id": "21",
+      "id": 21,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 8.2,
       "humidity": 73,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T20:00:00"
+      "recordedAt": "2026-05-11T20:00:00"
     },
     {
-      "id": "22",
+      "id": 22,
       "assetId": 2,
       "iotDeviceId": 2,
       "temperature": 8.1,
       "humidity": 75,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T21:00:00"
+      "recordedAt": "2026-05-11T21:00:00"
     },
     {
-      "id": "23",
+      "id": 23,
       "assetId": 3,
       "iotDeviceId": 3,
       "temperature": 8.4,
       "humidity": 78,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T22:00:00"
+      "recordedAt": "2026-05-11T22:00:00"
     },
     {
-      "id": "24",
+      "id": 24,
       "assetId": 4,
       "iotDeviceId": 4,
       "temperature": 8.6,
       "humidity": 80,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T23:00:00"
+      "recordedAt": "2026-05-11T23:00:00"
     },
     {
-      "id": "25",
+      "id": 25,
       "assetId": 5,
       "iotDeviceId": 5,
       "temperature": 9.1,
       "humidity": 82,
       "isOutOfRange": true,
-      "recordedAt": "2026-12-13T24:00:00"
+      "recordedAt": "2026-05-11T23:59:00"
     },
     {
-      "id": "26",
+      "id": 26,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 8.5,
@@ -982,7 +1164,7 @@
       "signalStrength": null
     },
     {
-      "id": "27",
+      "id": 27,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 13.4,
@@ -995,7 +1177,7 @@
       "signalStrength": null
     },
     {
-      "id": "28",
+      "id": 28,
       "assetId": 3,
       "iotDeviceId": 3,
       "temperature": -2.6,
@@ -1008,7 +1190,7 @@
       "signalStrength": null
     },
     {
-      "id": "29",
+      "id": 29,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 4.9,
@@ -1021,7 +1203,7 @@
       "signalStrength": null
     },
     {
-      "id": "30",
+      "id": 30,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -4.5,
@@ -1034,7 +1216,7 @@
       "signalStrength": null
     },
     {
-      "id": "31",
+      "id": 31,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 8.6,
@@ -1047,7 +1229,7 @@
       "signalStrength": null
     },
     {
-      "id": "32",
+      "id": 32,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": -0.4,
@@ -1060,7 +1242,7 @@
       "signalStrength": null
     },
     {
-      "id": "33",
+      "id": 33,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -3.1,
@@ -1073,7 +1255,7 @@
       "signalStrength": null
     },
     {
-      "id": "34",
+      "id": 34,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 9.6,
@@ -1086,7 +1268,7 @@
       "signalStrength": null
     },
     {
-      "id": "35",
+      "id": 35,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 3.4,
@@ -1099,7 +1281,7 @@
       "signalStrength": null
     },
     {
-      "id": "36",
+      "id": 36,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -1.5,
@@ -1112,7 +1294,7 @@
       "signalStrength": null
     },
     {
-      "id": "37",
+      "id": 37,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 10.2,
@@ -1125,7 +1307,7 @@
       "signalStrength": null
     },
     {
-      "id": "38",
+      "id": 38,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 13.7,
@@ -1138,7 +1320,7 @@
       "signalStrength": null
     },
     {
-      "id": "39",
+      "id": 39,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -8.2,
@@ -1151,7 +1333,7 @@
       "signalStrength": null
     },
     {
-      "id": "40",
+      "id": 40,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 1.8,
@@ -1164,7 +1346,7 @@
       "signalStrength": null
     },
     {
-      "id": "41",
+      "id": 41,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 2.1,
@@ -1177,7 +1359,7 @@
       "signalStrength": null
     },
     {
-      "id": "42",
+      "id": 42,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -5.7,
@@ -1190,7 +1372,7 @@
       "signalStrength": null
     },
     {
-      "id": "43",
+      "id": 43,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 1.8,
@@ -1203,7 +1385,7 @@
       "signalStrength": null
     },
     {
-      "id": "44",
+      "id": 44,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 14,
@@ -1216,7 +1398,7 @@
       "signalStrength": null
     },
     {
-      "id": "45",
+      "id": 45,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 12.8,
@@ -1229,7 +1411,7 @@
       "signalStrength": null
     },
     {
-      "id": "46",
+      "id": 46,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -7.1,
@@ -1242,7 +1424,7 @@
       "signalStrength": null
     },
     {
-      "id": "47",
+      "id": 47,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 11.8,
@@ -1255,7 +1437,7 @@
       "signalStrength": null
     },
     {
-      "id": "48",
+      "id": 48,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -4.3,
@@ -1268,7 +1450,7 @@
       "signalStrength": null
     },
     {
-      "id": "49",
+      "id": 49,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 2.6,
@@ -1281,7 +1463,7 @@
       "signalStrength": null
     },
     {
-      "id": "50",
+      "id": 50,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 0.1,
@@ -1294,7 +1476,7 @@
       "signalStrength": null
     },
     {
-      "id": "51",
+      "id": 51,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -6.9,
@@ -1307,7 +1489,7 @@
       "signalStrength": null
     },
     {
-      "id": "52",
+      "id": 52,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -2.9,
@@ -1320,7 +1502,7 @@
       "signalStrength": null
     },
     {
-      "id": "53",
+      "id": 53,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 2.3,
@@ -1333,7 +1515,7 @@
       "signalStrength": null
     },
     {
-      "id": "54",
+      "id": 54,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 3.9,
@@ -1346,7 +1528,7 @@
       "signalStrength": null
     },
     {
-      "id": "55",
+      "id": 55,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -6.5,
@@ -1359,7 +1541,7 @@
       "signalStrength": null
     },
     {
-      "id": "56",
+      "id": 56,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -6.6,
@@ -1372,7 +1554,7 @@
       "signalStrength": null
     },
     {
-      "id": "57",
+      "id": 57,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 6.6,
@@ -1385,7 +1567,7 @@
       "signalStrength": null
     },
     {
-      "id": "58",
+      "id": 58,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 1,
@@ -1398,7 +1580,7 @@
       "signalStrength": null
     },
     {
-      "id": "59",
+      "id": 59,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 0.9,
@@ -1411,7 +1593,7 @@
       "signalStrength": null
     },
     {
-      "id": "60",
+      "id": 60,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -5.2,
@@ -1424,7 +1606,7 @@
       "signalStrength": null
     },
     {
-      "id": "61",
+      "id": 61,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 12.9,
@@ -1437,7 +1619,7 @@
       "signalStrength": null
     },
     {
-      "id": "62",
+      "id": 62,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": -0.8,
@@ -1450,7 +1632,7 @@
       "signalStrength": null
     },
     {
-      "id": "63",
+      "id": 63,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -7.3,
@@ -1463,7 +1645,7 @@
       "signalStrength": null
     },
     {
-      "id": "64",
+      "id": 64,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 1.1,
@@ -1476,7 +1658,7 @@
       "signalStrength": null
     },
     {
-      "id": "65",
+      "id": 65,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 11.3,
@@ -1489,7 +1671,7 @@
       "signalStrength": null
     },
     {
-      "id": "66",
+      "id": 66,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 9.3,
@@ -1502,7 +1684,7 @@
       "signalStrength": null
     },
     {
-      "id": "67",
+      "id": 67,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": -3.6,
@@ -1515,7 +1697,7 @@
       "signalStrength": null
     },
     {
-      "id": "68",
+      "id": 68,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 11.5,
@@ -1528,7 +1710,7 @@
       "signalStrength": null
     },
     {
-      "id": "69",
+      "id": 69,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 9.6,
@@ -1541,7 +1723,7 @@
       "signalStrength": null
     },
     {
-      "id": "70",
+      "id": 70,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 5.5,
@@ -1554,7 +1736,7 @@
       "signalStrength": null
     },
     {
-      "id": "71",
+      "id": 71,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 0,
@@ -1567,7 +1749,7 @@
       "signalStrength": null
     },
     {
-      "id": "72",
+      "id": 72,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 12.9,
@@ -1580,7 +1762,7 @@
       "signalStrength": null
     },
     {
-      "id": "73",
+      "id": 73,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -8.9,
@@ -1593,7 +1775,7 @@
       "signalStrength": null
     },
     {
-      "id": "74",
+      "id": 74,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 11.8,
@@ -1606,7 +1788,7 @@
       "signalStrength": null
     },
     {
-      "id": "75",
+      "id": 75,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": -3.5,
@@ -1619,7 +1801,7 @@
       "signalStrength": null
     },
     {
-      "id": "76",
+      "id": 76,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -5.3,
@@ -1632,7 +1814,7 @@
       "signalStrength": null
     },
     {
-      "id": "77",
+      "id": 77,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": -3.9,
@@ -1645,7 +1827,7 @@
       "signalStrength": null
     },
     {
-      "id": "78",
+      "id": 78,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -2.8,
@@ -1658,7 +1840,7 @@
       "signalStrength": null
     },
     {
-      "id": "9Ygt0tfG4rc",
+      "id": 79,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 10.3,
@@ -1671,7 +1853,7 @@
       "signalStrength": null
     },
     {
-      "id": "3R3BQ--KR64",
+      "id": 80,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -0.7,
@@ -1684,7 +1866,7 @@
       "signalStrength": null
     },
     {
-      "id": "rUl85ZPcGLw",
+      "id": 81,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 9.7,
@@ -1697,7 +1879,7 @@
       "signalStrength": null
     },
     {
-      "id": "gbzBhH5Vfqk",
+      "id": 82,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -0.6,
@@ -1710,7 +1892,7 @@
       "signalStrength": null
     },
     {
-      "id": "5tBR-S-8TQ8",
+      "id": 83,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 4.2,
@@ -1723,7 +1905,7 @@
       "signalStrength": null
     },
     {
-      "id": "xKuoC2PrAko",
+      "id": 84,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 13.3,
@@ -1736,7 +1918,7 @@
       "signalStrength": null
     },
     {
-      "id": "S1HyGULTqfM",
+      "id": 85,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 1.8,
@@ -1749,7 +1931,7 @@
       "signalStrength": null
     },
     {
-      "id": "lUAydXepOEE",
+      "id": 86,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -0.5,
@@ -1762,7 +1944,7 @@
       "signalStrength": null
     },
     {
-      "id": "7gq8sImEebk",
+      "id": 87,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 12,
@@ -1775,7 +1957,7 @@
       "signalStrength": null
     },
     {
-      "id": "_JFgTOB1la8",
+      "id": 88,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -3.9,
@@ -1788,7 +1970,7 @@
       "signalStrength": null
     },
     {
-      "id": "yzox42QOYfw",
+      "id": 89,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -2.5,
@@ -1801,7 +1983,7 @@
       "signalStrength": null
     },
     {
-      "id": "U9NlZpI6aC8",
+      "id": 90,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -6.7,
@@ -1814,7 +1996,7 @@
       "signalStrength": null
     },
     {
-      "id": "Ng1Gd6rZKEY",
+      "id": 91,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 8.4,
@@ -1827,7 +2009,7 @@
       "signalStrength": null
     },
     {
-      "id": "HKwL70cPPA0",
+      "id": 92,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -4.2,
@@ -1840,7 +2022,7 @@
       "signalStrength": null
     },
     {
-      "id": "MBxM-lOTme0",
+      "id": 93,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 0.2,
@@ -1853,7 +2035,7 @@
       "signalStrength": null
     },
     {
-      "id": "ucmv8uJVYU4",
+      "id": 94,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 2.1,
@@ -1866,7 +2048,7 @@
       "signalStrength": null
     },
     {
-      "id": "KXA98Nzx_qo",
+      "id": 95,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -7.2,
@@ -1879,7 +2061,7 @@
       "signalStrength": null
     },
     {
-      "id": "TG6Em1PZufg",
+      "id": 96,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 3.8,
@@ -1892,7 +2074,7 @@
       "signalStrength": null
     },
     {
-      "id": "hvxEFUu5Xog",
+      "id": 97,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -3.9,
@@ -1905,7 +2087,7 @@
       "signalStrength": null
     },
     {
-      "id": "MxG7MsmRDeM",
+      "id": 98,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": -8.2,
@@ -1918,7 +2100,7 @@
       "signalStrength": null
     },
     {
-      "id": "zqHIZYI6UgI",
+      "id": 99,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 9.7,
@@ -1931,7 +2113,7 @@
       "signalStrength": null
     },
     {
-      "id": "zNcQvzCBeeo",
+      "id": 100,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 7.4,
@@ -1944,7 +2126,7 @@
       "signalStrength": null
     },
     {
-      "id": "30FmQ_rkSj8",
+      "id": 101,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 7.5,
@@ -1957,7 +2139,7 @@
       "signalStrength": null
     },
     {
-      "id": "LipewDk4rmA",
+      "id": 102,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -3.9,
@@ -1970,7 +2152,7 @@
       "signalStrength": null
     },
     {
-      "id": "JWiqs57CPqM",
+      "id": 103,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": -0.6,
@@ -1983,7 +2165,7 @@
       "signalStrength": null
     },
     {
-      "id": "1RRtG9I3SWU",
+      "id": 104,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 10.1,
@@ -1996,7 +2178,7 @@
       "signalStrength": null
     },
     {
-      "id": "Df2EARksq8c",
+      "id": 105,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 13.5,
@@ -2009,7 +2191,7 @@
       "signalStrength": null
     },
     {
-      "id": "yVenaiK-pko",
+      "id": 106,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 8.5,
@@ -2022,7 +2204,7 @@
       "signalStrength": null
     },
     {
-      "id": "yCPWuIbBHlk",
+      "id": 107,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -6.7,
@@ -2035,7 +2217,7 @@
       "signalStrength": null
     },
     {
-      "id": "UTiBUjdZ5GM",
+      "id": 108,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -0.2,
@@ -2048,7 +2230,7 @@
       "signalStrength": null
     },
     {
-      "id": "MkubrzlyPg4",
+      "id": 109,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 6.4,
@@ -2061,7 +2243,7 @@
       "signalStrength": null
     },
     {
-      "id": "ZryJVX2Yhk8",
+      "id": 110,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 4.7,
@@ -2074,7 +2256,7 @@
       "signalStrength": null
     },
     {
-      "id": "p5I-foBjpA4",
+      "id": 111,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 4.2,
@@ -2087,7 +2269,7 @@
       "signalStrength": null
     },
     {
-      "id": "vNGF0BsvpDk",
+      "id": 112,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 11.5,
@@ -2100,7 +2282,7 @@
       "signalStrength": null
     },
     {
-      "id": "bXPXYj_gDyA",
+      "id": 113,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 13.7,
@@ -2113,7 +2295,7 @@
       "signalStrength": null
     },
     {
-      "id": "onRwaEFYrRo",
+      "id": 114,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -5.4,
@@ -2126,7 +2308,7 @@
       "signalStrength": null
     },
     {
-      "id": "VZw0kag5WMs",
+      "id": 115,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -3.1,
@@ -2139,7 +2321,7 @@
       "signalStrength": null
     },
     {
-      "id": "CzYg04pmV58",
+      "id": 116,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": -7.8,
@@ -2152,7 +2334,7 @@
       "signalStrength": null
     },
     {
-      "id": "8a5qkZMZAIU",
+      "id": 117,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 0,
@@ -2165,7 +2347,7 @@
       "signalStrength": null
     },
     {
-      "id": "0ytgnHyaEK8",
+      "id": 118,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -7,
@@ -2178,7 +2360,7 @@
       "signalStrength": null
     },
     {
-      "id": "QmDpWVlfU0k",
+      "id": 119,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 5.4,
@@ -2191,7 +2373,7 @@
       "signalStrength": null
     },
     {
-      "id": "jqWODPgfnSU",
+      "id": 120,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 11.3,
@@ -2204,7 +2386,7 @@
       "signalStrength": null
     },
     {
-      "id": "FvsAd1rQTo0",
+      "id": 121,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 3.9,
@@ -2217,7 +2399,7 @@
       "signalStrength": null
     },
     {
-      "id": "4t3sTDEZ5ZU",
+      "id": 122,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 8,
@@ -2230,7 +2412,7 @@
       "signalStrength": null
     },
     {
-      "id": "OOHbfacVv_M",
+      "id": 123,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 7.4,
@@ -2243,7 +2425,7 @@
       "signalStrength": null
     },
     {
-      "id": "wds5qmhwvJc",
+      "id": 124,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -1.9,
@@ -2256,7 +2438,7 @@
       "signalStrength": null
     },
     {
-      "id": "_BIH6uFECHQ",
+      "id": 125,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 7.8,
@@ -2269,7 +2451,7 @@
       "signalStrength": null
     },
     {
-      "id": "JLpvF-r19M8",
+      "id": 126,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 2.2,
@@ -2282,7 +2464,7 @@
       "signalStrength": null
     },
     {
-      "id": "MTqcMB5xIy4",
+      "id": 127,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 12.5,
@@ -2295,7 +2477,7 @@
       "signalStrength": null
     },
     {
-      "id": "Or7y13u_KCk",
+      "id": 128,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 5.6,
@@ -2308,7 +2490,7 @@
       "signalStrength": null
     },
     {
-      "id": "fedn70bfOa0",
+      "id": 129,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -8.3,
@@ -2321,7 +2503,7 @@
       "signalStrength": null
     },
     {
-      "id": "qS81VBgtsF0",
+      "id": 130,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 4,
@@ -2334,7 +2516,7 @@
       "signalStrength": null
     },
     {
-      "id": "tUJ2DBEYvcQ",
+      "id": 131,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 11.1,
@@ -2347,7 +2529,7 @@
       "signalStrength": null
     },
     {
-      "id": "C63LF_av4RI",
+      "id": 132,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 11.6,
@@ -2360,7 +2542,7 @@
       "signalStrength": null
     },
     {
-      "id": "2AA8-riojcM",
+      "id": 133,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 0.7,
@@ -2373,7 +2555,7 @@
       "signalStrength": null
     },
     {
-      "id": "WAYkDOzDdhA",
+      "id": 134,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -7.5,
@@ -2386,7 +2568,7 @@
       "signalStrength": null
     },
     {
-      "id": "WIsT3TmOTww",
+      "id": 135,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 5.3,
@@ -2399,7 +2581,7 @@
       "signalStrength": null
     },
     {
-      "id": "TmzoxcsAD2s",
+      "id": 136,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 9.3,
@@ -2412,7 +2594,7 @@
       "signalStrength": null
     },
     {
-      "id": "1j81al0-fBU",
+      "id": 137,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 9.1,
@@ -2425,7 +2607,7 @@
       "signalStrength": null
     },
     {
-      "id": "MjNuxX17hmo",
+      "id": 138,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -2,
@@ -2438,7 +2620,7 @@
       "signalStrength": null
     },
     {
-      "id": "60_AecwdXqw",
+      "id": 139,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": -1.3,
@@ -2451,7 +2633,7 @@
       "signalStrength": null
     },
     {
-      "id": "qH1XeFlstC0",
+      "id": 140,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -9,
@@ -2464,7 +2646,7 @@
       "signalStrength": null
     },
     {
-      "id": "7ZKceZe-o_o",
+      "id": 141,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 13.6,
@@ -2477,7 +2659,7 @@
       "signalStrength": null
     },
     {
-      "id": "cHdNWC4dyio",
+      "id": 142,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -8.1,
@@ -2490,7 +2672,7 @@
       "signalStrength": null
     },
     {
-      "id": "E-Z4ubR9zVo",
+      "id": 143,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -5,
@@ -2503,7 +2685,7 @@
       "signalStrength": null
     },
     {
-      "id": "Jgh5BoEHbRo",
+      "id": 144,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 3,
@@ -2516,7 +2698,7 @@
       "signalStrength": null
     },
     {
-      "id": "RXGggMtv_dE",
+      "id": 145,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -2.8,
@@ -2529,7 +2711,7 @@
       "signalStrength": null
     },
     {
-      "id": "pW7fMuS4vLU",
+      "id": 146,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -8.8,
@@ -2542,7 +2724,7 @@
       "signalStrength": null
     },
     {
-      "id": "FW-JMOidxvk",
+      "id": 147,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -2.3,
@@ -2555,7 +2737,7 @@
       "signalStrength": null
     },
     {
-      "id": "uiGtjkxPa7M",
+      "id": 148,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -2.9,
@@ -2568,7 +2750,7 @@
       "signalStrength": null
     },
     {
-      "id": "YASiPo8_nGI",
+      "id": 149,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": -4.8,
@@ -2581,7 +2763,7 @@
       "signalStrength": null
     },
     {
-      "id": "wvc4lomiUmY",
+      "id": 150,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -4.8,
@@ -2594,7 +2776,7 @@
       "signalStrength": null
     },
     {
-      "id": "Cxm90ueWuSI",
+      "id": 151,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 6.3,
@@ -2607,7 +2789,7 @@
       "signalStrength": null
     },
     {
-      "id": "7aZBzSFakLU",
+      "id": 152,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -7.3,
@@ -2620,7 +2802,7 @@
       "signalStrength": null
     },
     {
-      "id": "h-x1740013k",
+      "id": 153,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 2.7,
@@ -2633,7 +2815,7 @@
       "signalStrength": null
     },
     {
-      "id": "Yv8ENRwRrLg",
+      "id": 154,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 0.6,
@@ -2646,7 +2828,7 @@
       "signalStrength": null
     },
     {
-      "id": "755fCOnocRI",
+      "id": 155,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -1.3,
@@ -2659,7 +2841,7 @@
       "signalStrength": null
     },
     {
-      "id": "w_Fh0Y_cTnQ",
+      "id": 156,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -6.7,
@@ -2672,7 +2854,7 @@
       "signalStrength": null
     },
     {
-      "id": "sG5Jbuq9rLA",
+      "id": 157,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -6.1,
@@ -2685,7 +2867,7 @@
       "signalStrength": null
     },
     {
-      "id": "xY4Mxy3Gvec",
+      "id": 158,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 13,
@@ -2698,7 +2880,7 @@
       "signalStrength": null
     },
     {
-      "id": "RAgwc5ALvnM",
+      "id": 159,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 10.3,
@@ -2711,7 +2893,7 @@
       "signalStrength": null
     },
     {
-      "id": "sC6dloPe_O4",
+      "id": 160,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -7.9,
@@ -2724,7 +2906,7 @@
       "signalStrength": null
     },
     {
-      "id": "i-kuYLwpf0w",
+      "id": 161,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 5.2,
@@ -2737,7 +2919,7 @@
       "signalStrength": null
     },
     {
-      "id": "gvrft8gzdaU",
+      "id": 162,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -8.4,
@@ -2750,7 +2932,7 @@
       "signalStrength": null
     },
     {
-      "id": "EO0-HOU45n0",
+      "id": 163,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 5.2,
@@ -2763,7 +2945,7 @@
       "signalStrength": null
     },
     {
-      "id": "VJKJxkaR-uc",
+      "id": 164,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 12.6,
@@ -2776,7 +2958,7 @@
       "signalStrength": null
     },
     {
-      "id": "KY_TedSTuzU",
+      "id": 165,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 2.9,
@@ -2789,7 +2971,7 @@
       "signalStrength": null
     },
     {
-      "id": "f5IBhkvPg8c",
+      "id": 166,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 1.9,
@@ -2802,7 +2984,7 @@
       "signalStrength": null
     },
     {
-      "id": "j5jS7KWwmNE",
+      "id": 167,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": -0.6,
@@ -2815,7 +2997,7 @@
       "signalStrength": null
     },
     {
-      "id": "N_Qv7BvtFLM",
+      "id": 168,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -6.2,
@@ -2828,7 +3010,7 @@
       "signalStrength": null
     },
     {
-      "id": "NIqdpnMX9YM",
+      "id": 169,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -1.6,
@@ -2841,7 +3023,7 @@
       "signalStrength": null
     },
     {
-      "id": "90CVllqXHUw",
+      "id": 170,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 10.2,
@@ -2854,7 +3036,7 @@
       "signalStrength": null
     },
     {
-      "id": "fnSqKNUivCY",
+      "id": 171,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 1.1,
@@ -2867,7 +3049,7 @@
       "signalStrength": null
     },
     {
-      "id": "FhhJ42r2nnk",
+      "id": 172,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 12.4,
@@ -2880,7 +3062,7 @@
       "signalStrength": null
     },
     {
-      "id": "X4G_ILrY5tA",
+      "id": 173,
       "assetId": 3,
       "iotDeviceId": 2,
       "temperature": 9,
@@ -2893,7 +3075,7 @@
       "signalStrength": null
     },
     {
-      "id": "ah8PxeVry4g",
+      "id": 174,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -1.2,
@@ -2906,7 +3088,7 @@
       "signalStrength": null
     },
     {
-      "id": "Ea-cyhFoRGg",
+      "id": 175,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 4.3,
@@ -2919,7 +3101,7 @@
       "signalStrength": null
     },
     {
-      "id": "Tq88jY8TUKA",
+      "id": 176,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -4.4,
@@ -2932,7 +3114,7 @@
       "signalStrength": null
     },
     {
-      "id": "dAIAKMYyyK0",
+      "id": 177,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 7.3,
@@ -2945,7 +3127,7 @@
       "signalStrength": null
     },
     {
-      "id": "n1PfqQ52efY",
+      "id": 178,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 10.9,
@@ -2958,7 +3140,7 @@
       "signalStrength": null
     },
     {
-      "id": "Oh6FbhPHp30",
+      "id": 179,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -2.5,
@@ -2971,7 +3153,7 @@
       "signalStrength": null
     },
     {
-      "id": "25JkGhR2RZQ",
+      "id": 180,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 13.3,
@@ -2984,7 +3166,7 @@
       "signalStrength": null
     },
     {
-      "id": "znRiYkcDr54",
+      "id": 181,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 1.7,
@@ -2997,7 +3179,7 @@
       "signalStrength": null
     },
     {
-      "id": "GcRWNBo1WmQ",
+      "id": 182,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 5.1,
@@ -3010,7 +3192,7 @@
       "signalStrength": null
     },
     {
-      "id": "5qdtkTl5uTQ",
+      "id": 183,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 12,
@@ -3023,7 +3205,7 @@
       "signalStrength": null
     },
     {
-      "id": "tC4r695V7FY",
+      "id": 184,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 11.2,
@@ -3036,7 +3218,7 @@
       "signalStrength": null
     },
     {
-      "id": "hdfYGL_OL68",
+      "id": 185,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -5,
@@ -3049,7 +3231,7 @@
       "signalStrength": null
     },
     {
-      "id": "Nth3RZmLjjE",
+      "id": 186,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": 11.8,
@@ -3062,7 +3244,7 @@
       "signalStrength": null
     },
     {
-      "id": "VdE6VIQ3tIw",
+      "id": 187,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 9.2,
@@ -3075,7 +3257,7 @@
       "signalStrength": null
     },
     {
-      "id": "k0AF0jtKp-I",
+      "id": 188,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 13,
@@ -3088,7 +3270,7 @@
       "signalStrength": null
     },
     {
-      "id": "IVxgk9WyIUg",
+      "id": 189,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -2.6,
@@ -3101,7 +3283,7 @@
       "signalStrength": null
     },
     {
-      "id": "pBRECRU1QXc",
+      "id": 190,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 2,
@@ -3114,7 +3296,7 @@
       "signalStrength": null
     },
     {
-      "id": "ae78AEJB2VY",
+      "id": 191,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": -7.7,
@@ -3127,7 +3309,7 @@
       "signalStrength": null
     },
     {
-      "id": "-coCO7DqaH0",
+      "id": 192,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 10.7,
@@ -3140,7 +3322,7 @@
       "signalStrength": null
     },
     {
-      "id": "AOmeunOFa0c",
+      "id": 193,
       "assetId": 1,
       "iotDeviceId": 1,
       "temperature": -4.7,
@@ -3153,7 +3335,7 @@
       "signalStrength": null
     },
     {
-      "id": "hIIMofYOpPo",
+      "id": 194,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 7.3,
@@ -3166,7 +3348,7 @@
       "signalStrength": null
     },
     {
-      "id": "awGK12mUjKc",
+      "id": 195,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 4.7,
@@ -3179,7 +3361,7 @@
       "signalStrength": null
     },
     {
-      "id": "XghCJhXGWas",
+      "id": 196,
       "assetId": 2,
       "iotDeviceId": 4,
       "temperature": 7.6,
@@ -3192,7 +3374,7 @@
       "signalStrength": null
     },
     {
-      "id": "s-E5l3lGcX4",
+      "id": 197,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 4.9,
@@ -3205,7 +3387,7 @@
       "signalStrength": null
     },
     {
-      "id": "xiqfkvSrRg8",
+      "id": 198,
       "assetId": 22,
       "iotDeviceId": 5,
       "temperature": 3.6,
@@ -3216,7 +3398,1027 @@
       "imageCaptured": null,
       "batteryLevel": null,
       "signalStrength": null
+    },
+    {
+      "id": 199,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 6.1,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T01:51:21.626Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 200,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -4,
+      "humidity": 102,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T01:52:21.653Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 201,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 3.5,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T01:53:21.689Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 202,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": -7.9,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T01:55:21.690Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 203,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -2.2,
+      "humidity": 66,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T01:57:21.662Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 204,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": -1.7,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T01:58:19.347Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 205,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -6.8,
+      "humidity": 97,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T01:58:21.633Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 206,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -3.3,
+      "humidity": 80,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:00:21.635Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 207,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -1.7,
+      "humidity": 79,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:02:21.659Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 208,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 8.3,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:03:21.705Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 209,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 13.8,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:07:21.658Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 210,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": -2.4,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:08:21.663Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 211,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": 7.6,
+      "humidity": 79,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:09:21.766Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 212,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": 4.6,
+      "humidity": 80,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:11:21.659Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 213,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -8.5,
+      "humidity": 81,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:12:21.676Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 214,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 5,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:13:21.691Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 215,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -6,
+      "humidity": 90,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:14:21.675Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 216,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": -9,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:18:21.736Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 217,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": -7.6,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:19:21.686Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 218,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -2.5,
+      "humidity": 91,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:20:21.689Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 219,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 7.2,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:21:21.748Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 220,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 7.6,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:23:21.702Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 221,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -6.1,
+      "humidity": 76,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:24:21.723Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 222,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": 6.1,
+      "humidity": 78,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:26:21.739Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 223,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 9.4,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:28:21.785Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 224,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 2.3,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:30:21.755Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 225,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": -7.4,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:32:21.861Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 226,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 1.7,
+      "humidity": 89,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:33:21.727Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 227,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": 13.7,
+      "humidity": 96,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:34:21.809Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 228,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 9.8,
+      "humidity": 103,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:35:21.731Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 229,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -6.1,
+      "humidity": 91,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:36:21.737Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 230,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": -0.3,
+      "humidity": 67,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:37:21.790Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 231,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -0.3,
+      "humidity": 95,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:38:21.740Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 232,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 11.8,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:39:21.725Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 233,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 3.6,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:40:21.745Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 234,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 5.1,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:41:21.723Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 235,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 13.4,
+      "humidity": 95,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:42:21.733Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 236,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": -3.2,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:43:21.776Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 237,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 10.2,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:44:21.765Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 238,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": 0.4,
+      "humidity": 88,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:45:21.756Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 239,
+      "assetId": 2,
+      "iotDeviceId": 4,
+      "temperature": -6.8,
+      "humidity": 92,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:46:21.775Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 240,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": -6.8,
+      "humidity": 77,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:48:21.754Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 241,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 8.5,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:50:21.757Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 242,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": -1.1,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:51:21.756Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 243,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 8.4,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-12T02:55:21.790Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 244,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 4,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:56:21.770Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 245,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 2.1,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:58:21.777Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 246,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": 2.5,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T02:59:21.832Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 247,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 1.2,
+      "humidity": 59,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T03:55:45.239Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 248,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 2.7,
+      "humidity": 59,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T03:55:57.850Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 249,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 4.7,
+      "humidity": 56,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T03:56:38.830Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 250,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 5.4,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T03:56:56.864Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 251,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 4.3,
+      "humidity": 72,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T03:58:42.167Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 252,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": 7.4,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-11T00:05:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 78,
+      "signalStrength": 82
+    },
+    {
+      "id": 253,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": 0.6,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-11T00:35:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 76,
+      "signalStrength": 80
+    },
+    {
+      "id": 254,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": 2.2,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-11T01:05:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 74,
+      "signalStrength": 78
+    },
+    {
+      "id": 255,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": -1,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-11T01:35:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 78,
+      "signalStrength": 81
+    },
+    {
+      "id": 256,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": 0.6,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-11T02:05:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 76,
+      "signalStrength": 79
+    },
+    {
+      "id": 257,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": 2.2,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-11T02:35:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 74,
+      "signalStrength": 82
+    },
+    {
+      "id": 258,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": -1,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-11T03:05:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 78,
+      "signalStrength": 80
+    },
+    {
+      "id": 259,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": 0.6,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-11T03:35:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 76,
+      "signalStrength": 78
+    },
+    {
+      "id": 260,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": 2.2,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-11T04:05:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 74,
+      "signalStrength": 81
+    },
+    {
+      "id": 261,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": -1,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-11T04:35:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 78,
+      "signalStrength": 79
+    },
+    {
+      "id": 262,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": 0.6,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-11T05:05:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 76,
+      "signalStrength": 82
+    },
+    {
+      "id": 263,
+      "assetId": 21,
+      "iotDeviceId": 6,
+      "temperature": 7.4,
+      "humidity": null,
+      "isOutOfRange": true,
+      "recordedAt": "2026-05-11T05:35:00",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": 74,
+      "signalStrength": 80
+    },
+    {
+      "id": 264,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": -0.7,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:31:11.528Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 265,
+      "assetId": 6,
+      "iotDeviceId": 7,
+      "temperature": -3.4,
+      "humidity": 80,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:31:23.960Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 266,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": -0.5,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:31:35.958Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 267,
+      "assetId": 1,
+      "iotDeviceId": 1,
+      "temperature": -0.4,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:31:59.959Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 268,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 1.2,
+      "humidity": 82,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:32:11.965Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 269,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 2.4,
+      "humidity": 68,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:33:21.971Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 270,
+      "assetId": 6,
+      "iotDeviceId": 7,
+      "temperature": -2.7,
+      "humidity": 80,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:34:21.966Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 271,
+      "assetId": 3,
+      "iotDeviceId": 2,
+      "temperature": 6.9,
+      "humidity": 75,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:34:46.623Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 272,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 2.9,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:34:47.565Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 273,
+      "assetId": 6,
+      "iotDeviceId": 7,
+      "temperature": 0.7,
+      "humidity": 78,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:34:59.964Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 274,
+      "assetId": 6,
+      "iotDeviceId": 7,
+      "temperature": -1.9,
+      "humidity": 80,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:35:11.964Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
+    },
+    {
+      "id": 275,
+      "assetId": 22,
+      "iotDeviceId": 5,
+      "temperature": 0.3,
+      "humidity": null,
+      "isOutOfRange": false,
+      "recordedAt": "2026-05-12T04:35:23.972Z",
+      "motionDetected": null,
+      "imageCaptured": null,
+      "batteryLevel": null,
+      "signalStrength": null
     }
   ],
-  "$schema": "./node_modules/json-server/schema.json"
+  "reports": [
+    {
+      "id": 1,
+      "organizationId": 1,
+      "uuid": "RPT-DL-20260511-001",
+      "type": "daily-log",
+      "title": "Daily thermal control log",
+      "periodDate": "2026-05-11",
+      "generatedAt": "2026-05-11T22:10:00-05:00"
+    },
+    {
+      "id": 2,
+      "organizationId": 2,
+      "uuid": "RPT-DL-20260511-002",
+      "type": "daily-log",
+      "title": "Daily compliance log",
+      "periodDate": "2026-05-11",
+      "generatedAt": "2026-05-11T22:15:00-05:00"
+    }
+  ]
 }
