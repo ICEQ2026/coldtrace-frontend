@@ -40,6 +40,7 @@
               <th>{{ 'alerts.incident-list.col-detected' | translate }}</th>
               <th>{{ 'alerts.incident-list.col-status' | translate }}</th>
               <th>{{ 'alerts.incident-list.col-condition' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-source' | translate }}</th>
               <th>{{ 'alerts.incident-list.col-recognized-by' | translate }}</th>
               @if (canResolveAlerts()) {
                 <th>{{ 'alerts.incident-list.col-actions' | translate }}</th>
@@ -77,6 +78,16 @@
                     {{ conditionLabelKey(incident) | translate }}
                   </span>
                 </td>
+                <td>
+                  <span
+                    class="source-pill"
+                    [class.source-generated]="incident.isGenerated && !incident.isPendingReview"
+                    [class.source-initial]="!incident.isGenerated && !incident.isPendingReview"
+                    [class.source-pending]="incident.isPendingReview"
+                  >
+                    {{ sourceLabelKey(incident) | translate }}
+                  </span>
+                </td>
                 <td class="recognized-by">{{ incident.recognizedBy ?? '—' }}</td>
                 @if (canResolveAlerts()) {
                   <td>
@@ -112,7 +123,7 @@
               </tr>
             } @empty {
               <tr>
-                <td [attr.colspan]="canResolveAlerts() ? 8 : 7" class="empty-cell">
+                <td [attr.colspan]="canResolveAlerts() ? 9 : 8" class="empty-cell">
                   <mat-icon class="empty-icon">check_circle</mat-icon>
                   <p class="empty-title">{{ 'alerts.incident-list.empty-title' | translate }}</p>
                   <p class="empty-description">{{ 'alerts.incident-list.empty-description' | translate }}</p>

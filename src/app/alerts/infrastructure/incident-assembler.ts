@@ -21,6 +21,10 @@ export class IncidentAssembler implements BaseAssembler<Incident, IncidentResour
       closureEvidence: resource.closureEvidence ?? null,
       closedBy: resource.closedBy ?? null,
       closedAt: resource.closedAt ?? null,
+      conditionKey: resource.conditionKey ?? null,
+      source: resource.source ?? 'initial-data',
+      sourceReadingId: resource.sourceReadingId ?? null,
+      reviewStatus: resource.reviewStatus ?? 'complete',
     });
   }
 
@@ -42,6 +46,10 @@ export class IncidentAssembler implements BaseAssembler<Incident, IncidentResour
       closureEvidence: entity.closureEvidence,
       closedBy: entity.closedBy,
       closedAt: entity.closedAt,
+      conditionKey: entity.conditionKey,
+      source: entity.source,
+      sourceReadingId: entity.sourceReadingId,
+      reviewStatus: entity.reviewStatus,
     };
   }
 

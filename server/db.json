@@ -4609,7 +4609,11 @@
       "correctiveAction": null,
       "closureEvidence": null,
       "closedBy": null,
-      "closedAt": null
+      "closedAt": null,
+      "conditionKey": "high-temperature",
+      "source": "initial-data",
+      "sourceReadingId": null,
+      "reviewStatus": "complete"
     },
     {
       "id": 2,
@@ -4627,7 +4631,11 @@
       "correctiveAction": null,
       "closureEvidence": null,
       "closedBy": null,
-      "closedAt": null
+      "closedAt": null,
+      "conditionKey": "high-humidity",
+      "source": "initial-data",
+      "sourceReadingId": null,
+      "reviewStatus": "complete"
     },
     {
       "id": 3,
@@ -4645,7 +4653,11 @@
       "correctiveAction": null,
       "closureEvidence": null,
       "closedBy": null,
-      "closedAt": null
+      "closedAt": null,
+      "conditionKey": "connectivity-unstable",
+      "source": "initial-data",
+      "sourceReadingId": null,
+      "reviewStatus": "complete"
     },
     {
       "id": 4,
@@ -4663,7 +4675,11 @@
       "correctiveAction": "Adjusted thermostat and moved sensitive products to backup storage.",
       "closureEvidence": "Temperature stayed at 3.9°C for 30 minutes after intervention.",
       "closedBy": "Andrés Silva",
-      "closedAt": "2026-05-10T23:20:00-05:00"
+      "closedAt": "2026-05-10T23:20:00-05:00",
+      "conditionKey": "high-temperature",
+      "source": "initial-data",
+      "sourceReadingId": null,
+      "reviewStatus": "complete"
     },
     {
       "id": 5,
@@ -4681,7 +4697,11 @@
       "correctiveAction": null,
       "closureEvidence": null,
       "closedBy": null,
-      "closedAt": null
+      "closedAt": null,
+      "conditionKey": "high-temperature",
+      "source": "initial-data",
+      "sourceReadingId": null,
+      "reviewStatus": "complete"
     }
   ]
 }
