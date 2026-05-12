@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  platformProviderApiBaseUrl: 'http://localhost:3000',
+  platformProviderApiBaseUrl: 'https://coldtrace-json-server.onrender.com',
   platformProviderUsersEndpointPath: '/users',
   platformProviderOrganizationsEndpointPath: '/organizations',
   platformProviderRolesEndpointPath: '/roles',
