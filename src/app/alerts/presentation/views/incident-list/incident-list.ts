@@ -1,60 +1,27 @@
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
 import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
-import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
-import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
-import { DashboardShell } from '../../../../shared/presentation/components/dashboard-shell/dashboard-shell';
 
 @Component({
   selector: 'app-incident-list',
   standalone: true,
-  imports: [TranslateModule, MatIconModule, MatProgressSpinnerModule, DashboardShell],
+  imports: [TranslateModule, MatIconModule, MatProgressSpinnerModule],
   templateUrl: './incident-list.html',
   styleUrl: './incident-list.css',
 })
 export class IncidentList implements OnInit {
   protected readonly alertsStore = inject(AlertsStore);
-  protected readonly identityStore = inject(IdentityAccessStore);
-  protected readonly assetStore = inject(AssetManagementStore);
-  private readonly router = inject(Router);
-
-  protected readonly activeOrganizationName = computed(() =>
-    this.identityStore.currentOrganizationNameFrom(
-      this.identityStore.users(),
-      this.identityStore.organizations(),
-    ),
-  );
+  private readonly identityStore = inject(IdentityAccessStore);
+  protected readonly canResolveAlerts = computed(() => this.alertsStore.canResolveAlerts());
   protected readonly profileUserName = computed(() =>
     this.identityStore.currentUserNameFrom(this.identityStore.users()),
   );
-  protected readonly profileRoleLabelKey = computed(() =>
-    this.identityStore.currentRoleLabelKeyFrom(
-      this.identityStore.users(),
-      this.identityStore.roles(),
-    ),
-  );
-  protected readonly canManageAccess = computed(() =>
-    this.identityStore.canManageAccess(
-      this.identityStore.users(),
-      this.identityStore.roles(),
-    ),
-  );
-  protected readonly assetIssuesCount = computed(() =>
-    this.assetStore.assetIssueCountFor(
-      this.identityStore.currentOrganizationIdFrom(this.identityStore.users()),
-    ),
-  );
-  protected readonly canResolveAlerts = computed(() => this.alertsStore.canResolveAlerts());
 
   ngOnInit(): void {
-    this.identityStore.loadUsers();
-    this.identityStore.loadOrganizations();
-    this.identityStore.loadRoles();
-    this.assetStore.loadAssets();
     this.alertsStore.loadIncidents();
   }
 
@@ -66,11 +33,6 @@ export class IncidentList implements OnInit {
     this.alertsStore.recognizeIncident(incident, userName).subscribe({
       error: () => undefined,
     });
-  }
-
-  protected logout(): void {
-    this.identityStore.clearCurrentUser();
-    void this.router.navigate(['/identity-access/sign-in']);
   }
 
   protected statusLabelKey(incident: Incident): string {

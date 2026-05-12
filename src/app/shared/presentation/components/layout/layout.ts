@@ -37,6 +37,7 @@ export class Layout implements OnInit {
     '/identity-access/reports',
     '/identity-access/users',
     '/identity-access/roles-permissions',
+    '/alerts',
     '/monitoring',
     '/reports',
   ];
@@ -78,6 +79,10 @@ export class Layout implements OnInit {
 
     if (currentUrl.includes('/monitoring')) {
       return 'monitoring.operational.title';
+    }
+
+    if (currentUrl.includes('/alerts')) {
+      return 'alerts.incident-list.page-title';
     }
 
     if (currentUrl.includes('/identity-access/roles-permissions/users/new')) {

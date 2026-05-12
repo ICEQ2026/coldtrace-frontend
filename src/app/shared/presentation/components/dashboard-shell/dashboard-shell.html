@@ -23,11 +23,6 @@
           }
         </a>
 
-        <a class="menu-item" routerLink="/alerts/incidents" routerLinkActive="active">
-          <mat-icon class="menu-icon">warning</mat-icon>
-          <span class="menu-label">{{ 'dashboard-shell.nav-alerts' | translate }}</span>
-        </a>
-
         <div
           class="menu-group"
           routerLinkActive="active-group"
@@ -59,6 +54,11 @@
             </div>
           }
         </div>
+
+        <a class="menu-item" routerLink="/alerts/incidents" routerLinkActive="active">
+          <mat-icon class="menu-icon">warning</mat-icon>
+          <span class="menu-label">{{ 'dashboard-shell.nav-alerts' | translate }}</span>
+        </a>
 
         <div
           class="menu-group"
