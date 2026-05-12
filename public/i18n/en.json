@@ -438,6 +438,7 @@
     "nav-history": "History",
     "nav-compliance": "Compliance",
     "nav-findings": "Findings",
+    "nav-audit-evidence": "Audit evidence",
     "nav-notifications": "Notifications",
     "download-report": "Download Monthly Report",
     "theme-light": "Light",
@@ -797,6 +798,70 @@
         "out-of-range": "{{ count }} reading(s) were outside the configured range.",
         "connectivity": "Asset connectivity is {{ status }}.",
         "expired-calibration": "Device {{ device }} has an expired calibration date: {{ date }}."
+      }
+    },
+    "audit": {
+      "page-title": "Audit Evidence",
+      "title": "Audit Evidence",
+      "subtitle": "Consolidate monitoring, reports, findings, and corrective evidence for reviews.",
+      "reload": "Reload",
+      "export": "Export evidence",
+      "feedback-exported": "Audit evidence exported with the selected period.",
+      "feedback-insufficient": "The selected period does not contain enough evidence to export.",
+      "feedback-error": "We could not prepare the audit evidence with the current data.",
+      "access-title": "Insufficient authorization",
+      "access-description": "Your current role does not include audit evidence permissions.",
+      "filter-from": "From",
+      "filter-to": "To",
+      "filter-asset": "Asset",
+      "all-assets": "All assets",
+      "summary-completeness": "Checklist",
+      "summary-readings": "Readings",
+      "summary-reports": "Reports",
+      "summary-pending": "Missing sections",
+      "incomplete-title": "Incomplete evidence",
+      "incomplete-description": "{{ count }} checklist item(s) still need evidence before review.",
+      "checklist-title": "Evidence checklist",
+      "table-subtitle": "Evidence from {{ from }} to {{ to }}",
+      "reports-title": "Generated reports",
+      "reports-subtitle": "Files and report records included in this package.",
+      "findings-title": "Findings and actions",
+      "findings-subtitle": "Compliance observations used as pending or corrective evidence.",
+      "empty-reports-title": "No reports in range",
+      "empty-reports-description": "Generate a daily, compliance, or monthly report for this period.",
+      "empty-findings-title": "No findings in range",
+      "empty-findings-description": "No compliance findings were detected for this evidence package.",
+      "table": {
+        "section": "Section",
+        "evidence": "Evidence",
+        "status": "Status"
+      },
+      "checklist": {
+        "monitoring-readings": "Monitoring readings",
+        "generated-reports": "Generated reports",
+        "compliance-findings": "Compliance review",
+        "incident-records": "Incident records",
+        "corrective-actions": "Corrective actions"
+      },
+      "status": {
+        "complete": "Complete",
+        "incomplete": "Incomplete"
+      },
+      "items": {
+        "monitoring-readings-complete": "{{ count }} monitoring reading(s) are available.",
+        "monitoring-readings-incomplete": "No monitoring readings were found for this period.",
+        "generated-reports-complete": "{{ count }} generated report(s) are included.",
+        "generated-reports-incomplete": "No generated reports were found for this period.",
+        "compliance-findings-complete": "{{ count }} compliance finding(s) were evaluated without blocking limitations.",
+        "compliance-findings-incomplete": "{{ limitations }} limitation(s) prevent a complete compliance evaluation.",
+        "incident-records-complete": "{{ count }} incident record(s) are included or no incidents were detected.",
+        "corrective-actions-complete": "{{ closed }} corrective action(s) are closed.",
+        "corrective-actions-incomplete": "{{ open }} open finding(s) still need corrective action."
+      },
+      "report-type": {
+        "daily-log": "Daily log",
+        "compliance": "Compliance report",
+        "monthly-summary": "Monthly report"
       }
     }
   }

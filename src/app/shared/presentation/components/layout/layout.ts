@@ -92,6 +92,10 @@ export class Layout implements OnInit {
       return 'reports.findings.page-title';
     }
 
+    if (currentUrl.includes('/reports/audit-evidence')) {
+      return 'reports.audit.page-title';
+    }
+
     if (currentUrl.includes('/identity-access/reports') || currentUrl.includes('/reports')) {
       return 'reports.daily-log.page-title';
     }
