@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  platformProviderApiBaseUrl: 'https://coldtrace-json-server.onrender.com',
+  platformProviderApiBaseUrl: 'http://localhost:3000',
   platformProviderUsersEndpointPath: '/users',
   platformProviderOrganizationsEndpointPath: '/organizations',
   platformProviderRolesEndpointPath: '/roles',
@@ -8,6 +8,7 @@ export const environment = {
   platformProviderIoTDevicesEndpointPath: '/iot-devices',
   platformProviderGatewaysEndpointPath: '/gateways',
   platformProviderAssetSettingsEndpointPath: '/asset-settings',
+  platformProviderMaintenanceSchedulesEndpointPath: '/maintenance-schedules',
   platformProviderSensorReadingsEndpointPath: '/sensor-readings',
   platformProviderReportsEndpointPath: '/reports',
   platformProviderSignUpEndpointPath: '/authentication/sign-up',

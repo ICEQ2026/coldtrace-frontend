@@ -493,6 +493,62 @@
       "loading": "Loading asset data..."
     }
   },
+  "maintenance": {
+    "preventive": {
+      "page-title": "Preventive maintenance",
+      "title": "Preventive maintenance",
+      "subtitle": "Schedule planned maintenance for cold-chain assets and their monitoring devices.",
+      "reload": "Reload",
+      "save": "Schedule maintenance",
+      "saving": "Scheduling...",
+      "reset": "Reset",
+      "form-title": "Maintenance schedule",
+      "form-subtitle": "Register the date, scope, and observations for the next preventive intervention.",
+      "feedback-scheduled": "Preventive maintenance was scheduled successfully.",
+      "feedback-invalid": "Review the required date and observations before saving.",
+      "feedback-invalid-asset": "Select an active asset before scheduling maintenance.",
+      "feedback-duplicate": "There is already an open maintenance schedule for this asset in the selected period.",
+      "feedback-access-denied": "Your current role cannot schedule preventive maintenance.",
+      "feedback-error": "The maintenance schedule could not be saved. Try again.",
+      "access-title": "Restricted scheduling",
+      "access-description": "Users without asset management permission can review maintenance schedules, but cannot create them.",
+      "summary-assets": "Organization assets",
+      "summary-open": "Open schedules",
+      "summary-tracked": "Tracked assets",
+      "summary-devices": "Monitoring devices",
+      "empty": "No preventive maintenance schedules registered for this organization.",
+      "form": {
+        "asset": "Asset",
+        "select-asset": "Select asset",
+        "asset-error": "Select a valid asset.",
+        "device": "Device",
+        "asset-level": "Asset-level maintenance",
+        "date": "Scheduled date",
+        "date-error": "Select today or a future date.",
+        "observations": "Observations",
+        "observations-placeholder": "Describe the preventive work to be completed.",
+        "observations-error": "Enter at least 6 characters."
+      },
+      "table-title": "Scheduled preventive maintenance",
+      "table-subtitle": "Open schedules keep the asset under operational follow-up.",
+      "table": {
+        "id": "ID",
+        "asset": "Asset",
+        "device": "Device",
+        "asset-level": "Asset level",
+        "location": "Location",
+        "date": "Date",
+        "period": "Period",
+        "status": "Status"
+      },
+      "status": {
+        "scheduled": "Scheduled",
+        "pending": "Pending",
+        "completed": "Completed",
+        "canceled": "Canceled"
+      }
+    }
+  },
   "sign-up": {
     "title": "Create your account",
     "organization-name": "Organization name",
@@ -535,6 +591,7 @@
     "nav-settings": "Settings",
     "nav-safety-ranges": "Safety ranges",
     "nav-operational-parameters": "Operational parameters",
+    "nav-preventive-maintenance": "Preventive maintenance",
     "nav-reports": "Reports",
     "nav-daily-log": "Daily log",
     "nav-monthly-report": "Monthly report",

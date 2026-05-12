@@ -31,6 +31,7 @@ export class Layout implements OnInit {
     '/asset-management/assets',
     '/asset-management/safety-ranges',
     '/asset-management/operational-parameters',
+    '/maintenance',
     '/identity-access/alerts',
     '/identity-access/monitoring',
     '/identity-access/reports',
@@ -61,6 +62,10 @@ export class Layout implements OnInit {
 
     if (currentUrl.includes('/asset-management/operational-parameters')) {
       return 'asset-management.operational-parameters.page-title';
+    }
+
+    if (currentUrl.includes('/maintenance/preventive')) {
+      return 'maintenance.preventive.page-title';
     }
 
     if (currentUrl.includes('/monitoring')) {

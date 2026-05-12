@@ -1,0 +1,227 @@
+<section class="page" aria-labelledby="preventive-maintenance-title">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <div class="page-heading">
+    <div>
+      <span class="section-kicker">{{ activeOrganizationName() }}</span>
+      <h1 id="preventive-maintenance-title">
+        {{ 'maintenance.preventive.title' | translate }}
+      </h1>
+      <p>{{ 'maintenance.preventive.subtitle' | translate }}</p>
+    </div>
+
+    <div class="heading-actions">
+      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'maintenance.preventive.reload' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (feedback() === 'scheduled') {
+    <p class="feedback success">{{ 'maintenance.preventive.feedback-scheduled' | translate }}</p>
+  }
+
+  @if (feedback() === 'invalid') {
+    <p class="feedback warning">{{ 'maintenance.preventive.feedback-invalid' | translate }}</p>
+  }
+
+  @if (feedback() === 'invalid-asset') {
+    <p class="feedback warning">
+      {{ 'maintenance.preventive.feedback-invalid-asset' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'duplicate') {
+    <p class="feedback warning">{{ 'maintenance.preventive.feedback-duplicate' | translate }}</p>
+  }
+
+  @if (feedback() === 'access-denied') {
+    <p class="feedback warning">
+      {{ 'maintenance.preventive.feedback-access-denied' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'server-error') {
+    <p class="feedback error">{{ 'maintenance.preventive.feedback-error' | translate }}</p>
+  }
+
+  @if (!canScheduleMaintenance() && !identityLoading()) {
+    <section class="access-banner" aria-live="polite">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <div>
+        <h2>{{ 'maintenance.preventive.access-title' | translate }}</h2>
+        <p>{{ 'maintenance.preventive.access-description' | translate }}</p>
+      </div>
+    </section>
+  }
+
+  <section class="summary-grid" aria-label="Preventive maintenance summary">
+    <article class="summary-card accent-blue">
+      <span>{{ 'maintenance.preventive.summary-assets' | translate }}</span>
+      <strong>{{ organizationAssets().length }}</strong>
+    </article>
+    <article class="summary-card accent-green">
+      <span>{{ 'maintenance.preventive.summary-open' | translate }}</span>
+      <strong>{{ openSchedules().length }}</strong>
+    </article>
+    <article class="summary-card accent-amber">
+      <span>{{ 'maintenance.preventive.summary-tracked' | translate }}</span>
+      <strong>{{ trackedAssetsCount() }}</strong>
+    </article>
+    <article class="summary-card accent-red">
+      <span>{{ 'maintenance.preventive.summary-devices' | translate }}</span>
+      <strong>{{ organizationIoTDevices().length }}</strong>
+    </article>
+  </section>
+
+  <section class="table-card scheduler-card" aria-labelledby="maintenance-form-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="maintenance-form-title">{{ 'maintenance.preventive.form-title' | translate }}</h2>
+        <p>{{ 'maintenance.preventive.form-subtitle' | translate }}</p>
+      </div>
+
+      <button
+        mat-stroked-button
+        type="button"
+        class="secondary-action"
+        [disabled]="saving()"
+        (click)="resetScheduleForm()"
+      >
+        <mat-icon aria-hidden="true">restart_alt</mat-icon>
+        {{ 'maintenance.preventive.reset' | translate }}
+      </button>
+    </div>
+
+    <form
+      class="maintenance-form"
+      [formGroup]="maintenanceForm"
+      (ngSubmit)="schedulePreventiveMaintenance()"
+    >
+      <div class="form-grid">
+        <label class="filter-field">
+          <span>{{ 'maintenance.preventive.form.asset' | translate }}</span>
+          <select formControlName="assetId" (change)="selectAsset($any($event.target).value)">
+            <option [ngValue]="0">
+              {{ 'maintenance.preventive.form.select-asset' | translate }}
+            </option>
+            @for (asset of organizationAssets(); track asset.id) {
+              <option [ngValue]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
+            }
+          </select>
+          @if (hasControlError('assetId')) {
+            <small>{{ 'maintenance.preventive.form.asset-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="filter-field">
+          <span>{{ 'maintenance.preventive.form.device' | translate }}</span>
+          <select formControlName="iotDeviceId">
+            <option [ngValue]="0">
+              {{ 'maintenance.preventive.form.asset-level' | translate }}
+            </option>
+            @for (iotDevice of selectedAssetDevices(); track iotDevice.id) {
+              <option [ngValue]="iotDevice.id">{{ iotDevice.uuid }} - {{ iotDevice.model }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="filter-field">
+          <span>{{ 'maintenance.preventive.form.date' | translate }}</span>
+          <input type="date" [min]="today" formControlName="scheduledDate" />
+          @if (hasDateError()) {
+            <small>{{ 'maintenance.preventive.form.date-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="filter-field full">
+          <span>{{ 'maintenance.preventive.form.observations' | translate }}</span>
+          <textarea
+            rows="3"
+            formControlName="observations"
+            [placeholder]="'maintenance.preventive.form.observations-placeholder' | translate"
+          ></textarea>
+          @if (hasControlError('observations')) {
+            <small>{{ 'maintenance.preventive.form.observations-error' | translate }}</small>
+          }
+        </label>
+
+        <div class="save-actions">
+          <button
+            mat-flat-button
+            type="submit"
+            class="primary-action"
+            [disabled]="saving() || !canScheduleMaintenance()"
+          >
+            <mat-icon aria-hidden="true">event_available</mat-icon>
+            {{
+              (saving() ? 'maintenance.preventive.saving' : 'maintenance.preventive.save')
+                | translate
+            }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="table-card" aria-labelledby="maintenance-schedules-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="maintenance-schedules-title">
+          {{ 'maintenance.preventive.table-title' | translate }}
+        </h2>
+        <p>{{ 'maintenance.preventive.table-subtitle' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'maintenance.preventive.table.id' | translate }}</th>
+            <th>{{ 'maintenance.preventive.table.asset' | translate }}</th>
+            <th>{{ 'maintenance.preventive.table.device' | translate }}</th>
+            <th>{{ 'maintenance.preventive.table.location' | translate }}</th>
+            <th>{{ 'maintenance.preventive.table.date' | translate }}</th>
+            <th>{{ 'maintenance.preventive.table.period' | translate }}</th>
+            <th>{{ 'maintenance.preventive.table.status' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (schedule of organizationSchedules(); track schedule.id) {
+            <tr>
+              <td>{{ schedule.uuid }}</td>
+              <td>{{ assetNameFor(schedule) }}</td>
+              <td>
+                @if (schedule.iotDeviceId) {
+                  {{ deviceNameFor(schedule) }}
+                } @else {
+                  {{ deviceNameFor(schedule) | translate }}
+                }
+              </td>
+              <td>{{ assetLocationFor(schedule) }}</td>
+              <td>{{ schedule.scheduledDate }}</td>
+              <td>{{ schedule.period }}</td>
+              <td>
+                <span class="status-pill" [ngClass]="scheduleStatusClass(schedule.status)">
+                  {{ scheduleStatusKey(schedule.status) | translate }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty-state">
+                {{ 'maintenance.preventive.empty' | translate }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>
