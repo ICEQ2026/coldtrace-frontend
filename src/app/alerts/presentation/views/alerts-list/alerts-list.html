@@ -1,0 +1,57 @@
+<div class="alerts-container">
+  <div class="alerts-list-view">
+    <header class="list-header">
+      <h1 class="page-title">{{ 'alerts.list.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'alerts.list.subtitle' | translate }}</p>
+    </header>
+
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>{{ 'alerts.list.loading' | translate }}</p>
+      </div>
+    } @else {
+      <div class="alerts-grid">
+        @for (incident of incidents(); track incident.id) {
+          <div 
+            class="alert-card" 
+            [class.selected]="selectedIncidentId === incident.id"
+            (click)="onSelectIncident(incident.id)"
+          >
+            <div class="card-status" [class]="incident.severity"></div>
+            <div class="card-content">
+              <div class="card-top">
+                <span class="incident-id">#{{ incident.id }}</span>
+                <span class="incident-status" [class]="incident.status">
+                  {{ 'alerts.status.' + incident.status | translate }}
+                </span>
+              </div>
+              <h3 class="incident-type">
+                {{ 'monitoring.operational.type-' + (incident.type === 'high-temperature' ? 'high-temp' : incident.type === 'low-temperature' ? 'low-temp' : 'high-humidity') | translate }}
+              </h3>
+              <p class="incident-date">{{ incident.detectedAt | date: 'medium' }}</p>
+            </div>
+            <mat-icon class="arrow-icon">chevron_right</mat-icon>
+          </div>
+        } @empty {
+          <div class="empty-state">
+            <mat-icon class="empty-icon">check_circle</mat-icon>
+            <h3>{{ 'alerts.list.empty-title' | translate }}</h3>
+            <p>{{ 'alerts.list.empty-desc' | translate }}</p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  @if (selectedIncidentId) {
+    <div class="detail-overlay" (click)="onCloseDetail()">
+      <div class="detail-panel" (click)="$event.stopPropagation()">
+        <button class="close-btn" (click)="onCloseDetail()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <app-incident-detail [incidentId]="selectedIncidentId"></app-incident-detail>
+      </div>
+    </div>
+  }
+</div>

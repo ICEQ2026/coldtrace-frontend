@@ -780,6 +780,54 @@
       "empty-description": "Agrega activos, dispositivos y lecturas para ver el dashboard operativo de esta organización."
     }
   },
+  "alerts": {
+    "status": {
+      "open": "Abierta",
+      "acknowledged": "Reconocida",
+      "resolved": "Resuelta"
+    },
+    "list": {
+      "title": "Alertas e Incidencias",
+      "subtitle": "Monitorea y resuelve incidencias operativas en tus activos.",
+      "loading": "Cargando incidencias...",
+      "empty-title": "Sin incidencias activas",
+      "empty-desc": "Todo funciona correctamente. Todas las incidencias han sido resueltas."
+    },
+    "detail": {
+      "title": "Incidencia",
+      "status": "Estado",
+      "asset": "Activo",
+      "type": "Tipo",
+      "detected": "Detectada el",
+      "recognized": "Reconocida el",
+      "add-corrective-action": "Resolver y cerrar incidencia",
+      "corrective-action-title": "Acción correctiva aplicada",
+      "description": "Descripción",
+      "responsible": "Responsable",
+      "result": "Resultado",
+      "applied": "Aplicada el"
+    },
+    "form": {
+      "title": "Acción correctiva",
+      "subtitle": "Registra los detalles de la solución para cerrar esta incidencia.",
+      "description": "Descripción de la acción",
+      "description-placeholder": "Describe la medida correctiva aplicada...",
+      "description-error": "Se requiere una descripción de al menos 10 caracteres.",
+      "responsible": "Persona responsable",
+      "responsible-placeholder": "ej. Andrés Silva",
+      "responsible-error": "La persona responsable es requerida.",
+      "result": "Resultado / Evidencia",
+      "result-placeholder": "ej. Temperatura estabilizada en 4°C",
+      "result-error": "La evidencia del resultado es requerida.",
+      "cancel": "Cancelar",
+      "resolve": "Cerrar incidencia",
+      "saving": "Cerrando..."
+    },
+    "warning": {
+      "critical-title": "Condición aún crítica",
+      "critical-text": "El activo sigue reportando valores fuera del rango seguro. Se recomienda confirmar la solución antes del cierre definitivo."
+    }
+  },
   "reports": {
     "daily-log": {
       "page-title": "Reportes",

@@ -16,6 +16,8 @@ const maintenanceManagementRoutes = () =>
   import('./maintenance-management/presentation/maintenance-management.routes').then(
     (m) => m.maintenanceManagementRoutes,
   );
+const alertsRoutes = () =>
+  import('./alerts/presentation/alerts.routes').then((m) => m.alertsRoutes);
 const pageNotFound = () =>
   import('./shared/presentation/views/page-not-found/page-not-found').then((m) => m.PageNotFound);
 
@@ -23,6 +25,7 @@ export const routes: Routes = [
   { path: 'identity-access', loadChildren: identityAccessRoutes },
   { path: 'asset-management', loadChildren: assetManagementRoutes },
   { path: 'monitoring', loadChildren: monitoringRoutes },
+  { path: 'alerts', loadChildren: alertsRoutes },
   { path: 'reports', loadChildren: reportsRoutes },
   { path: 'maintenance', loadChildren: maintenanceManagementRoutes },
   { path: '', redirectTo: '/identity-access/sign-in', pathMatch: 'full' },

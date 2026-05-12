@@ -1,0 +1,55 @@
+<div class="corrective-action-form">
+  <h3 class="form-title">{{ 'alerts.form.title' | translate }}</h3>
+  <p class="form-subtitle">{{ 'alerts.form.subtitle' | translate }}</p>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-field">
+      <label for="description">{{ 'alerts.form.description' | translate }}</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        [placeholder]="'alerts.form.description-placeholder' | translate"
+      ></textarea>
+      @if (form.get('description')?.invalid && form.get('description')?.touched) {
+        <span class="error">{{ 'alerts.form.description-error' | translate }}</span>
+      }
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="responsible">{{ 'alerts.form.responsible' | translate }}</label>
+        <input
+          type="text"
+          id="responsible"
+          formControlName="responsible"
+          [placeholder]="'alerts.form.responsible-placeholder' | translate"
+        />
+        @if (form.get('responsible')?.invalid && form.get('responsible')?.touched) {
+          <span class="error">{{ 'alerts.form.responsible-error' | translate }}</span>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="result">{{ 'alerts.form.result' | translate }}</label>
+        <input
+          type="text"
+          id="result"
+          formControlName="result"
+          [placeholder]="'alerts.form.result-placeholder' | translate"
+        />
+        @if (form.get('result')?.invalid && form.get('result')?.touched) {
+          <span class="error">{{ 'alerts.form.result-error' | translate }}</span>
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="onCancel()">
+        {{ 'alerts.form.cancel' | translate }}
+      </button>
+      <button type="submit" class="btn-primary" [disabled]="form.invalid || loading">
+        {{ (loading ? 'alerts.form.saving' : 'alerts.form.resolve') | translate }}
+      </button>
+    </div>
+  </form>
+</div>

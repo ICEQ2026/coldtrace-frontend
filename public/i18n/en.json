@@ -780,6 +780,54 @@
       "empty-description": "Add assets, devices, and readings to see the operational dashboard for this organization."
     }
   },
+  "alerts": {
+    "status": {
+      "open": "Open",
+      "acknowledged": "Acknowledged",
+      "resolved": "Resolved"
+    },
+    "list": {
+      "title": "Alerts & Incidents",
+      "subtitle": "Monitor and resolve operational incidents across your assets.",
+      "loading": "Loading incidents...",
+      "empty-title": "No active incidents",
+      "empty-desc": "Everything is running smoothly. All incidents have been resolved."
+    },
+    "detail": {
+      "title": "Incident",
+      "status": "Status",
+      "asset": "Asset",
+      "type": "Type",
+      "detected": "Detected at",
+      "recognized": "Recognized at",
+      "add-corrective-action": "Resolve & Close Incident",
+      "corrective-action-title": "Applied Corrective Action",
+      "description": "Description",
+      "responsible": "Responsible",
+      "result": "Result",
+      "applied": "Applied at"
+    },
+    "form": {
+      "title": "Corrective Action",
+      "subtitle": "Register the fix details to close this incident.",
+      "description": "Action description",
+      "description-placeholder": "Describe the corrective measure applied...",
+      "description-error": "A description of at least 10 characters is required.",
+      "responsible": "Responsible person",
+      "responsible-placeholder": "e.g., Andrés Silva",
+      "responsible-error": "Responsible person is required.",
+      "result": "Result / Evidence",
+      "result-placeholder": "e.g., Temperature stabilized at 4°C",
+      "result-error": "Result evidence is required.",
+      "cancel": "Cancel",
+      "resolve": "Close Incident",
+      "saving": "Closing..."
+    },
+    "warning": {
+      "critical-title": "Condition Still Critical",
+      "critical-text": "The asset is still reporting values outside the safety range. Confirming the fix is recommended before final closure."
+    }
+  },
   "reports": {
     "daily-log": {
       "page-title": "Reports",

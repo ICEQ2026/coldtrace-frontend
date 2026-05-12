@@ -1,0 +1,73 @@
+@if (incident) {
+  <div class="incident-detail">
+    <header class="detail-header">
+      <div class="title-group">
+        <h2 class="detail-title">{{ 'alerts.detail.title' | translate }} #{{ incident.id }}</h2>
+        <span class="badge" [class]="incident.severity">{{ incident.severity | uppercase }}</span>
+      </div>
+      <div class="status-group">
+        <span class="status-label">{{ 'alerts.detail.status' | translate }}:</span>
+        <span class="status-value" [class]="incident.status">{{ 'alerts.status.' + incident.status | translate }}</span>
+      </div>
+    </header>
+
+    <div class="detail-body">
+      <section class="info-section">
+        <div class="info-item">
+          <span class="label">{{ 'alerts.detail.asset' | translate }}</span>
+          <span class="value">{{ assetName }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'alerts.detail.type' | translate }}</span>
+          <span class="value">{{ 'monitoring.operational.type-' + (incident.type === 'high-temperature' ? 'high-temp' : incident.type === 'low-temperature' ? 'low-temp' : 'high-humidity') | translate }}</span>
+        </div>
+        <div class="info-item">
+          <span class="label">{{ 'alerts.detail.detected' | translate }}</span>
+          <span class="value">{{ incident.detectedAt | date: 'medium' }}</span>
+        </div>
+        @if (incident.recognizedAt) {
+          <div class="info-item">
+            <span class="label">{{ 'alerts.detail.recognized' | translate }}</span>
+            <span class="value">{{ incident.recognizedAt | date: 'medium' }}</span>
+          </div>
+        }
+      </section>
+
+      @if (incident.status !== 'resolved') {
+        <div class="action-section">
+          @if (!showForm) {
+            @if (isCriticalCondition) {
+              <div class="risk-warning">
+                <i class="warning-icon">⚠️</i>
+                <div class="warning-content">
+                  <p class="warning-title">{{ 'alerts.warning.critical-title' | translate }}</p>
+                  <p class="warning-text">{{ 'alerts.warning.critical-text' | translate }}</p>
+                </div>
+              </div>
+            }
+
+            <button class="btn-primary full-width" (click)="onOpenForm()">
+              {{ 'alerts.detail.add-corrective-action' | translate }}
+            </button>
+          } @else {
+            <app-corrective-action-form
+              [loading]="loading"
+              (save)="onResolve($event)"
+              (cancel)="onCloseForm()"
+            ></app-corrective-action-form>
+          }
+        </div>
+      } @else if (incident.correctiveAction) {
+        <section class="corrective-action-details">
+          <h3 class="section-title">{{ 'alerts.detail.corrective-action-title' | translate }}</h3>
+          <div class="ca-content">
+            <p><strong>{{ 'alerts.detail.responsible' | translate }}:</strong> {{ incident.correctiveAction.responsible }}</p>
+            <p><strong>{{ 'alerts.detail.description' | translate }}:</strong> {{ incident.correctiveAction.description }}</p>
+            <p><strong>{{ 'alerts.detail.result' | translate }}:</strong> {{ incident.correctiveAction.result }}</p>
+            <p><strong>{{ 'alerts.detail.applied' | translate }}:</strong> {{ incident.correctiveAction.appliedAt | date: 'medium' }}</p>
+          </div>
+        </section>
+      }
+    </div>
+  </div>
+}

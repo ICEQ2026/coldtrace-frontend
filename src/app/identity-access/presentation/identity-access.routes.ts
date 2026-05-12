@@ -29,7 +29,7 @@ export const identityAccessRoutes: Routes = [
   },
   {
     path: 'alerts',
-    redirectTo: '/identity-access/dashboard',
+    redirectTo: '/alerts',
     pathMatch: 'full',
   },
   {
