@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
 import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
+import { Notification } from '../../../domain/model/notification.entity';
 
 @Component({
   selector: 'app-incident-list',
@@ -162,6 +163,22 @@ export class IncidentList implements OnInit {
 
   protected typeLabelKey(incident: Incident): string {
     return `alerts.incident-list.type-${incident.type}`;
+  }
+
+  protected notificationChannelIcon(notification: Notification): string {
+    switch (notification.channel) {
+      case 'email': return 'mail';
+      case 'sms': return 'sms';
+      default: return 'notifications';
+    }
+  }
+
+  protected notificationChannelLabelKey(notification: Notification): string {
+    return `alerts.incident-list.notification-channel-${notification.channel}`;
+  }
+
+  protected notificationStatusLabelKey(notification: Notification): string {
+    return `alerts.incident-list.notification-status-${notification.status}`;
   }
 
   protected formatDate(isoDate: string): string {
