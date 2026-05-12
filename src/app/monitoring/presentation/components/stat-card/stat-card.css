@@ -1,0 +1,258 @@
+.stat-card {
+  position: relative;
+  border-radius: 8px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: visible;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 5px 9px rgba(15, 23, 42, 0.12), 0 18px 32px rgba(15, 23, 42, 0.06);
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  background-clip: padding-box;
+}
+
+.card-content {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  height: 100%;
+  pointer-events: none;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: 0;
+}
+
+.more-btn {
+  align-items: center;
+  border-radius: 999px;
+  display: flex;
+  height: 20px;
+  justify-content: center;
+  pointer-events: auto;
+  width: 24px;
+}
+
+.more-btn mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+.main-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.trend {
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+}
+
+.value {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.04;
+  letter-spacing: 0;
+}
+
+.unit {
+  font-size: 12px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  margin-top: 0;
+}
+
+.size-small {
+  padding: 22px 20px;
+}
+
+.size-small .card-content {
+  gap: 12px;
+}
+
+.size-small .title {
+  font-size: 12px;
+  line-height: 1.22;
+  max-width: 106px;
+}
+
+.size-small .main-metric {
+  max-width: 112px;
+}
+
+.size-small .value {
+  font-size: 22px;
+  max-width: 112px;
+}
+
+.size-small .unit {
+  font-size: 11px;
+}
+
+.size-large .title {
+  opacity: 0.74;
+}
+
+.size-large .value {
+  font-size: 25px;
+}
+
+/* CHART LAYER */
+.chart-container {
+  position: absolute;
+  bottom: 24px;
+  left: 22px;
+  right: 22px;
+  height: 98px;
+  z-index: 1;
+}
+
+.chart-container.is-wave {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 142px;
+}
+
+.size-small .chart-container {
+  bottom: 20px;
+  height: 92px;
+  left: auto;
+  right: 18px;
+  width: 108px;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 100%;
+  width: 100%;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.bar {
+  width: 5px;
+  border-radius: 999px;
+  transition: height 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.size-small .bars {
+  gap: 5px;
+}
+
+.size-small .bar {
+  width: 4px;
+}
+
+.wave {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.wave svg {
+  width: 100%;
+  height: 100%;
+  opacity: 0.95;
+}
+
+.wave-fill {
+  opacity: 0.42;
+}
+
+.wave-line {
+  filter: drop-shadow(0 2px 3px rgba(68, 12, 124, 0.22));
+  opacity: 0.82;
+}
+
+.wave-shadow {
+  opacity: 0.55;
+}
+
+.anchor-dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 3px solid;
+  transform: translate(-50%, 50%);
+  z-index: 10;
+}
+
+.bars-anchor {
+  bottom: 70%;
+}
+
+.wave-anchor {
+  bottom: 37%;
+}
+
+/* THOUGHT BUBBLE */
+.thought-bubble {
+  position: absolute;
+  top: 102px;
+  transform: translateX(-50%);
+  background: #FFFFFF;
+  padding: 6px 10px;
+  border-radius: 5px;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.10);
+  white-space: nowrap;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.size-large.type-wave .thought-bubble {
+  top: 116px;
+}
+
+.size-small .thought-bubble {
+  top: 28px;
+}
+
+.stat-card:hover .thought-bubble {
+  transform: translateX(-50%) translateY(-5px);
+  transition: transform 0.2s ease;
+}
+
+.bubble-text {
+  font-size: 11px;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+}
+
+.bubble-tail {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid #FFFFFF;
+}

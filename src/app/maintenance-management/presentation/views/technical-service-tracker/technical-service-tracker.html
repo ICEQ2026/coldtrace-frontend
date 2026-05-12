@@ -1,0 +1,323 @@
+<section class="page" aria-labelledby="technical-service-title">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <div class="page-heading">
+    <div>
+      <span class="section-kicker">{{ activeOrganizationName() }}</span>
+      <h1 id="technical-service-title">
+        {{ 'maintenance.technical-service.title' | translate }}
+      </h1>
+      <p>{{ 'maintenance.technical-service.subtitle' | translate }}</p>
+    </div>
+
+    <div class="heading-actions">
+      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'maintenance.technical-service.reload' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (feedback() === 'request-created') {
+    <p class="feedback success">
+      {{ 'maintenance.technical-service.feedback-request-created' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'closed') {
+    <p class="feedback success">
+      {{ 'maintenance.technical-service.feedback-closed' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'failed-test') {
+    <p class="feedback warning">
+      {{ 'maintenance.technical-service.feedback-failed-test' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'invalid') {
+    <p class="feedback warning">
+      {{ 'maintenance.technical-service.feedback-invalid' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'invalid-asset') {
+    <p class="feedback warning">
+      {{ 'maintenance.technical-service.feedback-invalid-asset' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'missing-evidence') {
+    <p class="feedback warning">
+      {{ 'maintenance.technical-service.feedback-missing-evidence' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'access-denied') {
+    <p class="feedback warning">
+      {{ 'maintenance.technical-service.feedback-access-denied' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'server-error') {
+    <p class="feedback error">{{ 'maintenance.technical-service.feedback-error' | translate }}</p>
+  }
+
+  @if (!canManageTechnicalService() && !identityLoading()) {
+    <section class="access-banner" aria-live="polite">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <div>
+        <h2>{{ 'maintenance.technical-service.access-title' | translate }}</h2>
+        <p>{{ 'maintenance.technical-service.access-description' | translate }}</p>
+      </div>
+    </section>
+  }
+
+  <section class="summary-grid" aria-label="Technical service summary">
+    <article class="summary-card accent-blue">
+      <span>{{ 'maintenance.technical-service.summary-assets' | translate }}</span>
+      <strong>{{ serviceEligibleAssets().length }}</strong>
+    </article>
+    <article class="summary-card accent-amber">
+      <span>{{ 'maintenance.technical-service.summary-open' | translate }}</span>
+      <strong>{{ openRequests().length }}</strong>
+    </article>
+    <article class="summary-card accent-red">
+      <span>{{ 'maintenance.technical-service.summary-pending-review' | translate }}</span>
+      <strong>{{ pendingReviewRequests().length }}</strong>
+    </article>
+    <article class="summary-card accent-green">
+      <span>{{ 'maintenance.technical-service.summary-closed' | translate }}</span>
+      <strong>{{ closedRequests().length }}</strong>
+    </article>
+  </section>
+
+  <section class="forms-grid">
+    <section class="table-card service-card" aria-labelledby="technical-request-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="technical-request-title">
+            {{ 'maintenance.technical-service.request-title' | translate }}
+          </h2>
+          <p>{{ 'maintenance.technical-service.request-subtitle' | translate }}</p>
+        </div>
+
+        <button
+          mat-stroked-button
+          type="button"
+          class="secondary-action"
+          [disabled]="saving()"
+          (click)="resetRequestForm()"
+        >
+          <mat-icon aria-hidden="true">restart_alt</mat-icon>
+          {{ 'maintenance.technical-service.reset' | translate }}
+        </button>
+      </div>
+
+      <form
+        class="service-form"
+        [formGroup]="serviceRequestForm"
+        (ngSubmit)="requestTechnicalService()"
+      >
+        <label class="filter-field">
+          <span>{{ 'maintenance.technical-service.form.asset' | translate }}</span>
+          <select formControlName="assetId">
+            <option [ngValue]="0">
+              {{ 'maintenance.technical-service.form.select-asset' | translate }}
+            </option>
+            @for (asset of serviceEligibleAssets(); track asset.id) {
+              <option [ngValue]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
+            }
+          </select>
+          @if (hasRequestControlError('assetId')) {
+            <small>{{ 'maintenance.technical-service.form.asset-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="filter-field">
+          <span>{{ 'maintenance.technical-service.form.priority' | translate }}</span>
+          <select formControlName="priority">
+            <option value="low">
+              {{ 'maintenance.technical-service.priority.low' | translate }}
+            </option>
+            <option value="medium">
+              {{ 'maintenance.technical-service.priority.medium' | translate }}
+            </option>
+            <option value="high">
+              {{ 'maintenance.technical-service.priority.high' | translate }}
+            </option>
+            <option value="critical">
+              {{ 'maintenance.technical-service.priority.critical' | translate }}
+            </option>
+          </select>
+        </label>
+
+        <label class="filter-field">
+          <span>{{ 'maintenance.technical-service.form.issue' | translate }}</span>
+          <textarea
+            rows="4"
+            formControlName="issueDescription"
+            [placeholder]="'maintenance.technical-service.form.issue-placeholder' | translate"
+          ></textarea>
+          @if (hasRequestControlError('issueDescription')) {
+            <small>{{ 'maintenance.technical-service.form.issue-error' | translate }}</small>
+          }
+        </label>
+
+        <button
+          mat-flat-button
+          type="submit"
+          class="primary-action"
+          [disabled]="saving() || !canManageTechnicalService()"
+        >
+          <mat-icon aria-hidden="true">build_circle</mat-icon>
+          {{ 'maintenance.technical-service.create-request' | translate }}
+        </button>
+      </form>
+    </section>
+
+    <section class="table-card service-card" aria-labelledby="technical-closure-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="technical-closure-title">
+            {{ 'maintenance.technical-service.closure-title' | translate }}
+          </h2>
+          <p>{{ 'maintenance.technical-service.closure-subtitle' | translate }}</p>
+        </div>
+
+        <button
+          mat-stroked-button
+          type="button"
+          class="secondary-action"
+          [disabled]="saving()"
+          (click)="resetClosureForm()"
+        >
+          <mat-icon aria-hidden="true">restart_alt</mat-icon>
+          {{ 'maintenance.technical-service.reset' | translate }}
+        </button>
+      </div>
+
+      <form class="service-form" [formGroup]="closureForm" (ngSubmit)="closeTechnicalService()">
+        <label class="filter-field">
+          <span>{{ 'maintenance.technical-service.form.open-request' | translate }}</span>
+          <select formControlName="requestId">
+            <option [ngValue]="0">
+              {{ 'maintenance.technical-service.form.select-request' | translate }}
+            </option>
+            @for (request of openRequests(); track request.id) {
+              <option [ngValue]="request.id">
+                {{ request.uuid }} - {{ assetNameFor(request.assetId) }}
+              </option>
+            }
+          </select>
+          @if (hasClosureControlError('requestId')) {
+            <small>{{ 'maintenance.technical-service.form.request-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="filter-field">
+          <span>{{ 'maintenance.technical-service.form.intervention' | translate }}</span>
+          <textarea
+            rows="3"
+            formControlName="interventionNotes"
+            [placeholder]="
+              'maintenance.technical-service.form.intervention-placeholder' | translate
+            "
+          ></textarea>
+          @if (hasClosureControlError('interventionNotes')) {
+            <small>{{ 'maintenance.technical-service.form.intervention-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="filter-field">
+          <span>{{ 'maintenance.technical-service.form.result' | translate }}</span>
+          <textarea
+            rows="3"
+            formControlName="resultNotes"
+            [placeholder]="'maintenance.technical-service.form.result-placeholder' | translate"
+          ></textarea>
+          @if (hasClosureControlError('resultNotes')) {
+            <small>{{ 'maintenance.technical-service.form.result-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="checkbox-field">
+          <input type="checkbox" formControlName="functionalTestPassed" />
+          <span>{{ 'maintenance.technical-service.form.functional-test-passed' | translate }}</span>
+        </label>
+
+        <button
+          mat-flat-button
+          type="submit"
+          class="primary-action"
+          [disabled]="saving() || !canManageTechnicalService() || !openRequests().length"
+        >
+          <mat-icon aria-hidden="true">task_alt</mat-icon>
+          {{ 'maintenance.technical-service.close-request' | translate }}
+        </button>
+      </form>
+    </section>
+  </section>
+
+  <section class="table-card" aria-labelledby="technical-service-list-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="technical-service-list-title">
+          {{ 'maintenance.technical-service.table-title' | translate }}
+        </h2>
+        <p>{{ 'maintenance.technical-service.table-subtitle' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'maintenance.technical-service.table.id' | translate }}</th>
+            <th>{{ 'maintenance.technical-service.table.asset' | translate }}</th>
+            <th>{{ 'maintenance.technical-service.table.priority' | translate }}</th>
+            <th>{{ 'maintenance.technical-service.table.issue' | translate }}</th>
+            <th>{{ 'maintenance.technical-service.table.result' | translate }}</th>
+            <th>{{ 'maintenance.technical-service.table.status' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (request of organizationRequests(); track request.id) {
+            <tr>
+              <td>
+                <strong>{{ request.uuid }}</strong>
+                <small>{{ request.requestedDate }}</small>
+              </td>
+              <td>
+                <strong>{{ assetNameFor(request.assetId) }}</strong>
+                <small>{{ assetLocationFor(request.assetId) }}</small>
+              </td>
+              <td>{{ priorityKey(request.priority) | translate }}</td>
+              <td>{{ request.issueDescription }}</td>
+              <td>
+                <strong>{{ resultLabelFor(request) | translate }}</strong>
+                <small>{{ request.resultNotes || 'N/A' }}</small>
+              </td>
+              <td>
+                <span class="status-pill" [ngClass]="requestStatusClass(request.status)">
+                  {{ requestStatusKey(request.status) | translate }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-state">
+                {{ 'maintenance.technical-service.empty' | translate }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

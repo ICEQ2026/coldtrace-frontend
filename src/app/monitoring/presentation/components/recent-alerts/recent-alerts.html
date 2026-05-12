@@ -1,0 +1,40 @@
+<div class="premium-card table-card">
+  <div class="card-header">
+    <h3 class="card-title">{{ 'monitoring.operational.recent-alerts' | translate }}</h3>
+    <button class="more-btn"><mat-icon>more_horiz</mat-icon></button>
+  </div>
+
+  <div class="table-container">
+    <table class="premium-table">
+      <thead>
+        <tr>
+          <th>{{ 'monitoring.operational.col-asset' | translate }}</th>
+          <th>{{ 'monitoring.operational.col-type' | translate }}</th>
+          <th>{{ 'monitoring.operational.col-value' | translate }}</th>
+          <th>{{ 'monitoring.operational.col-date' | translate }}</th>
+          <th>{{ 'monitoring.operational.col-status' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (alert of alerts; track alert.id) {
+          <tr>
+            <td class="asset-name">{{ alert.assetName }}</td>
+            <td>
+              <div class="type-cell" [class.warn]="alert.severity === 'warning'" [class.crit]="alert.severity === 'critical'" [class.info]="alert.severity === 'info'">
+                <mat-icon>{{ alert.icon }}</mat-icon>
+                <span>{{ alert.type | translate }}</span>
+              </div>
+            </td>
+            <td class="value">{{ alert.value }}</td>
+            <td class="date">{{ alert.date }}</td>
+            <td><span class="badge" [class.unack]="alert.status === 'Unacknowledged'" [class.ack]="alert.status === 'Acknowledged'">{{ statusLabelKey(alert.status) | translate }}</span></td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="empty-cell">{{ 'monitoring.operational.no-alerts' | translate }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

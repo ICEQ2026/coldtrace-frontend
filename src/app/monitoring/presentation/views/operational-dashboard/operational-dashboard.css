@@ -1,0 +1,178 @@
+.dashboard-content {
+  background: #f5f6f8;
+  box-sizing: border-box;
+  min-height: 100%;
+  padding: 8px 18px 40px;
+}
+
+.loading-overlay {
+  align-items: center;
+  background: rgba(245, 246, 248, 0.74);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  position: fixed;
+  z-index: 20;
+}
+
+.dashboard-board {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(660px, 1fr) 508px;
+  margin: 0;
+  max-width: 1352px;
+}
+
+.primary-column,
+.secondary-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+.dashboard-card-slot {
+  min-width: 0;
+}
+
+.temp-chart-container {
+  height: 390px;
+}
+
+.right-kpis {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 244px 244px;
+}
+
+.feature-kpis,
+.compact-kpis {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.feature-kpis app-stat-card {
+  height: 244px;
+}
+
+.compact-kpis app-stat-card {
+  height: 156px;
+}
+
+.lower-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: minmax(0, 1.62fr) minmax(260px, 0.95fr);
+}
+
+.storage-box,
+.maintenance-box {
+  height: 292px;
+}
+
+.alerts-row {
+  height: 336px;
+}
+
+.incidents-box {
+  height: 534px;
+}
+
+.empty-state {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid rgba(17, 24, 39, 0.06);
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.08);
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 320px;
+  padding: 32px;
+  text-align: center;
+}
+
+.empty-state.compact {
+  box-shadow: none;
+  min-height: 190px;
+  padding: 16px;
+}
+
+.empty-state mat-icon {
+  color: #c5ceda;
+  font-size: 42px;
+  height: 42px;
+  margin-bottom: 10px;
+  width: 42px;
+}
+
+.empty-state h2 {
+  color: #263348;
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.empty-state p {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  max-width: 420px;
+}
+
+:host ::ng-deep .premium-card {
+  background: #ffffff;
+  border: 1px solid rgba(17, 24, 39, 0.055);
+  border-radius: 8px;
+  box-shadow:
+    0 3px 8px rgba(15, 23, 42, 0.09),
+    0 18px 34px rgba(15, 23, 42, 0.055);
+  overflow: hidden;
+}
+
+:host ::ng-deep .stat-card {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+:host ::ng-deep .stat-card:hover {
+  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+  transform: translateY(-3px);
+}
+
+@media (max-width: 1180px) {
+  .dashboard-board {
+    grid-template-columns: 1fr;
+    max-width: 760px;
+  }
+
+  .right-kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .lower-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .incidents-box {
+    height: 430px;
+  }
+}
+
+@media (max-width: 760px) {
+  .dashboard-content {
+    padding: 18px;
+  }
+
+  .temp-chart-container,
+  .storage-box,
+  .maintenance-box,
+  .alerts-row,
+  .incidents-box {
+    height: auto;
+    min-height: 260px;
+  }
+}

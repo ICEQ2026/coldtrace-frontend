@@ -1,0 +1,268 @@
+<div class="incident-list-view">
+  <div class="view-header">
+    <div class="header-text">
+      <h1 class="view-title">{{ 'alerts.incident-list.title' | translate }}</h1>
+      <p class="view-subtitle">{{ 'alerts.incident-list.subtitle' | translate }}</p>
+    </div>
+
+    @if (alertsStore.feedback()) {
+      <div
+        class="feedback-banner"
+        [class.feedback-success]="isSuccessFeedback(alertsStore.feedback()!)"
+        [class.feedback-error]="!isSuccessFeedback(alertsStore.feedback()!)"
+      >
+        <mat-icon>{{ isSuccessFeedback(alertsStore.feedback()!) ? 'check_circle' : 'error_outline' }}</mat-icon>
+        <span>{{ alertsStore.feedback()! | translate }}</span>
+      </div>
+    }
+  </div>
+
+  @if (alertsStore.loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else {
+    <div class="premium-card table-card">
+      <div class="card-header">
+        <h3 class="card-title">{{ 'alerts.incident-list.title' | translate }}</h3>
+        <span class="open-count">
+          {{ alertsStore.openIncidentsCount() }} {{ 'alerts.incident-list.status-open' | translate }}
+        </span>
+        <span class="escalated-count">
+          {{ alertsStore.escalatedIncidentsCount() }} {{ 'alerts.incident-list.escalated-count' | translate }}
+        </span>
+      </div>
+
+      <div class="table-container">
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th>{{ 'alerts.incident-list.col-asset' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-type' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-value' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-detected' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-status' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-condition' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-source' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-escalation' | translate }}</th>
+              <th>{{ 'alerts.incident-list.col-recognized-by' | translate }}</th>
+              @if (canResolveAlerts()) {
+                <th>{{ 'alerts.incident-list.col-actions' | translate }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (incident of alertsStore.incidents(); track incident.id) {
+              <tr [class.recognized-row]="incident.isRecognized">
+                <td class="asset-name">{{ incident.assetName }}</td>
+                <td>
+                  <div class="type-cell" [class.crit]="incident.severity === 'critical'" [class.warn]="incident.severity === 'warning'">
+                    <mat-icon>{{ severityIcon(incident) }}</mat-icon>
+                    <span>{{ typeLabelKey(incident) | translate }}</span>
+                  </div>
+                </td>
+                <td class="value">{{ incident.value }}</td>
+                <td class="date">{{ formatDate(incident.detectedAt) }}</td>
+                <td>
+                  <span
+                    class="badge"
+                    [class.badge-open]="incident.status === 'open'"
+                    [class.badge-recognized]="incident.status === 'recognized'"
+                    [class.badge-closed]="incident.status === 'closed'"
+                  >
+                    {{ statusLabelKey(incident) | translate }}
+                  </span>
+                </td>
+                <td>
+                  <span
+                    class="condition-pill"
+                    [class.condition-stable]="incident.isConditionStable"
+                    [class.condition-active]="!incident.isConditionStable"
+                  >
+                    {{ conditionLabelKey(incident) | translate }}
+                  </span>
+                </td>
+                <td>
+                  <span
+                    class="source-pill"
+                    [class.source-generated]="incident.isGenerated && !incident.isPendingReview"
+                    [class.source-initial]="!incident.isGenerated && !incident.isPendingReview"
+                    [class.source-pending]="incident.isPendingReview"
+                  >
+                    {{ sourceLabelKey(incident) | translate }}
+                  </span>
+                </td>
+                <td>
+                  <div class="escalation-cell">
+                    <span
+                      class="escalation-pill"
+                      [class.escalation-none]="incident.escalationStatus === 'none'"
+                      [class.escalation-pending]="incident.isPendingEscalationConfiguration"
+                      [class.escalation-escalated]="incident.isEscalated"
+                      [class.escalation-reviewed]="incident.escalationStatus === 'reviewed'"
+                    >
+                      {{ escalationLabelKey(incident) | translate }}
+                    </span>
+                    @if (incident.isEscalated) {
+                      <small>
+                        {{ 'alerts.incident-list.escalation-level' | translate }} {{ incident.escalationLevel }}
+                        · {{ escalationTargetLabelKey(incident) | translate }}
+                      </small>
+                    } @else if (incident.isPendingEscalationConfiguration) {
+                      <small>{{ 'alerts.incident-list.escalation-no-policy' | translate }}</small>
+                    } @else if (incident.escalationPolicyMinutes) {
+                      <small>
+                        {{ incident.escalationPolicyMinutes }} {{ 'alerts.incident-list.escalation-minutes' | translate }}
+                      </small>
+                    }
+                  </div>
+                </td>
+                <td class="recognized-by">{{ incident.recognizedBy ?? '—' }}</td>
+                @if (canResolveAlerts()) {
+                  <td>
+                    @if (incident.isEscalated || incident.isPendingEscalationConfiguration) {
+                      <button
+                        id="review-escalation-{{ incident.id }}"
+                        class="review-escalation-btn"
+                        [disabled]="alertsStore.reviewingEscalationId() === incident.id"
+                        (click)="reviewEscalation(incident)"
+                      >
+                        @if (alertsStore.reviewingEscalationId() === incident.id) {
+                          <mat-spinner diameter="14" />
+                        } @else {
+                          {{ 'alerts.incident-list.action-review-escalation' | translate }}
+                        }
+                      </button>
+                    } @else if (incident.isOpen) {
+                      <button
+                        id="recognize-incident-{{ incident.id }}"
+                        class="recognize-btn"
+                        [disabled]="alertsStore.recognizingId() === incident.id"
+                        (click)="recognize(incident)"
+                      >
+                        @if (alertsStore.recognizingId() === incident.id) {
+                          <mat-spinner diameter="14" />
+                        } @else {
+                          {{ 'alerts.incident-list.action-recognize' | translate }}
+                        }
+                      </button>
+                    } @else if (!incident.isClosed) {
+                      <button
+                        id="close-incident-shortcut-{{ incident.id }}"
+                        class="close-shortcut-btn"
+                        [disabled]="alertsStore.closingId() === incident.id"
+                        (click)="selectIncidentForClosure(incident)"
+                      >
+                        {{ 'alerts.incident-list.action-prepare-close' | translate }}
+                      </button>
+                    } @else {
+                      <span class="action-done">
+                        <mat-icon>check</mat-icon>
+                      </span>
+                    }
+                  </td>
+                }
+              </tr>
+            } @empty {
+              <tr>
+                <td [attr.colspan]="canResolveAlerts() ? 10 : 9" class="empty-cell">
+                  <mat-icon class="empty-icon">check_circle</mat-icon>
+                  <p class="empty-title">{{ 'alerts.incident-list.empty-title' | translate }}</p>
+                  <p class="empty-description">{{ 'alerts.incident-list.empty-description' | translate }}</p>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      @if (!canResolveAlerts()) {
+        <div class="access-notice">
+          <mat-icon>lock</mat-icon>
+          <span>{{ 'alerts.incident-list.access-description' | translate }}</span>
+        </div>
+      }
+    </div>
+
+    @if (canResolveAlerts()) {
+      <div class="premium-card closure-card">
+        <div class="card-header closure-header">
+          <div>
+            <h3 class="card-title">{{ 'alerts.incident-list.closure-title' | translate }}</h3>
+            <p class="closure-subtitle">{{ 'alerts.incident-list.closure-subtitle' | translate }}</p>
+          </div>
+          <span class="closure-count">
+            {{ pendingClosureIncidents().length }} {{ 'alerts.incident-list.closure-pending' | translate }}
+          </span>
+        </div>
+
+        <form class="closure-form" [formGroup]="closureForm" (ngSubmit)="closeIncident()">
+          <label class="closure-field">
+            <span>{{ 'alerts.incident-list.form-incident' | translate }}</span>
+            <select formControlName="incidentId">
+              <option [ngValue]="0">
+                {{ 'alerts.incident-list.form-select-incident' | translate }}
+              </option>
+              @for (incident of pendingClosureIncidents(); track incident.id) {
+                <option [ngValue]="incident.id">
+                  {{ incident.assetName }} - {{ typeLabelKey(incident) | translate }}
+                </option>
+              }
+            </select>
+            @if (hasClosureControlError('incidentId')) {
+              <small>{{ 'alerts.incident-list.form-incident-error' | translate }}</small>
+            }
+          </label>
+
+          <label class="closure-field">
+            <span>{{ 'alerts.incident-list.form-corrective-action' | translate }}</span>
+            <textarea
+              rows="3"
+              formControlName="correctiveAction"
+              [placeholder]="'alerts.incident-list.form-corrective-placeholder' | translate"
+            ></textarea>
+            @if (hasClosureControlError('correctiveAction')) {
+              <small>{{ 'alerts.incident-list.form-corrective-error' | translate }}</small>
+            }
+          </label>
+
+          <label class="closure-field">
+            <span>{{ 'alerts.incident-list.form-evidence' | translate }}</span>
+            <textarea
+              rows="3"
+              formControlName="closureEvidence"
+              [placeholder]="'alerts.incident-list.form-evidence-placeholder' | translate"
+            ></textarea>
+            @if (hasClosureControlError('closureEvidence')) {
+              <small>{{ 'alerts.incident-list.form-evidence-error' | translate }}</small>
+            }
+          </label>
+
+          @if (selectedClosureIncident(); as selectedIncident) {
+            <div
+              class="closure-condition"
+              [class.closure-condition-ready]="selectedIncident.isConditionStable"
+              [class.closure-condition-blocked]="!selectedIncident.isConditionStable"
+            >
+              <mat-icon>{{ selectedIncident.isConditionStable ? 'task_alt' : 'warning' }}</mat-icon>
+              <span>{{ conditionLabelKey(selectedIncident) | translate }}</span>
+            </div>
+          }
+
+          <button
+            type="submit"
+            class="close-incident-btn"
+            [disabled]="alertsStore.closingId() !== null || !pendingClosureIncidents().length"
+          >
+            @if (alertsStore.closingId() !== null) {
+              <mat-spinner diameter="14" />
+            } @else {
+              <mat-icon>assignment_turned_in</mat-icon>
+            }
+            {{ 'alerts.incident-list.action-close' | translate }}
+          </button>
+        </form>
+      </div>
+    }
+  }
+</div>

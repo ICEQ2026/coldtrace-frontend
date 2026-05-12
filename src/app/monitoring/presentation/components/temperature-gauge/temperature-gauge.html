@@ -1,0 +1,60 @@
+<div class="gauge-content">
+  <div class="gauge-container">
+    <svg viewBox="0 0 120 120" class="gauge-svg">
+      <path
+        class="gauge-bg"
+        d="M 25 95 A 50 50 0 1 1 95 95"
+        fill="none"
+        stroke="#F1F5F9"
+        stroke-width="10"
+        stroke-linecap="round"
+      />
+      <path
+        class="gauge-value"
+        d="M 25 95 A 50 50 0 1 1 95 95"
+        fill="none"
+        [attr.stroke]="gaugeColor"
+        stroke-width="10"
+        stroke-linecap="round"
+        [style.stroke-dasharray]="dashArray"
+      />
+    </svg>
+    <div class="gauge-center">
+      <span class="temperature-value">{{ temperatureText }}</span>
+    </div>
+  </div>
+
+  <div class="asset-details">
+    <div class="detail-item">
+      <mat-icon>sensors</mat-icon>
+      <span class="detail-label">{{ 'monitoring.asset-monitoring.sensor-id' | translate }}</span>
+      <span class="detail-value">{{ sensorId }}</span>
+    </div>
+    <div class="detail-item">
+      <mat-icon>location_on</mat-icon>
+      <span class="detail-label">{{ 'monitoring.asset-monitoring.location' | translate }}</span>
+      <span class="detail-value">{{ location }}</span>
+    </div>
+    <div class="detail-item">
+      <mat-icon>schedule</mat-icon>
+      <span class="detail-label">{{ 'monitoring.asset-monitoring.last-reading' | translate }}</span>
+      <span class="detail-value">{{ lastReadingTime }}</span>
+    </div>
+    <div class="detail-item">
+      <mat-icon>water_drop</mat-icon>
+      <span class="detail-label">{{ 'monitoring.asset-monitoring.humidity' | translate }}</span>
+      <span class="detail-value">
+        @if (hasHumidity) {
+          {{ humidity }}%
+        } @else {
+          {{ 'monitoring.asset-monitoring.no-data' | translate }}
+        }
+      </span>
+    </div>
+    <div class="detail-item">
+      <mat-icon>inventory_2</mat-icon>
+      <span class="detail-label">{{ 'monitoring.asset-monitoring.asset-name' | translate }}</span>
+      <span class="detail-value">{{ assetName }}</span>
+    </div>
+  </div>
+</div>

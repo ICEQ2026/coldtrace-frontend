@@ -1,0 +1,150 @@
+<section class="history-page" aria-labelledby="history-title">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <div class="page-heading">
+    <div>
+      <span class="section-kicker">{{ activeOrganizationName() }}</span>
+      <h1 id="history-title">{{ 'reports.history.title' | translate }}</h1>
+      <p>{{ 'reports.history.subtitle' | translate }}</p>
+    </div>
+  </div>
+
+  @if (!canViewHistory() && !loading()) {
+    <section class="access-banner" aria-live="polite">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <div>
+        <h2>{{ 'reports.history.access-title' | translate }}</h2>
+        <p>{{ 'reports.history.access-description' | translate }}</p>
+      </div>
+    </section>
+  } @else {
+    <section class="filter-card" aria-label="Operational history filters">
+      <label class="filter-field">
+        <span>{{ 'reports.history.filter-from' | translate }}</span>
+        <input
+          type="date"
+          [value]="effectiveFromDate()"
+          [max]="maxDate()"
+          (input)="updateFromDate($any($event.target).value)"
+        />
+      </label>
+
+      <label class="filter-field">
+        <span>{{ 'reports.history.filter-to' | translate }}</span>
+        <input
+          type="date"
+          [value]="effectiveToDate()"
+          [max]="maxDate()"
+          (input)="updateToDate($any($event.target).value)"
+        />
+      </label>
+
+      <label class="filter-field">
+        <span>{{ 'reports.history.filter-asset' | translate }}</span>
+        <select [value]="selectedAssetId()" (change)="selectAsset($any($event.target).value)">
+          <option [value]="0">{{ 'reports.history.all-assets' | translate }}</option>
+          @for (asset of organizationAssets(); track asset.id) {
+            <option [value]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="filter-field">
+        <span>{{ 'reports.history.filter-type' | translate }}</span>
+        <select
+          [value]="selectedEventType()"
+          (change)="selectEventType($any($event.target).value)"
+        >
+          <option value="all">{{ 'reports.history.types.all' | translate }}</option>
+          <option value="reading">{{ 'reports.history.types.reading' | translate }}</option>
+          <option value="alert">{{ 'reports.history.types.alert' | translate }}</option>
+          <option value="incident">{{ 'reports.history.types.incident' | translate }}</option>
+        </select>
+      </label>
+    </section>
+
+    <section class="summary-grid" aria-label="Operational history summary">
+      <article class="summary-card accent-blue">
+        <span>{{ 'reports.history.summary-events' | translate }}</span>
+        <strong>{{ history().totalEvents }}</strong>
+      </article>
+      <article class="summary-card accent-green">
+        <span>{{ 'reports.history.summary-readings' | translate }}</span>
+        <strong>{{ history().readingsCount }}</strong>
+      </article>
+      <article class="summary-card accent-amber">
+        <span>{{ 'reports.history.summary-alerts' | translate }}</span>
+        <strong>{{ history().alertsCount }}</strong>
+      </article>
+      <article class="summary-card accent-red">
+        <span>{{ 'reports.history.summary-incidents' | translate }}</span>
+        <strong>{{ history().incidentsCount }}</strong>
+      </article>
+    </section>
+
+    <section class="table-card" aria-labelledby="history-table-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="history-table-title">{{ 'reports.history.table-title' | translate }}</h2>
+          <p>
+            {{
+              'reports.history.table-subtitle'
+                | translate: { from: effectiveFromDate(), to: effectiveToDate() }
+            }}
+          </p>
+        </div>
+      </div>
+
+      @if (hasEvents()) {
+        <div class="history-table-wrapper">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>{{ 'reports.history.table.date' | translate }}</th>
+                <th>{{ 'reports.history.table.asset' | translate }}</th>
+                <th>{{ 'reports.history.table.type' | translate }}</th>
+                <th>{{ 'reports.history.table.detail' | translate }}</th>
+                <th>{{ 'reports.history.table.value' | translate }}</th>
+                <th>{{ 'reports.history.table.severity' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (event of history().events; track trackEvent($index, event)) {
+                <tr>
+                  <td>{{ formatDateTime(event.occurredAt) }}</td>
+                  <td>
+                    <strong>{{ event.assetName }}</strong>
+                    <span>{{ event.assetLocation }}</span>
+                  </td>
+                  <td>
+                    <span class="event-type">
+                      <mat-icon aria-hidden="true">{{ event.icon }}</mat-icon>
+                      {{ eventTypeLabelKey(event.eventType) | translate }}
+                    </span>
+                  </td>
+                  <td>{{ event.messageKey | translate: event.messageParams }}</td>
+                  <td>{{ event.value }}</td>
+                  <td>
+                    <span class="severity-pill" [ngClass]="severityClass(event.severity)">
+                      {{ severityLabelKey(event.severity) | translate }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <mat-icon aria-hidden="true">manage_search</mat-icon>
+          <h2>{{ 'reports.history.empty-title' | translate }}</h2>
+          <p>{{ 'reports.history.empty-description' | translate }}</p>
+        </div>
+      }
+    </section>
+  }
+</section>

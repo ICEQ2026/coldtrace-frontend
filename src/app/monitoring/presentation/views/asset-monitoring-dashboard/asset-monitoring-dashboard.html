@@ -1,0 +1,59 @@
+<div class="monitoring-page">
+  <header class="monitoring-header">
+    <div class="header-main">
+      <h1 class="page-title">{{ 'monitoring.asset-monitoring.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'monitoring.asset-monitoring.subtitle' | translate }}</p>
+    </div>
+
+    <nav class="monitoring-tabs">
+      @for (tab of tabs; track tab) {
+        <button
+          type="button"
+          [class.active]="activeType() === tab.type"
+          (click)="activeType.set(tab.type)"
+        >
+          {{ tab.labelKey | translate }}
+        </button>
+      }
+    </nav>
+
+    <div class="assets-toolbar">
+      <label class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input
+          type="search"
+          [value]="searchTerm()"
+          (input)="updateSearchTerm($event)"
+          [placeholder]="'monitoring.asset-monitoring.search-placeholder' | translate"
+        />
+      </label>
+
+      <div class="summary-pills" aria-label="Monitoring summary">
+        <span>{{ 'monitoring.asset-monitoring.summary-assets' | translate }}: {{ totalAssets() }}</span>
+        <span>{{ 'monitoring.asset-monitoring.summary-readings' | translate }}: {{ assetsWithReadings() }}</span>
+        <span class="warning">
+          {{ 'monitoring.asset-monitoring.summary-alerts' | translate }}: {{ assetsOutOfRange() }}
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <div class="monitoring-list">
+    @for (item of filteredItems(); track item.asset.id) {
+      <app-monitoring-asset-card
+        [asset]="item.asset"
+        [device]="item.device"
+        [latestReading]="item.latestReading"
+        [settings]="item.settings"
+        [chartPoints]="item.chartPoints"
+      ></app-monitoring-asset-card>
+    }
+
+    @if (filteredItems().length === 0) {
+      <div class="empty-state">
+        <mat-icon>inventory_2</mat-icon>
+        <p>{{ 'monitoring.asset-monitoring.empty' | translate }}</p>
+      </div>
+    }
+  </div>
+</div>

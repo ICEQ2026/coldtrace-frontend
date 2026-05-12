@@ -1,0 +1,230 @@
+<section class="page" aria-labelledby="safety-ranges-title">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <div class="page-heading">
+    <div>
+      <span class="section-kicker">{{ activeOrganizationName() }}</span>
+      <h1 id="safety-ranges-title">{{ 'asset-management.safety-ranges.title' | translate }}</h1>
+      <p>{{ 'asset-management.safety-ranges.subtitle' | translate }}</p>
+    </div>
+
+    <div class="heading-actions">
+      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'asset-management.safety-ranges.reload' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (feedback() === 'saved') {
+    <p class="feedback success">
+      {{ 'asset-management.safety-ranges.feedback-saved' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'invalid') {
+    <p class="feedback warning">
+      {{ 'asset-management.safety-ranges.feedback-invalid' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'access-denied') {
+    <p class="feedback warning">
+      {{ 'asset-management.safety-ranges.feedback-access-denied' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'server-error') {
+    <p class="feedback error">{{ 'asset-management.safety-ranges.feedback-error' | translate }}</p>
+  }
+
+  @if (!canManageSafetyRanges() && !identityLoading()) {
+    <section class="access-banner" aria-live="polite">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <div>
+        <h2>{{ 'asset-management.safety-ranges.access-title' | translate }}</h2>
+        <p>{{ 'asset-management.safety-ranges.access-description' | translate }}</p>
+      </div>
+    </section>
+  }
+
+  <section class="filter-card safety-filter" aria-label="Safety range scope">
+    <label class="filter-field scope-field">
+      <span>{{ 'asset-management.safety-ranges.form.scope' | translate }}</span>
+      <select [value]="selectedAssetId()" (change)="selectScope($any($event.target).value)">
+        <option [value]="0">
+          {{ 'asset-management.safety-ranges.form.default-scope' | translate }}
+        </option>
+        @for (asset of monitoredAssets(); track asset.id) {
+          <option [value]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
+        }
+      </select>
+    </label>
+
+    <div class="filter-meta">
+      <span>{{ 'asset-management.safety-ranges.form.selected-range' | translate }}</span>
+      <strong>{{ selectedRangeLabel() }}</strong>
+    </div>
+  </section>
+
+  <section class="summary-grid" aria-label="Safety range summary">
+    <article class="summary-card accent-blue">
+      <span>{{ 'asset-management.safety-ranges.summary-assets' | translate }}</span>
+      <strong>{{ monitoredAssets().length }}</strong>
+    </article>
+    <article class="summary-card accent-green">
+      <span>{{ 'asset-management.safety-ranges.summary-profiles' | translate }}</span>
+      <strong>{{ assetSpecificSettingsCount() }}</strong>
+    </article>
+    <article class="summary-card accent-amber">
+      <span>{{ 'asset-management.safety-ranges.summary-temperature' | translate }}</span>
+      <strong>{{ selectedRangeLabel() }}</strong>
+    </article>
+    <article class="summary-card accent-red">
+      <span>{{ 'asset-management.safety-ranges.summary-humidity' | translate }}</span>
+      <strong>{{ selectedSettings().maximumHumidity }}{{ selectedSettings().humidityUnit }}</strong>
+    </article>
+  </section>
+
+  <section class="table-card settings-card" aria-labelledby="safety-range-form-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="safety-range-form-title">
+          {{ 'asset-management.safety-ranges.form-title' | translate }}
+        </h2>
+        <p>{{ 'asset-management.safety-ranges.form-subtitle' | translate }}</p>
+      </div>
+
+      <button
+        mat-stroked-button
+        type="button"
+        class="secondary-action"
+        [disabled]="saving()"
+        (click)="resetRangeForm()"
+      >
+        <mat-icon aria-hidden="true">restart_alt</mat-icon>
+        {{ 'asset-management.safety-ranges.reset' | translate }}
+      </button>
+    </div>
+
+    <form class="settings-form" [formGroup]="rangeForm" (ngSubmit)="saveRangeSettings()">
+      <div class="settings-grid">
+        <label class="filter-field">
+          <span>{{ 'asset-management.safety-ranges.form.minimum-temperature' | translate }}</span>
+          <input type="number" step="0.1" formControlName="minimumTemperature" />
+          @if (hasRangeControlError('minimumTemperature')) {
+            <small>{{ 'asset-management.safety-ranges.form.number-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="filter-field">
+          <span>{{ 'asset-management.safety-ranges.form.maximum-temperature' | translate }}</span>
+          <input type="number" step="0.1" formControlName="maximumTemperature" />
+          @if (hasRangeControlError('maximumTemperature') || hasTemperatureRangeError()) {
+            <small>
+              {{
+                (hasTemperatureRangeError()
+                  ? 'asset-management.safety-ranges.form.temperature-range-error'
+                  : 'asset-management.safety-ranges.form.number-error'
+                ) | translate
+              }}
+            </small>
+          }
+        </label>
+
+        <label class="filter-field">
+          <span>{{ 'asset-management.safety-ranges.form.maximum-humidity' | translate }}</span>
+          <input type="number" step="1" formControlName="maximumHumidity" />
+          @if (hasRangeControlError('maximumHumidity')) {
+            <small>{{ 'asset-management.safety-ranges.form.humidity-error' | translate }}</small>
+          }
+        </label>
+
+        <div class="save-actions">
+          <button
+            mat-flat-button
+            type="submit"
+            class="primary-action"
+            [disabled]="saving() || !canManageSafetyRanges()"
+          >
+            <mat-icon aria-hidden="true">save</mat-icon>
+            {{
+              (saving()
+                ? 'asset-management.safety-ranges.saving'
+                : 'asset-management.safety-ranges.save'
+              ) | translate
+            }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="table-card" aria-labelledby="range-profiles-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="range-profiles-title">
+          {{ 'asset-management.safety-ranges.table-title' | translate }}
+        </h2>
+        <p>{{ 'asset-management.safety-ranges.table-subtitle' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'asset-management.safety-ranges.table.scope' | translate }}</th>
+            <th>{{ 'asset-management.safety-ranges.table.location' | translate }}</th>
+            <th>{{ 'asset-management.safety-ranges.table.temperature' | translate }}</th>
+            <th>{{ 'asset-management.safety-ranges.table.humidity' | translate }}</th>
+            <th>{{ 'asset-management.safety-ranges.table.status' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (settings of currentProfiles(); track settings.id) {
+            <tr>
+              <td>
+                <strong>
+                  {{
+                    settings.assetId === null
+                      ? (scopeNameFor(settings) | translate)
+                      : scopeNameFor(settings)
+                  }}
+                </strong>
+                <span>{{ settings.uuid }}</span>
+              </td>
+              <td>
+                {{
+                  settings.assetId === null
+                    ? (scopeLocationFor(settings) | translate)
+                    : scopeLocationFor(settings)
+                }}
+              </td>
+              <td>
+                {{ settings.minimumTemperature }}{{ settings.temperatureUnit }} -
+                {{ settings.maximumTemperature }}{{ settings.temperatureUnit }}
+              </td>
+              <td>{{ settings.maximumHumidity }}{{ settings.humidityUnit }}</td>
+              <td>
+                <span class="status-pill" [ngClass]="settingStatusClass(settings)">
+                  {{ settingStatusKey(settings) | translate }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="empty-state" colspan="5">
+                {{ 'asset-management.safety-ranges.empty' | translate }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

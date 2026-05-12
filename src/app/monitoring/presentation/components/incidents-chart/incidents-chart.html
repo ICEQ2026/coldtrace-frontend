@@ -1,0 +1,68 @@
+<div class="premium-card incidents-card">
+  <div class="card-header">
+    <h3 class="card-title">{{ 'monitoring.operational.incidents-by-day' | translate }}</h3>
+    <div class="controls">
+      <button class="nav-btn"><mat-icon>chevron_left</mat-icon></button>
+      <button class="today-btn">{{ 'monitoring.operational.nav-today' | translate }}</button>
+      <button class="nav-btn"><mat-icon>chevron_right</mat-icon></button>
+    </div>
+  </div>
+
+  <div class="metric-container">
+    <h2 class="avg-metric">
+      {{ 'monitoring.operational.label-avg' | translate }}: {{ averageIncidents }}
+      {{ 'monitoring.operational.unit-incidents' | translate }}
+    </h2>
+  </div>
+
+  <div class="chart-wrapper">
+    <canvas #canvasElement></canvas>
+    <span class="axis-label top">{{ chartMax }} INC</span>
+    <span class="axis-label average">{{ 'monitoring.operational.label-avg' | translate }}</span>
+    <span class="axis-label bottom">{{ 'monitoring.operational.axis-0-inc' | translate }}</span>
+  </div>
+
+  <div class="mini-timeline">
+    <span class="mini-axis top">{{ 'monitoring.operational.axis-10-mea' | translate }}</span>
+    <span class="mini-axis bottom">{{ 'monitoring.operational.axis-0-mea' | translate }}</span>
+    <div class="timeline-ticks">
+      <span>00h</span><span>06h</span><span>12h</span><span>18h</span>
+    </div>
+    <div class="timeline-bars">
+      @for (day of timeline; track day.id) {
+        <div class="micro-stack" [style.height.px]="microHeight(day)">
+          <span class="m-normal"></span>
+          <span class="m-warning"></span>
+          <span class="m-critical"></span>
+          <span class="m-offline"></span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <div class="legend-row">
+      <div class="legend-item">
+        <span
+          ><i class="dot green"></i>{{ 'monitoring.operational.legend-normal' | translate }}</span
+        ><strong>{{ normalTotal }} {{ 'monitoring.operational.unit-readings' | translate }}</strong>
+      </div>
+      <div class="legend-item">
+        <span
+          ><i class="dot yellow"></i
+          >{{ 'monitoring.operational.legend-warnings' | translate }}</span
+        ><strong>{{ warningTotal }} {{ 'monitoring.operational.unit-events' | translate }}</strong>
+      </div>
+      <div class="legend-item">
+        <span
+          ><i class="dot red"></i>{{ 'monitoring.operational.legend-critical' | translate }}</span
+        ><strong>{{ criticalTotal }} {{ 'monitoring.operational.unit-alerts' | translate }}</strong>
+      </div>
+      <div class="legend-item">
+        <span
+          ><i class="dot gray"></i>{{ 'monitoring.operational.legend-offline' | translate }}</span
+        ><strong>{{ offlineTotal }} {{ 'monitoring.operational.unit-gaps' | translate }}</strong>
+      </div>
+    </div>
+  </div>
+</div>
