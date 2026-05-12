@@ -1,0 +1,261 @@
+<section class="page" aria-labelledby="operational-parameters-title">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <div class="page-heading">
+    <div>
+      <span class="section-kicker">{{ activeOrganizationName() }}</span>
+      <h1 id="operational-parameters-title">
+        {{ 'asset-management.operational-parameters.title' | translate }}
+      </h1>
+      <p>{{ 'asset-management.operational-parameters.subtitle' | translate }}</p>
+    </div>
+
+    <div class="heading-actions">
+      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'asset-management.operational-parameters.reload' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (feedback() === 'saved') {
+    <p class="feedback success">
+      {{ 'asset-management.operational-parameters.feedback-saved' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'invalid') {
+    <p class="feedback warning">
+      {{ 'asset-management.operational-parameters.feedback-invalid' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'incompatible') {
+    <p class="feedback warning">
+      {{ 'asset-management.operational-parameters.feedback-incompatible' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'access-denied') {
+    <p class="feedback warning">
+      {{ 'asset-management.operational-parameters.feedback-access-denied' | translate }}
+    </p>
+  }
+
+  @if (feedback() === 'server-error') {
+    <p class="feedback error">
+      {{ 'asset-management.operational-parameters.feedback-error' | translate }}
+    </p>
+  }
+
+  @if (!canUpdateOperationalParameters() && !identityLoading()) {
+    <section class="access-banner" aria-live="polite">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <div>
+        <h2>{{ 'asset-management.operational-parameters.access-title' | translate }}</h2>
+        <p>{{ 'asset-management.operational-parameters.access-description' | translate }}</p>
+      </div>
+    </section>
+  }
+
+  <section class="filter-card operational-filter" aria-label="Operational parameter scope">
+    <label class="filter-field">
+      <span>{{ 'asset-management.operational-parameters.form.asset' | translate }}</span>
+      <select [value]="selectedAssetId()" (change)="selectAsset($any($event.target).value)">
+        <option [value]="0" [selected]="selectedAssetId() === 0">
+          {{ 'asset-management.operational-parameters.form.select-asset' | translate }}
+        </option>
+        @for (asset of monitoredAssets(); track asset.id) {
+          <option [value]="asset.id" [selected]="selectedAssetId() === asset.id">
+            {{ asset.uuid }} - {{ asset.name }}
+          </option>
+        }
+      </select>
+    </label>
+
+    <label class="filter-field">
+      <span>{{ 'asset-management.operational-parameters.form.device' | translate }}</span>
+      <select [value]="selectedIoTDeviceId()" (change)="selectIoTDevice($any($event.target).value)">
+        <option [value]="0" [selected]="selectedIoTDeviceId() === 0">
+          {{ 'asset-management.operational-parameters.form.select-device' | translate }}
+        </option>
+        @for (iotDevice of selectedAssetDevices(); track iotDevice.id) {
+          <option [value]="iotDevice.id" [selected]="selectedIoTDeviceId() === iotDevice.id">
+            {{ iotDevice.uuid }} - {{ iotDevice.model }}
+          </option>
+        }
+      </select>
+    </label>
+
+    <div class="filter-meta">
+      <span>{{ 'asset-management.operational-parameters.form.current-interval' | translate }}</span>
+      <strong>{{ selectedIntervalLabel() }}</strong>
+    </div>
+  </section>
+
+  <section class="summary-grid" aria-label="Operational parameter summary">
+    <article class="summary-card accent-blue">
+      <span>{{ 'asset-management.operational-parameters.summary-assets' | translate }}</span>
+      <strong>{{ monitoredAssets().length }}</strong>
+    </article>
+    <article class="summary-card accent-green">
+      <span>{{ 'asset-management.operational-parameters.summary-devices' | translate }}</span>
+      <strong>{{ configuredDevices().length }}</strong>
+    </article>
+    <article class="summary-card accent-amber">
+      <span>{{ 'asset-management.operational-parameters.summary-interval' | translate }}</span>
+      <strong>{{ selectedIntervalLabel() }}</strong>
+    </article>
+    <article class="summary-card accent-red">
+      <span>{{ 'asset-management.operational-parameters.summary-criteria' | translate }}</span>
+      <strong>{{ selectedParameters().length }}</strong>
+    </article>
+  </section>
+
+  <section class="table-card parameters-card" aria-labelledby="operational-parameters-form-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="operational-parameters-form-title">
+          {{ 'asset-management.operational-parameters.form-title' | translate }}
+        </h2>
+        <p>{{ 'asset-management.operational-parameters.form-subtitle' | translate }}</p>
+      </div>
+
+      <button
+        mat-stroked-button
+        type="button"
+        class="secondary-action"
+        [disabled]="saving()"
+        (click)="resetOperationalForm()"
+      >
+        <mat-icon aria-hidden="true">restart_alt</mat-icon>
+        {{ 'asset-management.operational-parameters.reset' | translate }}
+      </button>
+    </div>
+
+    @if (compatibilityIssueKey(); as issueKey) {
+      <div class="compatibility-banner" aria-live="polite">
+        <mat-icon aria-hidden="true">report</mat-icon>
+        <span>{{ issueKey | translate }}</span>
+      </div>
+    }
+
+    <form
+      class="parameters-form"
+      [formGroup]="operationalForm"
+      (ngSubmit)="saveOperationalParameters()"
+    >
+      <div class="settings-grid">
+        <label class="filter-field">
+          <span>{{
+            'asset-management.operational-parameters.form.reading-frequency' | translate
+          }}</span>
+          <input
+            type="number"
+            min="5"
+            max="1440"
+            step="5"
+            formControlName="readingFrequencyMinutes"
+          />
+          @if (hasFrequencyError()) {
+            <small>{{
+              'asset-management.operational-parameters.form.frequency-error' | translate
+            }}</small>
+          }
+        </label>
+
+        <div class="criteria-panel">
+          <span class="field-label">
+            {{ 'asset-management.operational-parameters.form.criteria' | translate }}
+          </span>
+          <div class="criteria-grid">
+            @for (parameter of parameterKeys; track parameter) {
+              <label class="parameter-option" [class.disabled]="!isParameterSupported(parameter)">
+                <input
+                  type="checkbox"
+                  [formControlName]="parameter"
+                  [disabled]="!isParameterSupported(parameter)"
+                />
+                <span>{{ parameterLabelKey(parameter) | translate }}</span>
+              </label>
+            }
+          </div>
+          @if (hasCriteriaError()) {
+            <small>{{
+              'asset-management.operational-parameters.form.criteria-error' | translate
+            }}</small>
+          }
+        </div>
+
+        <div class="save-actions">
+          <button
+            mat-flat-button
+            type="submit"
+            class="primary-action"
+            [disabled]="saving() || !canUpdateOperationalParameters()"
+          >
+            <mat-icon aria-hidden="true">save</mat-icon>
+            {{
+              (saving()
+                ? 'asset-management.operational-parameters.saving'
+                : 'asset-management.operational-parameters.save'
+              ) | translate
+            }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="table-card" aria-labelledby="operational-profiles-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="operational-profiles-title">
+          {{ 'asset-management.operational-parameters.table-title' | translate }}
+        </h2>
+        <p>{{ 'asset-management.operational-parameters.table-subtitle' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'asset-management.operational-parameters.table.asset' | translate }}</th>
+            <th>{{ 'asset-management.operational-parameters.table.location' | translate }}</th>
+            <th>{{ 'asset-management.operational-parameters.table.device' | translate }}</th>
+            <th>{{ 'asset-management.operational-parameters.table.frequency' | translate }}</th>
+            <th>{{ 'asset-management.operational-parameters.table.criteria' | translate }}</th>
+            <th>{{ 'asset-management.operational-parameters.table.status' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (iotDevice of configuredDevices(); track iotDevice.id) {
+            <tr>
+              <td>{{ assetNameFor(iotDevice) }}</td>
+              <td>{{ assetLocationFor(iotDevice) }}</td>
+              <td>{{ iotDevice.uuid }} - {{ iotDevice.model }}</td>
+              <td>{{ frequencyLabelFor(iotDevice) }}</td>
+              <td>{{ criteriaLabelFor(iotDevice) }}</td>
+              <td>
+                <span class="status-pill" [ngClass]="operationalStatusClass(iotDevice)">
+                  {{ operationalStatusKey(iotDevice) | translate }}
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-state">
+                {{ 'asset-management.operational-parameters.empty' | translate }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</section>

@@ -730,7 +730,13 @@
       "uuid": "SN-001",
       "deviceType": "temperature-sensor",
       "model": "TempSense T100",
-      "measurementType": "Temperature",
+      "measurementType": "Temperature / Battery / Signal",
+      "measurementParameters": [
+        "temperature",
+        "battery",
+        "signal"
+      ],
+      "readingFrequencySeconds": 1800,
       "assetId": 1,
       "status": "linked",
       "calibrationStatus": "expired",
@@ -744,6 +750,13 @@
       "deviceType": "humidity-sensor",
       "model": "HumidSense H200",
       "measurementType": "Temperature / Humidity",
+      "measurementParameters": [
+        "temperature",
+        "humidity",
+        "battery",
+        "signal"
+      ],
+      "readingFrequencySeconds": 1800,
       "assetId": 3,
       "status": "offline",
       "calibrationStatus": "compliant",
@@ -774,6 +787,11 @@
       "deviceType": "humidity-sensor",
       "model": "TraceSense M2",
       "measurementType": "Temperature / Humidity",
+      "measurementParameters": [
+        "temperature",
+        "humidity"
+      ],
+      "readingFrequencySeconds": 7200,
       "assetId": 2,
       "status": "offline",
       "calibrationStatus": "compliant",
@@ -786,7 +804,14 @@
       "uuid": "SN-005",
       "deviceType": "camera",
       "model": "ColdLink C1",
-      "measurementType": "Temperature",
+      "measurementType": "Image / Motion / Battery / Signal",
+      "measurementParameters": [
+        "image",
+        "motion",
+        "battery",
+        "signal"
+      ],
+      "readingFrequencySeconds": 900,
       "assetId": 22,
       "status": "linked",
       "calibrationStatus": "compliant",
