@@ -50,27 +50,31 @@
             <mat-icon class="dropdown-icon">expand_more</mat-icon>
           </button>
           @if (isAccessDropdownOpen(accessGroup.isActive)) {
-          <div class="sub-menu" aria-label="Access navigation">
-            <a class="sub-menu-link" routerLink="/identity-access/users" routerLinkActive="active">
-              {{ 'dashboard-shell.nav-users' | translate }}
-            </a>
-            @if (canManageAccess) {
+            <div class="sub-menu" aria-label="Access navigation">
               <a
                 class="sub-menu-link"
-                routerLink="/identity-access/roles-permissions/users/new"
+                routerLink="/identity-access/users"
                 routerLinkActive="active"
               >
-                {{ 'dashboard-shell.nav-new-user' | translate }}
+                {{ 'dashboard-shell.nav-users' | translate }}
               </a>
-              <a
-                class="sub-menu-link"
-                routerLink="/identity-access/roles-permissions/permissions"
-                routerLinkActive="active"
-              >
-                {{ 'dashboard-shell.nav-permissions' | translate }}
-              </a>
-            }
-          </div>
+              @if (canManageAccess) {
+                <a
+                  class="sub-menu-link"
+                  routerLink="/identity-access/roles-permissions/users/new"
+                  routerLinkActive="active"
+                >
+                  {{ 'dashboard-shell.nav-new-user' | translate }}
+                </a>
+                <a
+                  class="sub-menu-link"
+                  routerLink="/identity-access/roles-permissions/permissions"
+                  routerLinkActive="active"
+                >
+                  {{ 'dashboard-shell.nav-permissions' | translate }}
+                </a>
+              }
+            </div>
           }
         </div>
 
@@ -101,14 +105,17 @@
             <mat-icon class="dropdown-icon">expand_more</mat-icon>
           </button>
           @if (isReportsDropdownOpen(reportsGroup.isActive)) {
-          <div class="sub-menu" aria-label="Reports navigation">
-            <a class="sub-menu-link" routerLink="/reports/daily-log" routerLinkActive="active">
-              {{ 'dashboard-shell.nav-daily-log' | translate }}
-            </a>
-            <a class="sub-menu-link" routerLink="/reports/history" routerLinkActive="active">
-              {{ 'dashboard-shell.nav-history' | translate }}
-            </a>
-          </div>
+            <div class="sub-menu" aria-label="Reports navigation">
+              <a class="sub-menu-link" routerLink="/reports/daily-log" routerLinkActive="active">
+                {{ 'dashboard-shell.nav-daily-log' | translate }}
+              </a>
+              <a class="sub-menu-link" routerLink="/reports/history" routerLinkActive="active">
+                {{ 'dashboard-shell.nav-history' | translate }}
+              </a>
+              <a class="sub-menu-link" routerLink="/reports/compliance" routerLinkActive="active">
+                {{ 'dashboard-shell.nav-compliance' | translate }}
+              </a>
+            </div>
           }
         </div>
 

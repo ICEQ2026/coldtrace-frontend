@@ -75,6 +75,10 @@ export class Layout implements OnInit {
       return 'reports.history.page-title';
     }
 
+    if (currentUrl.includes('/reports/compliance')) {
+      return 'reports.compliance.page-title';
+    }
+
     if (currentUrl.includes('/identity-access/reports') || currentUrl.includes('/reports')) {
       return 'reports.daily-log.page-title';
     }
