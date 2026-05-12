@@ -16,6 +16,12 @@ import {
   OperationalHistoryFilters,
   OperationalHistorySeverity,
 } from '../domain/model/operational-history.entity';
+import {
+  SanitaryComplianceFilters,
+  SanitaryComplianceReport,
+  SanitaryComplianceRow,
+  SanitaryComplianceStatus,
+} from '../domain/model/sanitary-compliance-report.entity';
 import { ReportsApi } from '../infrastructure/reports-api';
 
 @Injectable({ providedIn: 'root' })
@@ -123,6 +129,55 @@ export class ReportsStore {
     return new OperationalHistory(filters, events);
   }
 
+  buildSanitaryComplianceReport(
+    organizationId: number | null,
+    filters: SanitaryComplianceFilters,
+  ): SanitaryComplianceReport {
+    const safeOrganizationId = organizationId ?? 0;
+    const assets = this.assetManagementStore.assetsForOrganization(organizationId);
+    const iotDevices = this.assetManagementStore.iotDevicesForOrganization(organizationId);
+    const assetSettings = this.assetManagementStore
+      .assetSettings()
+      .find((settings) => settings.organizationId === organizationId);
+    const monitoredAssetIds = new Set(
+      iotDevices
+        .filter((iotDevice) => iotDevice.assetId !== null)
+        .map((iotDevice) => iotDevice.assetId as number),
+    );
+    const selectedAssets = assets.filter(
+      (asset) => !filters.assetId || asset.id === filters.assetId,
+    );
+    const selectedAssetIds = selectedAssets.map((asset) => asset.id);
+    const readings = this.monitoringStore
+      .readingsForAssetIds(selectedAssetIds)
+      .filter((reading) =>
+        this.isInDateRange(reading.recordedAt, filters.fromDate, filters.toDate),
+      );
+    const assetsWithReadings = new Set(readings.map((reading) => reading.assetId));
+    const reportAssets = selectedAssets.filter((asset) => {
+      return filters.assetId || monitoredAssetIds.has(asset.id) || assetsWithReadings.has(asset.id);
+    });
+    const daysCount = this.daysInRange(filters.fromDate, filters.toDate);
+    const rows = reportAssets
+      .map((asset) =>
+        this.buildSanitaryComplianceRow(asset, readings, iotDevices, assetSettings, daysCount),
+      )
+      .sort(
+        (a, b) =>
+          b.totalReadings - a.totalReadings ||
+          b.complianceRate - a.complianceRate ||
+          a.assetName.localeCompare(b.assetName),
+      );
+
+    return new SanitaryComplianceReport(
+      Number(`${filters.fromDate.replaceAll('-', '')}${safeOrganizationId}`),
+      safeOrganizationId,
+      filters,
+      new Date().toISOString(),
+      rows,
+    );
+  }
+
   createDailyLogReport(organizationId: number | null, dailyLog: DailyLog): Observable<Report> {
     if (!organizationId) {
       return of(this.reportFromDailyLog(0, dailyLog));
@@ -147,6 +202,79 @@ export class ReportsStore {
         this.reportsSignal.update((reports) => [...reports, createdReport]);
       }),
     );
+  }
+
+  createSanitaryComplianceReport(
+    organizationId: number | null,
+    complianceReport: SanitaryComplianceReport,
+  ): Observable<Report> {
+    if (!organizationId) {
+      return of(this.reportFromSanitaryCompliance(0, complianceReport));
+    }
+
+    const existingReport = this.reports().find((report) => {
+      return (
+        report.organizationId === organizationId &&
+        report.type === ReportType.Compliance &&
+        report.uuid === this.sanitaryComplianceUuid(organizationId, complianceReport.filters)
+      );
+    });
+
+    if (existingReport) {
+      return of(existingReport);
+    }
+
+    const report = this.reportFromSanitaryCompliance(organizationId, complianceReport);
+
+    return this.reportsApi.createReport(report).pipe(
+      tap((createdReport) => {
+        this.reportsSignal.update((reports) => [...reports, createdReport]);
+      }),
+    );
+  }
+
+  sanitaryComplianceCsv(
+    complianceReport: SanitaryComplianceReport,
+    organizationName: string,
+  ): string {
+    const headers = [
+      'Organization',
+      'From',
+      'To',
+      'Asset',
+      'Location',
+      'Readings',
+      'Expected',
+      'Valid',
+      'Out of range',
+      'Missing',
+      'Incidents',
+      'Average temperature',
+      'Average humidity',
+      'Compliance',
+      'Status',
+    ];
+    const rows = complianceReport.rows.map((row) => [
+      organizationName,
+      complianceReport.filters.fromDate,
+      complianceReport.filters.toDate,
+      row.assetName,
+      row.assetLocation,
+      row.totalReadings,
+      row.expectedReadings,
+      row.validReadings,
+      row.outOfRangeCount,
+      row.missingReadings,
+      row.incidentCount,
+      row.averageTemperature === null ? 'N/A' : `${row.averageTemperature.toFixed(1)} C`,
+      row.averageHumidity === null ? 'N/A' : `${row.averageHumidity.toFixed(0)}%`,
+      `${row.complianceRate}%`,
+      row.status,
+    ]);
+
+    return [headers, ...rows]
+      .map((row) => row.map((cell) => this.csvCell(cell)).join(','))
+      .join('\n');
   }
 
   private buildDailyLogEntry(
@@ -183,12 +311,86 @@ export class ReportsStore {
     };
   }
 
+  private buildSanitaryComplianceRow(
+    asset: Asset,
+    readings: SensorReading[],
+    iotDevices: IoTDevice[],
+    settings: AssetSettings | undefined,
+    daysCount: number,
+  ): SanitaryComplianceRow {
+    const assetDevices = iotDevices.filter((iotDevice) => iotDevice.assetId === asset.id);
+    const assetReadings = readings.filter((reading) => reading.assetId === asset.id);
+    const temperatureReadings = assetReadings
+      .map((reading) => reading.temperature)
+      .filter((value): value is number => value !== null);
+    const humidityReadings = assetReadings
+      .map((reading) => reading.humidity)
+      .filter((value): value is number => value !== null);
+    const expectedReadings = assetDevices.length
+      ? this.expectedDailyReadingsFor(assetDevices, assetReadings.length) * daysCount
+      : assetReadings.length;
+    const outOfRangeCount = assetReadings.filter((reading) => reading.isOutOfRange).length;
+    const validReadings = Math.max(assetReadings.length - outOfRangeCount, 0);
+    const missingReadings = Math.max(expectedReadings - assetReadings.length, 0);
+    const incidentCount = this.complianceIncidentCount(asset);
+    const complianceDenominator = expectedReadings || assetReadings.length;
+    const complianceRate = complianceDenominator
+      ? Math.round((validReadings / complianceDenominator) * 100)
+      : 0;
+
+    return {
+      assetId: asset.id,
+      assetName: asset.name,
+      assetLocation: asset.location,
+      totalReadings: assetReadings.length,
+      expectedReadings,
+      validReadings,
+      outOfRangeCount,
+      missingReadings,
+      incidentCount,
+      averageTemperature: this.average(temperatureReadings),
+      averageHumidity: this.average(humidityReadings),
+      complianceRate,
+      status: this.complianceStatus(
+        assetReadings.length,
+        expectedReadings,
+        outOfRangeCount,
+        missingReadings,
+        incidentCount,
+        settings,
+      ),
+    };
+  }
+
   private entryStatus(totalReadings: number, missingReadings: number): DailyLogStatus {
     if (!totalReadings) {
       return 'no-data';
     }
 
     return missingReadings > 0 ? 'incomplete' : 'complete';
+  }
+
+  private complianceStatus(
+    totalReadings: number,
+    expectedReadings: number,
+    outOfRangeCount: number,
+    missingReadings: number,
+    incidentCount: number,
+    settings: AssetSettings | undefined,
+  ): SanitaryComplianceStatus {
+    if (!settings || !totalReadings || !expectedReadings) {
+      return 'insufficient';
+    }
+
+    return outOfRangeCount || missingReadings || incidentCount ? 'observation' : 'compliant';
+  }
+
+  private complianceIncidentCount(asset: Asset): number {
+    const currentIncident = this.normalizeIncident(asset.lastIncident);
+    const incidentCount = currentIncident === 'none' ? 0 : 1;
+    const connectivityIncident = asset.connectivity === ConnectivityStatus.Online ? 0 : 1;
+
+    return incidentCount + connectivityIncident;
   }
 
   private expectedDailyReadingsFor(iotDevices: IoTDevice[], fallbackReadings: number): number {
@@ -444,12 +646,36 @@ export class ReportsStore {
     );
   }
 
+  private reportFromSanitaryCompliance(
+    organizationId: number,
+    complianceReport: SanitaryComplianceReport,
+  ): Report {
+    return new Report(
+      this.nextReportId(),
+      organizationId,
+      this.sanitaryComplianceUuid(organizationId, complianceReport.filters),
+      ReportType.Compliance,
+      'Sanitary compliance report',
+      `${complianceReport.filters.fromDate} - ${complianceReport.filters.toDate}`,
+      new Date().toISOString(),
+    );
+  }
+
   private nextReportId(): number {
     return Math.max(...this.reports().map((report) => report.id), 0) + 1;
   }
 
   private dailyLogUuid(organizationId: number, date: string): string {
     return `RPT-DL-${date.replaceAll('-', '')}-${organizationId.toString().padStart(3, '0')}`;
+  }
+
+  private sanitaryComplianceUuid(
+    organizationId: number,
+    filters: SanitaryComplianceFilters,
+  ): string {
+    const assetKey = filters.assetId ? filters.assetId.toString().padStart(3, '0') : 'ALL';
+
+    return `RPT-SC-${filters.fromDate.replaceAll('-', '')}-${filters.toDate.replaceAll('-', '')}-${assetKey}-${organizationId.toString().padStart(3, '0')}`;
   }
 
   private today(): string {
@@ -464,6 +690,24 @@ export class ReportsStore {
     }
 
     return this.formatDateKey(date);
+  }
+
+  private daysInRange(fromDate: string, toDate: string): number {
+    const from = new Date(`${fromDate}T00:00:00`);
+    const to = new Date(`${toDate}T00:00:00`);
+
+    if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime()) || to < from) {
+      return 1;
+    }
+
+    const millisecondsPerDay = 86400000;
+    return Math.floor((to.getTime() - from.getTime()) / millisecondsPerDay) + 1;
+  }
+
+  private csvCell(value: string | number): string {
+    const text = String(value).replaceAll('"', '""');
+
+    return `"${text}"`;
   }
 
   private formatDateKey(date: Date): string {

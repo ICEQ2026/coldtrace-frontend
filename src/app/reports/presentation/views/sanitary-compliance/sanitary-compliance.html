@@ -1,0 +1,208 @@
+<section class="page" aria-labelledby="compliance-title">
+  @if (loading()) {
+    <div class="loading-overlay">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  }
+
+  <div class="page-heading">
+    <div>
+      <span class="section-kicker">{{ activeOrganizationName() }}</span>
+      <h1 id="compliance-title">{{ 'reports.compliance.title' | translate }}</h1>
+      <p>{{ 'reports.compliance.subtitle' | translate }}</p>
+    </div>
+
+    <div class="heading-actions">
+      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'reports.compliance.reload' | translate }}
+      </button>
+      <button
+        mat-flat-button
+        type="button"
+        class="primary-action"
+        [disabled]="!canExportReport() || !canExportReports()"
+        (click)="exportComplianceReport()"
+      >
+        <mat-icon aria-hidden="true">download</mat-icon>
+        {{ 'reports.compliance.export' | translate }}
+      </button>
+    </div>
+  </div>
+
+  @if (feedback() === 'exported') {
+    <p class="feedback success">{{ 'reports.compliance.feedback-exported' | translate }}</p>
+  }
+
+  @if (feedback() === 'insufficient') {
+    <p class="feedback warning">{{ 'reports.compliance.feedback-insufficient' | translate }}</p>
+  }
+
+  @if (feedback() === 'server-error' || reportsStore.error() || monitoringStore.error()) {
+    <p class="feedback error">{{ 'reports.compliance.feedback-error' | translate }}</p>
+  }
+
+  @if (!canExportReports() && !loading()) {
+    <section class="access-banner" aria-live="polite">
+      <mat-icon aria-hidden="true">lock</mat-icon>
+      <div>
+        <h2>{{ 'reports.compliance.access-title' | translate }}</h2>
+        <p>{{ 'reports.compliance.access-description' | translate }}</p>
+      </div>
+    </section>
+  } @else {
+    <section class="filter-card" aria-label="Sanitary compliance filters">
+      <label class="filter-field">
+        <span>{{ 'reports.compliance.filter-from' | translate }}</span>
+        <input
+          type="date"
+          [value]="effectiveFromDate()"
+          [max]="maxDate()"
+          (input)="updateFromDate($any($event.target).value)"
+        />
+      </label>
+
+      <label class="filter-field">
+        <span>{{ 'reports.compliance.filter-to' | translate }}</span>
+        <input
+          type="date"
+          [value]="effectiveToDate()"
+          [max]="maxDate()"
+          (input)="updateToDate($any($event.target).value)"
+        />
+      </label>
+
+      <label class="filter-field">
+        <span>{{ 'reports.compliance.filter-asset' | translate }}</span>
+        <select [value]="selectedAssetId()" (change)="selectAsset($any($event.target).value)">
+          <option [value]="0">{{ 'reports.compliance.all-assets' | translate }}</option>
+          @for (asset of organizationAssets(); track asset.id) {
+            <option [value]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
+          }
+        </select>
+      </label>
+
+      <div class="filter-meta">
+        <span>{{ 'reports.compliance.generated-reports' | translate }}</span>
+        <strong>{{ generatedReportsCount() }}</strong>
+      </div>
+    </section>
+
+    <section class="summary-grid" aria-label="Sanitary compliance summary">
+      <article class="summary-card accent-blue">
+        <span>{{ 'reports.compliance.summary-assets' | translate }}</span>
+        <strong>{{ complianceReport().totalAssets }}</strong>
+      </article>
+      <article class="summary-card accent-green">
+        <span>{{ 'reports.compliance.summary-readings' | translate }}</span>
+        <strong>{{ complianceReport().totalReadings }}</strong>
+      </article>
+      <article class="summary-card accent-amber">
+        <span>{{ 'reports.compliance.summary-compliance' | translate }}</span>
+        <strong>{{ complianceReport().complianceRate }}%</strong>
+      </article>
+      <article class="summary-card accent-red">
+        <span>{{ 'reports.compliance.summary-observations' | translate }}</span>
+        <strong>{{ complianceReport().observationsCount }}</strong>
+      </article>
+    </section>
+
+    @if (complianceReport().observationsCount > 0 && hasRows()) {
+      <section class="observation-banner" aria-live="polite">
+        <mat-icon aria-hidden="true">rule</mat-icon>
+        <div>
+          <h2>{{ 'reports.compliance.observation-title' | translate }}</h2>
+          <p>
+            {{
+              'reports.compliance.observation-description'
+                | translate: { count: complianceReport().observationsCount }
+            }}
+          </p>
+        </div>
+      </section>
+    }
+
+    <section class="table-card" aria-labelledby="compliance-table-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="compliance-table-title">{{ 'reports.compliance.table-title' | translate }}</h2>
+          <p>
+            {{
+              'reports.compliance.table-subtitle'
+                | translate: { from: effectiveFromDate(), to: effectiveToDate() }
+            }}
+          </p>
+        </div>
+      </div>
+
+      @if (hasRows()) {
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>{{ 'reports.compliance.table.asset' | translate }}</th>
+                <th>{{ 'reports.compliance.table.location' | translate }}</th>
+                <th>{{ 'reports.compliance.table.readings' | translate }}</th>
+                <th>{{ 'reports.compliance.table.temperature' | translate }}</th>
+                <th>{{ 'reports.compliance.table.humidity' | translate }}</th>
+                <th>{{ 'reports.compliance.table.observations' | translate }}</th>
+                <th>{{ 'reports.compliance.table.compliance' | translate }}</th>
+                <th>{{ 'reports.compliance.table.status' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of complianceReport().rows; track trackRow($index, row)) {
+                <tr>
+                  <td>
+                    <strong>{{ row.assetName }}</strong>
+                    <span>#{{ row.assetId }}</span>
+                  </td>
+                  <td>{{ row.assetLocation }}</td>
+                  <td>
+                    <strong>{{ row.totalReadings }} / {{ row.expectedReadings }}</strong>
+                    <small>
+                      {{
+                        'reports.compliance.valid-readings'
+                          | translate: { count: row.validReadings }
+                      }}
+                    </small>
+                  </td>
+                  <td>{{ formatTemperature(row.averageTemperature) }}</td>
+                  <td>{{ formatHumidity(row.averageHumidity) }}</td>
+                  <td>
+                    <strong>
+                      {{ row.outOfRangeCount + row.missingReadings + row.incidentCount }}
+                    </strong>
+                    <small>
+                      {{
+                        'reports.compliance.observation-breakdown'
+                          | translate
+                            : {
+                                missing: row.missingReadings,
+                                out: row.outOfRangeCount,
+                                incidents: row.incidentCount,
+                              }
+                      }}
+                    </small>
+                  </td>
+                  <td>{{ row.complianceRate }}%</td>
+                  <td>
+                    <span class="status-pill" [ngClass]="statusClass(row.status)">
+                      {{ statusLabelKey(row.status) | translate }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <mat-icon aria-hidden="true">file_download_off</mat-icon>
+          <h2>{{ 'reports.compliance.empty-title' | translate }}</h2>
+          <p>{{ 'reports.compliance.empty-description' | translate }}</p>
+        </div>
+      }
+    </section>
+  }
+</section>

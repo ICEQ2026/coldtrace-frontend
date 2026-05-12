@@ -435,6 +435,7 @@
     "nav-reports": "Reportes",
     "nav-daily-log": "Bitácora diaria",
     "nav-history": "Historial",
+    "nav-compliance": "Cumplimiento",
     "nav-notifications": "Notificaciones",
     "download-report": "Descargar reporte mensual",
     "theme-light": "Claro",
@@ -643,6 +644,50 @@
         "high-humidity": "El activo reporta actualmente una incidencia por humedad alta.",
         "connection-lost": "El activo reportó una incidencia por pérdida de conexión.",
         "connectivity": "La conectividad del activo está en estado {{ status }}."
+      }
+    },
+    "compliance": {
+      "page-title": "Cumplimiento",
+      "title": "Cumplimiento sanitario",
+      "subtitle": "Exporta evidencia de monitoreo para revisiones internas y auditorías sanitarias.",
+      "reload": "Recargar",
+      "export": "Exportar reporte",
+      "feedback-exported": "El reporte de cumplimiento se exportó con la evidencia seleccionada.",
+      "feedback-insufficient": "El rango seleccionado no contiene información suficiente para exportar un reporte.",
+      "feedback-error": "No se pudo exportar el reporte de cumplimiento con los datos actuales.",
+      "access-title": "Autorización insuficiente",
+      "access-description": "Tu rol actual no incluye permisos para exportar reportes.",
+      "filter-from": "Desde",
+      "filter-to": "Hasta",
+      "filter-asset": "Activo",
+      "all-assets": "Todos los activos",
+      "generated-reports": "Reportes guardados",
+      "summary-assets": "Activos reportados",
+      "summary-readings": "Lecturas",
+      "summary-compliance": "Cumplimiento",
+      "summary-observations": "Observaciones",
+      "observation-title": "Observaciones de cumplimiento",
+      "observation-description": "{{ count }} activo(s) requieren revisión antes de auditoría.",
+      "table-title": "Evidencia de cumplimiento por activo",
+      "table-subtitle": "Evidencia desde {{ from }} hasta {{ to }}",
+      "valid-readings": "{{ count }} válidas",
+      "observation-breakdown": "{{ missing }} faltantes / {{ out }} fuera de rango / {{ incidents }} incidencias",
+      "empty-title": "No hay evidencia exportable",
+      "empty-description": "Selecciona otro periodo o un activo con lecturas de monitoreo.",
+      "table": {
+        "asset": "Activo",
+        "location": "Ubicación",
+        "readings": "Lecturas",
+        "temperature": "Temp. prom.",
+        "humidity": "Humedad prom.",
+        "observations": "Observaciones",
+        "compliance": "Cumplimiento",
+        "status": "Estado"
+      },
+      "status": {
+        "compliant": "Cumple",
+        "observation": "Observación",
+        "insufficient": "Insuficiente"
       }
     }
   }

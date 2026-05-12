@@ -435,6 +435,7 @@
     "nav-reports": "Reports",
     "nav-daily-log": "Daily log",
     "nav-history": "History",
+    "nav-compliance": "Compliance",
     "nav-notifications": "Notifications",
     "download-report": "Download Monthly Report",
     "theme-light": "Light",
@@ -643,6 +644,50 @@
         "high-humidity": "Asset currently reports a high humidity incident.",
         "connection-lost": "Asset reported a connection loss incident.",
         "connectivity": "Asset connectivity is {{ status }}."
+      }
+    },
+    "compliance": {
+      "page-title": "Compliance",
+      "title": "Sanitary Compliance",
+      "subtitle": "Export monitoring evidence for internal reviews and sanitary audits.",
+      "reload": "Reload",
+      "export": "Export report",
+      "feedback-exported": "Compliance report exported with the selected monitoring evidence.",
+      "feedback-insufficient": "The selected range does not contain enough information to export a report.",
+      "feedback-error": "We could not export the compliance report with the current data.",
+      "access-title": "Insufficient authorization",
+      "access-description": "Your current role does not include report export permissions.",
+      "filter-from": "From",
+      "filter-to": "To",
+      "filter-asset": "Asset",
+      "all-assets": "All assets",
+      "generated-reports": "Stored reports",
+      "summary-assets": "Reported assets",
+      "summary-readings": "Readings",
+      "summary-compliance": "Compliance",
+      "summary-observations": "Observations",
+      "observation-title": "Compliance observations",
+      "observation-description": "{{ count }} asset(s) need review before an audit.",
+      "table-title": "Compliance evidence by asset",
+      "table-subtitle": "Evidence from {{ from }} to {{ to }}",
+      "valid-readings": "{{ count }} valid",
+      "observation-breakdown": "{{ missing }} missing / {{ out }} out of range / {{ incidents }} incidents",
+      "empty-title": "No exportable evidence",
+      "empty-description": "Select another period or asset with monitoring readings.",
+      "table": {
+        "asset": "Asset",
+        "location": "Location",
+        "readings": "Readings",
+        "temperature": "Avg. temp.",
+        "humidity": "Avg. humidity",
+        "observations": "Observations",
+        "compliance": "Compliance",
+        "status": "Status"
+      },
+      "status": {
+        "compliant": "Compliant",
+        "observation": "Observation",
+        "insufficient": "Insufficient"
       }
     }
   }
