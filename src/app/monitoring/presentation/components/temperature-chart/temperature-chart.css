@@ -6,6 +6,13 @@
   box-sizing: border-box;
 }
 
+.chart-card.no-header {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+}
+
 .chart-header {
   display: flex;
   justify-content: space-between;

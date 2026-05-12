@@ -1,0 +1,146 @@
+.monitoring-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.monitoring-header {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0F172A;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.page-subtitle {
+  color: #8a95a8;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.monitoring-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 10px;
+}
+
+.monitoring-tabs button {
+  background: transparent;
+  border: 0;
+  color: #98a2b3;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 20px;
+  padding: 0;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+}
+
+.monitoring-tabs button.active {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.assets-toolbar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.search-box {
+  align-items: center;
+  color: #cfd5df;
+  display: flex;
+  gap: 8px;
+  min-width: min(320px, 100%);
+}
+
+.search-icon {
+  color: #cfd5df;
+  font-size: 26px;
+  height: 26px;
+  width: 26px;
+}
+
+.search-box input {
+  background: transparent;
+  border: 0;
+  color: #404040;
+  flex: 1;
+  font:
+    800 12px/20px 'Inter',
+    Arial,
+    sans-serif;
+  outline: 0;
+}
+
+.search-box input::placeholder {
+  color: #98a2b3;
+}
+
+.summary-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.summary-pills span {
+  background: #ffffff;
+  border: 1px solid #e5eaf1;
+  border-radius: 8px;
+  color: #667388;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 8px 10px;
+}
+
+.summary-pills .warning {
+  color: #b45309;
+}
+
+.monitoring-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+  color: #94A3B8;
+  gap: 16px;
+}
+
+.empty-state mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+@media (max-width: 860px) {
+  .assets-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

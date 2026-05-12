@@ -18,6 +18,7 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
   @Input() title = 'Temperature';
   @Input() subtitle = 'Last 24h · Cold Room 01';
   @Input() points: TemperaturePoint[] = [];
+  @Input() hideHeader = false;
 
   private chart?: Chart;
 

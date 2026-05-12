@@ -679,7 +679,9 @@
     "top-insights": "Insights",
     "top-notifications": "Notifications",
     "top-settings": "Settings",
-    "search-placeholder": "Search content..."
+    "search-placeholder": "Search content...",
+    "nav-operational-dashboard": "Operational dashboard",
+    "nav-asset-monitoring": "Asset monitoring"
   },
   "monitoring": {
     "operational": {
@@ -778,6 +780,37 @@
       "axis-0-mea": "0 MEA",
       "empty-title": "No operational data yet",
       "empty-description": "Add assets, devices, and readings to see the operational dashboard for this organization."
+    },
+    "asset-monitoring": {
+      "page-title": "Asset monitoring",
+      "title": "Asset monitoring",
+      "subtitle": "Review live readings, linked devices, and thermal status by asset.",
+      "search-placeholder": "Search by asset, ID, location, or notes...",
+      "summary-assets": "Assets",
+      "summary-readings": "With readings",
+      "summary-alerts": "Out of range",
+      "empty": "No monitored assets match the current filters.",
+      "trend-title": "Temperature trend",
+      "sensor-id": "Sensor ID",
+      "location": "Location",
+      "last-reading": "Last reading",
+      "humidity": "Humidity",
+      "asset-name": "Asset",
+      "device-model": "Device model",
+      "no-device": "No linked device",
+      "no-data": "N/A",
+      "tabs": {
+        "cold-room": "Cold rooms",
+        "transport": "Transport"
+      },
+      "status": {
+        "normal": "In range",
+        "no-data": "No data",
+        "no-readings": "No readings available"
+      },
+      "incident": {
+        "out-of-range": "Out-of-range reading"
+      }
     }
   },
   "reports": {

@@ -1,22 +1,24 @@
-    <div class="premium-card chart-card">
-      <div class="chart-header">
-        <div class="header-left">
-          <h3 class="chart-title">{{ title | translate }}</h3>
-          <span class="chart-subtitle">{{ subtitle | translate }}</span>
+    <div class="premium-card chart-card" [class.no-header]="hideHeader">
+      @if (!hideHeader) {
+        <div class="chart-header">
+          <div class="header-left">
+            <h3 class="chart-title">{{ title | translate }}</h3>
+            <span class="chart-subtitle">{{ subtitle | translate }}</span>
+          </div>
+          <div class="header-right">
+            <button class="filter-dropdown">
+              <span>{{ 'monitoring.operational.filter-last-24-hours' | translate }}</span>
+              <mat-icon>expand_more</mat-icon>
+            </button>
+          </div>
         </div>
-        <div class="header-right">
-          <button class="filter-dropdown">
-            <span>{{ 'monitoring.operational.filter-last-24-hours' | translate }}</span>
-            <mat-icon>expand_more</mat-icon>
-          </button>
+
+        <div class="legend-bar">
+          <div class="legend-item"><span class="indicator green"></span> {{ 'monitoring.operational.legend-temperature' | translate }}</div>
+          <div class="legend-item"><span class="indicator dashed-red"></span> {{ 'monitoring.operational.legend-max-limit' | translate }}</div>
+          <div class="legend-item"><span class="indicator dashed-blue"></span> {{ 'monitoring.operational.legend-min-limit' | translate }}</div>
         </div>
-      </div>
-      
-      <div class="legend-bar">
-        <div class="legend-item"><span class="indicator green"></span> {{ 'monitoring.operational.legend-temperature' | translate }}</div>
-        <div class="legend-item"><span class="indicator dashed-red"></span> {{ 'monitoring.operational.legend-max-limit' | translate }}</div>
-        <div class="legend-item"><span class="indicator dashed-blue"></span> {{ 'monitoring.operational.legend-min-limit' | translate }}</div>
-      </div>
+      }
 
       <div class="chart-container">
         <canvas #canvasElement [attr.aria-label]="'monitoring.operational.temperature-aria' | translate"></canvas>
