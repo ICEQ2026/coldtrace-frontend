@@ -649,7 +649,8 @@
       "calibrationFrequencyDays": 180,
       "temperatureUnit": "°C",
       "humidityUnit": "%",
-      "weightUnit": "kg"
+      "weightUnit": "kg",
+      "assetId": null
     },
     {
       "id": "2",
@@ -670,7 +671,56 @@
       "calibrationFrequencyDays": 180,
       "temperatureUnit": "°C",
       "humidityUnit": "%",
-      "weightUnit": "kg"
+      "weightUnit": "kg",
+      "assetId": null
+    },
+    {
+      "id": "3",
+      "organizationId": 1,
+      "uuid": "CFG-001-A001",
+      "assetTypes": [
+        "Cold room",
+        "Refrigerated transport"
+      ],
+      "iotDeviceTypes": [
+        "Temperature sensor",
+        "Humidity sensor",
+        "Motion sensor",
+        "Camera",
+        "Multi-sensor"
+      ],
+      "minimumTemperature": -4,
+      "maximumTemperature": 6,
+      "maximumHumidity": 82,
+      "calibrationFrequencyDays": 180,
+      "temperatureUnit": "°C",
+      "humidityUnit": "%",
+      "weightUnit": "kg",
+      "assetId": 1
+    },
+    {
+      "id": "4",
+      "organizationId": 1,
+      "uuid": "CFG-001-A022",
+      "assetTypes": [
+        "Cold room",
+        "Refrigerated transport"
+      ],
+      "iotDeviceTypes": [
+        "Temperature sensor",
+        "Humidity sensor",
+        "Motion sensor",
+        "Camera",
+        "Multi-sensor"
+      ],
+      "minimumTemperature": -2,
+      "maximumTemperature": 5,
+      "maximumHumidity": 78,
+      "calibrationFrequencyDays": 180,
+      "temperatureUnit": "°C",
+      "humidityUnit": "%",
+      "weightUnit": "kg",
+      "assetId": 22
     }
   ],
   "iot-devices": [

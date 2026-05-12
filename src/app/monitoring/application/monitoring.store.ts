@@ -172,12 +172,9 @@ export class MonitoringStore {
     const assets = this.assetManagementStore.assetsForOrganization(organizationId);
     const iotDevices = this.assetManagementStore.iotDevicesForOrganization(organizationId);
     const gateways = this.assetManagementStore.gatewaysForOrganization(organizationId);
-    const settings = this.assetManagementStore
-      .assetSettings()
-      .find((assetSettings) => assetSettings.organizationId === organizationId);
 
     // Seed recent readings once so report screens have current-day evidence to process.
-    this.ensureRecentReadingsForOrganization(organizationId, assets, iotDevices, settings);
+    this.ensureRecentReadingsForOrganization(organizationId, assets, iotDevices);
 
     const monitoredAssets = assets.filter((asset) =>
       iotDevices.some((iotDevice) => iotDevice.assetId === asset.id),
@@ -192,6 +189,7 @@ export class MonitoringStore {
     const gateway =
       gateways.find((currentGateway) => currentGateway.id === asset.gatewayId) ?? null;
     const connectivity = this.randomConnectivity(gateway, iotDevice);
+    const settings = this.assetManagementStore.settingsForAsset(organizationId, asset.id);
     const reading = this.buildSensorReading(asset, iotDevice, settings, connectivity);
 
     if (reading) {
@@ -223,12 +221,8 @@ export class MonitoringStore {
       : null;
     const motionDetected = parameters.includes('motion') ? Math.random() < 0.18 : null;
     const imageCaptured = parameters.includes('image') ? Math.random() < 0.35 : null;
-    const batteryLevel = parameters.includes('battery')
-      ? this.randomBatteryLevel()
-      : null;
-    const signalStrength = parameters.includes('signal')
-      ? this.randomSignalStrength()
-      : null;
+    const batteryLevel = parameters.includes('battery') ? this.randomBatteryLevel() : null;
+    const signalStrength = parameters.includes('signal') ? this.randomSignalStrength() : null;
     // One computed flag keeps charts, alerts, and reports aligned around the same risk rule.
     const isOutOfRange =
       (temperature !== null &&
@@ -256,7 +250,6 @@ export class MonitoringStore {
     organizationId: number,
     assets: Asset[],
     iotDevices: IoTDevice[],
-    settings: AssetSettings | undefined,
   ): void {
     if (this.seededOrganizationIds.has(organizationId)) {
       return;
@@ -283,6 +276,7 @@ export class MonitoringStore {
 
         const recordedAt = new Date();
         recordedAt.setHours(recordedAt.getHours() - (8 - index));
+        const settings = this.assetManagementStore.settingsForAsset(organizationId, asset.id);
         const reading = this.buildSensorReading(
           asset,
           iotDevice,

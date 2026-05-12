@@ -14,6 +14,7 @@ export class AssetSettings implements BaseEntity {
     private readonly _temperatureUnit: string,
     private readonly _humidityUnit: string,
     private readonly _weightUnit: string,
+    private readonly _assetId: number | null = null,
   ) {}
 
   get id(): number {
@@ -62,5 +63,9 @@ export class AssetSettings implements BaseEntity {
 
   get weightUnit(): string {
     return this._weightUnit;
+  }
+
+  get assetId(): number | null {
+    return this._assetId;
   }
 }

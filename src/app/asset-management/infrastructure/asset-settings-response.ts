@@ -12,6 +12,7 @@ export interface AssetSettingsResource extends BaseResource {
   temperatureUnit: string;
   humidityUnit: string;
   weightUnit: string;
+  assetId?: number | null;
 }
 
 export interface AssetSettingsResponse extends BaseResponse {

@@ -29,6 +29,7 @@ export class Layout implements OnInit {
   private readonly dashboardRoutePaths = [
     '/identity-access/dashboard',
     '/asset-management/assets',
+    '/asset-management/safety-ranges',
     '/identity-access/alerts',
     '/identity-access/monitoring',
     '/identity-access/reports',
@@ -51,6 +52,10 @@ export class Layout implements OnInit {
 
     if (currentUrl.includes('/asset-management/assets')) {
       return 'asset-management.title';
+    }
+
+    if (currentUrl.includes('/asset-management/safety-ranges')) {
+      return 'asset-management.safety-ranges.page-title';
     }
 
     if (currentUrl.includes('/monitoring')) {

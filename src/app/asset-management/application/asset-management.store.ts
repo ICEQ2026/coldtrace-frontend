@@ -75,6 +75,42 @@ export class AssetManagementStore {
     return this.gateways().filter((gateway) => gateway.organizationId === organizationId);
   }
 
+  assetSettingsForOrganization(organizationId: number | null): AssetSettings[] {
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.assetSettings().filter(
+      (assetSettings) => assetSettings.organizationId === organizationId,
+    );
+  }
+
+  defaultSettingsForOrganization(organizationId: number | null): AssetSettings | undefined {
+    return this.assetSettingsForOrganization(organizationId).find(
+      (assetSettings) => assetSettings.assetId === null,
+    );
+  }
+
+  settingsForAsset(
+    organizationId: number | null,
+    assetId: number | null,
+  ): AssetSettings | undefined {
+    const settings = this.assetSettingsForOrganization(organizationId);
+    const assetSpecificSettings = settings.find(
+      (assetSettings) => assetSettings.assetId !== null && assetSettings.assetId === assetId,
+    );
+
+    return (
+      assetSpecificSettings ??
+      settings.find((assetSettings) => assetSettings.assetId === null) ??
+      settings[0]
+    );
+  }
+
+  nextAssetSettingsId(): number {
+    return Math.max(...this.assetSettings().map((settings) => settings.id), 0) + 1;
+  }
+
   operationalSummaryFor(organizationId: number | null): AssetOperationalSummary {
     const assets = this.assetsForOrganization(organizationId);
     const iotDevices = this.iotDevicesForOrganization(organizationId);
@@ -88,11 +124,15 @@ export class AssetManagementStore {
     return {
       totalAssets: assets.length,
       monitoredAssets: assets.filter((asset) => monitoredAssetIds.has(asset.id)).length,
-      connectedDevices: iotDevices.filter((iotDevice) => iotDevice.status === IoTDeviceStatus.Linked).length,
+      connectedDevices: iotDevices.filter(
+        (iotDevice) => iotDevice.status === IoTDeviceStatus.Linked,
+      ).length,
       totalDevices: iotDevices.length,
-      connectedGateways: gateways.filter((gateway) => gateway.status === GatewayStatus.Active).length,
+      connectedGateways: gateways.filter((gateway) => gateway.status === GatewayStatus.Active)
+        .length,
       assetsWithIssues: assets.filter((asset) => this.hasAssetIssue(asset)).length,
-      connectivityIssues: assets.filter((asset) => asset.connectivity !== ConnectivityStatus.Online).length,
+      connectivityIssues: assets.filter((asset) => asset.connectivity !== ConnectivityStatus.Online)
+        .length,
     };
   }
 
@@ -248,9 +288,6 @@ export class AssetManagementStore {
     const assets = this.assetsForOrganization(organizationId);
     const iotDevices = this.iotDevicesForOrganization(organizationId);
     const gateways = this.gatewaysForOrganization(organizationId);
-    const settings = this.assetSettings().find(
-      (assetSettings) => assetSettings.organizationId === organizationId,
-    );
     const currentStep = this.telemetryUpdateStep % 3;
     this.telemetryUpdateStep += 1;
 
@@ -292,6 +329,7 @@ export class AssetManagementStore {
 
     const gateway = gateways.find((currentGateway) => currentGateway.id === asset.gatewayId);
     const iotDevice = iotDevices.find((currentIoTDevice) => currentIoTDevice.assetId === asset.id);
+    const settings = this.settingsForAsset(organizationId, asset.id);
     const connectivity = this.randomConnectivity(gateway ?? null, iotDevice ?? null);
     const currentTemperature = this.randomTemperature(connectivity, settings);
 
