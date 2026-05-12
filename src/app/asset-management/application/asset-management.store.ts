@@ -3,6 +3,7 @@ import { Observable, tap } from 'rxjs';
 import { Asset } from '../domain/model/asset.entity';
 import { AssetSettings } from '../domain/model/asset-settings.entity';
 import { AssetStatus } from '../domain/model/asset-status.enum';
+import { CalibrationStatus } from '../domain/model/calibration-status.enum';
 import { ConnectivityStatus } from '../domain/model/connectivity-status.enum';
 import { Gateway } from '../domain/model/gateway.entity';
 import { GatewayStatus } from '../domain/model/gateway-status.enum';
@@ -36,6 +37,7 @@ export class AssetManagementStore {
   readonly loading = this.loadingSignal.asReadonly();
   readonly error = this.errorSignal.asReadonly();
   readonly assetCount = computed(() => this.assets().length);
+  private telemetryUpdateStep = 0;
 
   constructor(private assetManagementApi: AssetManagementApi) {}
 
@@ -238,11 +240,260 @@ export class AssetManagementStore {
     );
   }
 
+  updateOrganizationTelemetry(organizationId: number | null): void {
+    if (!organizationId) {
+      return;
+    }
+
+    const assets = this.assetsForOrganization(organizationId);
+    const iotDevices = this.iotDevicesForOrganization(organizationId);
+    const gateways = this.gatewaysForOrganization(organizationId);
+    const settings = this.assetSettings().find(
+      (assetSettings) => assetSettings.organizationId === organizationId,
+    );
+    const currentStep = this.telemetryUpdateStep % 3;
+    this.telemetryUpdateStep += 1;
+
+    if (currentStep === 0) {
+      const gateway = this.sampleOne(gateways);
+
+      if (gateway) {
+        this.updateGateway(
+          this.nextGateway(gateway, {
+            status: this.randomGatewayStatus(),
+          }),
+        ).subscribe({ error: () => undefined });
+      }
+
+      return;
+    }
+
+    if (currentStep === 1) {
+      const iotDevice = this.sampleOne(iotDevices);
+
+      if (iotDevice) {
+        this.updateIoTDevice(
+          this.nextIoTDevice(iotDevice, {
+            status: this.randomIoTDeviceStatus(iotDevice),
+            calibrationStatus: this.randomCalibrationStatus(),
+          }),
+        ).subscribe({ error: () => undefined });
+      }
+
+      return;
+    }
+
+    const asset = this.sampleOne(assets);
+
+    if (!asset) {
+      return;
+    }
+
+    const gateway = gateways.find((currentGateway) => currentGateway.id === asset.gatewayId);
+    const iotDevice = iotDevices.find((currentIoTDevice) => currentIoTDevice.assetId === asset.id);
+    const connectivity = this.randomConnectivity(gateway ?? null, iotDevice ?? null);
+    const currentTemperature = this.randomTemperature(connectivity, settings);
+
+    this.updateAsset(
+      this.nextAsset(asset, {
+        lastIncident: this.incidentFor(currentTemperature, connectivity, settings),
+        currentTemperature,
+        connectivity,
+      }),
+    ).subscribe({ error: () => undefined });
+  }
+
   private hasAssetIssue(asset: Asset): boolean {
     return (
-      asset.lastIncident !== 'asset-management.incidents.none' ||
+      asset.lastIncident !== 'none' ||
       asset.connectivity !== ConnectivityStatus.Online ||
       asset.status !== AssetStatus.Active
     );
+  }
+
+  private nextAsset(
+    asset: Asset,
+    fields: Partial<{
+      status: AssetStatus;
+      lastIncident: string;
+      currentTemperature: string;
+      connectivity: ConnectivityStatus;
+    }>,
+  ): Asset {
+    return new Asset(
+      asset.id,
+      asset.organizationId,
+      asset.uuid,
+      asset.type,
+      asset.gatewayId,
+      asset.name,
+      asset.location,
+      asset.capacity,
+      asset.description,
+      fields.status ?? asset.status,
+      fields.lastIncident ?? asset.lastIncident,
+      fields.currentTemperature ?? asset.currentTemperature,
+      asset.entryDate,
+      fields.connectivity ?? asset.connectivity,
+    );
+  }
+
+  private nextIoTDevice(
+    iotDevice: IoTDevice,
+    fields: Partial<{
+      assetId: number | null;
+      status: IoTDeviceStatus;
+      calibrationStatus: CalibrationStatus;
+      nextCalibrationDate: string;
+    }>,
+  ): IoTDevice {
+    return new IoTDevice(
+      iotDevice.id,
+      iotDevice.organizationId,
+      iotDevice.uuid,
+      iotDevice.deviceType,
+      iotDevice.model,
+      iotDevice.measurementType,
+      fields.assetId ?? iotDevice.assetId,
+      fields.status ?? iotDevice.status,
+      fields.calibrationStatus ?? iotDevice.calibrationStatus,
+      iotDevice.lastCalibrationDate,
+      fields.nextCalibrationDate ?? iotDevice.nextCalibrationDate,
+      iotDevice.measurementParameters,
+    );
+  }
+
+  private nextGateway(
+    gateway: Gateway,
+    fields: Partial<{
+      status: GatewayStatus;
+    }>,
+  ): Gateway {
+    return new Gateway(
+      gateway.id,
+      gateway.organizationId,
+      gateway.uuid,
+      gateway.name,
+      gateway.location,
+      gateway.network,
+      fields.status ?? gateway.status,
+    );
+  }
+
+  private randomTemperature(
+    connectivity: ConnectivityStatus,
+    settings: AssetSettings | undefined,
+  ): string {
+    if (connectivity === ConnectivityStatus.Offline) {
+      return '—';
+    }
+
+    const minimum = (settings?.minimumTemperature ?? -5) - 4;
+    const maximum = (settings?.maximumTemperature ?? 8) + 6;
+    const temperature = this.randomNumber(minimum, maximum);
+    return `${temperature.toFixed(1)}${settings?.temperatureUnit ?? '°C'}`;
+  }
+
+  private incidentFor(
+    currentTemperature: string,
+    connectivity: ConnectivityStatus,
+    settings: AssetSettings | undefined,
+  ): string {
+    if (connectivity === ConnectivityStatus.Offline) {
+      return 'connection-lost';
+    }
+
+    const temperature = Number(currentTemperature.replace(/[^\d.-]/g, ''));
+
+    if (settings && temperature > settings.maximumTemperature) {
+      return 'high-temperature';
+    }
+
+    if (settings && temperature < settings.minimumTemperature) {
+      return 'low-temperature';
+    }
+
+    return Math.random() < 0.12 ? 'high-humidity' : 'none';
+  }
+
+  private randomConnectivity(
+    gateway: Gateway | null,
+    iotDevice: IoTDevice | null,
+  ): ConnectivityStatus {
+    if (
+      !iotDevice ||
+      gateway?.status === GatewayStatus.Offline ||
+      iotDevice.status === IoTDeviceStatus.Offline
+    ) {
+      return ConnectivityStatus.Offline;
+    }
+
+    if (gateway?.status === GatewayStatus.Maintenance) {
+      return ConnectivityStatus.Unstable;
+    }
+
+    const randomValue = Math.random();
+
+    if (randomValue < 0.74) {
+      return ConnectivityStatus.Online;
+    }
+
+    if (randomValue < 0.9) {
+      return ConnectivityStatus.Unstable;
+    }
+
+    return ConnectivityStatus.Offline;
+  }
+
+  private randomIoTDeviceStatus(iotDevice: IoTDevice): IoTDeviceStatus {
+    if (!iotDevice.assetId) {
+      return Math.random() < 0.86 ? IoTDeviceStatus.Available : IoTDeviceStatus.Offline;
+    }
+
+    return Math.random() < 0.9 ? IoTDeviceStatus.Linked : IoTDeviceStatus.Offline;
+  }
+
+  private randomCalibrationStatus(): CalibrationStatus {
+    const randomValue = Math.random();
+
+    if (randomValue < 0.6) {
+      return CalibrationStatus.Compliant;
+    }
+
+    if (randomValue < 0.8) {
+      return CalibrationStatus.DueSoon;
+    }
+
+    if (randomValue < 0.92) {
+      return CalibrationStatus.Expired;
+    }
+
+    return CalibrationStatus.Unknown;
+  }
+
+  private randomGatewayStatus(): GatewayStatus {
+    const randomValue = Math.random();
+
+    if (randomValue < 0.78) {
+      return GatewayStatus.Active;
+    }
+
+    if (randomValue < 0.9) {
+      return GatewayStatus.Maintenance;
+    }
+
+    return GatewayStatus.Offline;
+  }
+
+  private randomNumber(minimum: number, maximum: number): number {
+    return minimum + Math.random() * (maximum - minimum);
+  }
+
+  private sampleOne<T>(items: T[]): T | null {
+    if (!items.length) {
+      return null;
+    }
+
+    return items[Math.floor(Math.random() * items.length)];
   }
 }

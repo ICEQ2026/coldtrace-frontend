@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -18,12 +18,16 @@ import { Gateway } from '../../../domain/model/gateway.entity';
 import { GatewayStatus } from '../../../domain/model/gateway-status.enum';
 import { IoTDevice } from '../../../domain/model/iot-device.entity';
 import { IoTDeviceStatus } from '../../../domain/model/iot-device-status.enum';
+import {
+  IOT_DEVICE_DEFINITIONS,
+  IoTDeviceDefinition,
+  IoTMeasurementParameter,
+} from '../../../domain/model/iot-device-definitions';
 import { Organization } from '../../../../identity-access/domain/model/organization.entity';
 import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
-import { DashboardShell } from '../../../../shared/presentation/components/dashboard-shell/dashboard-shell';
 
 type AssetFeedback =
   | 'idle'
@@ -35,24 +39,10 @@ type AssetFeedback =
   | 'gateway-created'
   | 'settings-saved';
 type AssetManagementTab = AssetType | 'iot-device' | 'gateway' | 'settings';
-type IoTMeasurementParameter =
-  | 'temperature'
-  | 'humidity'
-  | 'motion'
-  | 'image'
-  | 'battery'
-  | 'signal';
-
-interface IoTDeviceDefinition {
-  type: string;
-  modelPlaceholder: string;
-  parameters: IoTMeasurementParameter[];
-}
 
 @Component({
   selector: 'app-cold-room-list',
   imports: [
-    DashboardShell,
     MatButton,
     MatIcon,
     MatProgressSpinner,
@@ -64,7 +54,7 @@ interface IoTDeviceDefinition {
   templateUrl: './cold-room-list.html',
   styleUrl: './cold-room-list.css',
 })
-export class ColdRoomList implements OnInit, OnDestroy {
+export class ColdRoomList implements OnInit {
   protected readonly assetStatus = AssetStatus;
   protected readonly iotDeviceStatus = IoTDeviceStatus;
   protected readonly calibrationStatus = CalibrationStatus;
@@ -76,8 +66,6 @@ export class ColdRoomList implements OnInit, OnDestroy {
   private readonly translate = inject(TranslateService);
   private readonly identityAccessApi = inject(IdentityAccessApi);
   private readonly router = inject(Router);
-  private readonly telemetryUpdateIntervalMs = 12000;
-  private telemetryUpdateIntervalId: ReturnType<typeof setInterval> | null = null;
 
   protected readonly assetTypeTabs: AssetManagementTab[] = [
     AssetType.ColdRoom,
@@ -91,33 +79,7 @@ export class ColdRoomList implements OnInit, OnDestroy {
     AssetStatus.Maintenance,
     AssetStatus.Inactive,
   ];
-  protected readonly iotDeviceDefinitions: IoTDeviceDefinition[] = [
-    {
-      type: 'temperature-sensor',
-      modelPlaceholder: 'TempSense T100',
-      parameters: ['temperature', 'battery', 'signal'],
-    },
-    {
-      type: 'humidity-sensor',
-      modelPlaceholder: 'HumidSense H200',
-      parameters: ['humidity', 'temperature', 'battery', 'signal'],
-    },
-    {
-      type: 'motion-sensor',
-      modelPlaceholder: 'MoveSense M100',
-      parameters: ['motion', 'battery', 'signal'],
-    },
-    {
-      type: 'camera',
-      modelPlaceholder: 'ColdCam C1',
-      parameters: ['image', 'motion', 'battery', 'signal'],
-    },
-    {
-      type: 'multi-sensor',
-      modelPlaceholder: 'TraceSense M2',
-      parameters: ['temperature', 'humidity', 'motion', 'battery', 'signal'],
-    },
-  ];
+  protected readonly iotDeviceDefinitions: IoTDeviceDefinition[] = IOT_DEVICE_DEFINITIONS;
   protected readonly iotDeviceTypes = this.iotDeviceDefinitions.map(
     (definition) => definition.type,
   );
@@ -330,13 +292,6 @@ export class ColdRoomList implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadPageData();
-    this.startTelemetryUpdates();
-  }
-
-  ngOnDestroy(): void {
-    if (this.telemetryUpdateIntervalId) {
-      clearInterval(this.telemetryUpdateIntervalId);
-    }
   }
 
   protected loadPageData(): void {
@@ -443,7 +398,7 @@ export class ColdRoomList implements OnInit, OnDestroy {
       Number(this.coldRoomForm.controls.capacity.value),
       this.coldRoomForm.controls.description.value.trim(),
       AssetStatus.Active,
-      'asset-management.incidents.none',
+      'none',
       '—',
       this.entryDate(),
       ConnectivityStatus.Online,
@@ -900,28 +855,37 @@ export class ColdRoomList implements OnInit, OnDestroy {
     return `${this.settingsForm.controls.calibrationFrequencyDays.value}`;
   }
 
+  protected incidentLabelKey(lastIncident: string): string {
+    return `asset-management.incidents.${this.normalizeIncident(lastIncident)}`;
+  }
+
   protected incidentIconName(lastIncident: string): string {
-    const iconByIncidentKey: Record<string, string> = {
-      'asset-management.incidents.high-temperature': 'warning',
-      'asset-management.incidents.connection-lost': 'report',
-      'asset-management.incidents.high-humidity': 'warning_amber',
-      'asset-management.incidents.low-temperature': 'change_history',
-      'asset-management.incidents.none': 'check_circle',
+    const iconByIncident: Record<string, string> = {
+      'high-temperature': 'warning',
+      'connection-lost': 'report',
+      'high-humidity': 'warning_amber',
+      'low-temperature': 'change_history',
+      'none': 'check_circle',
     };
 
-    return iconByIncidentKey[lastIncident] ?? 'info';
+    return iconByIncident[this.normalizeIncident(lastIncident)] ?? 'info';
   }
 
   protected incidentSeverityClass(lastIncident: string): string {
-    const classByIncidentKey: Record<string, string> = {
-      'asset-management.incidents.high-temperature': 'danger',
-      'asset-management.incidents.connection-lost': 'danger',
-      'asset-management.incidents.high-humidity': 'warning',
-      'asset-management.incidents.low-temperature': 'cold',
-      'asset-management.incidents.none': 'stable',
+    const classByIncident: Record<string, string> = {
+      'high-temperature': 'danger',
+      'connection-lost': 'danger',
+      'high-humidity': 'warning',
+      'low-temperature': 'cold',
+      'none': 'stable',
     };
 
-    return classByIncidentKey[lastIncident] ?? 'stable';
+    return classByIncident[this.normalizeIncident(lastIncident)] ?? 'stable';
+  }
+
+  private normalizeIncident(lastIncident: string): string {
+    const prefix = 'asset-management.incidents.';
+    return lastIncident.startsWith(prefix) ? lastIncident.slice(prefix.length) : lastIncident;
   }
 
   protected hasControlError(controlName: keyof typeof this.coldRoomForm.controls): boolean {
@@ -1068,75 +1032,6 @@ export class ColdRoomList implements OnInit, OnDestroy {
       .join(' / ');
   }
 
-  private startTelemetryUpdates(): void {
-    if (this.telemetryUpdateIntervalId) {
-      return;
-    }
-
-    this.telemetryUpdateIntervalId = setInterval(() => {
-      this.updateVariableOperationalData();
-    }, this.telemetryUpdateIntervalMs);
-  }
-
-  private updateVariableOperationalData(): void {
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      return;
-    }
-
-    const settings = this.activeAssetSettings() ?? this.defaultAssetSettings(organizationId);
-    this.organizationAssets().forEach((asset) => this.updateAssetTelemetry(asset, settings));
-    this.organizationIoTDevices().forEach((iotDevice) => this.updateIoTDeviceTelemetry(iotDevice));
-    this.organizationGateways().forEach((gateway) => this.updateGatewayTelemetry(gateway));
-  }
-
-  private updateAssetTelemetry(asset: Asset, settings: AssetSettings): void {
-    if (this.updatingAssetId() === asset.id) {
-      return;
-    }
-
-    const connectivity = this.randomConnectivity();
-    const currentTemperature = this.randomTemperature(connectivity, settings);
-    const lastIncident = this.randomIncident(currentTemperature, connectivity, settings);
-    this.assetManagementStore
-      .updateAsset(
-        this.nextAsset(asset, {
-          lastIncident,
-          currentTemperature,
-          connectivity,
-        }),
-      )
-      .subscribe({
-        error: () => undefined,
-      });
-  }
-
-  private updateIoTDeviceTelemetry(iotDevice: IoTDevice): void {
-    this.assetManagementStore
-      .updateIoTDevice(
-        this.nextIoTDevice(iotDevice, {
-          status: this.randomIoTDeviceStatus(iotDevice),
-          calibrationStatus: this.randomCalibrationStatus(),
-        }),
-      )
-      .subscribe({
-        error: () => undefined,
-      });
-  }
-
-  private updateGatewayTelemetry(gateway: Gateway): void {
-    this.assetManagementStore
-      .updateGateway(
-        this.nextGateway(gateway, {
-          status: this.randomGatewayStatus(),
-        }),
-      )
-      .subscribe({
-        error: () => undefined,
-      });
-  }
-
   private nextAsset(
     asset: Asset,
     fields: Partial<{
@@ -1164,136 +1059,6 @@ export class ColdRoomList implements OnInit, OnDestroy {
     );
   }
 
-  private nextIoTDevice(
-    iotDevice: IoTDevice,
-    fields: Partial<{
-      assetId: number | null;
-      status: IoTDeviceStatus;
-      calibrationStatus: CalibrationStatus;
-      nextCalibrationDate: string;
-    }>,
-  ): IoTDevice {
-    return new IoTDevice(
-      iotDevice.id,
-      iotDevice.organizationId,
-      iotDevice.uuid,
-      iotDevice.deviceType,
-      iotDevice.model,
-      iotDevice.measurementType,
-      fields.assetId ?? iotDevice.assetId,
-      fields.status ?? iotDevice.status,
-      fields.calibrationStatus ?? iotDevice.calibrationStatus,
-      iotDevice.lastCalibrationDate,
-      fields.nextCalibrationDate ?? iotDevice.nextCalibrationDate,
-      iotDevice.measurementParameters,
-    );
-  }
-
-  private nextGateway(
-    gateway: Gateway,
-    fields: Partial<{
-      status: GatewayStatus;
-    }>,
-  ): Gateway {
-    return new Gateway(
-      gateway.id,
-      gateway.organizationId,
-      gateway.uuid,
-      gateway.name,
-      gateway.location,
-      gateway.network,
-      fields.status ?? gateway.status,
-    );
-  }
-
-  private randomTemperature(connectivity: ConnectivityStatus, settings: AssetSettings): string {
-    if (connectivity === ConnectivityStatus.Offline) {
-      return '—';
-    }
-
-    const minimum = settings.minimumTemperature - 4;
-    const maximum = settings.maximumTemperature + 6;
-    const temperature = minimum + Math.random() * (maximum - minimum);
-    return `${temperature.toFixed(1)}${settings.temperatureUnit}`;
-  }
-
-  private randomIncident(
-    currentTemperature: string,
-    connectivity: ConnectivityStatus,
-    settings: AssetSettings,
-  ): string {
-    if (connectivity === ConnectivityStatus.Offline) {
-      return 'asset-management.incidents.connection-lost';
-    }
-
-    const temperature = Number(currentTemperature.replace(/[^\d.-]/g, ''));
-
-    if (temperature > settings.maximumTemperature) {
-      return 'asset-management.incidents.high-temperature';
-    }
-
-    if (temperature < settings.minimumTemperature) {
-      return 'asset-management.incidents.low-temperature';
-    }
-
-    return Math.random() < 0.16
-      ? 'asset-management.incidents.high-humidity'
-      : 'asset-management.incidents.none';
-  }
-
-  private randomConnectivity(): ConnectivityStatus {
-    const randomValue = Math.random();
-
-    if (randomValue < 0.72) {
-      return ConnectivityStatus.Online;
-    }
-
-    if (randomValue < 0.9) {
-      return ConnectivityStatus.Unstable;
-    }
-
-    return ConnectivityStatus.Offline;
-  }
-
-  private randomIoTDeviceStatus(iotDevice: IoTDevice): IoTDeviceStatus {
-    if (!iotDevice.assetId) {
-      return Math.random() < 0.85 ? IoTDeviceStatus.Available : IoTDeviceStatus.Offline;
-    }
-
-    return Math.random() < 0.88 ? IoTDeviceStatus.Linked : IoTDeviceStatus.Offline;
-  }
-
-  private randomCalibrationStatus(): CalibrationStatus {
-    const randomValue = Math.random();
-
-    if (randomValue < 0.58) {
-      return CalibrationStatus.Compliant;
-    }
-
-    if (randomValue < 0.78) {
-      return CalibrationStatus.DueSoon;
-    }
-
-    if (randomValue < 0.92) {
-      return CalibrationStatus.Expired;
-    }
-
-    return CalibrationStatus.Unknown;
-  }
-
-  private randomGatewayStatus(): GatewayStatus {
-    const randomValue = Math.random();
-
-    if (randomValue < 0.76) {
-      return GatewayStatus.Active;
-    }
-
-    if (randomValue < 0.9) {
-      return GatewayStatus.Maintenance;
-    }
-
-    return GatewayStatus.Offline;
-  }
 
   private clearPendingAssetStatus(assetId: number): void {
     this.pendingAssetStatuses.update((statuses) => {

@@ -21,8 +21,27 @@ export class StorageDistribution implements AfterViewInit, OnChanges, OnDestroy 
   private chart?: Chart;
 
   ngAfterViewInit(): void { this.buildChart(); }
-  ngOnChanges(): void { this.buildChart(); }
+  ngOnChanges(): void {
+    if (this.chart) {
+      this.refreshChart();
+    } else {
+      this.buildChart();
+    }
+  }
   ngOnDestroy(): void { this.chart?.destroy(); }
+
+  private refreshChart(): void {
+    if (!this.chart) return;
+    if (!this.items.length) {
+      this.chart.destroy();
+      this.chart = undefined;
+      return;
+    }
+    this.chart.data.labels = this.items.map(item => this.translate.instant(item.label));
+    this.chart.data.datasets[0].data = this.items.map(item => item.percentage);
+    this.chart.data.datasets[0].backgroundColor = this.items.map(item => item.color);
+    this.chart.update();
+  }
 
   private buildChart(): void {
     if (!this.canvas?.nativeElement) return;

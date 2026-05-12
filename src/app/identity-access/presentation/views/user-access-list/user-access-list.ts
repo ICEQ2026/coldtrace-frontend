@@ -5,7 +5,6 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { IdentityAccessStore } from '../../../application/identity-access.store';
-import { DashboardShell } from '../../../../shared/presentation/components/dashboard-shell/dashboard-shell';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { Organization } from '../../../domain/model/organization.entity';
 import { Role } from '../../../domain/model/role.entity';
@@ -25,7 +24,7 @@ interface UserAccessRow {
 
 @Component({
   selector: 'app-user-access-list',
-  imports: [DashboardShell, MatButton, MatIcon, RouterLink, TranslatePipe],
+  imports: [MatButton, MatIcon, RouterLink, TranslatePipe],
   templateUrl: './user-access-list.html',
   styleUrl: './user-access-list.css',
 })

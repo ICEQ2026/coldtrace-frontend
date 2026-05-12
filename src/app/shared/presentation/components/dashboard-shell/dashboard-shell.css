@@ -11,7 +11,6 @@
   font-family: 'Inter', sans-serif;
 }
 
-/* --- SIDEBAR --- */
 .side-panel {
   background: transparent;
   display: flex;
@@ -79,7 +78,7 @@
 }
 
 .menu-item .menu-icon {
-  color: #DADEE6;
+  color: #dadee6;
   font-size: 24px;
 }
 
@@ -90,15 +89,52 @@
 }
 
 .menu-item.active {
-  color: #2563EB;
+  color: #2563eb;
 }
 
 .menu-item.active .menu-icon {
-  color: #2563EB;
+  color: #2563eb;
 }
 
 .menu-item:hover {
   background: rgba(37, 99, 235, 0.04);
+}
+
+.menu-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.sub-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 38px 8px 88px;
+}
+
+.sub-menu-link {
+  color: #9aa4b5;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 16px;
+  text-decoration: none;
+}
+
+.sub-menu-link.active {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.sub-menu-link:hover {
+  color: #2563eb;
+}
+
+.menu-group.active-group > .menu-item {
+  color: #2563eb;
+}
+
+.menu-group.active-group > .menu-item .menu-icon {
+  color: #2563eb;
 }
 
 .counter {
@@ -110,15 +146,14 @@
 
 .badge-green {
   background: rgba(20, 184, 166, 0.1);
-  color: #0D9488;
+  color: #0d9488;
 }
 
 .badge-red {
-  background: #FEE2E2;
-  color: #EF4444;
+  background: #fee2e2;
+  color: #ef4444;
 }
 
-/* --- SIDEBAR FOOTER --- */
 .sidebar-footer {
   padding: 0 24px;
   display: flex;
@@ -126,7 +161,6 @@
   gap: 18px;
 }
 
-/* Team Members */
 .team-list {
   background: #ffffff;
   border-radius: 8px;
@@ -150,7 +184,7 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: 2px solid #DADEE5;
+  border: 2px solid #dadee5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -171,11 +205,11 @@
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  border: 2px solid #F3F5F9;
+  border: 2px solid #f3f5f9;
 }
 
 .status-dot.online {
-  background: #22C55E;
+  background: #22c55e;
   box-shadow: 0 1px 3px rgba(34, 197, 94, 0.2);
 }
 
@@ -206,7 +240,6 @@
   color: #42d786;
 }
 
-/* Toggle Controls */
 .toggle-control {
   background: #eef1f5;
   border-radius: 32px;
@@ -227,15 +260,15 @@
   padding: 5px 12px;
   font-size: 10.5px;
   font-weight: 700;
-  color: #9AA4B5;
+  color: #9aa4b5;
   border-radius: 24px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
-.toggle-option+.toggle-option::before {
+.toggle-option + .toggle-option::before {
   background: #ffffff;
-  content: "";
+  content: '';
   height: 28px;
   left: 0;
   position: absolute;
@@ -247,26 +280,13 @@
   position: relative;
 }
 
-.language-toggle .toggle-option:first-child.active {
-  border-radius: 24px 8px 8px 24px;
-}
-
-.language-toggle .toggle-option:last-child.active {
-  border-radius: 8px 24px 24px 8px;
-}
-
 .toggle-option.active {
-  background: #FFF;
+  background: #fff;
   color: #1a1a1a;
-  box-shadow: inset 0 2px 5px rgba(15, 23, 42, 0.08), 0 2px 8px rgba(96, 108, 128, 0.10);
+  box-shadow:
+    inset 0 2px 5px rgba(15, 23, 42, 0.08),
+    0 2px 8px rgba(96, 108, 128, 0.1);
   transform: translateY(1px);
-}
-
-.flag-icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  object-fit: cover;
 }
 
 app-language-switcher {
@@ -278,7 +298,6 @@ app-language-switcher {
   width: 100%;
 }
 
-/* Upload */
 .upload-icon {
   font-size: 32px !important;
   height: 32px !important;
@@ -286,8 +305,8 @@ app-language-switcher {
 }
 
 .drag-upload {
-  background: #F8FAFC;
-  border: 1px dashed #E2E8F0;
+  background: #f8fafc;
+  border: 1px dashed #e2e8f0;
   border-radius: 12px;
   box-sizing: border-box;
   height: 154px;
@@ -297,13 +316,12 @@ app-language-switcher {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  color: #2563EB;
+  color: #2563eb;
   font-size: 12px;
   font-weight: 700;
   text-align: center;
 }
 
-/* --- WORKSPACE --- */
 .workspace {
   display: flex;
   flex-direction: column;
@@ -332,7 +350,7 @@ app-language-switcher {
 .tab {
   font-size: 12px;
   font-weight: 700;
-  color: #98A2B2;
+  color: #98a2b2;
   text-decoration: none;
   cursor: pointer;
   position: relative;
@@ -340,7 +358,7 @@ app-language-switcher {
 }
 
 .tab.active {
-  color: #2563EB;
+  color: #2563eb;
   text-decoration: underline;
   text-underline-offset: 4px;
   text-decoration-thickness: 2px;
@@ -350,11 +368,11 @@ app-language-switcher {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #F3F4F6;
+  background: #f3f4f6;
   padding: 7px 16px;
   border-radius: 24px;
   width: 296px;
-  color: #9AA4B5;
+  color: #9aa4b5;
 }
 
 .search-input-wrapper mat-icon {
@@ -393,7 +411,7 @@ app-language-switcher {
 
 .role {
   font-size: 10px;
-  color: #A3B6CC;
+  color: #a3b6cc;
   font-weight: 700;
 }
 
@@ -411,11 +429,11 @@ app-language-switcher {
   height: 40px;
   border-radius: 50%;
   overflow: hidden;
-  border: 3px solid #E6EBF2;
+  border: 3px solid #e6ebf2;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #F3F4F6;
+  background: #f3f4f6;
   position: relative;
 }
 
@@ -430,21 +448,21 @@ app-language-switcher {
   width: 100%;
   max-width: 10px;
   z-index: 5;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .avatar-placeholder {
   font-size: 24px;
   width: 24px;
   height: 24px;
-  color: #B8BFCC;
+  color: #b8bfcc;
 }
 
 .user-actions {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #9AA4B5;
+  color: #9aa4b5;
   margin-left: 12px;
 }
 
@@ -504,140 +522,6 @@ app-language-switcher {
   transform: none;
 }
 
-.theme-toggle .toggle-option+.toggle-option::before {
+.theme-toggle .toggle-option + .toggle-option::before {
   display: none;
-}
-
-.language-toggle {
-  border-radius: 18px;
-}
-
-.language-toggle {
-  background: #eef1f5;
-  border-radius: 32px;
-  box-shadow: inset 0 1px 2px rgba(148, 163, 184, 0.10);
-  gap: 0;
-  overflow: hidden;
-  padding: 5px;
-}
-
-.language-toggle .toggle-option {
-  background: #ffffff;
-  border-radius: 0;
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9);
-  color: #9AA4B5;
-}
-
-.language-toggle .toggle-option:first-child {
-  border-radius: 24px 0 0 24px;
-}
-
-.language-toggle .toggle-option:last-child {
-  border-left: 1px solid #e7ebf1;
-  border-radius: 0 24px 24px 0;
-}
-
-.language-toggle .toggle-option.active {
-  color: #1f2937;
-  box-shadow: inset 0 2px 5px rgba(15, 23, 42, 0.08), 0 2px 7px rgba(96, 108, 128, 0.10);
-  transform: translateY(1px);
-  z-index: 1;
-}
-
-.language-toggle .toggle-option+.toggle-option::before {
-  display: none;
-}
-
-.language-toggle {
-  background: #eef1f5;
-  border-radius: 999px;
-  box-shadow: inset 0 1px 2px rgba(148, 163, 184, 0.12);
-  gap: 0;
-  height: 46px;
-  overflow: visible;
-  padding: 5px;
-}
-
-.language-toggle .toggle-option {
-  background: transparent;
-  border-radius: 0;
-  box-shadow: none;
-  color: #9aa4b5;
-  min-height: 36px;
-  position: relative;
-  transform: none;
-}
-
-.language-toggle .toggle-option:first-child {
-  border-radius: 999px 6px 6px 999px;
-}
-
-.language-toggle .toggle-option:last-child {
-  border-left: 1px solid rgba(203, 213, 225, 0.95);
-  border-radius: 6px 999px 999px 6px;
-}
-
-.language-toggle .toggle-option.active {
-  background: #ffffff;
-  color: #111827;
-  box-shadow: inset 0 2px 5px rgba(15, 23, 42, 0.06), 0 3px 8px rgba(96, 108, 128, 0.14);
-  transform: translateY(1px);
-  z-index: 2;
-}
-
-.language-toggle .toggle-option:first-child.active {
-  border-radius: 999px 6px 6px 999px;
-}
-
-.language-toggle .toggle-option:last-child.active {
-  border-radius: 6px 999px 999px 6px;
-}
-
-.language-toggle .toggle-option+.toggle-option::before,
-.language-toggle .toggle-option.active::before {
-  display: none;
-}
-
-.language-toggle {
-  background: #eef1f5;
-  border-radius: 999px;
-  box-shadow: none;
-  display: flex;
-  gap: 6px;
-  height: 52px;
-  overflow: hidden;
-  padding: 6px;
-}
-
-.language-toggle .toggle-option,
-.language-toggle .toggle-option.active {
-  background: #ffffff;
-  box-shadow: none;
-  color: #9aa4b5;
-  flex: 1 1 0;
-  min-height: 40px;
-  padding: 5px 14px;
-  transform: none;
-  z-index: auto;
-}
-
-.language-toggle .toggle-option:first-child,
-.language-toggle .toggle-option:first-child.active {
-  border-radius: 999px 4px 4px 999px;
-}
-
-.language-toggle .toggle-option:last-child,
-.language-toggle .toggle-option:last-child.active {
-  border-left: 0;
-  border-radius: 4px 999px 999px 4px;
-}
-
-.language-toggle .toggle-option+.toggle-option::before,
-.language-toggle .toggle-option.active::before {
-  display: none;
-}
-
-.language-toggle .flag-icon {
-  height: 28px;
-  width: 28px;
 }

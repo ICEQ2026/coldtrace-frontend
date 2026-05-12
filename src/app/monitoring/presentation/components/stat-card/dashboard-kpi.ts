@@ -1,5 +1,3 @@
-import { BaseEntity } from '../../../shared/domain/model/base-entity';
-
 export interface DashboardKpiColor {
   bg: string;
   border: string;
@@ -13,7 +11,7 @@ export interface DashboardKpiTooltip {
   position: number;
 }
 
-export class DashboardKpi implements BaseEntity {
+export class DashboardKpi {
   private _id: number;
   private _key: string;
   private _title: string;
@@ -27,10 +25,6 @@ export class DashboardKpi implements BaseEntity {
   private _chartData: number[];
   private _highlightedBar: number;
   private _showAnchor: boolean;
-  private _fillWave: boolean;
-  private _waveFillColor: string;
-  private _wavePath: string;
-  private _waveFillPath: string;
 
   constructor(kpi: {
     id: number;
@@ -46,10 +40,6 @@ export class DashboardKpi implements BaseEntity {
     chartData: number[];
     highlightedBar?: number;
     showAnchor?: boolean;
-    fillWave?: boolean;
-    waveFillColor?: string;
-    wavePath?: string;
-    waveFillPath?: string;
   }) {
     this._id = kpi.id;
     this._key = kpi.key;
@@ -64,10 +54,6 @@ export class DashboardKpi implements BaseEntity {
     this._chartData = kpi.chartData;
     this._highlightedBar = kpi.highlightedBar ?? -1;
     this._showAnchor = kpi.showAnchor ?? false;
-    this._fillWave = kpi.fillWave ?? false;
-    this._waveFillColor = kpi.waveFillColor ?? 'rgba(255,255,255,0.24)';
-    this._wavePath = kpi.wavePath ?? '';
-    this._waveFillPath = kpi.waveFillPath ?? '';
   }
 
   get id(): number { return this._id; }
@@ -83,8 +69,4 @@ export class DashboardKpi implements BaseEntity {
   get chartData(): number[] { return this._chartData; }
   get highlightedBar(): number { return this._highlightedBar; }
   get showAnchor(): boolean { return this._showAnchor; }
-  get fillWave(): boolean { return this._fillWave; }
-  get waveFillColor(): string { return this._waveFillColor; }
-  get wavePath(): string { return this._wavePath; }
-  get waveFillPath(): string { return this._waveFillPath; }
 }

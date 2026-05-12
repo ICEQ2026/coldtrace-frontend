@@ -22,15 +22,67 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
   private chart?: Chart;
 
   ngAfterViewInit(): void { this.buildChart(); }
-  ngOnChanges(): void { this.buildChart(); }
+  ngOnChanges(): void {
+    if (this.chart) {
+      this.refreshChart();
+    } else {
+      this.buildChart();
+    }
+  }
   ngOnDestroy(): void { this.chart?.destroy(); }
+
+  private refreshChart(): void {
+    if (!this.chart) return;
+    if (!this.points.length) {
+      this.chart.destroy();
+      this.chart = undefined;
+      return;
+    }
+    const labels = this.points.map(point => point.label);
+    const temperatures = this.points.map(point => point.temperature);
+    const ghostData = this.points.map(point => point.ghost);
+    const maxLimit = this.points[0]?.maxLimit ?? 7.2;
+    const minLimit = this.points[0]?.minLimit ?? -5;
+    const { min: yMin, max: yMax } = this.computeYRange(temperatures, ghostData, maxLimit, minLimit);
+
+    this.chart.data.labels = labels;
+    this.chart.data.datasets[0].data = ghostData;
+    this.chart.data.datasets[1].data = temperatures;
+    this.chart.data.datasets[2].data = temperatures;
+    this.chart.data.datasets[3].data = temperatures;
+    this.chart.data.datasets[4].data = temperatures;
+    this.chart.data.datasets[5].data = new Array(labels.length).fill(maxLimit);
+    this.chart.data.datasets[6].data = new Array(labels.length).fill(minLimit);
+    if (this.chart.options.scales?.['y']) {
+      const yScale = this.chart.options.scales['y'] as { min?: number; max?: number };
+      yScale.min = yMin;
+      yScale.max = yMax;
+    }
+    this.chart.update();
+  }
+
+  private computeYRange(
+    temperatures: number[],
+    ghostData: number[],
+    maxLimit: number,
+    minLimit: number,
+  ): { min: number; max: number } {
+    const allValues = [...temperatures, ...ghostData, maxLimit, minLimit];
+    const dataMin = Math.min(...allValues);
+    const dataMax = Math.max(...allValues);
+    const range = dataMax - dataMin;
+    const padding = Math.max(3, Math.ceil(range * 0.18));
+    return {
+      min: Math.floor((dataMin - padding) / 5) * 5,
+      max: Math.ceil((dataMax + padding) / 5) * 5,
+    };
+  }
 
   private buildChart(): void {
     if (!this.canvas?.nativeElement) return;
     this.chart?.destroy();
 
     if (!this.points.length) {
-      this.chart?.destroy();
       this.chart = undefined;
       return;
     }
@@ -41,6 +93,7 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
     const ghostData = dashboardPoints.map(point => point.ghost);
     const maxLimit = dashboardPoints[0]?.maxLimit ?? 7.2;
     const minLimit = dashboardPoints[0]?.minLimit ?? -5;
+    const { min: yMin, max: yMax } = this.computeYRange(temperatures, ghostData, maxLimit, minLimit);
 
     const ctx = this.canvas.nativeElement.getContext('2d');
     if (!ctx) return;
@@ -79,7 +132,7 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
               gradient.addColorStop(1, 'rgba(34, 197, 94, 0)');
               return gradient;
             },
-            fill: { target: { value: minLimit } } as any,
+            fill: { target: { value: minLimit } },
             tension: 0.42,
             pointRadius: 0,
             borderWidth: 0,
@@ -103,7 +156,7 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
               gradient.addColorStop(1, 'rgba(239, 68, 68, 0)');
               return gradient;
             },
-            fill: { target: { value: maxLimit } } as any,
+            fill: { target: { value: maxLimit } },
             tension: 0.42,
             pointRadius: 0,
             borderWidth: 0,
@@ -127,7 +180,7 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
               gradient.addColorStop(1, 'rgba(59, 130, 246, 0.48)');
               return gradient;
             },
-            fill: { target: { value: minLimit } } as any,
+            fill: { target: { value: minLimit } },
             tension: 0.42,
             pointRadius: 0,
             borderWidth: 0,
@@ -166,18 +219,18 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
             border: { display: false },
             ticks: {
               color: '#9CA3AF',
-              font: { family: 'Inter', size: 11, weight: '600' as any },
+              font: { family: 'Inter', size: 11, weight: 600 },
               maxRotation: 0,
               autoSkip: false,
               callback: function (_value, index) { return index % 4 === 0 ? labels[index] : ''; }
             }
           },
           y: {
-            min: -10,
-            max: 13,
+            min: yMin,
+            max: yMax,
             grid: { color: 'rgba(15,23,42,0.045)', drawTicks: false },
             border: { display: false },
-            ticks: { color: '#9CA3AF', font: { family: 'Inter', size: 10, weight: '500' as any }, stepSize: 5, padding: 8 }
+            ticks: { color: '#9CA3AF', font: { family: 'Inter', size: 10, weight: 500 }, stepSize: 5, padding: 8 }
           }
         }
       }

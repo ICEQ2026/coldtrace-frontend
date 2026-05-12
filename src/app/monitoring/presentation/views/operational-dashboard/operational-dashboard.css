@@ -126,12 +126,16 @@
   background: #ffffff;
   border: 1px solid rgba(17, 24, 39, 0.055);
   border-radius: 8px;
-  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.09), 0 18px 34px rgba(15, 23, 42, 0.055);
+  box-shadow:
+    0 3px 8px rgba(15, 23, 42, 0.09),
+    0 18px 34px rgba(15, 23, 42, 0.055);
   overflow: hidden;
 }
 
 :host ::ng-deep .stat-card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 :host ::ng-deep .stat-card:hover {

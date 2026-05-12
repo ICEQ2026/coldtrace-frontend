@@ -1,4 +1,12 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
@@ -10,7 +18,7 @@ Chart.register(...registerables);
   selector: 'app-incidents-chart',
   imports: [MatIconModule, TranslateModule],
   templateUrl: './incidents-chart.html',
-  styleUrl: './incidents-chart.css'
+  styleUrl: './incidents-chart.css',
 })
 export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('canvasElement') private canvas!: ElementRef<HTMLCanvasElement>;
@@ -20,19 +28,69 @@ export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
 
   private chart?: Chart;
 
-  get normalTotal(): number { return this.days.reduce((sum, day) => sum + day.normal, 0); }
-  get warningTotal(): number { return this.days.reduce((sum, day) => sum + day.warning, 0); }
-  get criticalTotal(): number { return this.days.reduce((sum, day) => sum + day.critical, 0); }
-  get offlineTotal(): number { return Math.max(1, Math.round(this.days.reduce((sum, day) => sum + day.offline, 0) / Math.max(this.days.length * 4, 1))); }
+  get normalTotal(): number {
+    return this.days.reduce((sum, day) => sum + day.normal, 0);
+  }
+  get warningTotal(): number {
+    return this.days.reduce((sum, day) => sum + day.warning, 0);
+  }
+  get criticalTotal(): number {
+    return this.days.reduce((sum, day) => sum + day.critical, 0);
+  }
+  get offlineTotal(): number {
+    return Math.max(
+      1,
+      Math.round(
+        this.days.reduce((sum, day) => sum + day.offline, 0) / Math.max(this.days.length * 4, 1),
+      ),
+    );
+  }
+  get chartMax(): number {
+    const maxStack = Math.max(
+      ...this.days.map((day) => day.normal + day.warning + day.critical + day.offline),
+      1,
+    );
+
+    return Math.max(10, Math.ceil(maxStack * 1.18));
+  }
+
   get averageIncidents(): string {
     const total = this.days.reduce((sum, day) => sum + day.warning + day.critical, 0);
-    const average = (total / Math.max(this.days.length, 1)) + this.offlineTotal;
+    const average = total / Math.max(this.days.length, 1) + this.offlineTotal;
     return average.toFixed(1).replace('.0', '');
   }
 
-  ngAfterViewInit(): void { this.buildChart(); }
-  ngOnChanges(): void { this.buildChart(); }
-  ngOnDestroy(): void { this.chart?.destroy(); }
+  ngAfterViewInit(): void {
+    this.buildChart();
+  }
+  ngOnChanges(): void {
+    if (this.chart) {
+      this.refreshChart();
+    } else {
+      this.buildChart();
+    }
+  }
+  ngOnDestroy(): void {
+    this.chart?.destroy();
+  }
+
+  private refreshChart(): void {
+    if (!this.chart) return;
+    if (!this.days.length) {
+      this.chart.destroy();
+      this.chart = undefined;
+      return;
+    }
+    this.chart.data.labels = this.days.map((day) => day.label);
+    this.chart.data.datasets[0].data = this.days.map((day) => day.normal);
+    this.chart.data.datasets[1].data = this.days.map((day) => day.warning);
+    this.chart.data.datasets[2].data = this.days.map((day) => day.critical);
+    this.chart.data.datasets[3].data = this.days.map((day) => day.offline);
+    if (this.chart.options.scales?.['y']) {
+      (this.chart.options.scales['y'] as { max?: number }).max = this.chartMax;
+    }
+    this.chart.update();
+  }
 
   microHeight(day: IncidentDay): number {
     return Math.max(4, Math.min(36, day.normal + day.warning + day.critical + day.offline));
@@ -48,23 +106,67 @@ export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
     this.chart = new Chart(this.canvas.nativeElement, {
       type: 'bar',
       data: {
-        labels: this.days.map(day => day.label),
+        labels: this.days.map((day) => day.label),
         datasets: [
-          { label: 'Normal', data: this.days.map(day => day.normal), backgroundColor: '#5bbf7f', borderRadius: 2, barPercentage: 0.42, categoryPercentage: 0.72 },
-          { label: 'Warning', data: this.days.map(day => day.warning), backgroundColor: '#f2b646', borderRadius: 2, barPercentage: 0.42, categoryPercentage: 0.72 },
-          { label: 'Critical', data: this.days.map(day => day.critical), backgroundColor: '#ed5145', borderRadius: 2, barPercentage: 0.42, categoryPercentage: 0.72 },
-          { label: 'Offline', data: this.days.map(day => day.offline), backgroundColor: '#e8ecf2', borderRadius: 2, barPercentage: 0.42, categoryPercentage: 0.72 }
-        ]
+          {
+            label: 'Normal',
+            data: this.days.map((day) => day.normal),
+            backgroundColor: '#5bbf7f',
+            borderRadius: 2,
+            barPercentage: 0.42,
+            categoryPercentage: 0.72,
+            minBarLength: 3,
+          },
+          {
+            label: 'Warning',
+            data: this.days.map((day) => day.warning),
+            backgroundColor: '#f2b646',
+            borderRadius: 2,
+            barPercentage: 0.42,
+            categoryPercentage: 0.72,
+            minBarLength: 3,
+          },
+          {
+            label: 'Critical',
+            data: this.days.map((day) => day.critical),
+            backgroundColor: '#ed5145',
+            borderRadius: 2,
+            barPercentage: 0.42,
+            categoryPercentage: 0.72,
+            minBarLength: 4,
+          },
+          {
+            label: 'Offline',
+            data: this.days.map((day) => day.offline),
+            backgroundColor: '#e8ecf2',
+            borderRadius: 2,
+            barPercentage: 0.42,
+            categoryPercentage: 0.72,
+            minBarLength: 3,
+          },
+        ],
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { stacked: true, grid: { color: 'rgba(148,163,184,0.16)', drawTicks: false }, border: { color: 'rgba(148,163,184,0.18)' }, ticks: { color: '#AEB7C6', font: { family: 'Inter', size: 11, weight: '800' as any } } },
-          y: { stacked: true, min: 0, max: 16, grid: { color: 'rgba(148,163,184,0.16)', drawTicks: false }, border: { color: 'rgba(148,163,184,0.18)' }, ticks: { display: false } }
-        }
-      }
+          x: {
+            stacked: true,
+            grid: { color: 'rgba(148,163,184,0.16)', drawTicks: false },
+            border: { color: 'rgba(148,163,184,0.18)' },
+            ticks: { color: '#AEB7C6', font: { family: 'Inter', size: 11, weight: '800' as any } },
+          },
+          y: {
+            stacked: true,
+            min: 0,
+            max: this.chartMax,
+            grid: { color: 'rgba(148,163,184,0.16)', drawTicks: false },
+            border: { color: 'rgba(148,163,184,0.18)' },
+            ticks: { display: false },
+          },
+        },
+      },
     });
   }
 }

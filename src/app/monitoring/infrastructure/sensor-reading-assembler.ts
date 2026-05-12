@@ -2,16 +2,24 @@ import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { SensorReading } from '../domain/model/sensor-reading.entity';
 import { SensorReadingResource, SensorReadingsResponse } from './sensor-readings-response';
 
-export class SensorReadingAssembler implements BaseAssembler<SensorReading, SensorReadingResource, SensorReadingsResponse> {
+export class SensorReadingAssembler implements BaseAssembler<
+  SensorReading,
+  SensorReadingResource,
+  SensorReadingsResponse
+> {
   toEntityFromResource(resource: SensorReadingResource): SensorReading {
     return new SensorReading(
-      resource.id,
+      Number(resource.id),
       resource.assetId,
       resource.iotDeviceId,
       resource.temperature,
       resource.humidity,
       resource.isOutOfRange,
       resource.recordedAt,
+      resource.motionDetected ?? null,
+      resource.imageCaptured ?? null,
+      resource.batteryLevel ?? null,
+      resource.signalStrength ?? null,
     );
   }
 
@@ -24,10 +32,14 @@ export class SensorReadingAssembler implements BaseAssembler<SensorReading, Sens
       humidity: entity.humidity,
       isOutOfRange: entity.isOutOfRange,
       recordedAt: entity.recordedAt,
+      motionDetected: entity.motionDetected,
+      imageCaptured: entity.imageCaptured,
+      batteryLevel: entity.batteryLevel,
+      signalStrength: entity.signalStrength,
     };
   }
 
   toEntitiesFromResponse(response: SensorReadingsResponse): SensorReading[] {
-    return response.sensorReadings.map(resource => this.toEntityFromResource(resource));
+    return response.sensorReadings.map((resource) => this.toEntityFromResource(resource));
   }
 }

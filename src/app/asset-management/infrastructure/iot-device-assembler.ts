@@ -13,7 +13,7 @@ export class IoTDeviceAssembler implements BaseAssembler<
 
   toEntityFromResource(resource: IoTDeviceResource): IoTDevice {
     return new IoTDevice(
-      resource.id,
+      Number(resource.id),
       resource.organizationId,
       resource.uuid,
       resource.deviceType,

@@ -10,7 +10,7 @@ export class RoleAssembler implements BaseAssembler<Role, RoleResource, RolesRes
 
   toEntityFromResource(resource: RoleResource): Role {
     return new Role(
-      resource.id,
+      Number(resource.id),
       resource.name,
       resource.label,
       resource.permissions.map((permission) => this.toPermissionFromResource(permission)),
@@ -29,7 +29,7 @@ export class RoleAssembler implements BaseAssembler<Role, RoleResource, RolesRes
   }
 
   private toPermissionFromResource(resource: PermissionResource): Permission {
-    return new Permission(resource.id, resource.resource, resource.action, resource.description);
+    return new Permission(Number(resource.id), resource.resource, resource.action, resource.description);
   }
 
   private toPermissionResourceFromEntity(entity: Permission): PermissionResource {

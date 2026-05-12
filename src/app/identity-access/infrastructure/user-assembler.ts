@@ -8,15 +8,16 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
   }
 
   toEntityFromResource(resource: UserResource): User {
+    const id = Number(resource.id);
     return new User(
-      resource.id,
+      id,
       resource.firstName,
       resource.lastName,
       resource.email,
       resource.organizationId,
       resource.roleId,
-      resource.uuid ?? `USR-${resource.id}`,
-      resource.organizationUserId ?? resource.id,
+      resource.uuid ?? `USR-${id}`,
+      resource.organizationUserId ?? id,
     );
   }
 

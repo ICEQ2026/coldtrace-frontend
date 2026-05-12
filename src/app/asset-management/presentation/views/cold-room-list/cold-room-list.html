@@ -1,13 +1,4 @@
-<app-dashboard-shell
-  [activeOrganizationName]="activeOrganizationName()"
-  [pageTitleKey]="'asset-management.title'"
-  [profileUserName]="profileUserName()"
-  [profileRoleLabelKey]="profileRoleLabelKey()"
-  [canManageAccess]="canManageAccess()"
-  [assetIssuesCount]="assetIssueCount()"
-  (signedOut)="logout()"
->
-  <nav class="asset-tabs" aria-label="Asset sections">
+<nav class="asset-tabs" aria-label="Asset sections">
     @for (assetType of assetTypeTabs; track assetType) {
       <button
         type="button"
@@ -791,7 +782,7 @@
                       <mat-icon aria-hidden="true">{{
                         incidentIconName(asset.lastIncident)
                       }}</mat-icon>
-                      {{ asset.lastIncident | translate }}
+                      {{ incidentLabelKey(asset.lastIncident) | translate }}
                     </span>
                   </td>
                   <td [attr.data-label]="'asset-management.table.temperature' | translate">
@@ -862,5 +853,4 @@
         </footer>
       }
     </section>
-  }
-</app-dashboard-shell>
+}

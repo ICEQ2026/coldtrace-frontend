@@ -11,12 +11,16 @@ const rolePermissionForm = () =>
 const userForm = () => import('./views/user-form/user-form').then((m) => m.UserForm);
 const userAccessList = () =>
   import('./views/user-access-list/user-access-list').then((m) => m.UserAccessList);
+const operationalDashboard = () =>
+  import('../../monitoring/presentation/views/operational-dashboard/operational-dashboard').then(
+    (m) => m.OperationalDashboard,
+  );
 
 export const identityAccessRoutes: Routes = [
   {
     path: 'dashboard',
-    redirectTo: '/monitoring/operational',
-    pathMatch: 'full',
+    loadComponent: operationalDashboard,
+    title: 'ColdTrace - Main',
   },
   {
     path: 'assets',
@@ -25,7 +29,7 @@ export const identityAccessRoutes: Routes = [
   },
   {
     path: 'alerts',
-    redirectTo: '/monitoring/operational',
+    redirectTo: '/identity-access/dashboard',
     pathMatch: 'full',
   },
   {
@@ -35,7 +39,7 @@ export const identityAccessRoutes: Routes = [
   },
   {
     path: 'reports',
-    redirectTo: '/monitoring/operational',
+    redirectTo: '/identity-access/dashboard',
     pathMatch: 'full',
   },
   {

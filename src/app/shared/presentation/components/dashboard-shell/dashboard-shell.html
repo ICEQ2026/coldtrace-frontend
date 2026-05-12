@@ -2,19 +2,19 @@
   <aside class="side-panel">
     <div class="sidebar-top">
       <div class="brand-section">
-        <img src="coldtrace-icon.png" alt="ColdTrace" class="logo-img"/>
+        <img src="coldtrace-icon.png" alt="ColdTrace" class="logo-img" />
         <div class="brand-text">
           <span class="brand-name">ColdTrace</span>
-          <span class="brand-sub">{{ 'dashboard-shell.brand-subtitle' | translate }}</span>
+          <span class="brand-sub">{{ activeOrganizationName }}</span>
         </div>
       </div>
 
       <nav class="side-menu">
-        <a class="menu-item" routerLink="/monitoring/operational" routerLinkActive="active">
+        <a class="menu-item" routerLink="/identity-access/dashboard" routerLinkActive="active">
           <mat-icon class="menu-icon">dashboard</mat-icon>
           <span class="menu-label">{{ 'dashboard-shell.nav-main' | translate }}</span>
         </a>
-        
+
         <a class="menu-item" routerLink="/asset-management/assets" routerLinkActive="active">
           <mat-icon class="menu-icon">inventory_2</mat-icon>
           <span class="menu-label">{{ 'dashboard-shell.nav-assets' | translate }}</span>
@@ -32,6 +32,34 @@
           <mat-icon class="menu-icon">sensors</mat-icon>
           <span class="menu-label">{{ 'dashboard-shell.nav-monitoring' | translate }}</span>
         </a>
+
+        <div class="menu-group" routerLinkActive="active-group">
+          <a class="menu-item" routerLink="/identity-access/users" routerLinkActive="active">
+            <mat-icon class="menu-icon">admin_panel_settings</mat-icon>
+            <span class="menu-label">{{ 'dashboard-shell.nav-access' | translate }}</span>
+          </a>
+          <div class="sub-menu">
+            <a class="sub-menu-link" routerLink="/identity-access/users" routerLinkActive="active">
+              {{ 'dashboard-shell.nav-users' | translate }}
+            </a>
+            @if (canManageAccess) {
+              <a
+                class="sub-menu-link"
+                routerLink="/identity-access/roles-permissions/users/new"
+                routerLinkActive="active"
+              >
+                {{ 'dashboard-shell.nav-new-user' | translate }}
+              </a>
+              <a
+                class="sub-menu-link"
+                routerLink="/identity-access/roles-permissions/permissions"
+                routerLinkActive="active"
+              >
+                {{ 'dashboard-shell.nav-permissions' | translate }}
+              </a>
+            }
+          </div>
+        </div>
 
         <a class="menu-item">
           <mat-icon class="menu-icon">chat</mat-icon>
@@ -133,7 +161,7 @@
       <div class="search-section">
         <div class="search-input-wrapper">
           <mat-icon>search</mat-icon>
-          <input type="text" [placeholder]="'dashboard-shell.search-placeholder' | translate">
+          <input type="text" [placeholder]="'dashboard-shell.search-placeholder' | translate" />
         </div>
       </div>
 

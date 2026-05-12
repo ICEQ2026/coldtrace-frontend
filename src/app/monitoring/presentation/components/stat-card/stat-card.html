@@ -38,7 +38,7 @@
     <!-- Wave -->
     <div class="wave" *ngIf="type === 'wave'">
       <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-        <path *ngIf="fillWave" [attr.d]="waveFillPath" class="wave-fill" [attr.fill]="waveFillColor" />
+        <path [attr.d]="waveFillPath" class="wave-fill" [attr.fill]="waveFillColor" />
         <path [attr.d]="wavePath" class="wave-shadow" fill="none" stroke="rgba(62, 12, 116, 0.22)" stroke-width="2.4"
           stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"
           transform="translate(0 1.4)" />

@@ -1,6 +1,20 @@
-@if (showLanguageSwitcher()) {
-  <div class="language-switcher-bar">
-    <app-language-switcher />
-  </div>
+@if (showDashboardShell()) {
+  <app-dashboard-shell
+    [activeOrganizationName]="activeOrganizationName()"
+    [pageTitleKey]="pageTitleKey()"
+    [profileUserName]="profileUserName()"
+    [profileRoleLabelKey]="profileRoleLabelKey()"
+    [canManageAccess]="canManageAccess()"
+    [assetIssuesCount]="assetIssueCount()"
+    (signedOut)="logout()"
+  >
+    <router-outlet />
+  </app-dashboard-shell>
+} @else {
+  @if (showLanguageSwitcher()) {
+    <div class="language-switcher-bar">
+      <app-language-switcher />
+    </div>
+  }
+  <router-outlet />
 }
-<router-outlet />
