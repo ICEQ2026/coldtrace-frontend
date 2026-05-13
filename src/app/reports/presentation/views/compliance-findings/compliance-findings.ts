@@ -25,6 +25,9 @@ import { FindingStatus } from '../../../domain/model/finding-status.enum';
 
 type ComplianceFindingsFeedback = 'idle' | 'closed' | 'access-denied' | 'server-error';
 
+/**
+ * @summary Presents the compliance findings user interface in the reports bounded context.
+ */
 @Component({
   selector: 'app-compliance-findings',
   imports: [FormsModule, MatButton, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
@@ -100,6 +103,9 @@ export class ComplianceFindings implements OnInit {
   });
   protected readonly hasFindings = computed(() => this.complianceReport().hasFindings);
 
+  /**
+   * @summary Initializes the compliance findings view state.
+   */
   ngOnInit(): void {
     this.loadPageData();
   }

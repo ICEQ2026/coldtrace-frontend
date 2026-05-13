@@ -8,6 +8,9 @@ import { IdentityAccessStore } from '../../../../identity-access/application/ide
 import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
 
+/**
+ * @summary Presents the incident list user interface in the alerts bounded context.
+ */
 @Component({
   selector: 'app-incident-list',
   standalone: true,
@@ -52,6 +55,9 @@ export class IncidentList implements OnInit {
     }
   });
 
+  /**
+   * @summary Initializes the incident list view state.
+   */
   ngOnInit(): void {
     this.alertsStore.loadIncidents();
   }

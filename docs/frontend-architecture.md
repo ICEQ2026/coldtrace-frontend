@@ -41,11 +41,16 @@ Main store:
 
 Main routes:
 
+- `/identity-access/dashboard`
 - `/identity-access/sign-in`
 - `/identity-access/sign-up`
 - `/identity-access/password-recovery`
 - `/identity-access/reset-password`
+- `/identity-access/roles-permissions/users/new`
 - `/identity-access/roles-permissions`
+- `/identity-access/roles-permissions/permissions`
+
+The dashboard route is kept in this context as an entry point after sign in, but it loads the operational dashboard component from the monitoring bounded context.
 
 ---
 
@@ -65,9 +70,13 @@ Main store:
 
 - `AssetManagementStore`
 
-Main route:
+Main routes:
 
 - `/asset-management/assets`
+- `/asset-management/safety-ranges`
+- `/asset-management/operational-parameters`
+
+Asset management exposes settings used by both the monitoring dashboard and the reports module. Temperature and humidity limits are read from the local API data instead of hard-coded component values.
 
 ---
 
@@ -77,6 +86,7 @@ Folder: `src/app/monitoring`
 
 Purpose:
 
+- Asset monitoring dashboard.
 - Operational dashboard.
 - KPI cards.
 - Temperature chart.
@@ -89,11 +99,38 @@ Main store:
 
 - `MonitoringStore`
 
-Main route:
+Main routes:
 
+- `/monitoring/assets`
+- `/monitoring/operational`
 - `/identity-access/dashboard`
 
-The dashboard reads both asset data and sensor readings to present operational status.
+The monitoring views read asset, device, gateway, settings, and sensor reading data to present operational status. The store also simulates telemetry updates for demo purposes while still using the local API data as the source of the asset configuration.
+
+---
+
+### Alerts
+
+Folder: `src/app/alerts`
+
+Purpose:
+
+- Thermal incidents generated from out-of-range readings.
+- Critical alert recognition.
+- Incident closure with corrective action and evidence.
+- Alert notifications.
+- Escalation tracking for unattended incidents.
+
+Main store:
+
+- `AlertsStore`
+
+Main routes:
+
+- `/alerts/incidents`
+- `/alerts/notifications`
+
+The alerts context depends on identity data for user and permission information, and on monitoring data for current thermal conditions.
 
 ---
 
@@ -123,6 +160,31 @@ Main routes:
 - `/reports/findings`
 - `/reports/audit-evidence`
 
+Reports are generated from local API data and frontend aggregation. CSV export names use the current organization name and selected period.
+
+---
+
+### Maintenance Management
+
+Folder: `src/app/maintenance-management`
+
+Purpose:
+
+- Preventive maintenance scheduling.
+- Technical service request tracking.
+- Service state review for operations follow-up.
+
+Main store:
+
+- `MaintenanceManagementStore`
+
+Main routes:
+
+- `/maintenance/preventive`
+- `/maintenance/technical-service`
+
+Maintenance data is stored through JSON Server collections and is linked to organization and asset records.
+
 ---
 
 ## Shared Layer
@@ -137,7 +199,7 @@ Purpose:
 - Page not found view.
 - Base API endpoint, assembler, response, and entity contracts.
 
-The shared infrastructure keeps the JSON Server integration consistent across contexts.
+The shared infrastructure keeps the JSON Server integration consistent across contexts. The dashboard shell owns the sidebar navigation, dashboard language switcher, organization label, access shortcuts, reports shortcuts, notifications entry, and current user controls.
 
 ---
 
@@ -150,6 +212,8 @@ Root route file: `src/app/app.routes.ts`
 /asset-management
 /monitoring
 /reports
+/alerts
+/maintenance
 ```
 
 Each route loads its feature routes lazily. This keeps the root router simple and close to the professor reference style.
@@ -166,6 +230,8 @@ Examples:
 - `AssetManagementStore` keeps assets, devices, gateways, and settings.
 - `MonitoringStore` keeps sensor readings and offline sync state.
 - `ReportsStore` builds report view models from monitoring and asset data.
+- `AlertsStore` keeps incidents, notifications, recognition, closure, and escalation state.
+- `MaintenanceManagementStore` keeps preventive schedules and technical service requests.
 
 ---
 
@@ -201,4 +267,10 @@ The local development URL is:
 http://localhost:3000
 ```
 
-Production is configured to use the hosted JSON Server URL when available.
+Production is configured to use the hosted JSON Server URL when available:
+
+```txt
+https://coldtrace-json-server.onrender.com
+```
+
+The application still follows the class project constraint of simulating backend behavior with JSON data. Authentication, authorization, email delivery, and report persistence are represented through frontend state and JSON Server records.

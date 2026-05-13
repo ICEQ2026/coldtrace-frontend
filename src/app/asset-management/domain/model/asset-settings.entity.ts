@@ -1,5 +1,8 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 
+/**
+ * @summary Represents asset settings in the asset management bounded context.
+ */
 export class AssetSettings implements BaseEntity {
   constructor(
     private readonly _id: number,

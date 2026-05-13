@@ -5,6 +5,9 @@ const incidentList = () =>
 const notificationList = () =>
   import('./views/notification-list/notification-list').then((m) => m.NotificationList);
 
+/**
+ * @summary Defines the lazy-loaded routes for the alerts bounded context.
+ */
 export const alertsRoutes: Routes = [
   {
     path: 'incidents',

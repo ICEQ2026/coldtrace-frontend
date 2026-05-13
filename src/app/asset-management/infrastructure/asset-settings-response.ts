@@ -1,5 +1,8 @@
 import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
 
+/**
+ * @summary Raw asset settings resource from the ColdTrace API.
+ */
 export interface AssetSettingsResource extends BaseResource {
   organizationId: number;
   uuid: string;
@@ -15,6 +18,9 @@ export interface AssetSettingsResource extends BaseResource {
   assetId?: number | null;
 }
 
+/**
+ * @summary Raw response from the ColdTrace API for asset settings.
+ */
 export interface AssetSettingsResponse extends BaseResponse {
   assetSettings: AssetSettingsResource[];
 }

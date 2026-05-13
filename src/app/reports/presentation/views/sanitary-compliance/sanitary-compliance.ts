@@ -23,6 +23,9 @@ import {
 
 type ComplianceFeedback = 'idle' | 'exported' | 'insufficient' | 'server-error';
 
+/**
+ * @summary Presents the sanitary compliance user interface in the reports bounded context.
+ */
 @Component({
   selector: 'app-sanitary-compliance',
   imports: [FormsModule, MatButton, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
@@ -89,6 +92,9 @@ export class SanitaryCompliance implements OnInit {
   protected readonly hasRows = computed(() => this.complianceReport().rows.length > 0);
   protected readonly canExportReport = computed(() => this.complianceReport().canExport);
 
+  /**
+   * @summary Initializes the sanitary compliance view state.
+   */
   ngOnInit(): void {
     this.loadPageData();
   }

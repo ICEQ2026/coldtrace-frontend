@@ -2,11 +2,20 @@ import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { User } from '../domain/model/user.entity';
 import { UserResource, UsersResponse } from './users-response';
 
+/**
+ * @summary Maps user data between domain entities and API resources.
+ */
 export class UserAssembler implements BaseAssembler<User, UserResource, UsersResponse> {
+  /**
+   * @summary Maps an API response envelope into domain entities.
+   */
   toEntitiesFromResponse(response: UsersResponse): User[] {
     return response.users.map((resource) => this.toEntityFromResource(resource));
   }
 
+  /**
+   * @summary Maps one API resource into a domain entity.
+   */
   toEntityFromResource(resource: UserResource): User {
     const id = Number(resource.id);
     return new User(
@@ -21,6 +30,9 @@ export class UserAssembler implements BaseAssembler<User, UserResource, UsersRes
     );
   }
 
+  /**
+   * @summary Maps one domain entity into an API resource.
+   */
   toResourceFromEntity(entity: User): UserResource {
     return {
       id: entity.id,

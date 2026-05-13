@@ -19,6 +19,9 @@ import {
 } from '../../../domain/model/operational-history.entity';
 import { ReportsStore } from '../../../application/reports.store';
 
+/**
+ * @summary Presents the operational history user interface in the reports bounded context.
+ */
 @Component({
   selector: 'app-operational-history',
   imports: [FormsModule, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
@@ -79,6 +82,9 @@ export class OperationalHistory implements OnInit {
   });
   protected readonly hasEvents = computed(() => this.history().totalEvents > 0);
 
+  /**
+   * @summary Initializes the operational history view state.
+   */
   ngOnInit(): void {
     this.loadPageData();
   }

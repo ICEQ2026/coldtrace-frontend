@@ -10,6 +10,9 @@ import { TemperaturePoint } from '../../../domain/model/temperature-point.entity
 import { TemperatureGauge } from '../temperature-gauge/temperature-gauge';
 import { TemperatureChart } from '../temperature-chart/temperature-chart';
 
+/**
+ * @summary Presents the monitoring asset card user interface in the monitoring bounded context.
+ */
 @Component({
   selector: 'app-monitoring-asset-card',
   standalone: true,

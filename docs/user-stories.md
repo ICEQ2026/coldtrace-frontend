@@ -8,8 +8,8 @@ This document outlines the user stories and acceptance criteria for the `coldtra
 
 ### US007: Creating an Account
 
-As an authorized visitor,  
-I want to create an account linked to an organization,  
+As an authorized visitor,
+I want to create an account linked to an organization,
 so that I can start using ColdTrace as the first administrator of that organization.
 
 #### Acceptance Criteria
@@ -26,8 +26,8 @@ so that I can start using ColdTrace as the first administrator of that organizat
 
 ### US008: Representing Account Verification
 
-As a registered user,  
-I want the application to represent my account as enabled after registration,  
+As a registered user,
+I want the application to represent my account as enabled after registration,
 so that the frontend delivery can continue without real email delivery.
 
 #### Acceptance Criteria
@@ -39,8 +39,8 @@ so that the frontend delivery can continue without real email delivery.
 
 ### US009: Signing In
 
-As a registered user,  
-I want to sign in with my email and demo password,  
+As a registered user,
+I want to sign in with my email and demo password,
 so that I can access the dashboard with my organization, role, and permissions.
 
 #### Acceptance Criteria
@@ -57,8 +57,8 @@ so that I can access the dashboard with my organization, role, and permissions.
 
 ### US010: Recovering a Password
 
-As a registered user,  
-I want to request password recovery,  
+As a registered user,
+I want to request password recovery,
 so that I can validate the reset experience without a real email backend.
 
 #### Acceptance Criteria
@@ -75,8 +75,8 @@ so that I can validate the reset experience without a real email backend.
 
 ### US011: Managing Roles and Permissions
 
-As an organization administrator,  
-I want to manage users, roles, and permissions,  
+As an organization administrator,
+I want to manage users, roles, and permissions,
 so that each person can access the actions that match their operational responsibility.
 
 #### Acceptance Criteria
@@ -97,8 +97,8 @@ so that each person can access the actions that match their operational responsi
 
 ### US012-US017: Managing Assets, Devices, and Gateways
 
-As an operations user,  
-I want to register assets, link IoT devices, pair gateways, and track calibration and connectivity,  
+As an operations user,
+I want to register assets, link IoT devices, pair gateways, and track calibration and connectivity,
 so that the monitoring infrastructure is organized and ready for operational control.
 
 #### Acceptance Criteria
@@ -124,8 +124,8 @@ so that the monitoring infrastructure is organized and ready for operational con
 
 ### US018-US023: Monitoring Temperature, Humidity, Connectivity, and Offline Sync
 
-As an operations user,  
-I want to monitor current readings, detect out-of-range values, review connectivity, and synchronize pending readings,  
+As an operations user,
+I want to monitor current readings, detect out-of-range values, review connectivity, and synchronize pending readings,
 so that I can react to operational risks in the cold chain.
 
 #### Acceptance Criteria
@@ -134,6 +134,11 @@ so that I can react to operational risks in the cold chain.
   - **Given** assets and readings exist for the active organization,
   - **When** the user opens the dashboard,
   - **Then** the application shows KPIs, temperature trends, storage distribution, recent alerts, and maintenance information.
+
+- **Scenario: User opens asset monitoring**
+  - **Given** assets, devices, gateways, readings, and asset settings exist for the active organization,
+  - **When** the user opens the asset monitoring view,
+  - **Then** the application shows thermal condition, connectivity, calibration, and operating range information per asset.
 
 - **Scenario: A reading is out of range**
   - **Given** a sensor reading exceeds the configured safety range,
@@ -147,12 +152,65 @@ so that I can react to operational risks in the cold chain.
 
 ---
 
+## Alerts
+
+### US024: Creating Thermal Incidents
+
+As an operations user,
+I want the application to create incidents from out-of-range readings,
+so that critical cold-chain events can be followed from the alerts module.
+
+#### Acceptance Criteria
+
+- **Scenario: Reading exceeds the configured safety range**
+  - **Given** an asset has safety settings and a reading outside the valid range,
+  - **When** the alerts workflow evaluates the reading,
+  - **Then** the application creates or shows an incident linked to the affected asset.
+
+### US025: Reviewing Alert Notifications
+
+As an operations user,
+I want to review alert notifications from the sidebar,
+so that incident information is available without using inactive chat or topbar controls.
+
+#### Acceptance Criteria
+
+- **Scenario: User opens notifications**
+  - **Given** notifications exist for the active organization,
+  - **When** the user opens the notifications page,
+  - **Then** the application lists the notification message, channel, status, and related incident.
+
+### US026-US028: Recognizing, Escalating, and Closing Incidents
+
+As an authorized operations user,
+I want to recognize incidents, review escalations, and close incidents with corrective evidence,
+so that the alert response lifecycle is traceable.
+
+#### Acceptance Criteria
+
+- **Scenario: User recognizes an open incident**
+  - **Given** an open incident exists and the user has alert resolution permission,
+  - **When** the user recognizes the incident,
+  - **Then** the application records the responsible user and recognition time.
+
+- **Scenario: Incident remains unattended**
+  - **Given** an incident matches the escalation criteria,
+  - **When** the alerts workflow evaluates unattended incidents,
+  - **Then** the application marks the incident as escalated for review.
+
+- **Scenario: User closes an incident**
+  - **Given** an incident has been reviewed and the user enters corrective action and evidence,
+  - **When** the user closes the incident,
+  - **Then** the application stores closure metadata and updates the incident status.
+
+---
+
 ## Reports and Audit Evidence
 
 ### US029: Generating a Daily Log
 
-As a quality or operations user,  
-I want to generate a daily log by date and asset,  
+As a quality or operations user,
+I want to generate a daily log by date and asset,
 so that I can review expected readings, registered readings, missing readings, and compliance.
 
 #### Acceptance Criteria
@@ -164,8 +222,8 @@ so that I can review expected readings, registered readings, missing readings, a
 
 ### US030: Consulting Operational History
 
-As a quality user,  
-I want to review readings, alerts, and incidents by period and event type,  
+As a quality user,
+I want to review readings, alerts, and incidents by period and event type,
 so that I can reconstruct operational behavior over time.
 
 #### Acceptance Criteria
@@ -177,8 +235,8 @@ so that I can reconstruct operational behavior over time.
 
 ### US031-US032: Exporting Compliance and Monthly Reports
 
-As an administrative user,  
-I want to export compliance and monthly reports,  
+As an administrative user,
+I want to export compliance and monthly reports,
 so that I can download evidence for review or audit.
 
 #### Acceptance Criteria
@@ -190,8 +248,8 @@ so that I can download evidence for review or audit.
 
 ### US033-US034: Reviewing Findings and Audit Evidence
 
-As a quality user,  
-I want to detect missing records, close findings, and prepare audit evidence,  
+As a quality user,
+I want to detect missing records, close findings, and prepare audit evidence,
 so that the organization can respond to internal or external reviews.
 
 #### Acceptance Criteria
@@ -210,20 +268,67 @@ so that the organization can respond to internal or external reviews.
 
 ## Operational Configuration and Maintenance
 
-### US035-US038: Configuring Ranges and Following Maintenance Work
+### US035: Configuring Safety Ranges
 
-As an administrative or operations user,  
-I want to configure safety ranges, update operational parameters, schedule maintenance, and track technical service,  
-so that ColdTrace can adapt to the real operating conditions of each organization.
+As an administrative user,
+I want to configure safety ranges per organization or asset,
+so that monitoring, alerts, and reports use operating limits stored in the API data.
 
 #### Acceptance Criteria
 
 - **Scenario: User configures safety ranges**
   - **Given** the organization has assets and asset settings,
   - **When** the user defines valid temperature and humidity ranges,
-  - **Then** the application uses those ranges to evaluate future readings and reports.
+  - **Then** the application saves the settings and uses them in monitoring and reports.
 
-- **Scenario: User reviews operational maintenance information**
-  - **Given** maintenance or service information exists in the dashboard data,
-  - **When** the user opens the operational dashboard,
-  - **Then** the application shows upcoming or relevant maintenance items for follow-up.
+### US036: Configuring Operational Parameters
+
+As an administrative user,
+I want to maintain operational parameters for monitored assets,
+so that ColdTrace reflects the expected measurement frequency and sensor configuration.
+
+#### Acceptance Criteria
+
+- **Scenario: User updates operational parameters**
+  - **Given** an asset has editable settings,
+  - **When** the user updates expected readings or measurement parameters,
+  - **Then** the application persists the configuration and keeps dashboard/report calculations aligned.
+
+### US037: Scheduling Preventive Maintenance
+
+As an operations user,
+I want to schedule preventive maintenance for cold-chain assets,
+so that routine service can be planned and tracked.
+
+#### Acceptance Criteria
+
+- **Scenario: User creates a preventive maintenance schedule**
+  - **Given** an asset belongs to the active organization,
+  - **When** the user creates a valid maintenance schedule,
+  - **Then** the application stores it and shows it in the preventive maintenance view.
+
+### US038: Tracking Technical Service
+
+As an operations user,
+I want to track technical service requests,
+so that corrective work can be followed after incidents or operational issues.
+
+#### Acceptance Criteria
+
+- **Scenario: User reviews technical service requests**
+  - **Given** service requests exist for the active organization,
+  - **When** the user opens the technical service view,
+  - **Then** the application shows request status, priority, affected asset, and service details.
+
+- **Scenario: User updates a technical service request**
+  - **Given** a technical service request is open,
+  - **When** the user updates its status or service information,
+  - **Then** the application persists the change in the local API.
+
+---
+
+## Implementation Trace
+
+The implemented frontend follows GitFlow and the current released scope includes identity access, asset management, monitoring, reports, alerts, operational configuration, and maintenance management.
+
+Some features were consolidated after review and correction commits. The product documentation describes the final behavior available in the application; individual contribution evidence should be reviewed from Git commits, pull requests, branches, and Linear assignments.

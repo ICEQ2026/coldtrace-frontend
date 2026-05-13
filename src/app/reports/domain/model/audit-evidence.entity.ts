@@ -2,12 +2,18 @@ import { ComplianceFinding } from './compliance-finding.entity';
 import { EvidenceItem } from './evidence-item.entity';
 import { Report } from './report.entity';
 
+/**
+ * @summary Defines the audit evidence filters contract used by the reports bounded context.
+ */
 export interface AuditEvidenceFilters {
   assetId: number;
   fromDate: string;
   toDate: string;
 }
 
+/**
+ * @summary Represents audit evidence in the reports bounded context.
+ */
 export class AuditEvidence {
   constructor(
     public id: number,

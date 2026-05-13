@@ -3,11 +3,20 @@ import { Permission } from '../domain/model/permission.entity';
 import { Role } from '../domain/model/role.entity';
 import { PermissionResource, RoleResource, RolesResponse } from './roles-response';
 
+/**
+ * @summary Maps role data between domain entities and API resources.
+ */
 export class RoleAssembler implements BaseAssembler<Role, RoleResource, RolesResponse> {
+  /**
+   * @summary Maps an API response envelope into domain entities.
+   */
   toEntitiesFromResponse(response: RolesResponse): Role[] {
     return response.roles.map((resource) => this.toEntityFromResource(resource));
   }
 
+  /**
+   * @summary Maps one API resource into a domain entity.
+   */
   toEntityFromResource(resource: RoleResource): Role {
     return new Role(
       Number(resource.id),
@@ -17,6 +26,9 @@ export class RoleAssembler implements BaseAssembler<Role, RoleResource, RolesRes
     );
   }
 
+  /**
+   * @summary Maps one domain entity into an API resource.
+   */
   toResourceFromEntity(entity: Role): RoleResource {
     return {
       id: entity.id,

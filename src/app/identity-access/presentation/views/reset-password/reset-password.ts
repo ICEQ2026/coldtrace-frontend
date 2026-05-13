@@ -5,6 +5,9 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 type ResetPasswordFeedback = 'idle' | 'success';
 
+/**
+ * @summary Presents the reset password user interface in the identity access bounded context.
+ */
 @Component({
   selector: 'app-reset-password',
   imports: [ReactiveFormsModule, RouterLink, TranslatePipe],

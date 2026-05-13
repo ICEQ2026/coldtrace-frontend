@@ -40,6 +40,9 @@ type AssetFeedback =
   | 'settings-saved';
 type AssetManagementTab = AssetType | 'iot-device' | 'gateway' | 'settings';
 
+/**
+ * @summary Presents the cold room list user interface in the asset management bounded context.
+ */
 @Component({
   selector: 'app-cold-room-list',
   imports: [
@@ -288,6 +291,9 @@ export class ColdRoomList implements OnInit {
     });
   });
 
+  /**
+   * @summary Initializes the cold room list view state.
+   */
   ngOnInit(): void {
     this.loadPageData();
   }

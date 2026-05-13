@@ -5,6 +5,9 @@ import { Report } from '../domain/model/report.entity';
 import { ReportAssembler } from './report-assembler';
 import { ReportResource, ReportsResponse } from './reports-response';
 
+/**
+ * @summary Connects reports API endpoint resources to the generic API endpoint contract.
+ */
 export class ReportsApiEndpoint extends BaseApiEndpoint<
   Report,
   ReportResource,

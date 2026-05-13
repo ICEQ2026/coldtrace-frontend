@@ -5,6 +5,9 @@ import { Gateway } from '../domain/model/gateway.entity';
 import { GatewayAssembler } from './gateway-assembler';
 import { GatewayResource, GatewaysResponse } from './gateways-response';
 
+/**
+ * @summary Connects gateways API endpoint resources to the generic API endpoint contract.
+ */
 export class GatewaysApiEndpoint extends BaseApiEndpoint<
   Gateway,
   GatewayResource,

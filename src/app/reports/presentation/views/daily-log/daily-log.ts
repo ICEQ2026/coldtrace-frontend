@@ -19,6 +19,9 @@ import { ReportsStore } from '../../../application/reports.store';
 
 type DailyLogFeedback = 'idle' | 'generated' | 'server-error';
 
+/**
+ * @summary Presents the daily log user interface in the reports bounded context.
+ */
 @Component({
   selector: 'app-daily-log',
   imports: [FormsModule, MatButton, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
@@ -80,6 +83,9 @@ export class DailyLog implements OnInit {
   protected readonly hasEntries = computed(() => this.filteredEntries().length > 0);
   protected readonly hasReadings = computed(() => this.dailyLog().totalReadings > 0);
 
+  /**
+   * @summary Initializes the daily log view state.
+   */
   ngOnInit(): void {
     this.loadPageData();
   }

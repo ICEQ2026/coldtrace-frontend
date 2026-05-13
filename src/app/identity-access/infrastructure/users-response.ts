@@ -1,5 +1,8 @@
 import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
 
+/**
+ * @summary Raw user resource from the ColdTrace API.
+ */
 export interface UserResource extends BaseResource {
   uuid?: string;
   organizationUserId?: number;
@@ -10,6 +13,9 @@ export interface UserResource extends BaseResource {
   roleId: number;
 }
 
+/**
+ * @summary Raw response from the ColdTrace API for users.
+ */
 export interface UsersResponse extends BaseResponse {
   users: UserResource[];
 }

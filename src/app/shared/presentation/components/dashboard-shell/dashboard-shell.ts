@@ -5,6 +5,9 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
+/**
+ * @summary Presents the dashboard shell user interface in the shared bounded context.
+ */
 @Component({
   selector: 'app-dashboard-shell',
   standalone: true,

@@ -1,3 +1,6 @@
+/**
+ * @summary Presents the dashboard kpi color user interface in the monitoring bounded context.
+ */
 export interface DashboardKpiColor {
   bg: string;
   border: string;
@@ -6,11 +9,17 @@ export interface DashboardKpiColor {
   chartLight?: string;
 }
 
+/**
+ * @summary Presents the dashboard kpi tooltip user interface in the monitoring bounded context.
+ */
 export interface DashboardKpiTooltip {
   text: string;
   position: number;
 }
 
+/**
+ * @summary Presents the dashboard kpi user interface in the monitoring bounded context.
+ */
 export class DashboardKpi {
   private _id: number;
   private _key: string;

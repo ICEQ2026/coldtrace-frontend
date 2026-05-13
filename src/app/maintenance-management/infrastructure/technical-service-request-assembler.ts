@@ -5,15 +5,24 @@ import {
   TechnicalServiceRequestsResponse,
 } from './technical-service-requests-response';
 
+/**
+ * @summary Maps technical service request data between domain entities and API resources.
+ */
 export class TechnicalServiceRequestAssembler implements BaseAssembler<
   TechnicalServiceRequest,
   TechnicalServiceRequestResource,
   TechnicalServiceRequestsResponse
 > {
+  /**
+   * @summary Maps an API response envelope into domain entities.
+   */
   toEntitiesFromResponse(response: TechnicalServiceRequestsResponse): TechnicalServiceRequest[] {
     return response.technicalServiceRequests.map((resource) => this.toEntityFromResource(resource));
   }
 
+  /**
+   * @summary Maps one API resource into a domain entity.
+   */
   toEntityFromResource(resource: TechnicalServiceRequestResource): TechnicalServiceRequest {
     return new TechnicalServiceRequest(
       Number(resource.id),
@@ -31,6 +40,9 @@ export class TechnicalServiceRequestAssembler implements BaseAssembler<
     );
   }
 
+  /**
+   * @summary Maps one domain entity into an API resource.
+   */
   toResourceFromEntity(entity: TechnicalServiceRequest): TechnicalServiceRequestResource {
     return {
       id: entity.id,

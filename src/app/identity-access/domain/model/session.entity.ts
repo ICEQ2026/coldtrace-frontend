@@ -1,5 +1,8 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 
+/**
+ * @summary Represents a session in the identity access bounded context.
+ */
 export class Session implements BaseEntity {
   constructor(
     private _id: number,

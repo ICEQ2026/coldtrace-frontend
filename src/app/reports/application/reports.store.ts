@@ -42,6 +42,9 @@ import {
 } from '../domain/model/sanitary-compliance-report.entity';
 import { ReportsApi } from '../infrastructure/reports-api';
 
+/**
+ * @summary Manages reports state and workflows for presentation components.
+ */
 @Injectable({ providedIn: 'root' })
 export class ReportsStore {
   private readonly reportsSignal = signal<Report[]>([]);
@@ -59,6 +62,9 @@ export class ReportsStore {
     private readonly monitoringStore: MonitoringStore,
   ) {}
 
+  /**
+   * @summary Loads reports data into local state.
+   */
   loadReports(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -77,6 +83,9 @@ export class ReportsStore {
     });
   }
 
+  /**
+   * @summary Returns reports scoped to one organization.
+   */
   reportsForOrganization(organizationId: number | null): Report[] {
     if (!organizationId) {
       return [];
@@ -85,10 +94,16 @@ export class ReportsStore {
     return this.reports().filter((report) => report.organizationId === organizationId);
   }
 
+  /**
+   * @summary Returns the current local date in ISO date format.
+   */
   currentDate(): string {
     return this.today();
   }
 
+  /**
+   * @summary Builds daily log evidence from readings and monitored assets.
+   */
   buildDailyLog(organizationId: number | null, date: string): DailyLog {
     const safeOrganizationId = organizationId ?? 0;
     const assets = this.assetManagementStore.assetsForOrganization(organizationId);
@@ -121,6 +136,9 @@ export class ReportsStore {
     );
   }
 
+  /**
+   * @summary Builds chronological operational events from readings, alerts, and incidents.
+   */
   buildOperationalHistory(
     organizationId: number | null,
     filters: OperationalHistoryFilters,
@@ -157,6 +175,9 @@ export class ReportsStore {
     return new OperationalHistory(filters, events);
   }
 
+  /**
+   * @summary Builds the sanitary compliance report for a date range and optional asset.
+   */
   buildSanitaryComplianceReport(
     organizationId: number | null,
     filters: SanitaryComplianceFilters,
@@ -209,6 +230,9 @@ export class ReportsStore {
     );
   }
 
+  /**
+   * @summary Builds compliance findings and evidence items for the selected period.
+   */
   buildComplianceReport(
     organizationId: number | null,
     filters: ComplianceReportFilters,
@@ -255,6 +279,9 @@ export class ReportsStore {
     );
   }
 
+  /**
+   * @summary Builds audit evidence from reports, readings, and findings.
+   */
   buildAuditEvidence(organizationId: number | null, filters: AuditEvidenceFilters): AuditEvidence {
     const safeOrganizationId = organizationId ?? 0;
     const assets = this.assetManagementStore.assetsForOrganization(organizationId);
@@ -359,6 +386,9 @@ export class ReportsStore {
     );
   }
 
+  /**
+   * @summary Builds the monthly summary report for the selected month.
+   */
   buildMonthlyReport(organizationId: number | null, month: string): MonthlyReport {
     const safeOrganizationId = organizationId ?? 0;
     const range = this.monthDateRange(month);
@@ -396,6 +426,9 @@ export class ReportsStore {
     );
   }
 
+  /**
+   * @summary Stores a daily log report reference unless it already exists.
+   */
   createDailyLogReport(organizationId: number | null, dailyLog: DailyLog): Observable<Report> {
     if (!organizationId) {
       return of(this.reportFromDailyLog(0, dailyLog));
@@ -422,6 +455,9 @@ export class ReportsStore {
     );
   }
 
+  /**
+   * @summary Stores a sanitary compliance report reference unless it already exists.
+   */
   createSanitaryComplianceReport(
     organizationId: number | null,
     complianceReport: SanitaryComplianceReport,
@@ -451,6 +487,9 @@ export class ReportsStore {
     );
   }
 
+  /**
+   * @summary Stores a monthly summary report reference unless it already exists.
+   */
   createMonthlySummaryReport(
     organizationId: number | null,
     monthlyReport: MonthlyReport,
@@ -480,6 +519,9 @@ export class ReportsStore {
     );
   }
 
+  /**
+   * @summary Closes a compliance finding with resolution metadata.
+   */
   closeComplianceFinding(findingId: string): void {
     this.closedComplianceFindingIdsSignal.update((findingIds) => {
       const nextFindingIds = new Set(findingIds);
@@ -488,6 +530,9 @@ export class ReportsStore {
     });
   }
 
+  /**
+   * @summary Builds CSV content for sanitary compliance CSV.
+   */
   sanitaryComplianceCsv(complianceReport: SanitaryComplianceReport): string {
     const headers = [
       'From',
@@ -527,6 +572,9 @@ export class ReportsStore {
       .join('\n');
   }
 
+  /**
+   * @summary Builds CSV content for monthly report CSV.
+   */
   monthlyReportCsv(monthlyReport: MonthlyReport): string {
     const headers = [
       'Month',
@@ -568,6 +616,9 @@ export class ReportsStore {
       .join('\n');
   }
 
+  /**
+   * @summary Builds CSV content for audit evidence CSV.
+   */
   auditEvidenceCsv(auditEvidence: AuditEvidence): string {
     const checklistHeaders = ['Section', 'Status', 'Quantity', 'Required', 'Notes'];
     const checklistRows = auditEvidence.items.map((item) => [

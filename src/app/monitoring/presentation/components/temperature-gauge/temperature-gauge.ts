@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslateModule } from '@ngx-translate/core';
 
+/**
+ * @summary Presents the temperature gauge user interface in the monitoring bounded context.
+ */
 @Component({
   selector: 'app-temperature-gauge',
   standalone: true,

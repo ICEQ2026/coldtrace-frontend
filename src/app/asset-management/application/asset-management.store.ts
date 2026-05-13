@@ -11,6 +11,9 @@ import { IoTDevice } from '../domain/model/iot-device.entity';
 import { IoTDeviceStatus } from '../domain/model/iot-device-status.enum';
 import { AssetManagementApi } from '../infrastructure/asset-management-api';
 
+/**
+ * @summary Defines operational metrics derived from assets, devices, and gateways.
+ */
 export interface AssetOperationalSummary {
   totalAssets: number;
   monitoredAssets: number;
@@ -21,6 +24,9 @@ export interface AssetOperationalSummary {
   connectivityIssues: number;
 }
 
+/**
+ * @summary Manages asset management state and workflows for presentation components.
+ */
 @Injectable({ providedIn: 'root' })
 export class AssetManagementStore {
   private readonly assetsSignal = signal<Asset[]>([]);
@@ -41,6 +47,9 @@ export class AssetManagementStore {
 
   constructor(private assetManagementApi: AssetManagementApi) {}
 
+  /**
+   * @summary Returns the number of assets with operational issues for one organization.
+   */
   assetIssueCountFor(organizationId: number | null): number {
     if (!organizationId) {
       return 0;
@@ -51,6 +60,9 @@ export class AssetManagementStore {
     }).length;
   }
 
+  /**
+   * @summary Returns assets scoped to one organization.
+   */
   assetsForOrganization(organizationId: number | null): Asset[] {
     if (!organizationId) {
       return [];
@@ -59,6 +71,9 @@ export class AssetManagementStore {
     return this.assets().filter((asset) => asset.organizationId === organizationId);
   }
 
+  /**
+   * @summary Returns IoT devices scoped to one organization.
+   */
   iotDevicesForOrganization(organizationId: number | null): IoTDevice[] {
     if (!organizationId) {
       return [];
@@ -67,6 +82,9 @@ export class AssetManagementStore {
     return this.iotDevices().filter((iotDevice) => iotDevice.organizationId === organizationId);
   }
 
+  /**
+   * @summary Returns gateways scoped to one organization.
+   */
   gatewaysForOrganization(organizationId: number | null): Gateway[] {
     if (!organizationId) {
       return [];
@@ -75,6 +93,9 @@ export class AssetManagementStore {
     return this.gateways().filter((gateway) => gateway.organizationId === organizationId);
   }
 
+  /**
+   * @summary Returns asset settings scoped to one organization.
+   */
   assetSettingsForOrganization(organizationId: number | null): AssetSettings[] {
     if (!organizationId) {
       return [];
@@ -85,12 +106,18 @@ export class AssetManagementStore {
     );
   }
 
+  /**
+   * @summary Returns default settings scoped to one organization.
+   */
   defaultSettingsForOrganization(organizationId: number | null): AssetSettings | undefined {
     return this.assetSettingsForOrganization(organizationId).find(
       (assetSettings) => assetSettings.assetId === null,
     );
   }
 
+  /**
+   * @summary Resolves asset-specific settings with an organization fallback.
+   */
   settingsForAsset(
     organizationId: number | null,
     assetId: number | null,
@@ -107,10 +134,16 @@ export class AssetManagementStore {
     );
   }
 
+  /**
+   * @summary Calculates the next asset settings id value.
+   */
   nextAssetSettingsId(): number {
     return Math.max(...this.assetSettings().map((settings) => settings.id), 0) + 1;
   }
 
+  /**
+   * @summary Builds the operational summary metrics for one organization.
+   */
   operationalSummaryFor(organizationId: number | null): AssetOperationalSummary {
     const assets = this.assetsForOrganization(organizationId);
     const iotDevices = this.iotDevicesForOrganization(organizationId);
@@ -136,6 +169,9 @@ export class AssetManagementStore {
     };
   }
 
+  /**
+   * @summary Loads assets data into local state.
+   */
   loadAssets(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -152,6 +188,9 @@ export class AssetManagementStore {
     });
   }
 
+  /**
+   * @summary Persists an asset and appends it to local state.
+   */
   createAsset(asset: Asset): Observable<Asset> {
     return this.assetManagementApi.createAsset(asset).pipe(
       tap((createdAsset) => {
@@ -160,6 +199,9 @@ export class AssetManagementStore {
     );
   }
 
+  /**
+   * @summary Persists asset changes and replaces the local entry.
+   */
   updateAsset(asset: Asset): Observable<Asset> {
     return this.assetManagementApi.updateAsset(asset).pipe(
       tap((updatedAsset) => {
@@ -172,6 +214,9 @@ export class AssetManagementStore {
     );
   }
 
+  /**
+   * @summary Loads IoT devices data into local state.
+   */
   loadIoTDevices(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -188,6 +233,9 @@ export class AssetManagementStore {
     });
   }
 
+  /**
+   * @summary Persists an IoT device and appends it to local state.
+   */
   createIoTDevice(iotDevice: IoTDevice): Observable<IoTDevice> {
     return this.assetManagementApi.createIoTDevice(iotDevice).pipe(
       tap((createdIoTDevice) => {
@@ -196,6 +244,9 @@ export class AssetManagementStore {
     );
   }
 
+  /**
+   * @summary Persists IoT device changes and replaces the local entry.
+   */
   updateIoTDevice(iotDevice: IoTDevice): Observable<IoTDevice> {
     return this.assetManagementApi.updateIoTDevice(iotDevice).pipe(
       tap((updatedIoTDevice) => {
@@ -208,6 +259,9 @@ export class AssetManagementStore {
     );
   }
 
+  /**
+   * @summary Loads gateways data into local state.
+   */
   loadGateways(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -224,6 +278,9 @@ export class AssetManagementStore {
     });
   }
 
+  /**
+   * @summary Persists a gateway and appends it to local state.
+   */
   createGateway(gateway: Gateway): Observable<Gateway> {
     return this.assetManagementApi.createGateway(gateway).pipe(
       tap((createdGateway) => {
@@ -232,6 +289,9 @@ export class AssetManagementStore {
     );
   }
 
+  /**
+   * @summary Persists gateway changes and replaces the local entry.
+   */
   updateGateway(gateway: Gateway): Observable<Gateway> {
     return this.assetManagementApi.updateGateway(gateway).pipe(
       tap((updatedGateway) => {
@@ -244,6 +304,9 @@ export class AssetManagementStore {
     );
   }
 
+  /**
+   * @summary Loads asset settings data into local state.
+   */
   loadAssetSettings(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -260,6 +323,9 @@ export class AssetManagementStore {
     });
   }
 
+  /**
+   * @summary Persists asset settings and appends them to local state.
+   */
   createAssetSettings(assetSettings: AssetSettings): Observable<AssetSettings> {
     return this.assetManagementApi.createAssetSettings(assetSettings).pipe(
       tap((createdAssetSettings) => {
@@ -268,6 +334,9 @@ export class AssetManagementStore {
     );
   }
 
+  /**
+   * @summary Persists asset settings changes and replaces the local entry.
+   */
   updateAssetSettings(assetSettings: AssetSettings): Observable<AssetSettings> {
     return this.assetManagementApi.updateAssetSettings(assetSettings).pipe(
       tap((updatedAssetSettings) => {
@@ -280,6 +349,9 @@ export class AssetManagementStore {
     );
   }
 
+  /**
+   * @summary Simulates telemetry status changes for one organization.
+   */
   updateOrganizationTelemetry(organizationId: number | null): void {
     if (!organizationId) {
       return;

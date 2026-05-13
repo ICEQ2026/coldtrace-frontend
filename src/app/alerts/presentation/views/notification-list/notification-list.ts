@@ -6,6 +6,9 @@ import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
 import { Notification } from '../../../domain/model/notification.entity';
 
+/**
+ * @summary Presents the notification list user interface in the alerts bounded context.
+ */
 @Component({
   selector: 'app-notification-list',
   standalone: true,
@@ -16,6 +19,9 @@ import { Notification } from '../../../domain/model/notification.entity';
 export class NotificationList implements OnInit {
   protected readonly alertsStore = inject(AlertsStore);
 
+  /**
+   * @summary Initializes the notification list view state.
+   */
   ngOnInit(): void {
     this.alertsStore.loadIncidents();
   }

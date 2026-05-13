@@ -4,6 +4,9 @@ import { BaseAssembler } from './base-assembler';
 import { BaseEntity } from './base-entity';
 import { BaseResource, BaseResponse } from './base-response';
 
+/**
+ * @summary Provides generic CRUD operations for JSON Server endpoints.
+ */
 export abstract class BaseApiEndpoint<
   TEntity extends BaseEntity,
   TResource extends BaseResource,
@@ -16,7 +19,9 @@ export abstract class BaseApiEndpoint<
     protected assembler: TAssembler,
   ) {}
 
-  /** Reads a collection from JSON Server and maps raw resources to domain entities. */
+  /**
+   * @summary Reads a collection from JSON Server and maps raw resources to domain entities.
+   */
   getAll(): Observable<TEntity[]> {
     return this.http.get<TResponse | TResource[]>(this.endpointUrl).pipe(
       map((response) => {
@@ -29,7 +34,9 @@ export abstract class BaseApiEndpoint<
     );
   }
 
-  /** Reads one resource by numeric id using the same endpoint pattern as the class examples. */
+  /**
+   * @summary Reads one resource by numeric id using the same endpoint pattern as the class examples.
+   */
   getById(id: number): Observable<TEntity> {
     return this.http.get<TResource>(`${this.endpointUrl}/${id}`).pipe(
       map((resource) => this.assembler.toEntityFromResource(resource)),
@@ -37,7 +44,9 @@ export abstract class BaseApiEndpoint<
     );
   }
 
-  /** Persists a domain entity after converting it to the API resource shape. */
+  /**
+   * @summary Persists a domain entity after converting it to the API resource shape.
+   */
   create(entity: TEntity): Observable<TEntity> {
     const resource = this.assembler.toResourceFromEntity(entity);
     return this.http.post<TResource>(this.endpointUrl, resource).pipe(
@@ -46,7 +55,9 @@ export abstract class BaseApiEndpoint<
     );
   }
 
-  /** Updates a domain entity in the API and keeps callers working with entity objects. */
+  /**
+   * @summary Updates a domain entity in the API and keeps callers working with entity objects.
+   */
   update(entity: TEntity, id: number): Observable<TEntity> {
     const resource = this.assembler.toResourceFromEntity(entity);
     return this.http.put<TResource>(`${this.endpointUrl}/${id}`, resource).pipe(
@@ -55,6 +66,9 @@ export abstract class BaseApiEndpoint<
     );
   }
 
+  /**
+   * @summary Deletes one resource by numeric id from the configured endpoint.
+   */
   delete(id: number): Observable<void> {
     return this.http
       .delete<void>(`${this.endpointUrl}/${id}`)

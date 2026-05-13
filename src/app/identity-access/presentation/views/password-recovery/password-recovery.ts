@@ -7,6 +7,9 @@ import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 
 type PasswordRecoveryFeedback = 'idle' | 'sent' | 'not-found' | 'server-error';
 
+/**
+ * @summary Presents the password recovery user interface in the identity access bounded context.
+ */
 @Component({
   selector: 'app-password-recovery',
   imports: [ReactiveFormsModule, RouterLink, TranslatePipe],

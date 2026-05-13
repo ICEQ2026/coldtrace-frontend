@@ -1,5 +1,8 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 
+/**
+ * @summary Represents a storage distribution item in the monitoring bounded context.
+ */
 export class StorageDistributionItem implements BaseEntity {
   private _id: number;
   private _label: string;

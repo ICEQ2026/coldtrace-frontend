@@ -1,12 +1,33 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 
+/**
+ * @summary Defines the allowed incident status values used by the alerts bounded context.
+ */
 export type IncidentStatus = 'open' | 'recognized' | 'closed';
+/**
+ * @summary Defines the allowed incident severity values used by the alerts bounded context.
+ */
 export type IncidentSeverity = 'warning' | 'critical';
+/**
+ * @summary Defines the allowed incident type values used by the alerts bounded context.
+ */
 export type IncidentType = 'temperature' | 'humidity' | 'connectivity' | 'other';
+/**
+ * @summary Defines the allowed incident source values used by the alerts bounded context.
+ */
 export type IncidentSource = 'initial-data' | 'sensor-reading' | 'manual';
+/**
+ * @summary Defines the allowed incident review status values used by the alerts bounded context.
+ */
 export type IncidentReviewStatus = 'complete' | 'pending-review';
+/**
+ * @summary Defines the allowed incident escalation status values used by the alerts bounded context.
+ */
 export type IncidentEscalationStatus = 'none' | 'pending-configuration' | 'escalated' | 'reviewed';
 
+/**
+ * @summary Represents an incident in the alerts bounded context.
+ */
 export class Incident implements BaseEntity {
   private _id: number;
   private _organizationId: number;

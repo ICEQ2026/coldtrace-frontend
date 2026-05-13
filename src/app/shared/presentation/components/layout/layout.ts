@@ -11,6 +11,9 @@ import { TELEMETRY_POLLING_INTERVAL_MS } from '../../../domain/model/polling-int
 import { DashboardShell } from '../dashboard-shell/dashboard-shell';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
+/**
+ * @summary Presents the layout user interface in the shared bounded context.
+ */
 @Component({
   selector: 'app-layout',
   imports: [RouterOutlet, LanguageSwitcher, DashboardShell],
@@ -190,6 +193,9 @@ export class Layout implements OnInit {
       .subscribe((event) => this.currentUrl.set(event.urlAfterRedirects));
   }
 
+  /**
+   * @summary Initializes the layout view state.
+   */
   ngOnInit(): void {
     this.loadShellData();
     this.startTelemetryUpdates();

@@ -9,6 +9,9 @@ const technicalServiceTracker = () =>
     (m) => m.TechnicalServiceTracker,
   );
 
+/**
+ * @summary Defines the lazy-loaded routes for the maintenance management bounded context.
+ */
 export const maintenanceManagementRoutes: Routes = [
   {
     path: 'preventive',

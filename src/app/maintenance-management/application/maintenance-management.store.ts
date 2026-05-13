@@ -6,6 +6,9 @@ import { TechnicalServiceRequest } from '../domain/model/technical-service-reque
 import { TechnicalServiceStatus } from '../domain/model/technical-service-status.enum';
 import { MaintenanceManagementApi } from '../infrastructure/maintenance-management-api';
 
+/**
+ * @summary Manages maintenance management state and workflows for presentation components.
+ */
 @Injectable({ providedIn: 'root' })
 export class MaintenanceManagementStore {
   private readonly maintenanceSchedulesSignal = signal<MaintenanceSchedule[]>([]);
@@ -27,6 +30,9 @@ export class MaintenanceManagementStore {
 
   constructor(private maintenanceManagementApi: MaintenanceManagementApi) {}
 
+  /**
+   * @summary Loads maintenance schedules data into local state.
+   */
   loadMaintenanceSchedules(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -43,6 +49,9 @@ export class MaintenanceManagementStore {
     });
   }
 
+  /**
+   * @summary Loads technical service requests data into local state.
+   */
   loadTechnicalServiceRequests(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -59,6 +68,9 @@ export class MaintenanceManagementStore {
     });
   }
 
+  /**
+   * @summary Creates a preventive maintenance schedule and appends it to local state.
+   */
   createMaintenanceSchedule(
     maintenanceSchedule: MaintenanceSchedule,
   ): Observable<MaintenanceSchedule> {
@@ -69,6 +81,9 @@ export class MaintenanceManagementStore {
     );
   }
 
+  /**
+   * @summary Updates a preventive maintenance schedule in local state after persistence.
+   */
   updateMaintenanceSchedule(
     maintenanceSchedule: MaintenanceSchedule,
   ): Observable<MaintenanceSchedule> {
@@ -83,6 +98,9 @@ export class MaintenanceManagementStore {
     );
   }
 
+  /**
+   * @summary Creates a technical service request and appends it to local state.
+   */
   createTechnicalServiceRequest(
     technicalServiceRequest: TechnicalServiceRequest,
   ): Observable<TechnicalServiceRequest> {
@@ -95,6 +113,9 @@ export class MaintenanceManagementStore {
       );
   }
 
+  /**
+   * @summary Updates a technical service request in local state after persistence.
+   */
   updateTechnicalServiceRequest(
     technicalServiceRequest: TechnicalServiceRequest,
   ): Observable<TechnicalServiceRequest> {
@@ -111,6 +132,9 @@ export class MaintenanceManagementStore {
       );
   }
 
+  /**
+   * @summary Returns schedules scoped to one organization.
+   */
   schedulesForOrganization(organizationId: number | null): MaintenanceSchedule[] {
     if (!organizationId) {
       return [];
@@ -121,10 +145,16 @@ export class MaintenanceManagementStore {
     );
   }
 
+  /**
+   * @summary Calculates the next schedule id value.
+   */
   nextScheduleId(): number {
     return Math.max(...this.maintenanceSchedules().map((schedule) => schedule.id), 0) + 1;
   }
 
+  /**
+   * @summary Checks whether an asset already has an open schedule for a period.
+   */
   hasOpenScheduleForAssetPeriod(
     organizationId: number | null,
     assetId: number,
@@ -137,6 +167,9 @@ export class MaintenanceManagementStore {
     });
   }
 
+  /**
+   * @summary Returns technical services scoped to one organization.
+   */
   technicalServicesForOrganization(organizationId: number | null): TechnicalServiceRequest[] {
     if (!organizationId) {
       return [];
@@ -147,6 +180,9 @@ export class MaintenanceManagementStore {
     );
   }
 
+  /**
+   * @summary Calculates the next technical service request id value.
+   */
   nextTechnicalServiceRequestId(): number {
     return Math.max(...this.technicalServiceRequests().map((request) => request.id), 0) + 1;
   }

@@ -8,6 +8,9 @@ import {
   IncidentType,
 } from '../domain/model/incident.entity';
 
+/**
+ * @summary Raw incident resource from the ColdTrace API.
+ */
 export interface IncidentResource extends BaseResource {
   organizationId: number;
   assetId: number;
@@ -37,6 +40,9 @@ export interface IncidentResource extends BaseResource {
   escalationReviewedAt?: string | null;
 }
 
+/**
+ * @summary Raw response from the ColdTrace API for incidents.
+ */
 export interface IncidentsResponse extends BaseResponse {
   incidents: IncidentResource[];
 }

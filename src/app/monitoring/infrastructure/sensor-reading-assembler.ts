@@ -2,11 +2,17 @@ import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { SensorReading } from '../domain/model/sensor-reading.entity';
 import { SensorReadingResource, SensorReadingsResponse } from './sensor-readings-response';
 
+/**
+ * @summary Maps sensor reading data between domain entities and API resources.
+ */
 export class SensorReadingAssembler implements BaseAssembler<
   SensorReading,
   SensorReadingResource,
   SensorReadingsResponse
 > {
+  /**
+   * @summary Maps one API resource into a domain entity.
+   */
   toEntityFromResource(resource: SensorReadingResource): SensorReading {
     return new SensorReading(
       Number(resource.id),
@@ -23,6 +29,9 @@ export class SensorReadingAssembler implements BaseAssembler<
     );
   }
 
+  /**
+   * @summary Maps one domain entity into an API resource.
+   */
   toResourceFromEntity(entity: SensorReading): SensorReadingResource {
     return {
       id: entity.id,
@@ -39,6 +48,9 @@ export class SensorReadingAssembler implements BaseAssembler<
     };
   }
 
+  /**
+   * @summary Maps an API response envelope into domain entities.
+   */
   toEntitiesFromResponse(response: SensorReadingsResponse): SensorReading[] {
     return response.sensorReadings.map((resource) => this.toEntityFromResource(resource));
   }

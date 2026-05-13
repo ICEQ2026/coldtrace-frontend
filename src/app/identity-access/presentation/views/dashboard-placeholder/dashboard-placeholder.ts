@@ -9,6 +9,9 @@ import { User } from '../../../domain/model/user.entity';
 import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 
+/**
+ * @summary Presents the dashboard placeholder user interface in the identity access bounded context.
+ */
 @Component({
   selector: 'app-dashboard-placeholder',
   imports: [TranslatePipe],
@@ -42,6 +45,9 @@ export class DashboardPlaceholder implements OnInit {
     return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
   });
 
+  /**
+   * @summary Initializes the dashboard placeholder view state.
+   */
   ngOnInit(): void {
     this.route.data.subscribe(data => {
       this.pageTitleKey.set(data['pageTitleKey'] ?? 'roles-permissions.main-page-title');

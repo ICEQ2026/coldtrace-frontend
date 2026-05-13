@@ -1,7 +1,19 @@
+/**
+ * @summary Defines the allowed operational history event type values used by the reports bounded context.
+ */
 export type OperationalHistoryEventType = 'reading' | 'alert' | 'incident';
+/**
+ * @summary Defines the allowed operational history severity values used by the reports bounded context.
+ */
 export type OperationalHistorySeverity = 'normal' | 'warning' | 'critical' | 'info';
+/**
+ * @summary Defines the allowed operational history filter type values used by the reports bounded context.
+ */
 export type OperationalHistoryFilterType = OperationalHistoryEventType | 'all';
 
+/**
+ * @summary Defines the operational history filters contract used by the reports bounded context.
+ */
 export interface OperationalHistoryFilters {
   assetId: number;
   fromDate: string;
@@ -9,6 +21,9 @@ export interface OperationalHistoryFilters {
   eventType: OperationalHistoryFilterType;
 }
 
+/**
+ * @summary Defines the operational history event contract used by the reports bounded context.
+ */
 export interface OperationalHistoryEvent {
   id: number;
   assetId: number;
@@ -23,6 +38,9 @@ export interface OperationalHistoryEvent {
   messageParams: Record<string, string | number>;
 }
 
+/**
+ * @summary Represents an operational history in the reports bounded context.
+ */
 export class OperationalHistory {
   constructor(
     public filters: OperationalHistoryFilters,

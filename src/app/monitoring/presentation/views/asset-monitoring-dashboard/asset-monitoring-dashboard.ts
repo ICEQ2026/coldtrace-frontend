@@ -31,6 +31,9 @@ interface TemperatureLimits {
   max: number;
 }
 
+/**
+ * @summary Presents the asset monitoring dashboard user interface in the monitoring bounded context.
+ */
 @Component({
   selector: 'app-asset-monitoring-dashboard',
   standalone: true,
@@ -79,6 +82,9 @@ export class AssetMonitoringDashboard implements OnInit {
     () => this.filteredItems().filter((item) => item.latestReading?.isOutOfRange).length,
   );
 
+  /**
+   * @summary Initializes the asset monitoring dashboard view state.
+   */
   ngOnInit(): void {
     this.identityStore.loadUsers();
     this.identityStore.loadOrganizations();

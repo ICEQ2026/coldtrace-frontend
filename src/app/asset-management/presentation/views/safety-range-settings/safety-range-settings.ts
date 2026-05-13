@@ -19,6 +19,9 @@ import { AssetManagementApi } from '../../../infrastructure/asset-management-api
 
 type SafetyRangeFeedback = 'idle' | 'saved' | 'invalid' | 'access-denied' | 'server-error';
 
+/**
+ * @summary Presents the safety range settings user interface in the asset management bounded context.
+ */
 @Component({
   selector: 'app-safety-range-settings',
   imports: [MatButton, MatIcon, MatProgressSpinner, NgClass, ReactiveFormsModule, TranslatePipe],
@@ -130,6 +133,9 @@ export class SafetyRangeSettings implements OnInit {
     });
   });
 
+  /**
+   * @summary Initializes the safety range settings view state.
+   */
   ngOnInit(): void {
     this.loadPageData();
   }

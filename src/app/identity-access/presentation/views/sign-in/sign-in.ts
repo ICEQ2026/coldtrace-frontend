@@ -8,6 +8,9 @@ import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 
 type SignInFeedback = 'idle' | 'invalid-credentials' | 'revoked-access' | 'success' | 'server-error';
 
+/**
+ * @summary Presents the sign in user interface in the identity access bounded context.
+ */
 @Component({
   selector: 'app-sign-in',
   imports: [ReactiveFormsModule, RouterLink, TranslatePipe],

@@ -8,6 +8,9 @@ import {
   MaintenanceSchedulesResponse,
 } from './maintenance-schedules-response';
 
+/**
+ * @summary Connects maintenance schedules API endpoint resources to the generic API endpoint contract.
+ */
 export class MaintenanceSchedulesApiEndpoint extends BaseApiEndpoint<
   MaintenanceSchedule,
   MaintenanceScheduleResource,

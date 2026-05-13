@@ -1,6 +1,9 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 import { ReportType } from './report-type.enum';
 
+/**
+ * @summary Represents a report in the reports bounded context.
+ */
 export class Report implements BaseEntity {
   constructor(
     public id: number,

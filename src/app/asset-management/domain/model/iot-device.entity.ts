@@ -2,6 +2,9 @@ import { BaseEntity } from '../../../shared/domain/model/base-entity';
 import { CalibrationStatus } from './calibration-status.enum';
 import { IoTDeviceStatus } from './iot-device-status.enum';
 
+/**
+ * @summary Represents an IoT device in the asset management bounded context.
+ */
 export class IoTDevice implements BaseEntity {
   constructor(
     private readonly _id: number,

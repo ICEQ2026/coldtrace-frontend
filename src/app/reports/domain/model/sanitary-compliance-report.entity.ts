@@ -1,11 +1,20 @@
+/**
+ * @summary Defines the allowed sanitary compliance status values used by the reports bounded context.
+ */
 export type SanitaryComplianceStatus = 'compliant' | 'observation' | 'insufficient';
 
+/**
+ * @summary Defines the sanitary compliance filters contract used by the reports bounded context.
+ */
 export interface SanitaryComplianceFilters {
   assetId: number;
   fromDate: string;
   toDate: string;
 }
 
+/**
+ * @summary Defines the sanitary compliance row contract used by the reports bounded context.
+ */
 export interface SanitaryComplianceRow {
   assetId: number;
   assetName: string;
@@ -22,6 +31,9 @@ export interface SanitaryComplianceRow {
   status: SanitaryComplianceStatus;
 }
 
+/**
+ * @summary Represents a sanitary compliance report in the reports bounded context.
+ */
 export class SanitaryComplianceReport {
   constructor(
     public id: number,

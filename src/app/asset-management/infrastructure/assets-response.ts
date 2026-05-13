@@ -3,6 +3,9 @@ import { AssetStatus } from '../domain/model/asset-status.enum';
 import { AssetType } from '../domain/model/asset-type.enum';
 import { ConnectivityStatus } from '../domain/model/connectivity-status.enum';
 
+/**
+ * @summary Raw asset resource from the ColdTrace API.
+ */
 export interface AssetResource extends BaseResource {
   organizationId: number;
   uuid: string;
@@ -19,6 +22,9 @@ export interface AssetResource extends BaseResource {
   connectivity: ConnectivityStatus;
 }
 
+/**
+ * @summary Raw response from the ColdTrace API for assets.
+ */
 export interface AssetsResponse extends BaseResponse {
   assets: AssetResource[];
 }

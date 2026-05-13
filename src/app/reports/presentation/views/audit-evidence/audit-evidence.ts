@@ -21,6 +21,9 @@ import { Report } from '../../../domain/model/report.entity';
 
 type AuditEvidenceFeedback = 'idle' | 'exported' | 'insufficient' | 'server-error';
 
+/**
+ * @summary Presents the audit evidence user interface in the reports bounded context.
+ */
 @Component({
   selector: 'app-audit-evidence',
   imports: [FormsModule, MatButton, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
@@ -83,6 +86,9 @@ export class AuditEvidence implements OnInit {
     return this.canPrepareEvidence() && this.auditEvidence().hasEvidence;
   });
 
+  /**
+   * @summary Initializes the audit evidence view state.
+   */
   ngOnInit(): void {
     this.loadPageData();
   }

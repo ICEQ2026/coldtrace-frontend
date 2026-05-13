@@ -1,5 +1,8 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 
+/**
+ * @summary Represents an organization in the identity access bounded context.
+ */
 export class Organization implements BaseEntity {
   constructor(
     private _id: number,

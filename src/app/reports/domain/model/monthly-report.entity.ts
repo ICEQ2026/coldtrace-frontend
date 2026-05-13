@@ -1,5 +1,11 @@
+/**
+ * @summary Defines the allowed monthly report status values used by the reports bounded context.
+ */
 export type MonthlyReportStatus = 'complete' | 'attention' | 'insufficient';
 
+/**
+ * @summary Defines the monthly report row contract used by the reports bounded context.
+ */
 export interface MonthlyReportRow {
   assetId: number;
   assetName: string;
@@ -16,6 +22,9 @@ export interface MonthlyReportRow {
   status: MonthlyReportStatus;
 }
 
+/**
+ * @summary Represents a monthly report in the reports bounded context.
+ */
 export class MonthlyReport {
   constructor(
     public id: number,

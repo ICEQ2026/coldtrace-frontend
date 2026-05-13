@@ -2,6 +2,9 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
 import { NotificationChannel } from '../domain/model/notification-channel.enum';
 import { NotificationStatus } from '../domain/model/notification-status.enum';
 
+/**
+ * @summary Raw notification resource from the ColdTrace API.
+ */
 export interface NotificationResource extends BaseResource {
   organizationId: number;
   incidentId: number;
@@ -15,6 +18,9 @@ export interface NotificationResource extends BaseResource {
   failureReason?: string | null;
 }
 
+/**
+ * @summary Raw response from the ColdTrace API for notifications.
+ */
 export interface NotificationsResponse extends BaseResponse {
   notifications: NotificationResource[];
 }

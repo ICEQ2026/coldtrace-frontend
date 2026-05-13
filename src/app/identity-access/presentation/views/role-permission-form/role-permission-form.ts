@@ -12,6 +12,9 @@ import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 
 type RolePermissionFeedback = 'idle' | 'server-error';
 
+/**
+ * @summary Presents the role permission form user interface in the identity access bounded context.
+ */
 @Component({
   selector: 'app-role-permission-form',
   imports: [MatButton, TranslatePipe],
@@ -44,6 +47,9 @@ export class RolePermissionForm implements OnInit {
     return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
   });
 
+  /**
+   * @summary Initializes the role permission form view state.
+   */
   ngOnInit(): void {
     this.loadRoles();
   }

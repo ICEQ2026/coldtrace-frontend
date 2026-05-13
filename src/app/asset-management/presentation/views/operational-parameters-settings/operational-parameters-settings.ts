@@ -32,6 +32,9 @@ type OperationalParametersFeedback =
   | 'access-denied'
   | 'server-error';
 
+/**
+ * @summary Presents the operational parameters settings user interface in the asset management bounded context.
+ */
 @Component({
   selector: 'app-operational-parameters-settings',
   imports: [MatButton, MatIcon, MatProgressSpinner, NgClass, ReactiveFormsModule, TranslatePipe],
@@ -159,6 +162,9 @@ export class OperationalParametersSettings implements OnInit {
   });
   protected readonly compatibilityIssueKey = computed(() => this.currentCompatibilityIssueKey());
 
+  /**
+   * @summary Initializes the operational parameters settings view state.
+   */
   ngOnInit(): void {
     this.loadPageData();
   }

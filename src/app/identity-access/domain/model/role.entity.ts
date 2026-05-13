@@ -2,6 +2,9 @@ import { BaseEntity } from '../../../shared/domain/model/base-entity';
 import { Permission } from './permission.entity';
 import { RoleName } from './role-name.enum';
 
+/**
+ * @summary Represents a role in the identity access bounded context.
+ */
 export class Role implements BaseEntity {
   constructor(
     private _id: number,

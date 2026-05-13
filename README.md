@@ -1,5 +1,11 @@
 # ColdTrace Frontend
 
+## Application Information
+
+ColdTrace is an Angular frontend application for cold-chain monitoring operations. It helps food businesses review refrigerated assets, IoT devices, alerts, maintenance work, access control, and compliance reports from a single dashboard experience.
+
+## Description
+
 ColdTrace is the frontend web application for ICEQ, a platform focused on cold-chain monitoring for food businesses. The current implementation is an Angular application that simulates the product flow with a local JSON Server API.
 
 The project follows the course style used in the reference applications: bounded contexts, standalone Angular components, route-level lazy loading, simple domain entities, infrastructure assemblers, and a small `server/db.json` data source for development.

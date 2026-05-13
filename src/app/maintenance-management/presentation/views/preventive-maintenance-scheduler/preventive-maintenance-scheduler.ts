@@ -30,6 +30,9 @@ type PreventiveMaintenanceFeedback =
   | 'access-denied'
   | 'server-error';
 
+/**
+ * @summary Presents the preventive maintenance scheduler user interface in the maintenance management bounded context.
+ */
 @Component({
   selector: 'app-preventive-maintenance-scheduler',
   imports: [MatButton, MatIcon, MatProgressSpinner, NgClass, ReactiveFormsModule, TranslatePipe],
@@ -126,6 +129,9 @@ export class PreventiveMaintenanceScheduler implements OnInit {
     });
   });
 
+  /**
+   * @summary Initializes the preventive maintenance scheduler view state.
+   */
   ngOnInit(): void {
     this.loadPageData();
   }

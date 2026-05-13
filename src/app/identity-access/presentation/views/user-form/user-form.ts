@@ -13,6 +13,9 @@ import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 
 type UserFormFeedback = 'idle' | 'duplicate-email' | 'invalid-role' | 'success' | 'server-error';
 
+/**
+ * @summary Presents the user form user interface in the identity access bounded context.
+ */
 @Component({
   selector: 'app-user-form',
   imports: [MatButton, ReactiveFormsModule, RouterLink, TranslatePipe],
@@ -58,6 +61,9 @@ export class UserForm implements OnInit {
     return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
   });
 
+  /**
+   * @summary Initializes the user form view state.
+   */
   ngOnInit(): void {
     this.loadFormData();
   }

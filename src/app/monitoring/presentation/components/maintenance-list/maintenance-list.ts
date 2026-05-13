@@ -3,6 +3,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 import { MaintenanceTask } from '../../../domain/model/maintenance-task.entity';
 
+/**
+ * @summary Presents the maintenance list user interface in the monitoring bounded context.
+ */
 @Component({
   selector: 'app-maintenance-list',
   imports: [MatIconModule, TranslatePipe],

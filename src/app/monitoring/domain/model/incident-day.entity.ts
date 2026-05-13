@@ -1,5 +1,8 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 
+/**
+ * @summary Represents an incident day in the monitoring bounded context.
+ */
 export class IncidentDay implements BaseEntity {
   private _id: number;
   private _label: string;
