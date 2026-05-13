@@ -9,7 +9,7 @@ import { IdentityAccessStore } from '../../identity-access/application/identity-
 import { SensorReading } from '../../monitoring/domain/model/sensor-reading.entity';
 import { MonitoringApi } from '../../monitoring/infrastructure/monitoring-api';
 import { EscalationPolicy } from '../domain/model/escalation-policy.entity';
-import { Incident } from '../domain/model/incident.entity';
+import { Incident, IncidentType } from '../domain/model/incident.entity';
 import { NotificationChannel } from '../domain/model/notification-channel.enum';
 import { NotificationStatus } from '../domain/model/notification-status.enum';
 import { Notification } from '../domain/model/notification.entity';
@@ -639,49 +639,54 @@ export class AlertsStore {
     ];
     let nextId = Math.max(...incidents.map((incident) => incident.id), 0) + 1;
     const now = new Date();
+    const generatedIncidents: Incident[] = [];
 
-    return candidates
-      .filter((candidate) => {
-        return !this.hasActiveEquivalentIncident(
-          incidents,
+    candidates.forEach((candidate) => {
+      if (
+        this.hasActiveEquivalentIncident(
+          [...incidents, ...generatedIncidents],
+          candidate.asset.organizationId,
           candidate.asset.id,
-          candidate.conditionKey,
-          settings,
-        );
-      })
-      .map((candidate) => {
-        const incident = new Incident({
-          id: nextId,
-          organizationId: candidate.asset.organizationId,
-          assetId: candidate.asset.id,
-          assetName: candidate.asset.name,
-          type: candidate.type,
-          severity: candidate.severity,
-          value: candidate.value,
-          detectedAt: candidate.reading.recordedAt,
-          status: 'open',
-          recognizedBy: null,
-          recognizedAt: null,
-          conditionStable: false,
-          correctiveAction: null,
-          closureEvidence: null,
-          closedBy: null,
-          closedAt: null,
-          conditionKey: candidate.conditionKey,
-          source: 'sensor-reading',
-          sourceReadingId: candidate.reading.id,
-          reviewStatus: candidate.reviewStatus,
-          escalationStatus: 'none',
-          escalationLevel: 0,
-          escalationPolicyMinutes: null,
-          escalatedAt: null,
-          escalatedTo: null,
-          escalationReviewedBy: null,
-          escalationReviewedAt: null,
-        });
-        nextId += 1;
-        return this.incidentWithCurrentEscalation(incident, now) ?? incident;
+          candidate.type,
+        )
+      ) {
+        return;
+      }
+
+      const incident = new Incident({
+        id: nextId,
+        organizationId: candidate.asset.organizationId,
+        assetId: candidate.asset.id,
+        assetName: candidate.asset.name,
+        type: candidate.type,
+        severity: candidate.severity,
+        value: candidate.value,
+        detectedAt: candidate.reading.recordedAt,
+        status: 'open',
+        recognizedBy: null,
+        recognizedAt: null,
+        conditionStable: false,
+        correctiveAction: null,
+        closureEvidence: null,
+        closedBy: null,
+        closedAt: null,
+        conditionKey: candidate.conditionKey,
+        source: 'sensor-reading',
+        sourceReadingId: candidate.reading.id,
+        reviewStatus: candidate.reviewStatus,
+        escalationStatus: 'none',
+        escalationLevel: 0,
+        escalationPolicyMinutes: null,
+        escalatedAt: null,
+        escalatedTo: null,
+        escalationReviewedBy: null,
+        escalationReviewedAt: null,
       });
+      nextId += 1;
+      generatedIncidents.push(this.incidentWithCurrentEscalation(incident, now) ?? incident);
+    });
+
+    return generatedIncidents;
   }
 
   private generatedNotificationsFrom(
@@ -918,36 +923,21 @@ export class AlertsStore {
 
   private hasActiveEquivalentIncident(
     incidents: Incident[],
+    organizationId: number,
     assetId: number,
-    conditionKey: GeneratedConditionKey,
-    settings: AssetSettings[],
+    type: IncidentType,
   ): boolean {
     return incidents.some((incident) => {
-      if (incident.isClosed || incident.assetId !== assetId) {
+      if (
+        incident.isClosed ||
+        incident.organizationId !== organizationId ||
+        incident.assetId !== assetId
+      ) {
         return false;
       }
 
-      return this.conditionKeyForIncident(incident, settings) === conditionKey;
+      return incident.type === type;
     });
-  }
-
-  private conditionKeyForIncident(incident: Incident, settings: AssetSettings[]): string | null {
-    if (incident.conditionKey) {
-      return incident.conditionKey;
-    }
-
-    if (incident.type !== 'temperature') {
-      return null;
-    }
-
-    const value = Number(incident.value.replace(/[^\d.-]/g, ''));
-    const assetSettings = settings.find((setting) => setting.assetId === incident.assetId);
-
-    if (!assetSettings || Number.isNaN(value)) {
-      return 'temperature';
-    }
-
-    return this.temperatureConditionKey(value, assetSettings);
   }
 
   private settingsForAsset(asset: Asset, settings: AssetSettings[]): AssetSettings | undefined {

@@ -31,7 +31,9 @@ export class IncidentList implements OnInit {
   protected readonly activeIncidents = computed(() =>
     this.alertsStore.incidents().filter((incident) => !incident.isClosed),
   );
-  protected readonly pendingClosureIncidents = computed(() => this.activeIncidents());
+  protected readonly pendingClosureIncidents = computed(() =>
+    this.activeIncidents().filter((incident) => incident.isRecognized),
+  );
 
   protected readonly closureForm = this.fb.nonNullable.group({
     incidentId: [0, [Validators.required, Validators.min(1)]],
@@ -136,7 +138,7 @@ export class IncidentList implements OnInit {
   }
 
   protected selectIncidentForClosure(incident: Incident): void {
-    if (incident.isClosed) {
+    if (!incident.isRecognized) {
       return;
     }
 
