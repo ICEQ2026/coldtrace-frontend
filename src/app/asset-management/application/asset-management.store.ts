@@ -116,6 +116,27 @@ export class AssetManagementStore {
   }
 
   /**
+   * @summary Resolves an asset location from its assigned gateway before using the stored fallback.
+   */
+  locationForAsset(asset: Asset, gateways: Gateway[] = this.gateways()): string {
+    return this.locationForGateway(asset.gatewayId, gateways) ?? asset.location;
+  }
+
+  /**
+   * @summary Resolves a gateway location by identifier.
+   */
+  locationForGateway(
+    gatewayId: number | null,
+    gateways: Gateway[] = this.gateways(),
+  ): string | null {
+    if (!gatewayId) {
+      return null;
+    }
+
+    return gateways.find((gateway) => gateway.id === gatewayId)?.location ?? null;
+  }
+
+  /**
    * @summary Resolves asset-specific settings with an organization fallback.
    */
   settingsForAsset(

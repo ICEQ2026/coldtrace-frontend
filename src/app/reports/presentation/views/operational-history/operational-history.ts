@@ -93,6 +93,7 @@ export class OperationalHistory implements OnInit {
     this.identityLoading.set(true);
     this.assetManagementStore.loadAssets();
     this.assetManagementStore.loadIoTDevices();
+    this.assetManagementStore.loadGateways();
     this.assetManagementStore.loadAssetSettings();
     this.monitoringStore.loadReadings();
 

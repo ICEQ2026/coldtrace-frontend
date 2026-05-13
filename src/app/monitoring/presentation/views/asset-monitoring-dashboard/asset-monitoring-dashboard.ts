@@ -21,6 +21,7 @@ interface AssetMonitoringTab {
 interface AssetMonitoringItem {
   asset: Asset;
   device: IoTDevice | null;
+  location: string;
   latestReading: SensorReading | null;
   settings: AssetSettings | undefined;
   chartPoints: TemperaturePoint[];
@@ -91,6 +92,7 @@ export class AssetMonitoringDashboard implements OnInit {
     this.identityStore.loadRoles();
     this.assetStore.loadAssets();
     this.assetStore.loadIoTDevices();
+    this.assetStore.loadGateways();
     this.assetStore.loadAssetSettings();
     this.monitoringStore.loadReadings();
   }
@@ -112,9 +114,12 @@ export class AssetMonitoringDashboard implements OnInit {
     return {
       asset,
       device: this.linkedDeviceFor(asset),
+      location: this.assetLocationFor(asset),
       latestReading: readings[0] ?? null,
       settings,
-      chartPoints: chartReadings.map((reading, index) => this.toTemperaturePoint(reading, index, limits)),
+      chartPoints: chartReadings.map((reading, index) =>
+        this.toTemperaturePoint(reading, index, limits),
+      ),
     };
   }
 
@@ -146,7 +151,10 @@ export class AssetMonitoringDashboard implements OnInit {
     });
   }
 
-  private temperatureLimitsFor(readings: SensorReading[], settings: AssetSettings | undefined): TemperatureLimits {
+  private temperatureLimitsFor(
+    readings: SensorReading[],
+    settings: AssetSettings | undefined,
+  ): TemperatureLimits {
     if (settings) {
       return {
         min: settings.minimumTemperature,
@@ -156,7 +164,10 @@ export class AssetMonitoringDashboard implements OnInit {
 
     const temperatures = readings
       .map((reading) => reading.temperature)
-      .filter((temperature): temperature is number => temperature !== null && Number.isFinite(temperature));
+      .filter(
+        (temperature): temperature is number =>
+          temperature !== null && Number.isFinite(temperature),
+      );
 
     if (!temperatures.length) {
       return { min: 0, max: 1 };
@@ -183,9 +194,13 @@ export class AssetMonitoringDashboard implements OnInit {
       return true;
     }
 
-    return [asset.name, asset.uuid, asset.location, asset.description]
+    return [asset.name, asset.uuid, this.assetLocationFor(asset), asset.description]
       .join(' ')
       .toLowerCase()
       .includes(query);
+  }
+
+  private assetLocationFor(asset: Asset): string {
+    return this.assetStore.locationForAsset(asset);
   }
 }

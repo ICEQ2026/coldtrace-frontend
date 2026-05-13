@@ -331,7 +331,7 @@ export class OperationalParametersSettings implements OnInit {
       (currentAsset) => currentAsset.id === iotDevice.assetId,
     );
 
-    return asset?.location ?? 'N/A';
+    return asset ? this.assetManagementStore.locationForAsset(asset, this.gateways()) : 'N/A';
   }
 
   protected frequencyLabelFor(iotDevice: IoTDevice): string {

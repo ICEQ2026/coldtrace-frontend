@@ -138,6 +138,7 @@ export class TechnicalServiceTracker implements OnInit {
   protected loadPageData(): void {
     this.identityLoading.set(true);
     this.feedback.set('idle');
+    this.assetManagementStore.loadGateways();
     this.maintenanceStore.loadTechnicalServiceRequests();
 
     forkJoin({
@@ -328,7 +329,9 @@ export class TechnicalServiceTracker implements OnInit {
   }
 
   protected assetLocationFor(assetId: number): string {
-    return this.organizationAssets().find((asset) => asset.id === assetId)?.location ?? 'N/A';
+    const asset = this.organizationAssets().find((currentAsset) => currentAsset.id === assetId);
+
+    return asset ? this.assetManagementStore.locationForAsset(asset) : 'N/A';
   }
 
   protected priorityKey(priority: string): string {

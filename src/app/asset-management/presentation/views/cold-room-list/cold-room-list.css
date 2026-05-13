@@ -158,74 +158,12 @@
   margin-top: 18px;
 }
 
-.settings-form {
-  display: grid;
-  gap: 18px;
-  margin-top: 18px;
-}
-
-.settings-summary {
-  display: grid;
-  gap: 12px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
-}
-
-.settings-summary-card {
-  grid-template-columns: 24px 1fr;
-}
-
-.settings-summary-card mat-icon {
-  color: #2563eb;
-  grid-row: span 2;
-}
-
-.settings-section {
-  border: 1px solid #ebeef2;
-  border-radius: 8px;
-  display: grid;
-  gap: 16px;
-  padding: 16px;
-}
-
-.settings-section-title {
-  align-items: center;
-  display: flex;
-  gap: 8px;
-}
-
-.settings-section h3,
-.settings-section-title h3 {
-  color: #323c4d;
-  font:
-    800 13px/20px 'Inter',
-    Arial,
-    sans-serif;
-  margin: 0;
-}
-
-.settings-grid,
-.catalog-editors {
-  display: grid;
-  gap: 14px 18px;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
-}
-
-.catalog-editors {
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
-}
-
-.catalog-editor::after {
-  display: none;
-}
-
-.settings-chip-list,
 .parameter-list {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.settings-chip-list span,
 .parameter-list span {
   background: #f7f8fa;
   border: 1px solid #ebeef2;
@@ -317,6 +255,27 @@
 .form-field textarea[readonly],
 .form-field select:disabled {
   color: #606c80;
+}
+
+.derived-field {
+  align-items: center;
+  background: #f4f4f4;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
+  box-sizing: border-box;
+  color: #404040;
+  display: flex;
+  font:
+    400 13px/18px 'Inter',
+    Arial,
+    sans-serif;
+  min-height: 38px;
+  padding: 9px 12px;
+}
+
+.derived-field.empty,
+.derived-field:empty {
+  color: #98a2b3;
 }
 
 .form-field small {

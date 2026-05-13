@@ -9,7 +9,6 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { AssetManagementStore } from '../../../application/asset-management.store';
 import { Asset } from '../../../domain/model/asset.entity';
-import { AssetSettings } from '../../../domain/model/asset-settings.entity';
 import { AssetStatus } from '../../../domain/model/asset-status.enum';
 import { AssetType } from '../../../domain/model/asset-type.enum';
 import { CalibrationStatus } from '../../../domain/model/calibration-status.enum';
@@ -36,9 +35,8 @@ type AssetFeedback =
   | 'duplicate-id'
   | 'server-error'
   | 'iot-device-created'
-  | 'gateway-created'
-  | 'settings-saved';
-type AssetManagementTab = AssetType | 'iot-device' | 'gateway' | 'settings';
+  | 'gateway-created';
+type AssetManagementTab = AssetType | 'iot-device' | 'gateway';
 
 /**
  * @summary Presents the cold room list user interface in the asset management bounded context.
@@ -75,7 +73,6 @@ export class ColdRoomList implements OnInit {
     AssetType.Transport,
     'iot-device',
     'gateway',
-    'settings',
   ];
   protected readonly assetStatuses: AssetStatus[] = [
     AssetStatus.Active,
@@ -91,11 +88,8 @@ export class ColdRoomList implements OnInit {
     GatewayStatus.Maintenance,
     GatewayStatus.Offline,
   ];
-  protected readonly temperatureUnits: string[] = ['°C', '°F'];
-  protected readonly weightUnits: string[] = ['kg', 'lb'];
   protected readonly identityLoading = signal(false);
   protected readonly creating = signal(false);
-  protected readonly savingSettings = signal(false);
   protected readonly updatingAssetId = signal<number | null>(null);
   protected readonly pendingAssetStatuses = signal<Record<number, AssetStatus>>({});
   protected readonly submitted = signal(false);
@@ -112,7 +106,6 @@ export class ColdRoomList implements OnInit {
     name: ['', [Validators.required, Validators.minLength(3)]],
     gatewayId: [0, [Validators.required, Validators.min(1)]],
     capacity: [0, [Validators.required, Validators.min(1)]],
-    location: ['', [Validators.required, Validators.minLength(3)]],
     description: [''],
   });
 
@@ -133,25 +126,12 @@ export class ColdRoomList implements OnInit {
     status: [GatewayStatus.Active, [Validators.required]],
   });
 
-  protected readonly settingsForm = this.fb.nonNullable.group({
-    assetTypes: ['', [Validators.required, Validators.minLength(3)]],
-    iotDeviceTypes: ['', [Validators.required, Validators.minLength(3)]],
-    minimumTemperature: [-5, [Validators.required]],
-    maximumTemperature: [8, [Validators.required]],
-    maximumHumidity: [85, [Validators.required, Validators.min(1), Validators.max(100)]],
-    calibrationFrequencyDays: [180, [Validators.required, Validators.min(1)]],
-    temperatureUnit: ['°C', [Validators.required]],
-    humidityUnit: ['%', [Validators.required]],
-    weightUnit: ['kg', [Validators.required]],
-  });
-
   protected readonly loading = computed(
     () => this.identityLoading() || this.assetManagementStore.loading(),
   );
   protected readonly assets = this.assetManagementStore.assets;
   protected readonly iotDevices = this.assetManagementStore.iotDevices;
   protected readonly gateways = this.assetManagementStore.gateways;
-  protected readonly assetSettings = this.assetManagementStore.assetSettings;
   protected readonly activeOrganizationName = computed(() => {
     return this.identityAccessStore.currentOrganizationNameFrom(this.users(), this.organizations());
   });
@@ -182,13 +162,9 @@ export class ColdRoomList implements OnInit {
     );
   });
   protected readonly positiveFeedback = computed(() => {
-    return [
-      'success',
-      'updated',
-      'iot-device-created',
-      'gateway-created',
-      'settings-saved',
-    ].includes(this.feedback());
+    return ['success', 'updated', 'iot-device-created', 'gateway-created'].includes(
+      this.feedback(),
+    );
   });
 
   protected readonly selectedAssets = computed(() => {
@@ -237,16 +213,6 @@ export class ColdRoomList implements OnInit {
     return this.gateways().filter((gateway) => gateway.organizationId === organizationId);
   });
 
-  protected readonly activeAssetSettings = computed(() => {
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      return null;
-    }
-
-    return this.assetManagementStore.defaultSettingsForOrganization(organizationId) ?? null;
-  });
-
   protected readonly calibrationSummary = computed(() => {
     return [
       {
@@ -279,7 +245,7 @@ export class ColdRoomList implements OnInit {
       return [
         asset.uuid,
         asset.name,
-        asset.location,
+        this.assetLocationFor(asset),
         asset.status,
         asset.connectivity,
         asset.lastIncident,
@@ -304,7 +270,6 @@ export class ColdRoomList implements OnInit {
     this.assetManagementStore.loadAssets();
     this.assetManagementStore.loadIoTDevices();
     this.assetManagementStore.loadGateways();
-    this.assetManagementStore.loadAssetSettings();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -340,10 +305,6 @@ export class ColdRoomList implements OnInit {
     this.feedback.set('idle');
     this.submitted.set(false);
     this.resetForms();
-
-    if (tab === 'settings') {
-      this.resetSettingsForm();
-    }
   }
 
   protected toggleForm(): void {
@@ -398,7 +359,7 @@ export class ColdRoomList implements OnInit {
       this.selectedAssetType(),
       gateway.id,
       this.coldRoomForm.controls.name.value.trim(),
-      this.coldRoomForm.controls.location.value.trim(),
+      gateway.location,
       Number(this.coldRoomForm.controls.capacity.value),
       this.coldRoomForm.controls.description.value.trim(),
       AssetStatus.Active,
@@ -535,73 +496,6 @@ export class ColdRoomList implements OnInit {
       });
   }
 
-  protected saveSettings(): void {
-    this.submitted.set(true);
-    this.feedback.set('idle');
-    this.settingsForm.markAllAsTouched();
-
-    if (this.settingsForm.invalid || !this.canManageAssets()) {
-      return;
-    }
-
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      this.feedback.set('server-error');
-      return;
-    }
-
-    const currentSettings = this.activeAssetSettings() ?? this.defaultAssetSettings(organizationId);
-    const assetTypes = this.toList(this.settingsForm.controls.assetTypes.value);
-    const iotDeviceTypes = this.toList(this.settingsForm.controls.iotDeviceTypes.value);
-
-    if (!assetTypes.length || !iotDeviceTypes.length) {
-      this.settingsForm.controls.assetTypes.setErrors(
-        assetTypes.length ? null : { required: true },
-      );
-      this.settingsForm.controls.iotDeviceTypes.setErrors(
-        iotDeviceTypes.length ? null : { required: true },
-      );
-      return;
-    }
-
-    const minimumTemperature = Number(this.settingsForm.controls.minimumTemperature.value);
-    const maximumTemperature = Number(this.settingsForm.controls.maximumTemperature.value);
-
-    if (minimumTemperature >= maximumTemperature) {
-      this.settingsForm.controls.maximumTemperature.setErrors({ range: true });
-      return;
-    }
-
-    const nextSettings = new AssetSettings(
-      currentSettings.id,
-      organizationId,
-      currentSettings.uuid,
-      assetTypes,
-      iotDeviceTypes,
-      minimumTemperature,
-      maximumTemperature,
-      Number(this.settingsForm.controls.maximumHumidity.value),
-      Number(this.settingsForm.controls.calibrationFrequencyDays.value),
-      this.settingsForm.controls.temperatureUnit.value,
-      this.settingsForm.controls.humidityUnit.value,
-      this.settingsForm.controls.weightUnit.value,
-    );
-    const request = this.activeAssetSettings()
-      ? this.assetManagementStore.updateAssetSettings(nextSettings)
-      : this.assetManagementStore.createAssetSettings(nextSettings);
-
-    this.savingSettings.set(true);
-    request.pipe(finalize(() => this.savingSettings.set(false))).subscribe({
-      next: () => {
-        this.feedback.set('settings-saved');
-        this.submitted.set(false);
-        this.settingsForm.markAsPristine();
-      },
-      error: () => this.feedback.set('server-error'),
-    });
-  }
-
   protected updateAssetStatus(asset: Asset, value: string): void {
     this.feedback.set('idle');
 
@@ -721,10 +615,6 @@ export class ColdRoomList implements OnInit {
       return 'asset-management.gateways.feedback-created';
     }
 
-    if (this.feedback() === 'settings-saved') {
-      return 'asset-management.settings.feedback-saved';
-    }
-
     return `asset-management.sections.${this.selectedAssetType()}.feedback-created`;
   }
 
@@ -839,24 +729,14 @@ export class ColdRoomList implements OnInit {
     return classByStatus[status];
   }
 
-  protected settingsAssetTypeList(): string[] {
-    return this.toList(this.settingsForm.controls.assetTypes.value);
+  protected selectedGatewayForForm(): Gateway | null {
+    const gatewayId = Number(this.coldRoomForm.controls.gatewayId.value);
+
+    return this.organizationGateways().find((gateway) => gateway.id === gatewayId) ?? null;
   }
 
-  protected settingsIoTDeviceTypeList(): string[] {
-    return this.toList(this.settingsForm.controls.iotDeviceTypes.value);
-  }
-
-  protected temperatureRangeLabel(): string {
-    return `${this.settingsForm.controls.minimumTemperature.value}${this.settingsForm.controls.temperatureUnit.value} - ${this.settingsForm.controls.maximumTemperature.value}${this.settingsForm.controls.temperatureUnit.value}`;
-  }
-
-  protected humidityLimitLabel(): string {
-    return `${this.settingsForm.controls.maximumHumidity.value}${this.settingsForm.controls.humidityUnit.value}`;
-  }
-
-  protected calibrationFrequencyLabel(): string {
-    return `${this.settingsForm.controls.calibrationFrequencyDays.value}`;
+  protected assetLocationFor(asset: Asset): string {
+    return this.assetManagementStore.locationForAsset(asset, this.organizationGateways());
   }
 
   protected incidentLabelKey(lastIncident: string): string {
@@ -909,11 +789,6 @@ export class ColdRoomList implements OnInit {
     return control.invalid && (control.touched || this.submitted());
   }
 
-  protected hasSettingsControlError(controlName: keyof typeof this.settingsForm.controls): boolean {
-    const control = this.settingsForm.controls[controlName];
-    return control.invalid && (control.touched || this.submitted());
-  }
-
   protected logout(): void {
     this.identityAccessStore.clearCurrentUser();
     void this.router.navigate(['/identity-access/sign-in']);
@@ -949,7 +824,6 @@ export class ColdRoomList implements OnInit {
       name: '',
       gatewayId: 0,
       capacity: 0,
-      location: '',
       description: '',
     });
   }
@@ -973,54 +847,6 @@ export class ColdRoomList implements OnInit {
       network: '',
       status: GatewayStatus.Active,
     });
-  }
-
-  protected resetSettingsForm(): void {
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      return;
-    }
-
-    const settings = this.activeAssetSettings() ?? this.defaultAssetSettings(organizationId);
-    this.settingsForm.reset({
-      assetTypes: settings.assetTypes.join('\n'),
-      iotDeviceTypes: settings.iotDeviceTypes.join('\n'),
-      minimumTemperature: settings.minimumTemperature,
-      maximumTemperature: settings.maximumTemperature,
-      maximumHumidity: settings.maximumHumidity,
-      calibrationFrequencyDays: settings.calibrationFrequencyDays,
-      temperatureUnit: settings.temperatureUnit,
-      humidityUnit: settings.humidityUnit,
-      weightUnit: settings.weightUnit,
-    });
-    this.settingsForm.markAsPristine();
-  }
-
-  private defaultAssetSettings(organizationId: number): AssetSettings {
-    const nextId = Math.max(...this.assetSettings().map((settings) => settings.id), 0) + 1;
-
-    return new AssetSettings(
-      nextId,
-      organizationId,
-      `CFG-${organizationId.toString().padStart(3, '0')}`,
-      ['Cold room', 'Refrigerated transport'],
-      ['Temperature sensor', 'Humidity sensor', 'Motion sensor', 'Camera', 'Multi-sensor'],
-      -5,
-      8,
-      85,
-      180,
-      '°C',
-      '%',
-      'kg',
-    );
-  }
-
-  private toList(value: string): string[] {
-    return value
-      .split(/[\n,]/)
-      .map((item) => item.trim())
-      .filter(Boolean);
   }
 
   private measurementParametersForDeviceType(deviceType: string): IoTMeasurementParameter[] {

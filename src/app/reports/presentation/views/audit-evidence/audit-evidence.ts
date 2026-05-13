@@ -98,6 +98,7 @@ export class AuditEvidence implements OnInit {
     this.feedback.set('idle');
     this.assetManagementStore.loadAssets();
     this.assetManagementStore.loadIoTDevices();
+    this.assetManagementStore.loadGateways();
     this.assetManagementStore.loadAssetSettings();
     this.monitoringStore.loadReadings();
     this.reportsStore.loadReports();

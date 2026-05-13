@@ -29,8 +29,13 @@
       </label>
 
       <div class="summary-pills" aria-label="Monitoring summary">
-        <span>{{ 'monitoring.asset-monitoring.summary-assets' | translate }}: {{ totalAssets() }}</span>
-        <span>{{ 'monitoring.asset-monitoring.summary-readings' | translate }}: {{ assetsWithReadings() }}</span>
+        <span
+          >{{ 'monitoring.asset-monitoring.summary-assets' | translate }}: {{ totalAssets() }}</span
+        >
+        <span
+          >{{ 'monitoring.asset-monitoring.summary-readings' | translate }}:
+          {{ assetsWithReadings() }}</span
+        >
         <span class="warning">
           {{ 'monitoring.asset-monitoring.summary-alerts' | translate }}: {{ assetsOutOfRange() }}
         </span>
@@ -43,6 +48,7 @@
       <app-monitoring-asset-card
         [asset]="item.asset"
         [device]="item.device"
+        [location]="item.location"
         [latestReading]="item.latestReading"
         [settings]="item.settings"
         [chartPoints]="item.chartPoints"

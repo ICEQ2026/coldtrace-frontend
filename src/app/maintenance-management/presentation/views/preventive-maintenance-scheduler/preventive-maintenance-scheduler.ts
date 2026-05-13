@@ -139,6 +139,7 @@ export class PreventiveMaintenanceScheduler implements OnInit {
   protected loadPageData(): void {
     this.identityLoading.set(true);
     this.feedback.set('idle');
+    this.assetManagementStore.loadGateways();
     this.maintenanceStore.loadMaintenanceSchedules();
 
     forkJoin({
@@ -277,7 +278,9 @@ export class PreventiveMaintenanceScheduler implements OnInit {
   }
 
   protected assetLocationFor(schedule: MaintenanceSchedule): string {
-    return this.assetFor(schedule.assetId)?.location ?? 'N/A';
+    const asset = this.assetFor(schedule.assetId);
+
+    return asset ? this.assetManagementStore.locationForAsset(asset) : 'N/A';
   }
 
   protected scheduleStatusKey(status: MaintenanceScheduleStatus): string {

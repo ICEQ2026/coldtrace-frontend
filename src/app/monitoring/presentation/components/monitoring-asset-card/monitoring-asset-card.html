@@ -4,7 +4,7 @@
       [temperature]="temperature"
       [humidity]="humidity"
       [sensorId]="sensorId"
-      [location]="asset.location"
+      [location]="location"
       [lastReadingTime]="lastReadingTime"
       [assetName]="asset.name"
       [minTemp]="minimumTemperature"
@@ -47,7 +47,8 @@
           {{
             (latestReading
               ? 'monitoring.asset-monitoring.status.normal'
-              : 'monitoring.asset-monitoring.status.no-readings') | translate
+              : 'monitoring.asset-monitoring.status.no-readings'
+            ) | translate
           }}
         </span>
       </div>

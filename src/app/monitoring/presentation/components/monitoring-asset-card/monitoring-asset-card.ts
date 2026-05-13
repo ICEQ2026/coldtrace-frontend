@@ -23,6 +23,7 @@ import { TemperatureChart } from '../temperature-chart/temperature-chart';
 export class MonitoringAssetCard {
   @Input() asset!: Asset;
   @Input() device: IoTDevice | null = null;
+  @Input() location = 'N/A';
   @Input() latestReading: SensorReading | null = null;
   @Input() settings: AssetSettings | undefined;
   @Input() chartPoints: TemperaturePoint[] = [];

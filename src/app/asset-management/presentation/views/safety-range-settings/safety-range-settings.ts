@@ -13,7 +13,12 @@ import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
 import { AssetManagementStore } from '../../../application/asset-management.store';
 import { Asset } from '../../../domain/model/asset.entity';
+import {
+  buildDefaultAssetSettings,
+  DEFAULT_ASSET_SETTING_VALUES,
+} from '../../../domain/model/asset-settings-defaults';
 import { AssetSettings } from '../../../domain/model/asset-settings.entity';
+import { Gateway } from '../../../domain/model/gateway.entity';
 import { IoTDevice } from '../../../domain/model/iot-device.entity';
 import { AssetManagementApi } from '../../../infrastructure/asset-management-api';
 
@@ -45,12 +50,16 @@ export class SafetyRangeSettings implements OnInit {
   protected readonly organizations = signal<Organization[]>([]);
   protected readonly assets = signal<Asset[]>([]);
   protected readonly iotDevices = signal<IoTDevice[]>([]);
+  protected readonly gateways = signal<Gateway[]>([]);
   protected readonly assetSettings = signal<AssetSettings[]>([]);
 
   protected readonly rangeForm = this.fb.nonNullable.group({
-    minimumTemperature: [-5, [Validators.required]],
-    maximumTemperature: [8, [Validators.required]],
-    maximumHumidity: [85, [Validators.required, Validators.min(1), Validators.max(100)]],
+    minimumTemperature: [DEFAULT_ASSET_SETTING_VALUES.minimumTemperature, [Validators.required]],
+    maximumTemperature: [DEFAULT_ASSET_SETTING_VALUES.maximumTemperature, [Validators.required]],
+    maximumHumidity: [
+      DEFAULT_ASSET_SETTING_VALUES.maximumHumidity,
+      [Validators.required, Validators.min(1), Validators.max(100)],
+    ],
   });
 
   protected readonly loading = computed(() => {
@@ -151,16 +160,18 @@ export class SafetyRangeSettings implements OnInit {
       organizations: this.identityAccessApi.getOrganizations(),
       assets: this.assetManagementApi.getAssets(),
       iotDevices: this.assetManagementApi.getIoTDevices(),
+      gateways: this.assetManagementApi.getGateways(),
       assetSettings: this.assetManagementApi.getAssetSettings(),
     })
       .pipe(finalize(() => this.identityLoading.set(false)))
       .subscribe({
-        next: ({ users, roles, organizations, assets, iotDevices, assetSettings }) => {
+        next: ({ users, roles, organizations, assets, iotDevices, gateways, assetSettings }) => {
           this.users.set(users);
           this.roles.set(roles);
           this.organizations.set(organizations);
           this.assets.set(assets);
           this.iotDevices.set(iotDevices);
+          this.gateways.set(gateways);
           this.assetSettings.set(assetSettings);
           this.identityAccessStore.setCurrentRoleFrom(users, roles);
           this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
@@ -279,7 +290,7 @@ export class SafetyRangeSettings implements OnInit {
       (currentAsset) => currentAsset.id === settings.assetId,
     );
 
-    return asset?.location ?? 'N/A';
+    return asset ? this.assetManagementStore.locationForAsset(asset, this.gateways()) : 'N/A';
   }
 
   protected settingStatusKey(settings: AssetSettings): string {
@@ -319,26 +330,12 @@ export class SafetyRangeSettings implements OnInit {
     const organizationDefault =
       this.settingsForScope(null) ?? this.organizationSettings()[0] ?? null;
 
-    return new AssetSettings(
+    return buildDefaultAssetSettings(
       organizationDefault?.id ?? this.nextSettingsId(),
       organizationId,
       organizationDefault?.uuid ?? this.generatedSettingsUuid(organizationId, assetId),
-      organizationDefault?.assetTypes ?? ['Cold room', 'Refrigerated transport'],
-      organizationDefault?.iotDeviceTypes ?? [
-        'Temperature sensor',
-        'Humidity sensor',
-        'Motion sensor',
-        'Camera',
-        'Multi-sensor',
-      ],
-      organizationDefault?.minimumTemperature ?? -5,
-      organizationDefault?.maximumTemperature ?? 8,
-      organizationDefault?.maximumHumidity ?? 85,
-      organizationDefault?.calibrationFrequencyDays ?? 180,
-      organizationDefault?.temperatureUnit ?? '°C',
-      organizationDefault?.humidityUnit ?? '%',
-      organizationDefault?.weightUnit ?? 'kg',
       assetId,
+      organizationDefault,
     );
   }
 
