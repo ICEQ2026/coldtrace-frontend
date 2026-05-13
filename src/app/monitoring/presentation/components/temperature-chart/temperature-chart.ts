@@ -30,6 +30,14 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
 
   private chart?: Chart;
 
+  get maxLimitLabel(): string {
+    return `${this.limitForPoints().max}°C`;
+  }
+
+  get minLimitLabel(): string {
+    return `${this.limitForPoints().min}°C`;
+  }
+
   /**
    * @summary Initializes view-dependent rendering after the template is available.
    */
@@ -58,18 +66,16 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
     }
     const labels = this.points.map(point => point.label);
     const temperatures = this.points.map(point => point.temperature);
-    const ghostData = this.points.map(point => point.ghost);
-    const { max: maxLimit, min: minLimit } = this.limitsFor(this.points, [...temperatures, ...ghostData]);
-    const { min: yMin, max: yMax } = this.computeYRange(temperatures, ghostData, maxLimit, minLimit);
+    const { max: maxLimit, min: minLimit } = this.limitForPoints();
+    const { min: yMin, max: yMax } = this.computeYRange(temperatures, maxLimit, minLimit);
 
     this.chart.data.labels = labels;
-    this.chart.data.datasets[0].data = ghostData;
+    this.chart.data.datasets[0].data = temperatures;
     this.chart.data.datasets[1].data = temperatures;
     this.chart.data.datasets[2].data = temperatures;
     this.chart.data.datasets[3].data = temperatures;
-    this.chart.data.datasets[4].data = temperatures;
-    this.chart.data.datasets[5].data = new Array(labels.length).fill(maxLimit);
-    this.chart.data.datasets[6].data = new Array(labels.length).fill(minLimit);
+    this.chart.data.datasets[4].data = new Array(labels.length).fill(maxLimit);
+    this.chart.data.datasets[5].data = new Array(labels.length).fill(minLimit);
     if (this.chart.options.scales?.['y']) {
       const yScale = this.chart.options.scales['y'] as { min?: number; max?: number };
       yScale.min = yMin;
@@ -80,11 +86,10 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
 
   private computeYRange(
     temperatures: number[],
-    ghostData: number[],
     maxLimit: number,
     minLimit: number,
   ): { min: number; max: number } {
-    const allValues = [...temperatures, ...ghostData, maxLimit, minLimit];
+    const allValues = [...temperatures, maxLimit, minLimit];
     const dataMin = Math.min(...allValues);
     const dataMax = Math.max(...allValues);
     const range = dataMax - dataMin;
@@ -107,9 +112,8 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
     const dashboardPoints = this.points;
     const labels = dashboardPoints.map(point => point.label);
     const temperatures = dashboardPoints.map(point => point.temperature);
-    const ghostData = dashboardPoints.map(point => point.ghost);
-    const { max: maxLimit, min: minLimit } = this.limitsFor(dashboardPoints, [...temperatures, ...ghostData]);
-    const { min: yMin, max: yMax } = this.computeYRange(temperatures, ghostData, maxLimit, minLimit);
+    const { max: maxLimit, min: minLimit } = this.limitForPoints();
+    const { min: yMin, max: yMax } = this.computeYRange(temperatures, maxLimit, minLimit);
 
     const ctx = this.canvas.nativeElement.getContext('2d');
     if (!ctx) return;
@@ -126,7 +130,6 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
       data: {
         labels,
         datasets: [
-          { label: 'Ghost Line', data: ghostData, borderColor: 'rgba(96, 165, 250, 0.42)', borderDash: [3, 3], borderWidth: 1.4, pointRadius: 0, fill: false, tension: 0.48, order: 4 },
           {
             label: 'Temperature Area',
             data: temperatures,
@@ -251,6 +254,11 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
         }
       }
     });
+  }
+
+  private limitForPoints(): TemperatureLimits {
+    const temperatures = this.points.map((point) => point.temperature);
+    return this.limitsFor(this.points, temperatures);
   }
 
   private limitsFor(points: TemperaturePoint[], values: number[]): TemperatureLimits {

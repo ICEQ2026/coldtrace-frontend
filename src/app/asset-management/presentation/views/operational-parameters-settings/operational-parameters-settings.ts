@@ -68,6 +68,7 @@ export class OperationalParametersSettings implements OnInit {
   protected readonly assets = signal<Asset[]>([]);
   protected readonly iotDevices = signal<IoTDevice[]>([]);
   protected readonly gateways = signal<Gateway[]>([]);
+  protected readonly selectedFrequencyMinutes = signal(60);
 
   protected readonly operationalForm = this.fb.nonNullable.group({
     readingFrequencyMinutes: [60, [Validators.required, Validators.min(5), Validators.max(1440)]],
@@ -90,48 +91,35 @@ export class OperationalParametersSettings implements OnInit {
     return this.identityAccessStore.currentRoleFrom(this.users(), this.roles());
   });
   protected readonly canUpdateOperationalParameters = computed(() => {
-    return this.identityAccessStore
-      .permissionKeysForRole(this.currentRole())
-      .includes('roles-permissions.permissions.manage-assets');
+    return this.identityAccessStore.canManageAssets(this.users(), this.roles());
   });
   protected readonly organizationAssets = computed(() => {
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      return [];
-    }
-
-    return this.assets().filter((asset) => asset.organizationId === organizationId);
+    return this.assetManagementStore.assetsForOrganization(
+      this.activeOrganizationId(),
+      this.assets(),
+    );
   });
   protected readonly organizationIoTDevices = computed(() => {
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      return [];
-    }
-
-    return this.iotDevices().filter((iotDevice) => iotDevice.organizationId === organizationId);
+    return this.assetManagementStore.iotDevicesForOrganization(
+      this.activeOrganizationId(),
+      this.iotDevices(),
+    );
   });
   protected readonly monitoredAssets = computed(() => {
-    const monitoredAssetIds = new Set(
-      this.organizationIoTDevices()
-        .filter((iotDevice) => iotDevice.assetId !== null)
-        .map((iotDevice) => iotDevice.assetId as number),
+    return this.assetManagementStore.monitoredAssetsForOrganization(
+      this.activeOrganizationId(),
+      this.assets(),
+      this.iotDevices(),
     );
-
-    return this.organizationAssets().filter((asset) => monitoredAssetIds.has(asset.id));
   });
   protected readonly selectedAsset = computed(() => {
     return this.organizationAssets().find((asset) => asset.id === this.selectedAssetId()) ?? null;
   });
   protected readonly selectedAssetDevices = computed(() => {
-    const assetId = this.selectedAssetId();
-
-    if (!assetId) {
-      return [];
-    }
-
-    return this.organizationIoTDevices().filter((iotDevice) => iotDevice.assetId === assetId);
+    return this.assetManagementStore.iotDevicesForAsset(
+      this.selectedAssetId(),
+      this.organizationIoTDevices(),
+    );
   });
   protected readonly selectedIoTDevice = computed(() => {
     return (
@@ -154,11 +142,14 @@ export class OperationalParametersSettings implements OnInit {
       .filter((iotDevice) => iotDevice.assetId !== null)
       .sort((a, b) => this.assetNameFor(a).localeCompare(this.assetNameFor(b)));
   });
-  protected readonly selectedIntervalLabel = computed(() => {
+  protected readonly currentIntervalLabel = computed(() => {
     const iotDevice = this.selectedIoTDevice();
     const seconds = iotDevice?.readingFrequencySeconds ?? 3600;
 
-    return `${Math.round(seconds / 60)} min`;
+    return this.minutesLabel(Math.round(seconds / 60));
+  });
+  protected readonly selectedIntervalLabel = computed(() => {
+    return this.minutesLabel(this.selectedFrequencyMinutes());
   });
   protected readonly compatibilityIssueKey = computed(() => this.currentCompatibilityIssueKey());
 
@@ -191,9 +182,7 @@ export class OperationalParametersSettings implements OnInit {
           this.assets.set(assets);
           this.iotDevices.set(iotDevices);
           this.gateways.set(gateways);
-          this.identityAccessStore.setCurrentRoleFrom(users, roles);
-          this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
-          this.identityAccessStore.initializeRolePermissions(roles);
+          this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
           this.selectInitialScope();
         },
         error: () => this.feedback.set('server-error'),
@@ -212,6 +201,12 @@ export class OperationalParametersSettings implements OnInit {
     this.feedback.set('idle');
     this.submitted.set(false);
     this.resetOperationalForm();
+  }
+
+  protected updateReadingFrequencyPreview(value: string): void {
+    const minutes = Number(value);
+
+    this.selectedFrequencyMinutes.set(value.trim() && Number.isFinite(minutes) ? minutes : 0);
   }
 
   protected saveOperationalParameters(): void {
@@ -276,11 +271,12 @@ export class OperationalParametersSettings implements OnInit {
   protected resetOperationalForm(): void {
     const iotDevice = this.selectedIoTDevice();
     const selectedParameters = iotDevice?.measurementParameters ?? [];
+    const readingFrequencyMinutes = Math.round((iotDevice?.readingFrequencySeconds ?? 3600) / 60);
 
     this.feedback.set('idle');
     this.submitted.set(false);
     this.operationalForm.reset({
-      readingFrequencyMinutes: Math.round((iotDevice?.readingFrequencySeconds ?? 3600) / 60),
+      readingFrequencyMinutes,
       temperature: selectedParameters.includes('temperature'),
       humidity: selectedParameters.includes('humidity'),
       motion: selectedParameters.includes('motion'),
@@ -288,6 +284,7 @@ export class OperationalParametersSettings implements OnInit {
       battery: selectedParameters.includes('battery'),
       signal: selectedParameters.includes('signal'),
     });
+    this.selectedFrequencyMinutes.set(readingFrequencyMinutes);
     this.parameterKeys.forEach((parameter) => {
       if (!this.isParameterSupported(parameter)) {
         this.operationalForm.controls[parameter].setValue(false);
@@ -475,6 +472,10 @@ export class OperationalParametersSettings implements OnInit {
     };
 
     return parameters.map((parameter) => labelByParameter[parameter]).join(' / ');
+  }
+
+  private minutesLabel(minutes: number): string {
+    return Number.isFinite(minutes) && minutes > 0 ? `${minutes} min` : 'N/A';
   }
 
   private upsertLocalIoTDevice(iotDevice: IoTDevice): void {

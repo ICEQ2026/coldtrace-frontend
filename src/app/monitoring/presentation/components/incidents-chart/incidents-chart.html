@@ -23,8 +23,8 @@
   </div>
 
   <div class="mini-timeline">
-    <span class="mini-axis top">{{ 'monitoring.operational.axis-10-mea' | translate }}</span>
-    <span class="mini-axis bottom">{{ 'monitoring.operational.axis-0-mea' | translate }}</span>
+    <span class="mini-axis top">{{ 'monitoring.operational.axis-10-inc' | translate }}</span>
+    <span class="mini-axis bottom">{{ 'monitoring.operational.axis-0-inc' | translate }}</span>
     <div class="timeline-ticks">
       <span>00h</span><span>06h</span><span>12h</span><span>18h</span>
     </div>
@@ -44,24 +44,24 @@
     <div class="legend-row">
       <div class="legend-item">
         <span
-          ><i class="dot green"></i>{{ 'monitoring.operational.legend-normal' | translate }}</span
-        ><strong>{{ normalTotal }} {{ 'monitoring.operational.unit-readings' | translate }}</strong>
+          ><i class="dot green"></i>{{ 'monitoring.operational.legend-resolved' | translate }}</span
+        ><strong>{{ resolvedTotal }} {{ 'monitoring.operational.unit-incidents' | translate }}</strong>
       </div>
       <div class="legend-item">
         <span
           ><i class="dot yellow"></i
           >{{ 'monitoring.operational.legend-warnings' | translate }}</span
-        ><strong>{{ warningTotal }} {{ 'monitoring.operational.unit-events' | translate }}</strong>
+        ><strong>{{ warningTotal }} {{ 'monitoring.operational.unit-incidents' | translate }}</strong>
       </div>
       <div class="legend-item">
         <span
           ><i class="dot red"></i>{{ 'monitoring.operational.legend-critical' | translate }}</span
-        ><strong>{{ criticalTotal }} {{ 'monitoring.operational.unit-alerts' | translate }}</strong>
+        ><strong>{{ criticalTotal }} {{ 'monitoring.operational.unit-incidents' | translate }}</strong>
       </div>
       <div class="legend-item">
         <span
           ><i class="dot gray"></i>{{ 'monitoring.operational.legend-offline' | translate }}</span
-        ><strong>{{ offlineTotal }} {{ 'monitoring.operational.unit-gaps' | translate }}</strong>
+        ><strong>{{ offlineTotal }} {{ 'monitoring.operational.unit-incidents' | translate }}</strong>
       </div>
     </div>
   </div>

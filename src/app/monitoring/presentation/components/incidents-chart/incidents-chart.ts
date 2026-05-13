@@ -31,7 +31,7 @@ export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
 
   private chart?: Chart;
 
-  get normalTotal(): number {
+  get resolvedTotal(): number {
     return this.days.reduce((sum, day) => sum + day.normal, 0);
   }
   get warningTotal(): number {
@@ -41,12 +41,7 @@ export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
     return this.days.reduce((sum, day) => sum + day.critical, 0);
   }
   get offlineTotal(): number {
-    return Math.max(
-      1,
-      Math.round(
-        this.days.reduce((sum, day) => sum + day.offline, 0) / Math.max(this.days.length * 4, 1),
-      ),
-    );
+    return this.days.reduce((sum, day) => sum + day.offline, 0);
   }
   get chartMax(): number {
     const maxStack = Math.max(
@@ -58,8 +53,11 @@ export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   get averageIncidents(): string {
-    const total = this.days.reduce((sum, day) => sum + day.warning + day.critical, 0);
-    const average = total / Math.max(this.days.length, 1) + this.offlineTotal;
+    const total = this.days.reduce(
+      (sum, day) => sum + day.normal + day.warning + day.critical + day.offline,
+      0,
+    );
+    const average = total / Math.max(this.days.length, 1);
     return average.toFixed(1).replace('.0', '');
   }
 
@@ -108,7 +106,8 @@ export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
    * @summary Calculates the chart bar height for one incident day.
    */
   microHeight(day: IncidentDay): number {
-    return Math.max(4, Math.min(36, day.normal + day.warning + day.critical + day.offline));
+    const total = day.normal + day.warning + day.critical + day.offline;
+    return total > 0 ? Math.max(4, Math.min(36, total)) : 0;
   }
 
   private buildChart(): void {
@@ -124,7 +123,7 @@ export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
         labels: this.days.map((day) => day.label),
         datasets: [
           {
-            label: 'Normal',
+            label: 'Resolved',
             data: this.days.map((day) => day.normal),
             backgroundColor: '#5bbf7f',
             borderRadius: 2,
@@ -151,7 +150,7 @@ export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
             minBarLength: 4,
           },
           {
-            label: 'Offline',
+            label: 'Connectivity',
             data: this.days.map((day) => day.offline),
             backgroundColor: '#e8ecf2',
             borderRadius: 2,

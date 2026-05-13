@@ -47,7 +47,7 @@ export class UserForm implements OnInit {
     this.roles().filter((role) => this.identityAccessStore.canAssignRole(role, this.users(), this.roles())),
   );
   protected readonly canManageAccess = computed(
-    () => this.identityAccessStore.canManageAccess(this.users(), this.roles())
+    () => this.identityAccessStore.canManageUsers(this.users(), this.roles())
   );
 
   protected readonly activeOrganizationName = computed(() => {
@@ -84,9 +84,7 @@ export class UserForm implements OnInit {
           this.users.set(users);
           this.roles.set(roles);
           this.organizations.set(organizations);
-          this.identityAccessStore.setCurrentRoleFrom(users, roles);
-          this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
-          this.identityAccessStore.initializeRolePermissions(roles);
+          this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
           this.selectDefaultRole();
         },
         error: () => this.feedback.set('server-error'),

@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,14 +22,16 @@ export class IncidentList implements OnInit {
   protected readonly alertsStore = inject(AlertsStore);
   private readonly identityStore = inject(IdentityAccessStore);
   private readonly fb = inject(FormBuilder);
+  @ViewChild('closureCard') private closureCard?: ElementRef<HTMLElement>;
   protected readonly closureSubmitted = signal(false);
   protected readonly canResolveAlerts = computed(() => this.alertsStore.canResolveAlerts());
   protected readonly profileUserName = computed(() =>
     this.identityStore.currentUserNameFrom(this.identityStore.users()),
   );
-  protected readonly pendingClosureIncidents = computed(() =>
+  protected readonly activeIncidents = computed(() =>
     this.alertsStore.incidents().filter((incident) => !incident.isClosed),
   );
+  protected readonly pendingClosureIncidents = computed(() => this.activeIncidents());
 
   protected readonly closureForm = this.fb.nonNullable.group({
     incidentId: [0, [Validators.required, Validators.min(1)]],
@@ -140,6 +142,22 @@ export class IncidentList implements OnInit {
 
     this.closureForm.controls.incidentId.setValue(incident.id);
     this.alertsStore.clearFeedback();
+    queueMicrotask(() => this.closureCard?.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    }));
+  }
+
+  protected stabilizeSelectedIncident(): void {
+    const incident = this.selectedClosureIncident();
+
+    if (!incident || incident.isConditionStable || this.alertsStore.stabilizingId() === incident.id) {
+      return;
+    }
+
+    this.alertsStore.stabilizeIncident(incident).subscribe({
+      error: () => undefined,
+    });
   }
 
   protected hasClosureControlError(

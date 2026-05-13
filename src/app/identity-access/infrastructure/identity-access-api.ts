@@ -66,4 +66,11 @@ export class IdentityAccessApi extends BaseApi {
   getRoles(): Observable<Role[]> {
     return this.rolesEndpoint.getAll();
   }
+
+  /**
+   * @summary Updates a role through the API endpoint.
+   */
+  updateRole(role: Role): Observable<Role> {
+    return this.rolesEndpoint.update(role, role.id);
+  }
 }

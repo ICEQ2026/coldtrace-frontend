@@ -67,7 +67,7 @@
 
     <div class="filter-meta">
       <span>{{ 'asset-management.safety-ranges.form.selected-range' | translate }}</span>
-      <strong>{{ selectedRangeLabel() }}</strong>
+      <strong>{{ currentRangeLabel() }}</strong>
     </div>
   </section>
 
@@ -86,7 +86,7 @@
     </article>
     <article class="summary-card accent-red">
       <span>{{ 'asset-management.safety-ranges.summary-humidity' | translate }}</span>
-      <strong>{{ selectedSettings().maximumHumidity }}{{ selectedSettings().humidityUnit }}</strong>
+      <strong>{{ selectedHumidityLabel() }}</strong>
     </article>
   </section>
 
@@ -115,7 +115,12 @@
       <div class="settings-grid">
         <label class="filter-field">
           <span>{{ 'asset-management.safety-ranges.form.minimum-temperature' | translate }}</span>
-          <input type="number" step="0.1" formControlName="minimumTemperature" />
+          <input
+            type="number"
+            step="0.1"
+            formControlName="minimumTemperature"
+            (input)="updateMinimumTemperaturePreview($any($event.target).value)"
+          />
           @if (hasRangeControlError('minimumTemperature')) {
             <small>{{ 'asset-management.safety-ranges.form.number-error' | translate }}</small>
           }
@@ -123,7 +128,12 @@
 
         <label class="filter-field">
           <span>{{ 'asset-management.safety-ranges.form.maximum-temperature' | translate }}</span>
-          <input type="number" step="0.1" formControlName="maximumTemperature" />
+          <input
+            type="number"
+            step="0.1"
+            formControlName="maximumTemperature"
+            (input)="updateMaximumTemperaturePreview($any($event.target).value)"
+          />
           @if (hasRangeControlError('maximumTemperature') || hasTemperatureRangeError()) {
             <small>
               {{
@@ -138,7 +148,12 @@
 
         <label class="filter-field">
           <span>{{ 'asset-management.safety-ranges.form.maximum-humidity' | translate }}</span>
-          <input type="number" step="1" formControlName="maximumHumidity" />
+          <input
+            type="number"
+            step="1"
+            formControlName="maximumHumidity"
+            (input)="updateMaximumHumidityPreview($any($event.target).value)"
+          />
           @if (hasRangeControlError('maximumHumidity')) {
             <small>{{ 'asset-management.safety-ranges.form.humidity-error' | translate }}</small>
           }

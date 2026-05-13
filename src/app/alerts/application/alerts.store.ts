@@ -1,7 +1,9 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { forkJoin, map, Observable, of, retry, switchMap, tap } from 'rxjs';
+import { forkJoin, map, Observable, of, retry, switchMap, tap, throwError } from 'rxjs';
 import { AssetSettings } from '../../asset-management/domain/model/asset-settings.entity';
 import { Asset } from '../../asset-management/domain/model/asset.entity';
+import { IoTDeviceStatus } from '../../asset-management/domain/model/iot-device-status.enum';
+import { IoTDevice } from '../../asset-management/domain/model/iot-device.entity';
 import { AssetManagementApi } from '../../asset-management/infrastructure/asset-management-api';
 import { IdentityAccessStore } from '../../identity-access/application/identity-access.store';
 import { SensorReading } from '../../monitoring/domain/model/sensor-reading.entity';
@@ -13,8 +15,22 @@ import { NotificationStatus } from '../domain/model/notification-status.enum';
 import { Notification } from '../domain/model/notification.entity';
 import { AlertsApi } from '../infrastructure/alerts-api';
 
-type ThermalConditionKey = 'high-temperature' | 'low-temperature';
-type GeneratedConditionKey = ThermalConditionKey | 'thermal-configuration-pending';
+type ReadingConditionKey =
+  | 'high-temperature'
+  | 'low-temperature'
+  | 'high-humidity'
+  | 'low-battery'
+  | 'low-signal';
+type GeneratedConditionKey = ReadingConditionKey | 'thermal-configuration-pending';
+type GeneratedIncidentCandidate = {
+  reading: SensorReading;
+  asset: Asset;
+  type: 'temperature' | 'humidity' | 'connectivity' | 'other';
+  conditionKey: GeneratedConditionKey;
+  severity: 'warning' | 'critical';
+  value: string;
+  reviewStatus: 'complete' | 'pending-review';
+};
 
 /**
  * @summary Manages alerts state and workflows for presentation components.
@@ -31,8 +47,10 @@ export class AlertsStore {
   private readonly errorSignal = signal<string | null>(null);
   private readonly recognizingIdSignal = signal<number | null>(null);
   private readonly closingIdSignal = signal<number | null>(null);
+  private readonly stabilizingIdSignal = signal<number | null>(null);
   private readonly reviewingEscalationIdSignal = signal<number | null>(null);
   private readonly feedbackSignal = signal<string | null>(null);
+  private incidentsRequestInFlight = false;
 
   readonly incidents = computed(() => {
     const organizationId = this.identityAccessStore.currentOrganizationIdFrom(
@@ -43,9 +61,7 @@ export class AlertsStore {
       return [];
     }
 
-    return this.incidentsSignal().filter(
-      (incident) => incident.organizationId === organizationId,
-    );
+    return this.incidentsSignal().filter((incident) => incident.organizationId === organizationId);
   });
   readonly notifications = computed(() => {
     const organizationId = this.identityAccessStore.currentOrganizationIdFrom(
@@ -64,16 +80,20 @@ export class AlertsStore {
   readonly error = this.errorSignal.asReadonly();
   readonly recognizingId = this.recognizingIdSignal.asReadonly();
   readonly closingId = this.closingIdSignal.asReadonly();
+  readonly stabilizingId = this.stabilizingIdSignal.asReadonly();
   readonly reviewingEscalationId = this.reviewingEscalationIdSignal.asReadonly();
   readonly feedback = this.feedbackSignal.asReadonly();
 
   readonly openIncidents = computed(() => this.incidents().filter((i) => i.isOpen));
   readonly openIncidentsCount = computed(() => this.openIncidents().length);
+  readonly activeNotifications = computed(() =>
+    this.notifications().filter((notification) => this.isNotificationForOpenIncident(notification)),
+  );
   readonly pendingNotificationsCount = computed(
-    () => this.notifications().filter((notification) => notification.isPending).length,
+    () => this.activeNotifications().filter((notification) => notification.isPending).length,
   );
   readonly failedNotificationsCount = computed(
-    () => this.notifications().filter((notification) => notification.isFailed).length,
+    () => this.activeNotifications().filter((notification) => notification.isFailed).length,
   );
   readonly escalatedIncidentsCount = computed(
     () => this.incidents().filter((incident) => incident.isEscalated).length,
@@ -92,9 +112,19 @@ export class AlertsStore {
   /**
    * @summary Loads incidents data into local state.
    */
-  loadIncidents(): void {
-    this.loadingSignal.set(true);
-    this.errorSignal.set(null);
+  loadIncidents(options: { silent?: boolean } = {}): void {
+    const showLoading = !options.silent;
+
+    if (this.incidentsRequestInFlight) {
+      return;
+    }
+
+    this.incidentsRequestInFlight = true;
+
+    if (showLoading) {
+      this.loadingSignal.set(true);
+      this.errorSignal.set(null);
+    }
     forkJoin({
       incidents: this.alertsApi.getIncidents(),
       notifications: this.alertsApi.getNotifications(),
@@ -104,7 +134,7 @@ export class AlertsStore {
     })
       .pipe(
         switchMap(({ incidents, notifications, readings, assets, settings }) => {
-          const generatedIncidents = this.generatedThermalIncidentsFrom(
+          const generatedIncidents = this.generatedParameterIncidentsFrom(
             incidents,
             readings,
             assets,
@@ -113,8 +143,8 @@ export class AlertsStore {
 
           const incidentsRequest = generatedIncidents.length
             ? forkJoin(
-              generatedIncidents.map((incident) => this.createIncidentWithRetry(incident)),
-            ).pipe(map((createdIncidents) => [...incidents, ...createdIncidents]))
+                generatedIncidents.map((incident) => this.createIncidentWithRetry(incident)),
+              ).pipe(map((createdIncidents) => [...incidents, ...createdIncidents]))
             : of(incidents);
 
           return incidentsRequest.pipe(
@@ -147,11 +177,19 @@ export class AlertsStore {
         next: ({ incidents, notifications }) => {
           this.incidentsSignal.set(incidents);
           this.notificationsSignal.set(notifications);
-          this.loadingSignal.set(false);
+          if (showLoading) {
+            this.loadingSignal.set(false);
+          }
+          this.incidentsRequestInFlight = false;
         },
         error: (error) => {
-          this.errorSignal.set(error.message);
-          this.loadingSignal.set(false);
+          if (showLoading) {
+            this.errorSignal.set(error.message);
+          }
+          if (showLoading) {
+            this.loadingSignal.set(false);
+          }
+          this.incidentsRequestInFlight = false;
         },
       });
   }
@@ -226,6 +264,58 @@ export class AlertsStore {
         error: () => {
           this.closingIdSignal.set(null);
           this.feedbackSignal.set('alerts.incident-list.feedback-error');
+        },
+      }),
+    );
+  }
+
+  /**
+   * @summary Registers an in-range reading for the incident asset and marks the condition as stable.
+   */
+  stabilizeIncident(incident: Incident): Observable<Incident> {
+    this.stabilizingIdSignal.set(incident.id);
+    this.feedbackSignal.set(null);
+
+    return forkJoin({
+      assets: this.assetManagementApi.getAssets(),
+      iotDevices: this.assetManagementApi.getIoTDevices(),
+      settings: this.assetManagementApi.getAssetSettings(),
+      readings: this.monitoringApi.getSensorReadings(),
+    }).pipe(
+      switchMap(({ assets, iotDevices, settings, readings }) => {
+        const reading = this.stableReadingForIncident(
+          incident,
+          assets,
+          iotDevices,
+          settings,
+          readings,
+        );
+
+        if (!reading) {
+          return throwError(() => new Error('missing-stabilization-context'));
+        }
+
+        const stabilized = this.incidentWith(incident, { conditionStable: true });
+
+        return this.monitoringApi
+          .createSensorReading(reading)
+          .pipe(switchMap(() => this.updateIncidentWithRetry(stabilized)));
+      }),
+      tap({
+        next: (updated) => {
+          this.incidentsSignal.update((current) =>
+            current.map((i) => (i.id === updated.id ? updated : i)),
+          );
+          this.stabilizingIdSignal.set(null);
+          this.feedbackSignal.set('alerts.incident-list.feedback-stabilized');
+        },
+        error: (error) => {
+          this.stabilizingIdSignal.set(null);
+          this.feedbackSignal.set(
+            error instanceof Error && error.message === 'missing-stabilization-context'
+              ? 'alerts.incident-list.feedback-stabilize-missing-device'
+              : 'alerts.incident-list.feedback-stabilize-error',
+          );
         },
       }),
     );
@@ -335,6 +425,98 @@ export class AlertsStore {
     return this.alertsApi.createNotification(notification).pipe(retry({ count: 2, delay: 250 }));
   }
 
+  private isNotificationForOpenIncident(notification: Notification): boolean {
+    return (
+      this.incidents().find((incident) => incident.id === notification.incidentId)?.isOpen ?? false
+    );
+  }
+
+  private stableReadingForIncident(
+    incident: Incident,
+    assets: Asset[],
+    iotDevices: IoTDevice[],
+    settings: AssetSettings[],
+    readings: SensorReading[],
+  ): SensorReading | null {
+    const asset = assets.find((currentAsset) => currentAsset.id === incident.assetId);
+
+    if (!asset) {
+      return null;
+    }
+
+    const device = this.monitoringDeviceForIncident(incident, iotDevices);
+    const assetSettings = this.settingsForAsset(asset, settings);
+
+    if (!device || !assetSettings) {
+      return null;
+    }
+
+    const parameters = device.measurementParameters;
+
+    return new SensorReading(
+      Math.max(...readings.map((reading) => reading.id), 0) + 1,
+      asset.id,
+      device.id,
+      parameters.includes('temperature') ? this.stableTemperatureFor(assetSettings) : null,
+      parameters.includes('humidity') ? this.stableHumidityFor(assetSettings) : null,
+      false,
+      new Date().toISOString(),
+      parameters.includes('motion') ? false : null,
+      parameters.includes('image') ? false : null,
+      parameters.includes('battery') ? 80 : null,
+      parameters.includes('signal') ? 85 : null,
+    );
+  }
+
+  private monitoringDeviceForIncident(
+    incident: Incident,
+    iotDevices: IoTDevice[],
+  ): IoTDevice | null {
+    const devices = iotDevices.filter(
+      (iotDevice) =>
+        iotDevice.assetId === incident.assetId && iotDevice.status !== IoTDeviceStatus.Offline,
+    );
+    const preferredParameter = this.preferredParameterForIncident(incident);
+
+    return (
+      devices.find(
+        (iotDevice) =>
+          preferredParameter !== null &&
+          iotDevice.measurementParameters.includes(preferredParameter),
+      ) ??
+      devices[0] ??
+      null
+    );
+  }
+
+  private preferredParameterForIncident(incident: Incident): string | null {
+    if (incident.type === 'temperature') {
+      return 'temperature';
+    }
+
+    if (incident.type === 'humidity') {
+      return 'humidity';
+    }
+
+    if (incident.type === 'connectivity' || incident.conditionKey === 'low-signal') {
+      return 'signal';
+    }
+
+    if (incident.conditionKey === 'low-battery') {
+      return 'battery';
+    }
+
+    return null;
+  }
+
+  private stableTemperatureFor(settings: AssetSettings): number {
+    return Number(((settings.minimumTemperature + settings.maximumTemperature) / 2).toFixed(1));
+  }
+
+  private stableHumidityFor(settings: AssetSettings): number {
+    return Math.max(0, Math.min(settings.maximumHumidity - 5, 65));
+  }
+
   private applyEscalationPolicies(incidents: Incident[]): Observable<Incident[]> {
     const updates = this.escalationUpdatesFrom(incidents);
 
@@ -342,13 +524,10 @@ export class AlertsStore {
       return of(incidents);
     }
 
-    return forkJoin(
-      updates.map((incident) => this.updateIncidentWithRetry(incident)),
-    ).pipe(
+    return forkJoin(updates.map((incident) => this.updateIncidentWithRetry(incident))).pipe(
       map((updatedIncidents) =>
         incidents.map(
-          (incident) =>
-            updatedIncidents.find((updated) => updated.id === incident.id) ?? incident,
+          (incident) => updatedIncidents.find((updated) => updated.id === incident.id) ?? incident,
         ),
       ),
     );
@@ -377,12 +556,12 @@ export class AlertsStore {
     if (!incident.isOpen) {
       return incident.escalationStatus === 'pending-configuration'
         ? this.incidentWith(incident, {
-          escalationStatus: 'none',
-          escalationLevel: 0,
-          escalationPolicyMinutes: this.escalationPolicyFor(incident)?.waitingMinutes ?? null,
-          escalatedAt: null,
-          escalatedTo: null,
-        })
+            escalationStatus: 'none',
+            escalationLevel: 0,
+            escalationPolicyMinutes: this.escalationPolicyFor(incident)?.waitingMinutes ?? null,
+            escalatedAt: null,
+            escalatedTo: null,
+          })
         : null;
     }
 
@@ -448,14 +627,14 @@ export class AlertsStore {
     );
   }
 
-  private generatedThermalIncidentsFrom(
+  private generatedParameterIncidentsFrom(
     incidents: Incident[],
     readings: SensorReading[],
     assets: Asset[],
     settings: AssetSettings[],
   ): Incident[] {
     const candidates = [
-      ...this.latestThermalCandidates(readings, assets, settings),
+      ...this.latestParameterCandidates(readings, assets, settings),
       ...this.pendingReviewCandidates(readings, assets, settings),
     ];
     let nextId = Math.max(...incidents.map((incident) => incident.id), 0) + 1;
@@ -509,23 +688,17 @@ export class AlertsStore {
     incidents: Incident[],
     notifications: Notification[],
   ): Notification[] {
-    const notificationChannels = [
-      NotificationChannel.App,
-      NotificationChannel.Email,
-      NotificationChannel.Sms,
-    ];
     let nextId = Math.max(...notifications.map((notification) => notification.id), 0) + 1;
 
     return incidents
-      .filter((incident) => incident.severity === 'critical' && !incident.isClosed)
+      .filter((incident) => incident.isOpen)
       .flatMap((incident) =>
-        notificationChannels
+        this.notificationChannelsForIncident(incident)
           .filter(
             (channel) =>
               !notifications.some(
                 (notification) =>
-                  notification.incidentId === incident.id &&
-                  notification.channel === channel,
+                  notification.incidentId === incident.id && notification.channel === channel,
               ),
           )
           .map((channel) => {
@@ -551,7 +724,7 @@ export class AlertsStore {
       incident.assetName,
       channel,
       this.notificationRecipientFor(channel),
-      `${incident.assetName} reported ${incident.value} and requires attention.`,
+      this.notificationMessageFor(incident),
       status,
       createdAt,
       status === NotificationStatus.Sent ? this.plusMinutes(createdAt, 2) : null,
@@ -559,6 +732,20 @@ export class AlertsStore {
         ? 'Recipient phone is not configured for SMS alerts.'
         : null,
     );
+  }
+
+  private notificationChannelsForIncident(incident: Incident): NotificationChannel[] {
+    if (incident.severity === 'critical') {
+      return [NotificationChannel.App, NotificationChannel.Email, NotificationChannel.Sms];
+    }
+
+    return [NotificationChannel.App];
+  }
+
+  private notificationMessageFor(incident: Incident): string {
+    const severity = incident.severity === 'critical' ? 'Critical alert' : 'Warning alert';
+
+    return `${severity}: ${incident.assetName} reported ${incident.value} and requires attention.`;
   }
 
   private notificationStatusFor(channel: NotificationChannel): NotificationStatus {
@@ -591,23 +778,15 @@ export class AlertsStore {
     return date.toISOString();
   }
 
-  private latestThermalCandidates(
+  private latestParameterCandidates(
     readings: SensorReading[],
     assets: Asset[],
     settings: AssetSettings[],
-  ): {
-    reading: SensorReading;
-    asset: Asset;
-    type: 'temperature';
-    conditionKey: ThermalConditionKey;
-    severity: 'warning' | 'critical';
-    value: string;
-    reviewStatus: 'complete';
-  }[] {
+  ): GeneratedIncidentCandidate[] {
     const latestByAsset = new Map<number, { reading: SensorReading; asset: Asset }>();
 
     readings
-      .filter((reading) => reading.temperature !== null)
+      .filter((reading) => reading.isOutOfRange)
       .forEach((reading) => {
         const asset = assets.find((currentAsset) => currentAsset.id === reading.assetId);
 
@@ -623,58 +802,95 @@ export class AlertsStore {
       });
 
     return [...latestByAsset.values()]
-      .map(({ reading, asset }) => {
+      .flatMap(({ reading, asset }) => {
         const assetSettings = this.settingsForAsset(asset, settings);
 
-        if (!assetSettings || reading.temperature === null) {
-          return null;
-        }
+        return this.conditionCandidatesForReading(reading, asset, assetSettings);
+      })
+      .sort((a, b) => b.reading.recordedAt.localeCompare(a.reading.recordedAt));
+  }
 
-        const conditionKey = this.temperatureConditionKey(reading.temperature, assetSettings);
+  private conditionCandidatesForReading(
+    reading: SensorReading,
+    asset: Asset,
+    assetSettings: AssetSettings | undefined,
+  ): GeneratedIncidentCandidate[] {
+    const candidates: GeneratedIncidentCandidate[] = [];
 
-        if (!conditionKey) {
-          return null;
-        }
+    if (assetSettings && reading.temperature !== null) {
+      const conditionKey = this.temperatureConditionKey(reading.temperature, assetSettings);
 
-        return {
+      if (conditionKey) {
+        candidates.push({
           reading,
           asset,
-          type: 'temperature' as const,
+          type: 'temperature',
           conditionKey,
           severity: this.thermalSeverity(reading.temperature, assetSettings),
           value: `${reading.temperature}${assetSettings.temperatureUnit}`,
-          reviewStatus: 'complete' as const,
-        };
-      })
-      .filter((candidate): candidate is {
-        reading: SensorReading;
-        asset: Asset;
-        type: 'temperature';
-        conditionKey: ThermalConditionKey;
-        severity: 'warning' | 'critical';
-        value: string;
-        reviewStatus: 'complete';
-      } => candidate !== null)
-      .sort((a, b) => b.reading.recordedAt.localeCompare(a.reading.recordedAt));
+          reviewStatus: 'complete',
+        });
+      }
+    }
+
+    if (
+      assetSettings &&
+      reading.humidity !== null &&
+      reading.humidity > assetSettings.maximumHumidity
+    ) {
+      candidates.push({
+        reading,
+        asset,
+        type: 'humidity',
+        conditionKey: 'high-humidity',
+        severity: this.humiditySeverity(reading.humidity, assetSettings),
+        value: `${reading.humidity}${assetSettings.humidityUnit}`,
+        reviewStatus: 'complete',
+      });
+    }
+
+    if (reading.batteryLevel !== null && reading.batteryLevel < 15) {
+      candidates.push({
+        reading,
+        asset,
+        type: 'other',
+        conditionKey: 'low-battery',
+        severity: reading.batteryLevel < 10 ? 'critical' : 'warning',
+        value: `${reading.batteryLevel}% battery`,
+        reviewStatus: 'complete',
+      });
+    }
+
+    if (reading.signalStrength !== null && reading.signalStrength < 35) {
+      candidates.push({
+        reading,
+        asset,
+        type: 'connectivity',
+        conditionKey: 'low-signal',
+        severity: reading.signalStrength < 30 ? 'critical' : 'warning',
+        value: `${reading.signalStrength}% signal`,
+        reviewStatus: 'complete',
+      });
+    }
+
+    return candidates;
+  }
+
+  private humiditySeverity(humidity: number, settings: AssetSettings): 'warning' | 'critical' {
+    return humidity - settings.maximumHumidity >= 5 ? 'critical' : 'warning';
   }
 
   private pendingReviewCandidates(
     readings: SensorReading[],
     assets: Asset[],
     settings: AssetSettings[],
-  ): {
-    reading: SensorReading;
-    asset: Asset;
-    type: 'other';
-    conditionKey: 'thermal-configuration-pending';
-    severity: 'warning';
-    value: string;
-    reviewStatus: 'pending-review';
-  }[] {
+  ): GeneratedIncidentCandidate[] {
     const latestByAsset = new Map<number, { reading: SensorReading; asset: Asset }>();
 
     readings
-      .filter((reading) => reading.isOutOfRange && reading.temperature !== null)
+      .filter((reading) => {
+        return reading.isOutOfRange && (reading.temperature !== null || reading.humidity !== null);
+      })
       .forEach((reading) => {
         const asset = assets.find((currentAsset) => currentAsset.id === reading.assetId);
 
@@ -695,7 +911,7 @@ export class AlertsStore {
       type: 'other',
       conditionKey: 'thermal-configuration-pending',
       severity: 'warning',
-      value: 'Pending thermal range',
+      value: 'Pending safety range',
       reviewStatus: 'pending-review',
     }));
   }
@@ -715,10 +931,7 @@ export class AlertsStore {
     });
   }
 
-  private conditionKeyForIncident(
-    incident: Incident,
-    settings: AssetSettings[],
-  ): string | null {
+  private conditionKeyForIncident(incident: Incident, settings: AssetSettings[]): string | null {
     if (incident.conditionKey) {
       return incident.conditionKey;
     }
@@ -741,8 +954,7 @@ export class AlertsStore {
     return (
       settings.find((setting) => setting.assetId === asset.id) ??
       settings.find(
-        (setting) =>
-          setting.organizationId === asset.organizationId && setting.assetId === null,
+        (setting) => setting.organizationId === asset.organizationId && setting.assetId === null,
       )
     );
   }
@@ -750,7 +962,7 @@ export class AlertsStore {
   private temperatureConditionKey(
     temperature: number,
     settings: AssetSettings,
-  ): ThermalConditionKey | null {
+  ): Extract<ReadingConditionKey, 'high-temperature' | 'low-temperature'> | null {
     if (temperature > settings.maximumTemperature) {
       return 'high-temperature';
     }
@@ -762,10 +974,7 @@ export class AlertsStore {
     return null;
   }
 
-  private thermalSeverity(
-    temperature: number,
-    settings: AssetSettings,
-  ): 'warning' | 'critical' {
+  private thermalSeverity(temperature: number, settings: AssetSettings): 'warning' | 'critical' {
     const upperDelta = temperature - settings.maximumTemperature;
     const lowerDelta = settings.minimumTemperature - temperature;
     const deviation = Math.max(upperDelta, lowerDelta);

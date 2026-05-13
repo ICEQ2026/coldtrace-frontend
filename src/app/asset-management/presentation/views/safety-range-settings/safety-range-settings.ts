@@ -52,6 +52,13 @@ export class SafetyRangeSettings implements OnInit {
   protected readonly iotDevices = signal<IoTDevice[]>([]);
   protected readonly gateways = signal<Gateway[]>([]);
   protected readonly assetSettings = signal<AssetSettings[]>([]);
+  protected readonly selectedMinimumTemperature = signal(
+    DEFAULT_ASSET_SETTING_VALUES.minimumTemperature,
+  );
+  protected readonly selectedMaximumTemperature = signal(
+    DEFAULT_ASSET_SETTING_VALUES.maximumTemperature,
+  );
+  protected readonly selectedMaximumHumidity = signal(DEFAULT_ASSET_SETTING_VALUES.maximumHumidity);
 
   protected readonly rangeForm = this.fb.nonNullable.group({
     minimumTemperature: [DEFAULT_ASSET_SETTING_VALUES.minimumTemperature, [Validators.required]],
@@ -75,44 +82,26 @@ export class SafetyRangeSettings implements OnInit {
     return this.identityAccessStore.currentRoleFrom(this.users(), this.roles());
   });
   protected readonly canManageSafetyRanges = computed(() => {
-    return this.identityAccessStore
-      .permissionKeysForRole(this.currentRole())
-      .includes('roles-permissions.permissions.manage-assets');
+    return this.identityAccessStore.canManageAssets(this.users(), this.roles());
   });
   protected readonly organizationAssets = computed(() => {
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      return [];
-    }
-
-    return this.assets().filter((asset) => asset.organizationId === organizationId);
+    return this.assetManagementStore.assetsForOrganization(
+      this.activeOrganizationId(),
+      this.assets(),
+    );
   });
   protected readonly monitoredAssets = computed(() => {
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      return [];
-    }
-
-    const monitoredAssetIds = new Set(
-      this.iotDevices()
-        .filter(
-          (iotDevice) => iotDevice.organizationId === organizationId && iotDevice.assetId !== null,
-        )
-        .map((iotDevice) => iotDevice.assetId as number),
+    return this.assetManagementStore.monitoredAssetsForOrganization(
+      this.activeOrganizationId(),
+      this.assets(),
+      this.iotDevices(),
     );
-
-    return this.organizationAssets().filter((asset) => monitoredAssetIds.has(asset.id));
   });
   protected readonly organizationSettings = computed(() => {
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      return [];
-    }
-
-    return this.assetSettings().filter((settings) => settings.organizationId === organizationId);
+    return this.assetManagementStore.assetSettingsForOrganization(
+      this.activeOrganizationId(),
+      this.assetSettings(),
+    );
   });
   protected readonly assetSpecificSettingsCount = computed(() => {
     return this.organizationSettings().filter((settings) => settings.assetId !== null).length;
@@ -129,10 +118,24 @@ export class SafetyRangeSettings implements OnInit {
   protected readonly selectedSettings = computed(() => {
     return this.settingsForSelectedScope() ?? this.defaultSettingsForSelectedScope();
   });
-  protected readonly selectedRangeLabel = computed(() => {
+  protected readonly currentRangeLabel = computed(() => {
     const settings = this.selectedSettings();
 
-    return `${settings.minimumTemperature}${settings.temperatureUnit} - ${settings.maximumTemperature}${settings.temperatureUnit}`;
+    return this.temperatureRangeLabel(
+      settings.minimumTemperature,
+      settings.maximumTemperature,
+      settings.temperatureUnit,
+    );
+  });
+  protected readonly selectedRangeLabel = computed(() => {
+    return this.temperatureRangeLabel(
+      this.selectedMinimumTemperature(),
+      this.selectedMaximumTemperature(),
+      this.selectedSettings().temperatureUnit,
+    );
+  });
+  protected readonly selectedHumidityLabel = computed(() => {
+    return this.humidityLabel(this.selectedMaximumHumidity(), this.selectedSettings().humidityUnit);
   });
   protected readonly currentProfiles = computed(() => {
     return this.organizationSettings().sort((a, b) => {
@@ -173,9 +176,7 @@ export class SafetyRangeSettings implements OnInit {
           this.iotDevices.set(iotDevices);
           this.gateways.set(gateways);
           this.assetSettings.set(assetSettings);
-          this.identityAccessStore.setCurrentRoleFrom(users, roles);
-          this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
-          this.identityAccessStore.initializeRolePermissions(roles);
+          this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
           this.resetRangeForm();
         },
         error: () => this.feedback.set('server-error'),
@@ -187,6 +188,18 @@ export class SafetyRangeSettings implements OnInit {
     this.feedback.set('idle');
     this.submitted.set(false);
     this.resetRangeForm();
+  }
+
+  protected updateMinimumTemperaturePreview(value: string): void {
+    this.selectedMinimumTemperature.set(this.numberFromInput(value));
+  }
+
+  protected updateMaximumTemperaturePreview(value: string): void {
+    this.selectedMaximumTemperature.set(this.numberFromInput(value));
+  }
+
+  protected updateMaximumHumidityPreview(value: string): void {
+    this.selectedMaximumHumidity.set(this.numberFromInput(value));
   }
 
   protected saveRangeSettings(): void {
@@ -256,6 +269,9 @@ export class SafetyRangeSettings implements OnInit {
       maximumTemperature: settings.maximumTemperature,
       maximumHumidity: settings.maximumHumidity,
     });
+    this.selectedMinimumTemperature.set(settings.minimumTemperature);
+    this.selectedMaximumTemperature.set(settings.maximumTemperature);
+    this.selectedMaximumHumidity.set(settings.maximumHumidity);
     this.rangeForm.markAsPristine();
   }
 
@@ -354,6 +370,28 @@ export class SafetyRangeSettings implements OnInit {
     }
 
     return `CFG-${organizationPart}-A${assetId.toString().padStart(3, '0')}`;
+  }
+
+  private temperatureRangeLabel(
+    minimumTemperature: number,
+    maximumTemperature: number,
+    temperatureUnit: string,
+  ): string {
+    if (!Number.isFinite(minimumTemperature) || !Number.isFinite(maximumTemperature)) {
+      return 'N/A';
+    }
+
+    return `${minimumTemperature}${temperatureUnit} - ${maximumTemperature}${temperatureUnit}`;
+  }
+
+  private humidityLabel(maximumHumidity: number, humidityUnit: string): string {
+    return Number.isFinite(maximumHumidity) ? `${maximumHumidity}${humidityUnit}` : 'N/A';
+  }
+
+  private numberFromInput(value: string): number {
+    const numericValue = Number(value);
+
+    return value.trim() && Number.isFinite(numericValue) ? numericValue : Number.NaN;
   }
 
   private upsertLocalSettings(settings: AssetSettings): void {

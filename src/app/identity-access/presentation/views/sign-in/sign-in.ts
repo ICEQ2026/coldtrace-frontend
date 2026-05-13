@@ -68,8 +68,7 @@ export class SignIn {
 
           if (validCredentials && currentUser) {
             this.identityAccessStore.setCurrentUser(currentUser);
-            this.identityAccessStore.setCurrentRoleFrom(users, roles);
-            this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
+            this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
             this.submitted.set(false);
             void this.router.navigate(['/identity-access/dashboard']);
           }

@@ -85,18 +85,13 @@ export class TechnicalServiceTracker implements OnInit {
     return this.identityAccessStore.currentRoleFrom(this.users(), this.roles());
   });
   protected readonly canManageTechnicalService = computed(() => {
-    return this.identityAccessStore
-      .permissionKeysForRole(this.currentRole())
-      .includes('roles-permissions.permissions.manage-assets');
+    return this.identityAccessStore.canManageAssets(this.users(), this.roles());
   });
   protected readonly organizationAssets = computed(() => {
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      return [];
-    }
-
-    return this.assets().filter((asset) => asset.organizationId === organizationId);
+    return this.assetManagementStore.assetsForOrganization(
+      this.activeOrganizationId(),
+      this.assets(),
+    );
   });
   protected readonly serviceEligibleAssets = computed(() => {
     return this.organizationAssets().filter((asset) => {
@@ -156,9 +151,7 @@ export class TechnicalServiceTracker implements OnInit {
           this.organizations.set(organizations);
           this.assets.set(assets);
           this.technicalServiceRequests.set(technicalServiceRequests);
-          this.identityAccessStore.setCurrentRoleFrom(users, roles);
-          this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
-          this.identityAccessStore.initializeRolePermissions(roles);
+          this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
           this.resetRequestForm();
           this.resetClosureForm();
         },

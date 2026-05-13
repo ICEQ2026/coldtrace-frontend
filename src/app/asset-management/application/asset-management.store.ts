@@ -63,47 +63,51 @@ export class AssetManagementStore {
   /**
    * @summary Returns assets scoped to one organization.
    */
-  assetsForOrganization(organizationId: number | null): Asset[] {
+  assetsForOrganization(organizationId: number | null, assets = this.assets()): Asset[] {
     if (!organizationId) {
       return [];
     }
 
-    return this.assets().filter((asset) => asset.organizationId === organizationId);
+    return assets.filter((asset) => asset.organizationId === organizationId);
   }
 
   /**
    * @summary Returns IoT devices scoped to one organization.
    */
-  iotDevicesForOrganization(organizationId: number | null): IoTDevice[] {
+  iotDevicesForOrganization(
+    organizationId: number | null,
+    iotDevices = this.iotDevices(),
+  ): IoTDevice[] {
     if (!organizationId) {
       return [];
     }
 
-    return this.iotDevices().filter((iotDevice) => iotDevice.organizationId === organizationId);
+    return iotDevices.filter((iotDevice) => iotDevice.organizationId === organizationId);
   }
 
   /**
    * @summary Returns gateways scoped to one organization.
    */
-  gatewaysForOrganization(organizationId: number | null): Gateway[] {
+  gatewaysForOrganization(organizationId: number | null, gateways = this.gateways()): Gateway[] {
     if (!organizationId) {
       return [];
     }
 
-    return this.gateways().filter((gateway) => gateway.organizationId === organizationId);
+    return gateways.filter((gateway) => gateway.organizationId === organizationId);
   }
 
   /**
    * @summary Returns asset settings scoped to one organization.
    */
-  assetSettingsForOrganization(organizationId: number | null): AssetSettings[] {
+  assetSettingsForOrganization(
+    organizationId: number | null,
+    assetSettings = this.assetSettings(),
+  ): AssetSettings[] {
     if (!organizationId) {
       return [];
     }
 
-    return this.assetSettings().filter(
-      (assetSettings) => assetSettings.organizationId === organizationId,
-    );
+    return assetSettings.filter((settings) => settings.organizationId === organizationId);
   }
 
   /**
@@ -134,6 +138,35 @@ export class AssetManagementStore {
     }
 
     return gateways.find((gateway) => gateway.id === gatewayId)?.location ?? null;
+  }
+
+  /**
+   * @summary Returns assets that have at least one monitoring device assigned.
+   */
+  monitoredAssetsForOrganization(
+    organizationId: number | null,
+    assets = this.assets(),
+    iotDevices = this.iotDevices(),
+  ): Asset[] {
+    const organizationAssets = this.assetsForOrganization(organizationId, assets);
+    const monitoredAssetIds = new Set(
+      this.iotDevicesForOrganization(organizationId, iotDevices)
+        .filter((iotDevice) => iotDevice.assetId !== null)
+        .map((iotDevice) => iotDevice.assetId),
+    );
+
+    return organizationAssets.filter((asset) => monitoredAssetIds.has(asset.id));
+  }
+
+  /**
+   * @summary Returns monitoring devices assigned to one asset.
+   */
+  iotDevicesForAsset(assetId: number | null, iotDevices = this.iotDevices()): IoTDevice[] {
+    if (!assetId) {
+      return [];
+    }
+
+    return iotDevices.filter((iotDevice) => iotDevice.assetId === assetId);
   }
 
   /**

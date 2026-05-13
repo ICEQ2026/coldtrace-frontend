@@ -57,6 +57,13 @@ export class AssetMonitoringDashboard implements OnInit {
   protected readonly activeOrganizationId = computed(() => {
     return this.identityStore.currentOrganizationIdFrom(this.identityStore.users());
   });
+  protected readonly canMonitorAssets = computed(() => {
+    return this.identityStore.canMonitorAssets(
+      this.identityStore.users(),
+      this.identityStore.roles(),
+    );
+  });
+  protected readonly identityDataReady = computed(() => this.identityStore.roles().length > 0);
 
   protected readonly filteredItems = computed<AssetMonitoringItem[]>(() => {
     const query = this.searchTerm().trim().toLowerCase();

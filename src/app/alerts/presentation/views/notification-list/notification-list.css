@@ -28,15 +28,17 @@
 
 .view-subtitle,
 .notification-subtitle {
-  color: #6B7280;
+  color: #6b7280;
   font-size: 13px;
   margin: 0;
 }
 
 .premium-card {
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 14px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
 }
 
 .notification-card {
@@ -72,9 +74,9 @@
 }
 
 .notification-count {
-  background: #EEF2FF;
+  background: #eef2ff;
   border-radius: 20px;
-  color: #3B66F5;
+  color: #3b66f5;
   font-size: 11px;
   font-weight: 700;
   padding: 4px 10px;
@@ -82,13 +84,29 @@
 }
 
 .notification-count.pending {
-  background: #FEF3C7;
-  color: #B45309;
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.notification-count.active {
+  background: #e0f2fe;
+  color: #0369a1;
 }
 
 .notification-count.failed {
-  background: #FEE2E2;
-  color: #DC2626;
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.notification-feedback {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 14px;
+  padding: 10px 12px;
 }
 
 .notification-list {
@@ -98,7 +116,7 @@
 
 .notification-row {
   align-items: center;
-  border: 1px solid #F3F4F6;
+  border: 1px solid #f3f4f6;
   border-radius: 8px;
   display: grid;
   gap: 12px;
@@ -122,18 +140,18 @@
 }
 
 .channel-app {
-  background: #DBEAFE;
-  color: #1D4ED8;
+  background: #dbeafe;
+  color: #1d4ed8;
 }
 
 .channel-email {
-  background: #ECFDF5;
+  background: #ecfdf5;
   color: #047857;
 }
 
 .channel-sms {
-  background: #FEF3C7;
-  color: #B45309;
+  background: #fef3c7;
+  color: #b45309;
 }
 
 .notification-content {
@@ -156,34 +174,49 @@
 .notification-title-line small,
 .notification-content small,
 .notification-state small {
-  color: #9CA3AF;
+  color: #9ca3af;
   font-size: 11px;
   font-weight: 600;
 }
 
 .notification-title-line .notification-escalation {
   border-radius: 999px;
-  color: #4B5563;
+  color: #4b5563;
   padding: 2px 8px;
 }
 
+.notification-title-line .notification-severity {
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+
+.notification-title-line .notification-critical {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.notification-title-line .notification-warning {
+  background: #fef3c7;
+  color: #b45309;
+}
+
 .notification-title-line .notification-escalated {
-  background: #FEE2E2;
-  color: #DC2626;
+  background: #fee2e2;
+  color: #dc2626;
 }
 
 .notification-title-line .notification-escalation-pending {
-  background: #FEF3C7;
-  color: #B45309;
+  background: #fef3c7;
+  color: #b45309;
 }
 
 .notification-title-line .notification-escalation-reviewed {
-  background: #DCFCE7;
-  color: #15803D;
+  background: #dcfce7;
+  color: #15803d;
 }
 
 .notification-content p {
-  color: #4B5563;
+  color: #4b5563;
   font-size: 12px;
   margin: 3px 0;
 }
@@ -193,6 +226,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 148px;
 }
 
 .notification-status {
@@ -203,24 +237,43 @@
 }
 
 .notification-sent {
-  background: #DCFCE7;
-  color: #15803D;
+  background: #dcfce7;
+  color: #15803d;
 }
 
 .notification-pending {
-  background: #FEF3C7;
-  color: #B45309;
+  background: #fef3c7;
+  color: #b45309;
 }
 
 .notification-failed {
-  background: #FEE2E2;
-  color: #DC2626;
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.attend-action {
+  border-color: #c7d2fe !important;
+  border-radius: 8px !important;
+  color: #2563eb !important;
+  font-size: 11px;
+  font-weight: 800;
+  height: 34px;
+  line-height: 34px;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+.attend-action mat-icon {
+  font-size: 16px;
+  height: 16px;
+  margin-right: 4px;
+  width: 16px;
 }
 
 .notification-empty,
 .loading-container {
   align-items: center;
-  color: #9CA3AF;
+  color: #9ca3af;
   display: flex;
   justify-content: center;
 }

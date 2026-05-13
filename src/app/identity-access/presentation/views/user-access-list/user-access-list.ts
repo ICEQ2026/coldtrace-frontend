@@ -95,7 +95,7 @@ export class UserAccessList implements OnInit {
     this.identityAccessStore.currentRoleLabelKeyFrom(this.users(), this.roles()),
   );
   protected readonly canManageAccess = computed(() =>
-    this.identityAccessStore.canManageAccess(this.users(), this.roles()),
+    this.identityAccessStore.canManageUsers(this.users(), this.roles()),
   );
 
   protected readonly pendingChangeCount = computed(
@@ -231,9 +231,7 @@ export class UserAccessList implements OnInit {
           this.users.set(users);
           this.roles.set(roles);
           this.organizations.set(organizations);
-          this.identityAccessStore.setCurrentRoleFrom(users, roles);
-          this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
-          this.identityAccessStore.initializeRolePermissions(roles);
+          this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
         },
         error: () => this.feedback.set('server-error'),
       });

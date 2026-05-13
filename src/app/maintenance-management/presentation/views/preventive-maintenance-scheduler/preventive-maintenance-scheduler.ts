@@ -78,27 +78,19 @@ export class PreventiveMaintenanceScheduler implements OnInit {
     return this.identityAccessStore.currentRoleFrom(this.users(), this.roles());
   });
   protected readonly canScheduleMaintenance = computed(() => {
-    return this.identityAccessStore
-      .permissionKeysForRole(this.currentRole())
-      .includes('roles-permissions.permissions.manage-assets');
+    return this.identityAccessStore.canManageAssets(this.users(), this.roles());
   });
   protected readonly organizationAssets = computed(() => {
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      return [];
-    }
-
-    return this.assets().filter((asset) => asset.organizationId === organizationId);
+    return this.assetManagementStore.assetsForOrganization(
+      this.activeOrganizationId(),
+      this.assets(),
+    );
   });
   protected readonly organizationIoTDevices = computed(() => {
-    const organizationId = this.activeOrganizationId();
-
-    if (!organizationId) {
-      return [];
-    }
-
-    return this.iotDevices().filter((iotDevice) => iotDevice.organizationId === organizationId);
+    return this.assetManagementStore.iotDevicesForOrganization(
+      this.activeOrganizationId(),
+      this.iotDevices(),
+    );
   });
   protected readonly organizationSchedules = computed(() => {
     const organizationId = this.activeOrganizationId();
@@ -120,13 +112,10 @@ export class PreventiveMaintenanceScheduler implements OnInit {
   protected readonly selectedAssetDevices = computed(() => {
     const selectedAssetId = Number(this.maintenanceForm.controls.assetId.value);
 
-    if (!selectedAssetId) {
-      return [];
-    }
-
-    return this.organizationIoTDevices().filter((iotDevice) => {
-      return iotDevice.assetId === selectedAssetId;
-    });
+    return this.assetManagementStore.iotDevicesForAsset(
+      selectedAssetId,
+      this.organizationIoTDevices(),
+    );
   });
 
   /**
@@ -159,9 +148,7 @@ export class PreventiveMaintenanceScheduler implements OnInit {
           this.assets.set(assets);
           this.iotDevices.set(iotDevices);
           this.maintenanceSchedules.set(maintenanceSchedules);
-          this.identityAccessStore.setCurrentRoleFrom(users, roles);
-          this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
-          this.identityAccessStore.initializeRolePermissions(roles);
+          this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
           this.resetScheduleForm();
         },
         error: () => this.feedback.set('server-error'),

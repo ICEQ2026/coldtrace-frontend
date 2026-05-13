@@ -144,12 +144,9 @@ export class ColdRoomList implements OnInit {
   protected readonly canManageAccess = computed(() =>
     this.identityAccessStore.canManageAccess(this.users(), this.roles()),
   );
-  protected readonly canManageAssets = computed(() => {
-    const role = this.identityAccessStore.currentRoleFrom(this.users(), this.roles());
-    return this.identityAccessStore
-      .permissionKeysForRole(role)
-      .includes('roles-permissions.permissions.manage-assets');
-  });
+  protected readonly canManageAssets = computed(() =>
+    this.identityAccessStore.canManageAssets(this.users(), this.roles()),
+  );
   protected readonly selectedAssetType = computed(() => {
     return this.selectedTab() === AssetType.Transport ? AssetType.Transport : AssetType.ColdRoom;
   });
@@ -282,9 +279,7 @@ export class ColdRoomList implements OnInit {
           this.users.set(users);
           this.roles.set(roles);
           this.organizations.set(organizations);
-          this.identityAccessStore.setCurrentRoleFrom(users, roles);
-          this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
-          this.identityAccessStore.initializeRolePermissions(roles);
+          this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
         },
         error: () => this.feedback.set('server-error'),
       });
