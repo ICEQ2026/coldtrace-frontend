@@ -2,6 +2,9 @@ import { BaseEntity } from '../../../shared/domain/model/base-entity';
 import { NotificationChannel } from './notification-channel.enum';
 import { NotificationStatus } from './notification-status.enum';
 
+/**
+ * @summary Represents a notification in the alerts bounded context.
+ */
 export class Notification implements BaseEntity {
   constructor(
     private _id: number,

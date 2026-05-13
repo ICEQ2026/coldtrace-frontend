@@ -1,6 +1,9 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 import { TechnicalServiceStatus } from './technical-service-status.enum';
 
+/**
+ * @summary Represents a technical service request in the maintenance management bounded context.
+ */
 export class TechnicalServiceRequest implements BaseEntity {
   constructor(
     private readonly _id: number,

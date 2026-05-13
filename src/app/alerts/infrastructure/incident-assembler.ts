@@ -2,7 +2,13 @@ import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { Incident } from '../domain/model/incident.entity';
 import { IncidentResource, IncidentsResponse } from './incident-resource';
 
+/**
+ * @summary Maps incident data between domain entities and API resources.
+ */
 export class IncidentAssembler implements BaseAssembler<Incident, IncidentResource, IncidentsResponse> {
+  /**
+   * @summary Maps one API resource into a domain entity.
+   */
   toEntityFromResource(resource: IncidentResource): Incident {
     return new Incident({
       id: Number(resource.id),
@@ -35,6 +41,9 @@ export class IncidentAssembler implements BaseAssembler<Incident, IncidentResour
     });
   }
 
+  /**
+   * @summary Maps one domain entity into an API resource.
+   */
   toResourceFromEntity(entity: Incident): IncidentResource {
     return {
       id: entity.id,
@@ -67,6 +76,9 @@ export class IncidentAssembler implements BaseAssembler<Incident, IncidentResour
     };
   }
 
+  /**
+   * @summary Maps an API response envelope into domain entities.
+   */
   toEntitiesFromResponse(response: IncidentsResponse): Incident[] {
     return response.incidents.map((resource) => this.toEntityFromResource(resource));
   }

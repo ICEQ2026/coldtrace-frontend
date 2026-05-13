@@ -2,15 +2,24 @@ import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { IoTDevice } from '../domain/model/iot-device.entity';
 import { IoTDeviceResource, IoTDevicesResponse } from './iot-devices-response';
 
+/**
+ * @summary Maps IoT device data between domain entities and API resources.
+ */
 export class IoTDeviceAssembler implements BaseAssembler<
   IoTDevice,
   IoTDeviceResource,
   IoTDevicesResponse
 > {
+  /**
+   * @summary Maps an API response envelope into domain entities.
+   */
   toEntitiesFromResponse(response: IoTDevicesResponse): IoTDevice[] {
     return response.iotDevices.map((resource) => this.toEntityFromResource(resource));
   }
 
+  /**
+   * @summary Maps one API resource into a domain entity.
+   */
   toEntityFromResource(resource: IoTDeviceResource): IoTDevice {
     return new IoTDevice(
       Number(resource.id),
@@ -29,6 +38,9 @@ export class IoTDeviceAssembler implements BaseAssembler<
     );
   }
 
+  /**
+   * @summary Maps one domain entity into an API resource.
+   */
   toResourceFromEntity(entity: IoTDevice): IoTDeviceResource {
     return {
       id: entity.id,

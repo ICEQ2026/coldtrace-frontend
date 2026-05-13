@@ -11,6 +11,9 @@ const operationalParametersSettings = () =>
     (m) => m.OperationalParametersSettings,
   );
 
+/**
+ * @summary Defines the lazy-loaded routes for the asset management bounded context.
+ */
 export const assetManagementRoutes: Routes = [
   {
     path: 'assets',

@@ -5,6 +5,9 @@ import { Asset } from '../domain/model/asset.entity';
 import { AssetAssembler } from './asset-assembler';
 import { AssetResource, AssetsResponse } from './assets-response';
 
+/**
+ * @summary Connects assets API endpoint resources to the generic API endpoint contract.
+ */
 export class AssetsApiEndpoint extends BaseApiEndpoint<
   Asset,
   AssetResource,

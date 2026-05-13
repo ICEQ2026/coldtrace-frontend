@@ -13,6 +13,9 @@ import { SensorReading } from '../domain/model/sensor-reading.entity';
 import { SyncStatus } from '../domain/model/sync-status.enum';
 import { MonitoringApi } from '../infrastructure/monitoring-api';
 
+/**
+ * @summary Manages monitoring state and workflows for presentation components.
+ */
 @Injectable({ providedIn: 'root' })
 export class MonitoringStore {
   private readonly readingsSignal = signal<SensorReading[]>([]);
@@ -57,6 +60,9 @@ export class MonitoringStore {
     private assetManagementStore: AssetManagementStore,
   ) {}
 
+  /**
+   * @summary Loads readings data into local state.
+   */
   loadReadings(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -73,6 +79,9 @@ export class MonitoringStore {
     });
   }
 
+  /**
+   * @summary Persists a sensor reading and appends it to local state.
+   */
   createSensorReading(sensorReading: SensorReading): Observable<SensorReading> {
     return this.monitoringApi.createSensorReading(sensorReading).pipe(
       tap((createdReading) => {
@@ -81,10 +90,16 @@ export class MonitoringStore {
     );
   }
 
+  /**
+   * @summary Calculates the next sensor reading id value.
+   */
   nextSensorReadingId(offset = 0): number {
     return Math.max(...this.readings().map((reading) => reading.id), 0) + 1 + offset;
   }
 
+  /**
+   * @summary Returns the latest temperature recorded for one asset.
+   */
   getLatestTemperatureByAsset(assetId: number): number | null {
     const sorted = this.readings()
       .filter((reading) => reading.assetId === assetId && reading.temperature !== null)
@@ -92,6 +107,9 @@ export class MonitoringStore {
     return sorted.length > 0 ? sorted[0].temperature : null;
   }
 
+  /**
+   * @summary Returns the latest humidity recorded for one asset.
+   */
   getLatestHumidityByAsset(assetId: number): number | null {
     const sorted = this.readings()
       .filter((reading) => reading.assetId === assetId && reading.humidity !== null)
@@ -99,6 +117,9 @@ export class MonitoringStore {
     return sorted.length > 0 ? sorted[0].humidity : null;
   }
 
+  /**
+   * @summary Returns sorted readings for an asset within an optional date range.
+   */
   getReadingsByAsset(assetId: number, from?: string, to?: string): SensorReading[] {
     return this.readings()
       .filter((reading) => {
@@ -111,6 +132,9 @@ export class MonitoringStore {
       .sort((a, b) => new Date(b.recordedAt).getTime() - new Date(a.recordedAt).getTime());
   }
 
+  /**
+   * @summary Returns sorted readings for a set of assets.
+   */
   readingsForAssetIds(assetIds: number[]): SensorReading[] {
     const assetIdSet = new Set(assetIds);
 
@@ -119,10 +143,16 @@ export class MonitoringStore {
       .sort((a, b) => new Date(b.recordedAt).getTime() - new Date(a.recordedAt).getTime());
   }
 
+  /**
+   * @summary Returns the latest readings for dashboard cards.
+   */
   recentReadingsForAssetIds(assetIds: number[], limit = 6): SensorReading[] {
     return this.readingsForAssetIds(assetIds).slice(0, limit);
   }
 
+  /**
+   * @summary Returns readings for assets recorded between a date and now.
+   */
   readingsForAssetIdsSince(assetIds: number[], since: Date): SensorReading[] {
     const sinceTime = since.getTime();
     const nowTime = Date.now();
@@ -133,10 +163,16 @@ export class MonitoringStore {
     });
   }
 
+  /**
+   * @summary Counts out-of-range readings for selected assets.
+   */
   outOfRangeCountForAssetIds(assetIds: number[]): number {
     return this.readingsForAssetIds(assetIds).filter((reading) => reading.isOutOfRange).length;
   }
 
+  /**
+   * @summary Calculates the percentage of in-range readings for selected assets.
+   */
   thermalComplianceForAssetIds(assetIds: number[]): number {
     const readings = this.readingsForAssetIds(assetIds);
 
@@ -148,6 +184,9 @@ export class MonitoringStore {
     return Math.round((inRangeReadings / readings.length) * 100);
   }
 
+  /**
+   * @summary Marks one offline reading as synced.
+   */
   syncReading(id: number): void {
     this.offlineReadingsSignal.update((list) =>
       list.map((reading) =>
@@ -156,6 +195,9 @@ export class MonitoringStore {
     );
   }
 
+  /**
+   * @summary Marks all pending offline readings as synced.
+   */
   syncAllPending(): void {
     this.offlineReadingsSignal.update((list) =>
       list.map((reading) =>
@@ -164,6 +206,9 @@ export class MonitoringStore {
     );
   }
 
+  /**
+   * @summary Simulates telemetry status changes for one organization.
+   */
   updateOrganizationTelemetry(organizationId: number | null): void {
     if (!organizationId) {
       return;

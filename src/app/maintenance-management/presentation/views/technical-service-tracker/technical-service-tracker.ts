@@ -31,6 +31,9 @@ type TechnicalServiceFeedback =
   | 'access-denied'
   | 'server-error';
 
+/**
+ * @summary Presents the technical service tracker user interface in the maintenance management bounded context.
+ */
 @Component({
   selector: 'app-technical-service-tracker',
   imports: [MatButton, MatIcon, MatProgressSpinner, NgClass, ReactiveFormsModule, TranslatePipe],
@@ -125,6 +128,9 @@ export class TechnicalServiceTracker implements OnInit {
     );
   });
 
+  /**
+   * @summary Initializes the technical service tracker view state.
+   */
   ngOnInit(): void {
     this.loadPageData();
   }

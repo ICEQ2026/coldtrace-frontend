@@ -5,6 +5,9 @@ import { IoTDevice } from '../domain/model/iot-device.entity';
 import { IoTDeviceAssembler } from './iot-device-assembler';
 import { IoTDeviceResource, IoTDevicesResponse } from './iot-devices-response';
 
+/**
+ * @summary Connects IoT devices API endpoint resources to the generic API endpoint contract.
+ */
 export class IoTDevicesApiEndpoint extends BaseApiEndpoint<
   IoTDevice,
   IoTDeviceResource,

@@ -1,6 +1,9 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 import { MaintenanceScheduleStatus } from './maintenance-schedule-status.enum';
 
+/**
+ * @summary Represents a maintenance schedule in the maintenance management bounded context.
+ */
 export class MaintenanceSchedule implements BaseEntity {
   constructor(
     private readonly _id: number,

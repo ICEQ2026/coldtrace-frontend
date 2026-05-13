@@ -16,6 +16,9 @@ import { AlertsApi } from '../infrastructure/alerts-api';
 type ThermalConditionKey = 'high-temperature' | 'low-temperature';
 type GeneratedConditionKey = ThermalConditionKey | 'thermal-configuration-pending';
 
+/**
+ * @summary Manages alerts state and workflows for presentation components.
+ */
 @Injectable({ providedIn: 'root' })
 export class AlertsStore {
   private readonly escalationPolicies = [
@@ -86,6 +89,9 @@ export class AlertsStore {
     private readonly assetManagementApi: AssetManagementApi,
   ) {}
 
+  /**
+   * @summary Loads incidents data into local state.
+   */
   loadIncidents(): void {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
@@ -150,6 +156,9 @@ export class AlertsStore {
       });
   }
 
+  /**
+   * @summary Marks an incident as recognized by the responsible user.
+   */
   recognizeIncident(incident: Incident, responsibleUserName: string): Observable<Incident> {
     const recognized = this.incidentWith(incident, {
       status: 'recognized',
@@ -177,6 +186,9 @@ export class AlertsStore {
     );
   }
 
+  /**
+   * @summary Closes an incident with corrective action and closure evidence.
+   */
   closeIncident(
     incident: Incident,
     correctiveAction: string,
@@ -219,6 +231,9 @@ export class AlertsStore {
     );
   }
 
+  /**
+   * @summary Marks an escalated incident as reviewed by the responsible user.
+   */
   reviewEscalation(incident: Incident, responsibleUserName: string): Observable<Incident> {
     const reviewed = this.incidentWith(incident, {
       escalationStatus: 'reviewed',
@@ -246,6 +261,9 @@ export class AlertsStore {
     );
   }
 
+  /**
+   * @summary Checks whether the current role can resolve alerts.
+   */
   canResolveAlerts(): boolean {
     const users = this.identityAccessStore.users();
     const roles = this.identityAccessStore.roles();
@@ -255,10 +273,16 @@ export class AlertsStore {
       .includes('roles-permissions.permissions.resolve-alerts');
   }
 
+  /**
+   * @summary Clears the alert feedback message key.
+   */
   clearFeedback(): void {
     this.feedbackSignal.set(null);
   }
 
+  /**
+   * @summary Stores the alert feedback message key.
+   */
   setFeedback(feedback: string | null): void {
     this.feedbackSignal.set(feedback);
   }

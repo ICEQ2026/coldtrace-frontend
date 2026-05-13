@@ -2,11 +2,20 @@ import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { Asset } from '../domain/model/asset.entity';
 import { AssetResource, AssetsResponse } from './assets-response';
 
+/**
+ * @summary Maps asset data between domain entities and API resources.
+ */
 export class AssetAssembler implements BaseAssembler<Asset, AssetResource, AssetsResponse> {
+  /**
+   * @summary Maps an API response envelope into domain entities.
+   */
   toEntitiesFromResponse(response: AssetsResponse): Asset[] {
     return response.assets.map((resource) => this.toEntityFromResource(resource));
   }
 
+  /**
+   * @summary Maps one API resource into a domain entity.
+   */
   toEntityFromResource(resource: AssetResource): Asset {
     return new Asset(
       Number(resource.id),
@@ -26,6 +35,9 @@ export class AssetAssembler implements BaseAssembler<Asset, AssetResource, Asset
     );
   }
 
+  /**
+   * @summary Maps one domain entity into an API resource.
+   */
   toResourceFromEntity(entity: Asset): AssetResource {
     return {
       id: entity.id,

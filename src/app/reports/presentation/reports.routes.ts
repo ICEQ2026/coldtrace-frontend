@@ -12,6 +12,9 @@ const complianceFindings = () =>
 const auditEvidence = () =>
   import('./views/audit-evidence/audit-evidence').then((m) => m.AuditEvidence);
 
+/**
+ * @summary Defines the lazy-loaded routes for the reports bounded context.
+ */
 export const reportsRoutes: Routes = [
   {
     path: 'daily-log',

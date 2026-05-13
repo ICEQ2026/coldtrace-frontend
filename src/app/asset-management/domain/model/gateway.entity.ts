@@ -1,6 +1,9 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 import { GatewayStatus } from './gateway-status.enum';
 
+/**
+ * @summary Represents a gateway in the asset management bounded context.
+ */
 export class Gateway implements BaseEntity {
   constructor(
     private readonly _id: number,

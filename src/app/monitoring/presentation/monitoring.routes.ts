@@ -9,6 +9,9 @@ const assetMonitoringDashboard = () =>
     (m) => m.AssetMonitoringDashboard,
   );
 
+/**
+ * @summary Defines the lazy-loaded routes for the monitoring bounded context.
+ */
 export const monitoringRoutes: Routes = [
   {
     path: 'operational',

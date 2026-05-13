@@ -14,6 +14,9 @@ import { IncidentDay } from '../../../domain/model/incident-day.entity';
 
 Chart.register(...registerables);
 
+/**
+ * @summary Presents the incidents chart user interface in the monitoring bounded context.
+ */
 @Component({
   selector: 'app-incidents-chart',
   imports: [MatIconModule, TranslateModule],
@@ -60,9 +63,15 @@ export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
     return average.toFixed(1).replace('.0', '');
   }
 
+  /**
+   * @summary Initializes view-dependent rendering after the template is available.
+   */
   ngAfterViewInit(): void {
     this.buildChart();
   }
+  /**
+   * @summary Refreshes rendered state when component inputs change.
+   */
   ngOnChanges(): void {
     if (this.chart) {
       this.refreshChart();
@@ -70,6 +79,9 @@ export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
       this.buildChart();
     }
   }
+  /**
+   * @summary Releases component resources when the component is destroyed.
+   */
   ngOnDestroy(): void {
     this.chart?.destroy();
   }
@@ -92,6 +104,9 @@ export class IncidentsChart implements AfterViewInit, OnChanges, OnDestroy {
     this.chart.update();
   }
 
+  /**
+   * @summary Calculates the chart bar height for one incident day.
+   */
   microHeight(day: IncidentDay): number {
     return Math.max(4, Math.min(36, day.normal + day.warning + day.critical + day.offline));
   }

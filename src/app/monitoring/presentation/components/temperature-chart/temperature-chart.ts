@@ -11,6 +11,9 @@ interface TemperatureLimits {
   max: number;
 }
 
+/**
+ * @summary Presents the temperature chart user interface in the monitoring bounded context.
+ */
 @Component({
   selector: 'app-temperature-chart',
   imports: [MatIconModule, TranslatePipe],
@@ -27,7 +30,13 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
 
   private chart?: Chart;
 
+  /**
+   * @summary Initializes view-dependent rendering after the template is available.
+   */
   ngAfterViewInit(): void { this.buildChart(); }
+  /**
+   * @summary Refreshes rendered state when component inputs change.
+   */
   ngOnChanges(): void {
     if (this.chart) {
       this.refreshChart();
@@ -35,6 +44,9 @@ export class TemperatureChart implements AfterViewInit, OnChanges, OnDestroy {
       this.buildChart();
     }
   }
+  /**
+   * @summary Releases component resources when the component is destroyed.
+   */
   ngOnDestroy(): void { this.chart?.destroy(); }
 
   private refreshChart(): void {

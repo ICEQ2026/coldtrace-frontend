@@ -1,5 +1,8 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 
+/**
+ * @summary Represents a temperature point in the monitoring bounded context.
+ */
 export class TemperaturePoint implements BaseEntity {
   private _id: number;
   private _label: string;

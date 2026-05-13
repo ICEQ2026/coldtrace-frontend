@@ -4,8 +4,14 @@ import {
 } from './compliance-finding.entity';
 import { FindingStatus } from './finding-status.enum';
 
+/**
+ * @summary Defines the allowed compliance finding status filter values used by the reports bounded context.
+ */
 export type ComplianceFindingStatusFilter = FindingStatus | 'all';
 
+/**
+ * @summary Defines the compliance report filters contract used by the reports bounded context.
+ */
 export interface ComplianceReportFilters {
   assetId: number;
   fromDate: string;
@@ -13,6 +19,9 @@ export interface ComplianceReportFilters {
   status: ComplianceFindingStatusFilter;
 }
 
+/**
+ * @summary Represents a compliance report in the reports bounded context.
+ */
 export class ComplianceReport {
   constructor(
     public id: number,

@@ -16,6 +16,9 @@ const operationalDashboard = () =>
     (m) => m.OperationalDashboard,
   );
 
+/**
+ * @summary Defines the lazy-loaded routes for the identity access bounded context.
+ */
 export const identityAccessRoutes: Routes = [
   {
     path: 'dashboard',

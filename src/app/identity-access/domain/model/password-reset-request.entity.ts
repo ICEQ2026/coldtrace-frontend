@@ -1,6 +1,9 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 import { PasswordResetStatus } from './password-reset-status.enum';
 
+/**
+ * @summary Represents a password reset request in the identity access bounded context.
+ */
 export class PasswordResetRequest implements BaseEntity {
   constructor(
     private _id: number,

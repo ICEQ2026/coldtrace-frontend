@@ -6,6 +6,9 @@ import { provideTranslateService } from '@ngx-translate/core';
 
 import { routes } from './app.routes';
 
+/**
+ * @summary Defines the Angular application configuration.
+ */
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),

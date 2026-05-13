@@ -135,6 +135,47 @@ class MonitoringApi {
   +createSensorReading(sensorReading)
 }
 
+' Alerts
+class Incident {
+  +id: number
+  +organizationId: number
+  +assetId: number
+  +type: string
+  +status: string
+  +severity: string
+  +recognizedBy: string
+  +correctiveAction: string
+}
+
+class Notification {
+  +id: number
+  +organizationId: number
+  +incidentId: number
+  +channel: NotificationChannel
+  +status: NotificationStatus
+}
+
+class EscalationPolicy {
+  +minutesBeforeEscalation: number
+}
+
+class AlertsStore {
+  +incidents
+  +notifications
+  +loadAlerts(): void
+  +recognizeIncident(incident, responsibleUserName)
+  +closeIncident(incident, correctiveAction, closureEvidence, responsibleUserName)
+  +reviewEscalation(incident, responsibleUserName)
+}
+
+class AlertsApi {
+  +getIncidents()
+  +createIncident(incident)
+  +updateIncident(incident)
+  +getNotifications()
+  +createNotification(notification)
+}
+
 ' Reports
 class Report {
   +id: number
@@ -177,15 +218,58 @@ class ReportsApi {
   +createReport(report)
 }
 
+' Maintenance management
+class MaintenanceSchedule {
+  +id: number
+  +organizationId: number
+  +assetId: number
+  +period: string
+  +status: MaintenanceScheduleStatus
+}
+
+class TechnicalServiceRequest {
+  +id: number
+  +organizationId: number
+  +assetId: number
+  +status: TechnicalServiceStatus
+  +priority: string
+}
+
+class MaintenanceManagementStore {
+  +maintenanceSchedules
+  +technicalServiceRequests
+  +loadMaintenanceSchedules(): void
+  +createMaintenanceSchedule(maintenanceSchedule)
+  +updateMaintenanceSchedule(maintenanceSchedule)
+  +createTechnicalServiceRequest(technicalServiceRequest)
+  +updateTechnicalServiceRequest(technicalServiceRequest)
+}
+
+class MaintenanceManagementApi {
+  +getMaintenanceSchedules()
+  +createMaintenanceSchedule(maintenanceSchedule)
+  +updateMaintenanceSchedule(maintenanceSchedule)
+  +getTechnicalServiceRequests()
+  +createTechnicalServiceRequest(technicalServiceRequest)
+  +updateTechnicalServiceRequest(technicalServiceRequest)
+}
+
 ' Presentation components
 class "<<Component>>\nDashboardShell" as DashboardShell
 class "<<Component>>\nSignIn" as SignIn
 class "<<Component>>\nSignUp" as SignUp
 class "<<Component>>\nColdRoomList" as ColdRoomList
+class "<<Component>>\nSafetyRangeSettings" as SafetyRangeSettings
+class "<<Component>>\nOperationalParametersSettings" as OperationalParametersSettings
 class "<<Component>>\nOperationalDashboard" as OperationalDashboard
+class "<<Component>>\nAssetMonitoringDashboard" as AssetMonitoringDashboard
+class "<<Component>>\nIncidentList" as IncidentList
+class "<<Component>>\nNotificationList" as NotificationList
 class "<<Component>>\nDailyLog" as DailyLogView
 class "<<Component>>\nMonthlyReport" as MonthlyReportView
 class "<<Component>>\nAuditEvidence" as AuditEvidenceView
+class "<<Component>>\nPreventiveMaintenanceScheduler" as PreventiveMaintenanceScheduler
+class "<<Component>>\nTechnicalServiceTracker" as TechnicalServiceTracker
 
 ' Relationships
 BaseApiEndpoint ..> BaseAssembler : uses
@@ -193,6 +277,8 @@ IdentityAccessApi --|> BaseApi
 AssetManagementApi --|> BaseApi
 MonitoringApi --|> BaseApi
 ReportsApi --|> BaseApi
+AlertsApi --|> BaseApi
+MaintenanceManagementApi --|> BaseApi
 
 IdentityAccessStore --> IdentityAccessApi : loads
 AssetManagementStore --> AssetManagementApi : loads
@@ -201,25 +287,43 @@ MonitoringStore --> AssetManagementStore : reads assets
 ReportsStore --> ReportsApi : loads
 ReportsStore --> AssetManagementStore : reads assets
 ReportsStore --> MonitoringStore : reads readings
+AlertsStore --> AlertsApi : loads
+AlertsStore --> IdentityAccessStore : checks permissions
+AlertsStore --> AssetManagementStore : reads assets
+AlertsStore --> MonitoringStore : reads readings
+MaintenanceManagementStore --> MaintenanceManagementApi : loads
+MaintenanceManagementStore --> AssetManagementStore : reads assets
 
 Organization "1" o--> "*" User
 Role "1" o--> "*" User
 Organization "1" o--> "*" Asset
+Organization "1" o--> "*" Incident
+Organization "1" o--> "*" MaintenanceSchedule
+Organization "1" o--> "*" TechnicalServiceRequest
 Asset "1" o--> "*" IoTDevice
 Gateway "1" o--> "*" IoTDevice
 Asset "1" o--> "*" SensorReading
+Asset "1" o--> "*" Incident
+Asset "1" o--> "*" MaintenanceSchedule
+Asset "1" o--> "*" TechnicalServiceRequest
 IoTDevice "1" o--> "*" SensorReading
+Incident "1" o--> "*" Notification
 Report <|-- DailyLog
 Report <|-- ComplianceReport
 Report <|-- AuditEvidence
 
-DashboardShell o--> SignIn
-DashboardShell o--> SignUp
 DashboardShell o--> ColdRoomList
+DashboardShell o--> SafetyRangeSettings
+DashboardShell o--> OperationalParametersSettings
 DashboardShell o--> OperationalDashboard
+DashboardShell o--> AssetMonitoringDashboard
+DashboardShell o--> IncidentList
+DashboardShell o--> NotificationList
 DashboardShell o--> DailyLogView
 DashboardShell o--> MonthlyReportView
 DashboardShell o--> AuditEvidenceView
+DashboardShell o--> PreventiveMaintenanceScheduler
+DashboardShell o--> TechnicalServiceTracker
 
 ' Notes
 note right of IdentityAccessStore
@@ -237,9 +341,19 @@ note right of MonitoringStore
   simulated reading updates.
 end note
 
+note right of AlertsStore
+  Coordinates incidents, notifications,
+  recognition, closure, and escalation.
+end note
+
 note right of ReportsStore
   Builds report view models from
   assets and monitoring readings.
+end note
+
+note right of MaintenanceManagementStore
+  Coordinates preventive schedules
+  and technical service requests.
 end note
 
 @enduml

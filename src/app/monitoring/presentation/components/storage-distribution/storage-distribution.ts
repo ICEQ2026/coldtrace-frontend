@@ -6,6 +6,9 @@ import { StorageDistributionItem } from '../../../domain/model/storage-distribut
 
 Chart.register(...registerables);
 
+/**
+ * @summary Presents the storage distribution user interface in the monitoring bounded context.
+ */
 @Component({
   selector: 'app-storage-distribution',
   imports: [MatIconModule, TranslateModule],
@@ -20,7 +23,13 @@ export class StorageDistribution implements AfterViewInit, OnChanges, OnDestroy 
 
   private chart?: Chart;
 
+  /**
+   * @summary Initializes view-dependent rendering after the template is available.
+   */
   ngAfterViewInit(): void { this.buildChart(); }
+  /**
+   * @summary Refreshes rendered state when component inputs change.
+   */
   ngOnChanges(): void {
     if (this.chart) {
       this.refreshChart();
@@ -28,6 +37,9 @@ export class StorageDistribution implements AfterViewInit, OnChanges, OnDestroy 
       this.buildChart();
     }
   }
+  /**
+   * @summary Releases component resources when the component is destroyed.
+   */
   ngOnDestroy(): void { this.chart?.destroy(); }
 
   private refreshChart(): void {

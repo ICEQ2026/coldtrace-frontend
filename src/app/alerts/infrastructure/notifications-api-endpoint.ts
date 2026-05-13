@@ -5,6 +5,9 @@ import { Notification } from '../domain/model/notification.entity';
 import { NotificationAssembler } from './notification-assembler';
 import { NotificationResource, NotificationsResponse } from './notifications-response';
 
+/**
+ * @summary Connects notifications API endpoint resources to the generic API endpoint contract.
+ */
 export class NotificationsApiEndpoint extends BaseApiEndpoint<
   Notification,
   NotificationResource,

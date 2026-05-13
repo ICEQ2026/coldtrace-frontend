@@ -1,6 +1,8 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 
-/** User entity scoped to one ColdTrace organization and one role. */
+/**
+ * @summary Represents a user in the identity access bounded context.
+ */
 export class User implements BaseEntity {
   constructor(
     private _id: number,

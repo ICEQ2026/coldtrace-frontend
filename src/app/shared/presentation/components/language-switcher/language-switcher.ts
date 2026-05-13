@@ -2,6 +2,9 @@ import { Component, inject } from '@angular/core';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { TranslateService } from '@ngx-translate/core';
 
+/**
+ * @summary Presents the language switcher user interface in the shared bounded context.
+ */
 @Component({
   selector: 'app-language-switcher',
   imports: [
@@ -22,6 +25,9 @@ export class LanguageSwitcher {
     this.languages = [...this.translate.getLangs()];
   }
 
+  /**
+   * @summary Changes the active application language.
+   */
   useLanguage(language: string) {
     this.translate.use(language);
     this.currentLang = language;

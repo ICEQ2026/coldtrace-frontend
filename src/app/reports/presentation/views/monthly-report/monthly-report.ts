@@ -20,6 +20,9 @@ import { ReportType } from '../../../domain/model/report-type.enum';
 
 type MonthlyReportFeedback = 'idle' | 'downloaded' | 'insufficient' | 'server-error';
 
+/**
+ * @summary Presents the monthly report user interface in the reports bounded context.
+ */
 @Component({
   selector: 'app-monthly-report',
   imports: [FormsModule, MatButton, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
@@ -76,6 +79,9 @@ export class MonthlyReport implements OnInit {
   protected readonly hasRows = computed(() => this.monthlyReport().rows.length > 0);
   protected readonly canDownloadReport = computed(() => this.monthlyReport().canDownload);
 
+  /**
+   * @summary Initializes the monthly report view state.
+   */
   ngOnInit(): void {
     this.loadPageData();
   }

@@ -2,7 +2,13 @@ import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
 import { Notification } from '../domain/model/notification.entity';
 import { NotificationResource, NotificationsResponse } from './notifications-response';
 
+/**
+ * @summary Maps notification data between domain entities and API resources.
+ */
 export class NotificationAssembler implements BaseAssembler<Notification, NotificationResource, NotificationsResponse> {
+  /**
+   * @summary Maps one API resource into a domain entity.
+   */
   toEntityFromResource(resource: NotificationResource): Notification {
     return new Notification(
       Number(resource.id),
@@ -19,6 +25,9 @@ export class NotificationAssembler implements BaseAssembler<Notification, Notifi
     );
   }
 
+  /**
+   * @summary Maps one domain entity into an API resource.
+   */
   toResourceFromEntity(entity: Notification): NotificationResource {
     return {
       id: entity.id,
@@ -35,6 +44,9 @@ export class NotificationAssembler implements BaseAssembler<Notification, Notifi
     };
   }
 
+  /**
+   * @summary Maps an API response envelope into domain entities.
+   */
   toEntitiesFromResponse(response: NotificationsResponse): Notification[] {
     return response.notifications.map((notification) => this.toEntityFromResource(notification));
   }

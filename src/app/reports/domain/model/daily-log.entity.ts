@@ -1,7 +1,13 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 
+/**
+ * @summary Defines the allowed daily log status values used by the reports bounded context.
+ */
 export type DailyLogStatus = 'complete' | 'incomplete' | 'no-data';
 
+/**
+ * @summary Defines the daily log entry contract used by the reports bounded context.
+ */
 export interface DailyLogEntry {
   assetId: number;
   assetName: string;
@@ -17,7 +23,9 @@ export interface DailyLogEntry {
   status: DailyLogStatus;
 }
 
-/** Daily evidence model used by the reports module to summarize asset readings. */
+/**
+ * @summary Represents a daily log in the reports bounded context.
+ */
 export class DailyLog implements BaseEntity {
   constructor(
     public id: number,

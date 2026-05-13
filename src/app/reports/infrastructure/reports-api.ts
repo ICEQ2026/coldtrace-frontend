@@ -5,6 +5,9 @@ import { BaseApi } from '../../shared/infrastructure/base-api';
 import { Report } from '../domain/model/report.entity';
 import { ReportsApiEndpoint } from './reports-api-endpoint';
 
+/**
+ * @summary Groups reports API operations used by application stores and views.
+ */
 @Injectable({ providedIn: 'root' })
 export class ReportsApi extends BaseApi {
   private readonly reportsEndpoint: ReportsApiEndpoint;
@@ -14,10 +17,16 @@ export class ReportsApi extends BaseApi {
     this.reportsEndpoint = new ReportsApiEndpoint(httpClient);
   }
 
+  /**
+   * @summary Fetches reports from the API endpoint.
+   */
   getReports(): Observable<Report[]> {
     return this.reportsEndpoint.getAll();
   }
 
+  /**
+   * @summary Persists a report through the API endpoint.
+   */
   createReport(report: Report): Observable<Report> {
     return this.reportsEndpoint.create(report);
   }

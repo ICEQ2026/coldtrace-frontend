@@ -3,6 +3,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslatePipe } from '@ngx-translate/core';
 import { RecentAlert } from '../../../domain/model/recent-alert.entity';
 
+/**
+ * @summary Presents the recent alerts user interface in the monitoring bounded context.
+ */
 @Component({
   selector: 'app-recent-alerts',
   imports: [MatIconModule, TranslatePipe],

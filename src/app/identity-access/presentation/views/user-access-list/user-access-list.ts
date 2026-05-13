@@ -22,6 +22,9 @@ interface UserAccessRow {
   pending: boolean;
 }
 
+/**
+ * @summary Presents the user access list user interface in the identity access bounded context.
+ */
 @Component({
   selector: 'app-user-access-list',
   imports: [MatButton, MatIcon, RouterLink, TranslatePipe],
@@ -109,6 +112,9 @@ export class UserAccessList implements OnInit {
     return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
   });
 
+  /**
+   * @summary Initializes the user access list view state.
+   */
   ngOnInit(): void {
     this.route.queryParamMap.subscribe((params) => {
       this.accessDenied.set(params.get('access') === 'denied');

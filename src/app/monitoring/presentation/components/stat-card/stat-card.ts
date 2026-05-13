@@ -11,6 +11,9 @@ interface StatCardColor {
   chartLight?: string;
 }
 
+/**
+ * @summary Presents the stat card tooltip user interface in the monitoring bounded context.
+ */
 export interface StatCardTooltip {
   text: string;
   position: number;
@@ -21,6 +24,9 @@ const CRITICAL_ALERTS_WAVE_PATH =
 const CRITICAL_ALERTS_WAVE_FILL_PATH = `${CRITICAL_ALERTS_WAVE_PATH} L100 40 L0 40 Z`;
 const CRITICAL_ALERTS_WAVE_FILL_COLOR = 'rgba(61, 12, 116, 0.16)';
 
+/**
+ * @summary Presents the stat card user interface in the monitoring bounded context.
+ */
 @Component({
   selector: 'app-stat-card',
   standalone: true,

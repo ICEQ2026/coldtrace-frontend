@@ -5,6 +5,9 @@ import { AssetSettings } from '../domain/model/asset-settings.entity';
 import { AssetSettingsAssembler } from './asset-settings-assembler';
 import { AssetSettingsResource, AssetSettingsResponse } from './asset-settings-response';
 
+/**
+ * @summary Connects asset settings API endpoint resources to the generic API endpoint contract.
+ */
 export class AssetSettingsApiEndpoint extends BaseApiEndpoint<
   AssetSettings,
   AssetSettingsResource,

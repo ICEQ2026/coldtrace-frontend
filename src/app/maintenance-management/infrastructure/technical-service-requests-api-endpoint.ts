@@ -8,6 +8,9 @@ import {
   TechnicalServiceRequestsResponse,
 } from './technical-service-requests-response';
 
+/**
+ * @summary Connects technical service requests API endpoint resources to the generic API endpoint contract.
+ */
 export class TechnicalServiceRequestsApiEndpoint extends BaseApiEndpoint<
   TechnicalServiceRequest,
   TechnicalServiceRequestResource,

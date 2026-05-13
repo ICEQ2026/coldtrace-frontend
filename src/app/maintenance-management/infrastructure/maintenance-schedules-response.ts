@@ -1,6 +1,9 @@
 import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-response';
 import { MaintenanceScheduleStatus } from '../domain/model/maintenance-schedule-status.enum';
 
+/**
+ * @summary Raw maintenance schedule resource from the ColdTrace API.
+ */
 export interface MaintenanceScheduleResource extends BaseResource {
   organizationId: number;
   uuid: string;
@@ -13,6 +16,9 @@ export interface MaintenanceScheduleResource extends BaseResource {
   createdAt: string;
 }
 
+/**
+ * @summary Raw response from the ColdTrace API for maintenance schedules.
+ */
 export interface MaintenanceSchedulesResponse extends BaseResponse {
   maintenanceSchedules: MaintenanceScheduleResource[];
 }

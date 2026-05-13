@@ -5,15 +5,24 @@ import {
   MaintenanceSchedulesResponse,
 } from './maintenance-schedules-response';
 
+/**
+ * @summary Maps maintenance schedule data between domain entities and API resources.
+ */
 export class MaintenanceScheduleAssembler implements BaseAssembler<
   MaintenanceSchedule,
   MaintenanceScheduleResource,
   MaintenanceSchedulesResponse
 > {
+  /**
+   * @summary Maps an API response envelope into domain entities.
+   */
   toEntitiesFromResponse(response: MaintenanceSchedulesResponse): MaintenanceSchedule[] {
     return response.maintenanceSchedules.map((resource) => this.toEntityFromResource(resource));
   }
 
+  /**
+   * @summary Maps one API resource into a domain entity.
+   */
   toEntityFromResource(resource: MaintenanceScheduleResource): MaintenanceSchedule {
     return new MaintenanceSchedule(
       Number(resource.id),
@@ -29,6 +38,9 @@ export class MaintenanceScheduleAssembler implements BaseAssembler<
     );
   }
 
+  /**
+   * @summary Maps one domain entity into an API resource.
+   */
   toResourceFromEntity(entity: MaintenanceSchedule): MaintenanceScheduleResource {
     return {
       id: entity.id,

@@ -1,3 +1,6 @@
+/**
+ * @summary Defines the allowed IoT measurement parameter values used by the asset management bounded context.
+ */
 export type IoTMeasurementParameter =
   | 'temperature'
   | 'humidity'
@@ -6,12 +9,18 @@ export type IoTMeasurementParameter =
   | 'battery'
   | 'signal';
 
+/**
+ * @summary Defines the IoT device definition contract used by the asset management bounded context.
+ */
 export interface IoTDeviceDefinition {
   type: string;
   modelPlaceholder: string;
   parameters: IoTMeasurementParameter[];
 }
 
+/**
+ * @summary Catalog of supported IoT device definitions used by asset forms and dashboards.
+ */
 export const IOT_DEVICE_DEFINITIONS: IoTDeviceDefinition[] = [
   {
     type: 'temperature-sensor',

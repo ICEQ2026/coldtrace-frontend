@@ -21,6 +21,9 @@ const maintenanceManagementRoutes = () =>
 const pageNotFound = () =>
   import('./shared/presentation/views/page-not-found/page-not-found').then((m) => m.PageNotFound);
 
+/**
+ * @summary Defines the routes configuration used by the application.
+ */
 export const routes: Routes = [
   { path: 'identity-access', loadChildren: identityAccessRoutes },
   { path: 'asset-management', loadChildren: assetManagementRoutes },

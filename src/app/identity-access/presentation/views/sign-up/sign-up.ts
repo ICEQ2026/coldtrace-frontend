@@ -11,6 +11,9 @@ import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 
 type SignUpFeedback = 'idle' | 'duplicate-email' | 'success' | 'server-error';
 
+/**
+ * @summary Presents the sign up user interface in the identity access bounded context.
+ */
 @Component({
   selector: 'app-sign-up',
   imports: [ReactiveFormsModule, RouterLink, TranslatePipe],

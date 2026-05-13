@@ -36,6 +36,9 @@ interface TemperatureLimits {
   max: number;
 }
 
+/**
+ * @summary Presents the operational dashboard user interface in the monitoring bounded context.
+ */
 @Component({
   selector: 'app-operational-dashboard',
   standalone: true,
@@ -145,6 +148,9 @@ export class OperationalDashboard implements OnInit {
     );
   });
 
+  /**
+   * @summary Initializes the operational dashboard view state.
+   */
   ngOnInit(): void {
     this.identityStore.loadUsers();
     this.identityStore.loadOrganizations();

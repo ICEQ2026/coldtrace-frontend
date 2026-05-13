@@ -1,6 +1,9 @@
 import { BaseEntity } from '../../../shared/domain/model/base-entity';
 import { PermissionAction } from './permission-action.enum';
 
+/**
+ * @summary Represents a permission in the identity access bounded context.
+ */
 export class Permission implements BaseEntity {
   constructor(
     private _id: number,

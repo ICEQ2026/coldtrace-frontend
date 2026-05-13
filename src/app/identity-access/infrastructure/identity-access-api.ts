@@ -9,6 +9,9 @@ import { OrganizationsApiEndpoint } from './organizations-api-endpoint';
 import { RolesApiEndpoint } from './roles-api-endpoint';
 import { UsersApiEndpoint } from './users-api-endpoint';
 
+/**
+ * @summary Groups identity access API operations used by application stores and views.
+ */
 @Injectable({ providedIn: 'root' })
 export class IdentityAccessApi extends BaseApi {
   private readonly usersEndpoint: UsersApiEndpoint;
@@ -22,26 +25,44 @@ export class IdentityAccessApi extends BaseApi {
     this.rolesEndpoint = new RolesApiEndpoint(httpClient);
   }
 
+  /**
+   * @summary Fetches users from the API endpoint.
+   */
   getUsers(): Observable<User[]> {
     return this.usersEndpoint.getAll();
   }
 
+  /**
+   * @summary Persists a user through the API endpoint.
+   */
   createUser(user: User): Observable<User> {
     return this.usersEndpoint.create(user);
   }
 
+  /**
+   * @summary Updates a user through the API endpoint.
+   */
   updateUser(user: User): Observable<User> {
     return this.usersEndpoint.update(user, user.id);
   }
 
+  /**
+   * @summary Fetches organizations from the API endpoint.
+   */
   getOrganizations(): Observable<Organization[]> {
     return this.organizationsEndpoint.getAll();
   }
 
+  /**
+   * @summary Persists an organization through the API endpoint.
+   */
   createOrganization(organization: Organization): Observable<Organization> {
     return this.organizationsEndpoint.create(organization);
   }
 
+  /**
+   * @summary Fetches roles from the API endpoint.
+   */
   getRoles(): Observable<Role[]> {
     return this.rolesEndpoint.getAll();
   }
