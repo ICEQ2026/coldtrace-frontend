@@ -6,7 +6,7 @@ ColdTrace is an Angular frontend application for cold-chain monitoring operation
 
 ## Description
 
-ColdTrace is the frontend web application for ICEQ, a platform focused on cold-chain monitoring for food businesses. The current implementation is an Angular application that simulates the product flow with a local JSON Server API.
+ColdTrace is the frontend web application for ICEQ, a platform focused on cold-chain monitoring for food businesses. The current implementation is an Angular application that consumes the ColdTrace Spring Boot backend during local development.
 
 The project follows the course style used in the reference applications: bounded contexts, standalone Angular components, route-level lazy loading, simple domain entities, infrastructure assemblers, and a small `server/db.json` data source for development.
 
@@ -16,7 +16,7 @@ The project follows the course style used in the reference applications: bounded
 - Asset management: cold rooms, transport units, IoT devices, gateways, calibration, connectivity, and asset settings.
 - Operational monitoring: dashboard KPIs, current readings, alerts, connectivity state, offline sync, charts, and maintenance widgets.
 - Reports and audit support: daily log, operational history, sanitary compliance CSV, monthly report CSV, findings, and audit evidence.
-- Local and hosted API simulation through JSON Server.
+- Local API consumption through the ColdTrace Spring Boot backend.
 
 ## Project Structure
 
@@ -28,7 +28,7 @@ src/app/
   reports/               Daily log, history, compliance, audit evidence
   shared/                Layout, shell, language switcher, infrastructure base classes
 server/
-  db.json                JSON Server data source
+  db.json                Legacy mock data source kept for reference
 docs/
   user-stories.md        User stories and acceptance criteria
   class-diagram.puml     PlantUML class diagram
@@ -53,12 +53,11 @@ Install dependencies:
 npm install
 ```
 
-Run the JSON Server API:
+Run the Spring Boot backend:
 
 ```bash
-cd server
-npm install
-npm run dev
+cd ../coldtrace-platform
+./mvnw.cmd spring-boot:run
 ```
 
 Run the Angular application:
@@ -76,7 +75,7 @@ http://localhost:4200
 The development frontend uses:
 
 ```txt
-http://localhost:3000
+http://localhost:8080
 ```
 
 ## Build and Test
@@ -96,5 +95,5 @@ npm test
 ## Notes
 
 - The application keeps the product-facing UI in English.
-- The local API is used only to simulate the required flows for the course delivery.
+- The frontend now targets the local Spring Boot backend. The `server/` folder is retained only as legacy mock data while frontend flows are migrated.
 - Real JWT authentication, real email delivery, and production backend authorization are outside the current frontend scope.

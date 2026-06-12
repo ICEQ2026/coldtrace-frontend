@@ -15,7 +15,7 @@ export class SensorReadingsApiEndpoint extends BaseApiEndpoint<SensorReading, Se
   }
 
   /**
-   * @summary Creates readings without a client-side id so JSON Server can avoid duplicate-id races.
+   * @summary Creates readings without a client-side id so the backend owns the persisted identifier.
    */
   override create(entity: SensorReading): Observable<SensorReading> {
     const { id: _temporaryId, ...resource } = this.assembler.toResourceFromEntity(entity);

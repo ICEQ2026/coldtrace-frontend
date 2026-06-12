@@ -5,7 +5,7 @@ import { BaseEntity } from './base-entity';
 import { BaseResource, BaseResponse } from './base-response';
 
 /**
- * @summary Provides generic CRUD operations for JSON Server endpoints.
+ * @summary Provides generic CRUD operations for backend REST endpoints.
  */
 export abstract class BaseApiEndpoint<
   TEntity extends BaseEntity,
@@ -20,7 +20,7 @@ export abstract class BaseApiEndpoint<
   ) {}
 
   /**
-   * @summary Reads a collection from JSON Server and maps raw resources to domain entities.
+   * @summary Reads a collection from the configured endpoint and maps raw resources to domain entities.
    */
   getAll(): Observable<TEntity[]> {
     return this.http.get<TResponse | TResource[]>(this.endpointUrl).pipe(
@@ -35,7 +35,7 @@ export abstract class BaseApiEndpoint<
   }
 
   /**
-   * @summary Reads one resource by numeric id using the same endpoint pattern as the class examples.
+   * @summary Reads one resource by numeric id using the configured endpoint pattern.
    */
   getById(id: number): Observable<TEntity> {
     return this.http.get<TResource>(`${this.endpointUrl}/${id}`).pipe(
