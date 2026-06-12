@@ -6,16 +6,19 @@ import { Asset } from '../domain/model/asset.entity';
 import { AssetSettings } from '../domain/model/asset-settings.entity';
 import { Gateway } from '../domain/model/gateway.entity';
 import { IoTDevice } from '../domain/model/iot-device.entity';
+import { Location } from '../domain/model/location.entity';
 import { AssetSettingsApiEndpoint } from './asset-settings-api-endpoint';
 import { AssetsApiEndpoint } from './assets-api-endpoint';
 import { GatewaysApiEndpoint } from './gateways-api-endpoint';
 import { IoTDevicesApiEndpoint } from './iot-devices-api-endpoint';
+import { LocationsApiEndpoint } from './locations-api-endpoint';
 
 /**
  * @summary Groups asset management API operations used by application stores and views.
  */
 @Injectable({ providedIn: 'root' })
 export class AssetManagementApi extends BaseApi {
+  private readonly locationsEndpoint: LocationsApiEndpoint;
   private readonly assetsEndpoint: AssetsApiEndpoint;
   private readonly iotDevicesEndpoint: IoTDevicesApiEndpoint;
   private readonly gatewaysEndpoint: GatewaysApiEndpoint;
@@ -23,10 +26,32 @@ export class AssetManagementApi extends BaseApi {
 
   constructor(httpClient: HttpClient) {
     super();
+    this.locationsEndpoint = new LocationsApiEndpoint(httpClient);
     this.assetsEndpoint = new AssetsApiEndpoint(httpClient);
     this.iotDevicesEndpoint = new IoTDevicesApiEndpoint(httpClient);
     this.gatewaysEndpoint = new GatewaysApiEndpoint(httpClient);
     this.assetSettingsEndpoint = new AssetSettingsApiEndpoint(httpClient);
+  }
+
+  /**
+   * @summary Fetches locations from the API endpoint.
+   */
+  getLocations(): Observable<Location[]> {
+    return this.locationsEndpoint.getAll();
+  }
+
+  /**
+   * @summary Persists a location and appends it to local state.
+   */
+  createLocation(location: Location): Observable<Location> {
+    return this.locationsEndpoint.create(location);
+  }
+
+  /**
+   * @summary Persists location changes and replaces the local entry.
+   */
+  updateLocation(location: Location): Observable<Location> {
+    return this.locationsEndpoint.update(location, location.id);
   }
 
   /**
@@ -97,6 +122,13 @@ export class AssetManagementApi extends BaseApi {
    */
   getAssetSettings(): Observable<AssetSettings[]> {
     return this.assetSettingsEndpoint.getAll();
+  }
+
+  /**
+   * @summary Fetches effective settings for one asset from the backend endpoint.
+   */
+  getAssetSettingsByAssetId(assetId: number): Observable<AssetSettings> {
+    return this.assetSettingsEndpoint.getByAssetId(assetId);
   }
 
   /**

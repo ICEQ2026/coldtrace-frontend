@@ -9,6 +9,7 @@ export class IoTDevice implements BaseEntity {
   constructor(
     private readonly _id: number,
     private readonly _organizationId: number,
+    private readonly _gatewayId: number,
     private readonly _uuid: string,
     private readonly _deviceType: string,
     private readonly _model: string,
@@ -28,6 +29,10 @@ export class IoTDevice implements BaseEntity {
 
   get organizationId(): number {
     return this._organizationId;
+  }
+
+  get gatewayId(): number {
+    return this._gatewayId;
   }
 
   get uuid(): string {

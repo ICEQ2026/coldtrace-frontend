@@ -19,6 +19,7 @@ type ReadingConditionKey =
   | 'high-temperature'
   | 'low-temperature'
   | 'high-humidity'
+  | 'low-humidity'
   | 'low-battery'
   | 'low-signal';
 type GeneratedConditionKey = ReadingConditionKey | 'thermal-configuration-pending';
@@ -841,13 +842,14 @@ export class AlertsStore {
     if (
       assetSettings &&
       reading.humidity !== null &&
-      reading.humidity > assetSettings.maximumHumidity
+      this.isHumidityOutOfRange(reading.humidity, assetSettings)
     ) {
       candidates.push({
         reading,
         asset,
         type: 'humidity',
-        conditionKey: 'high-humidity',
+        conditionKey:
+          reading.humidity > assetSettings.maximumHumidity ? 'high-humidity' : 'low-humidity',
         severity: this.humiditySeverity(reading.humidity, assetSettings),
         value: `${reading.humidity}${assetSettings.humidityUnit}`,
         reviewStatus: 'complete',
@@ -882,7 +884,15 @@ export class AlertsStore {
   }
 
   private humiditySeverity(humidity: number, settings: AssetSettings): 'warning' | 'critical' {
-    return humidity - settings.maximumHumidity >= 5 ? 'critical' : 'warning';
+    if (humidity > settings.maximumHumidity) {
+      return humidity - settings.maximumHumidity >= 5 ? 'critical' : 'warning';
+    }
+
+    return settings.minimumHumidity - humidity >= 5 ? 'critical' : 'warning';
+  }
+
+  private isHumidityOutOfRange(humidity: number, settings: AssetSettings): boolean {
+    return humidity < settings.minimumHumidity || humidity > settings.maximumHumidity;
   }
 
   private pendingReviewCandidates(

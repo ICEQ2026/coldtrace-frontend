@@ -24,6 +24,7 @@ export class IoTDeviceAssembler implements BaseAssembler<
     return new IoTDevice(
       Number(resource.id),
       resource.organizationId,
+      resource.gatewayId,
       resource.uuid,
       resource.deviceType,
       resource.model,
@@ -45,6 +46,7 @@ export class IoTDeviceAssembler implements BaseAssembler<
     return {
       id: entity.id,
       organizationId: entity.organizationId,
+      gatewayId: entity.gatewayId,
       uuid: entity.uuid,
       deviceType: entity.deviceType,
       model: entity.model,

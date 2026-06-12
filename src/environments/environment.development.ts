@@ -7,6 +7,7 @@ export const environment = {
   platformProviderUsersEndpointPath: `/organizations/${activeOrganizationId}/users`,
   platformProviderOrganizationsEndpointPath: '/organizations',
   platformProviderRolesEndpointPath: '/roles',
+  platformProviderLocationsEndpointPath: `/organizations/${activeOrganizationId}/locations`,
   platformProviderAssetsEndpointPath: `/organizations/${activeOrganizationId}/assets`,
   platformProviderIoTDevicesEndpointPath: `/organizations/${activeOrganizationId}/iot-devices`,
   platformProviderGatewaysEndpointPath: `/organizations/${activeOrganizationId}/gateways`,

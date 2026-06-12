@@ -231,8 +231,9 @@ export class MonitoringStore {
     }
 
     const iotDevice = iotDevices.find((device) => device.assetId === asset.id) ?? null;
-    const gateway =
-      gateways.find((currentGateway) => currentGateway.id === asset.gatewayId) ?? null;
+    const gateway = iotDevice
+      ? gateways.find((currentGateway) => currentGateway.id === iotDevice.gatewayId) ?? null
+      : null;
     const connectivity = this.randomConnectivity(gateway, iotDevice);
     const settings = this.assetManagementStore.settingsForAsset(organizationId, asset.id);
     const reading = this.buildSensorReading(asset, iotDevice, settings, connectivity);
@@ -259,7 +260,7 @@ export class MonitoringStore {
       ? this.randomTemperatureReading(settings.minimumTemperature, settings.maximumTemperature)
       : null;
     const humidity = parameters.includes('humidity') && settings
-      ? this.randomHumidityReading(settings.maximumHumidity)
+      ? this.randomHumidityReading(settings.minimumHumidity, settings.maximumHumidity)
       : null;
     const motionDetected = parameters.includes('motion') ? Math.random() < 0.18 : null;
     const imageCaptured = parameters.includes('image') ? Math.random() < 0.35 : null;
@@ -268,7 +269,8 @@ export class MonitoringStore {
     const environmentOutOfRange = settings
       ? (temperature !== null &&
           (temperature < settings.minimumTemperature || temperature > settings.maximumTemperature)) ||
-        (humidity !== null && humidity > settings.maximumHumidity)
+        (humidity !== null &&
+          (humidity < settings.minimumHumidity || humidity > settings.maximumHumidity))
       : false;
     // One computed flag keeps charts, alerts, and reports aligned around the same risk rule.
     const isOutOfRange =
@@ -382,11 +384,18 @@ export class MonitoringStore {
     return Number(this.randomNumber(maximumTemperature + 0.2, maximumTemperature + 3).toFixed(1));
   }
 
-  private randomHumidityReading(maximumHumidity: number): number {
-    const normalMinimum = Math.max(0, maximumHumidity - 30);
+  private randomHumidityReading(minimumHumidity: number, maximumHumidity: number): number {
+    const anomalyRoll = Math.random();
 
-    if (Math.random() < 0.94) {
-      return Math.round(this.randomNumber(normalMinimum, maximumHumidity));
+    if (anomalyRoll < 0.94) {
+      return Math.round(this.randomNumber(minimumHumidity, maximumHumidity));
+    }
+
+    if (anomalyRoll < 0.97) {
+      const lowMaximum = minimumHumidity - 1;
+      return lowMaximum > 0
+        ? Math.round(this.randomNumber(Math.max(0, minimumHumidity - 8), lowMaximum))
+        : 0;
     }
 
     return Math.round(this.randomNumber(maximumHumidity + 1, maximumHumidity + 8));

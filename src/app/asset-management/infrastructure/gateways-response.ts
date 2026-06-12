@@ -6,9 +6,9 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
  */
 export interface GatewayResource extends BaseResource {
   organizationId: number;
+  locationId: number;
   uuid: string;
   name: string;
-  location: string;
   network: string;
   status: GatewayStatus;
 }

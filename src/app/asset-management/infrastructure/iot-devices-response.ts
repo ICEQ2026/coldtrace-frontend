@@ -7,6 +7,7 @@ import { BaseResource, BaseResponse } from '../../shared/infrastructure/base-res
  */
 export interface IoTDeviceResource extends BaseResource {
   organizationId: number;
+  gatewayId: number;
   uuid: string;
   deviceType: string;
   model: string;

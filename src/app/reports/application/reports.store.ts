@@ -1154,7 +1154,9 @@ export class ReportsStore {
     }
 
     if (
-      (settings && reading.humidity !== null && reading.humidity > settings.maximumHumidity) ||
+      (settings &&
+        reading.humidity !== null &&
+        this.isHumidityOutOfRange(reading.humidity, settings)) ||
       (reading.batteryLevel !== null && reading.batteryLevel < 15) ||
       (reading.signalStrength !== null && reading.signalStrength < 35)
     ) {
@@ -1165,7 +1167,11 @@ export class ReportsStore {
   }
 
   private alertIcon(reading: SensorReading, settings: AssetSettings | undefined): string {
-    if (settings && reading.humidity !== null && reading.humidity > settings.maximumHumidity) {
+    if (
+      settings &&
+      reading.humidity !== null &&
+      this.isHumidityOutOfRange(reading.humidity, settings)
+    ) {
       return 'water_drop';
     }
 
@@ -1185,8 +1191,14 @@ export class ReportsStore {
   }
 
   private alertMessageKey(reading: SensorReading, settings: AssetSettings | undefined): string {
-    if (settings && reading.humidity !== null && reading.humidity > settings.maximumHumidity) {
-      return 'reports.history.messages.high-humidity';
+    if (
+      settings &&
+      reading.humidity !== null &&
+      this.isHumidityOutOfRange(reading.humidity, settings)
+    ) {
+      return reading.humidity > settings.maximumHumidity
+        ? 'reports.history.messages.high-humidity'
+        : 'reports.history.messages.low-humidity';
     }
 
     if (reading.batteryLevel !== null && reading.batteryLevel < 15) {
@@ -1202,6 +1214,10 @@ export class ReportsStore {
       reading.temperature > settings.maximumTemperature
       ? 'reports.history.messages.high-temperature'
       : 'reports.history.messages.low-temperature';
+  }
+
+  private isHumidityOutOfRange(humidity: number, settings: AssetSettings): boolean {
+    return humidity < settings.minimumHumidity || humidity > settings.maximumHumidity;
   }
 
   private readingValueLabel(reading: SensorReading): string {

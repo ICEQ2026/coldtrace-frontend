@@ -8,9 +8,9 @@ export class Gateway implements BaseEntity {
   constructor(
     private readonly _id: number,
     private readonly _organizationId: number,
+    private readonly _locationId: number,
     private readonly _uuid: string,
     private readonly _name: string,
-    private readonly _location: string,
     private readonly _network: string,
     private readonly _status: GatewayStatus,
   ) {}
@@ -23,16 +23,16 @@ export class Gateway implements BaseEntity {
     return this._organizationId;
   }
 
+  get locationId(): number {
+    return this._locationId;
+  }
+
   get uuid(): string {
     return this._uuid;
   }
 
   get name(): string {
     return this._name;
-  }
-
-  get location(): string {
-    return this._location;
   }
 
   get network(): string {

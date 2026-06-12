@@ -85,6 +85,9 @@ export class OperationalDashboard implements OnInit {
   protected readonly organizationGateways = computed(() => {
     return this.assetStore.gatewaysForOrganization(this.activeOrganizationId());
   });
+  protected readonly organizationLocations = computed(() => {
+    return this.assetStore.locationsForOrganization(this.activeOrganizationId());
+  });
   protected readonly organizationMaintenanceSchedules = computed(() => {
     return this.maintenanceStore.schedulesForOrganization(this.activeOrganizationId());
   });
@@ -190,6 +193,7 @@ export class OperationalDashboard implements OnInit {
     this.assetStore.loadAssets();
     this.assetStore.loadIoTDevices();
     this.assetStore.loadGateways();
+    this.assetStore.loadLocations();
     this.assetStore.loadAssetSettings();
     this.maintenanceStore.loadMaintenanceSchedules();
     this.maintenanceStore.loadTechnicalServiceRequests();
@@ -563,7 +567,7 @@ export class OperationalDashboard implements OnInit {
         (gateway, index) =>
           new MaintenanceTask({
             id: calibrationTasks.length + index + 1,
-            label: `${gateway.uuid} · ${gateway.location}`,
+            label: `${gateway.uuid} · ${this.gatewayLocationFor(gateway.locationId)}`,
             icon: gateway.status === GatewayStatus.Offline ? 'wifi_off' : 'router',
             status: gateway.status === GatewayStatus.Offline ? 'to-do' : 'doing',
           }),
@@ -601,6 +605,10 @@ export class OperationalDashboard implements OnInit {
 
   private assetNameFor(assetId: number): string {
     return this.organizationAssets().find((asset) => asset.id === assetId)?.name ?? `Asset #${assetId}`;
+  }
+
+  private gatewayLocationFor(locationId: number): string {
+    return this.assetStore.locationNameById(locationId, this.organizationLocations());
   }
 
   private maintenanceTaskStatus(
@@ -747,6 +755,8 @@ export class OperationalDashboard implements OnInit {
         return 'monitoring.operational.type-low-temp';
       case 'high-humidity':
         return 'monitoring.operational.type-high-humidity';
+      case 'low-humidity':
+        return 'monitoring.operational.type-low-humidity';
       case 'low-battery':
         return 'monitoring.operational.type-low-battery';
       case 'low-signal':
@@ -779,6 +789,7 @@ export class OperationalDashboard implements OnInit {
       case 'high-temperature':
         return 'device_thermostat';
       case 'high-humidity':
+      case 'low-humidity':
         return 'water_drop';
       case 'low-battery':
         return 'battery_alert';
@@ -806,8 +817,14 @@ export class OperationalDashboard implements OnInit {
   private alertTypeKey(reading: SensorReading): string {
     const settings = this.settingsForReading(reading);
 
-    if (settings && reading.humidity !== null && reading.humidity > settings.maximumHumidity) {
-      return 'monitoring.operational.type-high-humidity';
+    if (
+      settings &&
+      reading.humidity !== null &&
+      this.isHumidityOutOfRange(reading.humidity, settings)
+    ) {
+      return reading.humidity > settings.maximumHumidity
+        ? 'monitoring.operational.type-high-humidity'
+        : 'monitoring.operational.type-low-humidity';
     }
 
     if (reading.motionDetected) {
@@ -876,6 +893,10 @@ export class OperationalDashboard implements OnInit {
     }
 
     return 'sensors';
+  }
+
+  private isHumidityOutOfRange(humidity: number, settings: AssetSettings): boolean {
+    return humidity < settings.minimumHumidity || humidity > settings.maximumHumidity;
   }
 
   private getThermalSeverity(

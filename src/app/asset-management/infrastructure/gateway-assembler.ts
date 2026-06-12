@@ -20,9 +20,9 @@ export class GatewayAssembler implements BaseAssembler<Gateway, GatewayResource,
     return new Gateway(
       Number(resource.id),
       resource.organizationId,
+      resource.locationId,
       resource.uuid,
       resource.name,
-      resource.location,
       resource.network,
       resource.status,
     );
@@ -35,9 +35,9 @@ export class GatewayAssembler implements BaseAssembler<Gateway, GatewayResource,
     return {
       id: entity.id,
       organizationId: entity.organizationId,
+      locationId: entity.locationId,
       uuid: entity.uuid,
       name: entity.name,
-      location: entity.location,
       network: entity.network,
       status: entity.status,
     };

@@ -18,8 +18,8 @@ import {
   DEFAULT_ASSET_SETTING_VALUES,
 } from '../../../domain/model/asset-settings-defaults';
 import { AssetSettings } from '../../../domain/model/asset-settings.entity';
-import { Gateway } from '../../../domain/model/gateway.entity';
 import { IoTDevice } from '../../../domain/model/iot-device.entity';
+import { Location } from '../../../domain/model/location.entity';
 import { AssetManagementApi } from '../../../infrastructure/asset-management-api';
 
 type SafetyRangeFeedback = 'idle' | 'saved' | 'invalid' | 'access-denied' | 'server-error';
@@ -50,7 +50,7 @@ export class SafetyRangeSettings implements OnInit {
   protected readonly organizations = signal<Organization[]>([]);
   protected readonly assets = signal<Asset[]>([]);
   protected readonly iotDevices = signal<IoTDevice[]>([]);
-  protected readonly gateways = signal<Gateway[]>([]);
+  protected readonly locations = signal<Location[]>([]);
   protected readonly assetSettings = signal<AssetSettings[]>([]);
   protected readonly selectedMinimumTemperature = signal(
     DEFAULT_ASSET_SETTING_VALUES.minimumTemperature,
@@ -163,18 +163,18 @@ export class SafetyRangeSettings implements OnInit {
       organizations: this.identityAccessApi.getOrganizations(),
       assets: this.assetManagementApi.getAssets(),
       iotDevices: this.assetManagementApi.getIoTDevices(),
-      gateways: this.assetManagementApi.getGateways(),
+      locations: this.assetManagementApi.getLocations(),
       assetSettings: this.assetManagementApi.getAssetSettings(),
     })
       .pipe(finalize(() => this.identityLoading.set(false)))
       .subscribe({
-        next: ({ users, roles, organizations, assets, iotDevices, gateways, assetSettings }) => {
+        next: ({ users, roles, organizations, assets, iotDevices, locations, assetSettings }) => {
           this.users.set(users);
           this.roles.set(roles);
           this.organizations.set(organizations);
           this.assets.set(assets);
           this.iotDevices.set(iotDevices);
-          this.gateways.set(gateways);
+          this.locations.set(locations);
           this.assetSettings.set(assetSettings);
           this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
           this.resetRangeForm();
@@ -235,11 +235,14 @@ export class SafetyRangeSettings implements OnInit {
       fallbackSettings.iotDeviceTypes,
       Number(this.rangeForm.controls.minimumTemperature.value),
       Number(this.rangeForm.controls.maximumTemperature.value),
+      fallbackSettings.minimumHumidity,
       Number(this.rangeForm.controls.maximumHumidity.value),
       fallbackSettings.calibrationFrequencyDays,
       fallbackSettings.temperatureUnit,
       fallbackSettings.humidityUnit,
       fallbackSettings.weightUnit,
+      fallbackSettings.readingFrequencySeconds,
+      fallbackSettings.alertThresholdMinutes,
       assetId,
     );
     const request = currentSettings
@@ -306,7 +309,7 @@ export class SafetyRangeSettings implements OnInit {
       (currentAsset) => currentAsset.id === settings.assetId,
     );
 
-    return asset ? this.assetManagementStore.locationForAsset(asset, this.gateways()) : 'N/A';
+    return asset ? this.assetManagementStore.locationForAsset(asset, this.locations()) : 'N/A';
   }
 
   protected settingStatusKey(settings: AssetSettings): string {

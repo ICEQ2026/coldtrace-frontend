@@ -12,9 +12,8 @@ export class Asset implements BaseEntity {
     private _organizationId: number,
     private _uuid: string,
     private _type: AssetType,
-    private _gatewayId: number | null,
+    private _locationId: number,
     private _name: string,
-    private _location: string,
     private _capacity: number,
     private _description: string,
     private _status: AssetStatus,
@@ -44,16 +43,12 @@ export class Asset implements BaseEntity {
     return this._type;
   }
 
-  get gatewayId(): number | null {
-    return this._gatewayId;
-  }
-
   get name(): string {
     return this._name;
   }
 
-  get location(): string {
-    return this._location;
+  get locationId(): number {
+    return this._locationId;
   }
 
   get capacity(): number {

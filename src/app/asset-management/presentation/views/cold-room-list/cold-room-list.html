@@ -76,15 +76,15 @@
       </label>
 
       <label class="form-field">
-        <span>{{ 'asset-management.form.gateway' | translate }}</span>
-        <select formControlName="gatewayId">
-          <option [ngValue]="0">{{ 'asset-management.form.select-gateway' | translate }}</option>
-          @for (gateway of organizationGateways(); track gateway.id) {
-            <option [ngValue]="gateway.id">{{ gateway.uuid }} - {{ gateway.location }}</option>
+        <span>{{ 'asset-management.form.location' | translate }}</span>
+        <select formControlName="locationId">
+          <option [ngValue]="0">{{ 'asset-management.form.select-location' | translate }}</option>
+          @for (location of organizationLocations(); track location.id) {
+            <option [ngValue]="location.id">{{ location.name }}</option>
           }
         </select>
-        @if (hasControlError('gatewayId')) {
-          <small>{{ 'asset-management.form.gateway-error' | translate }}</small>
+        @if (hasControlError('locationId')) {
+          <small>{{ 'asset-management.form.location-error' | translate }}</small>
         }
       </label>
 
@@ -98,9 +98,9 @@
 
       <div class="form-field">
         <span>{{ 'asset-management.form.location' | translate }}</span>
-        <div class="derived-field" [class.empty]="!selectedGatewayForForm()">
-          @if (selectedGatewayForForm(); as gateway) {
-            {{ gateway.location }}
+        <div class="derived-field" [class.empty]="selectedLocationForForm() === 'N/A'">
+          @if (selectedLocationForForm() !== 'N/A') {
+            {{ selectedLocationForForm() }}
           } @else {
             {{ 'asset-management.form.location-derived-empty' | translate }}
           }
@@ -196,6 +196,19 @@
       </label>
 
       <label class="form-field">
+        <span>{{ 'asset-management.iot-devices.table.gateway' | translate }}</span>
+        <select formControlName="gatewayId">
+          <option [ngValue]="0">{{ 'asset-management.form.select-gateway' | translate }}</option>
+          @for (gateway of organizationGateways(); track gateway.id) {
+            <option [ngValue]="gateway.id">{{ gatewayNameById(gateway.id) }}</option>
+          }
+        </select>
+        @if (hasIoTDeviceControlError('gatewayId')) {
+          <small>{{ 'asset-management.form.gateway-error' | translate }}</small>
+        }
+      </label>
+
+      <label class="form-field">
         <span>{{ 'asset-management.iot-devices.form.asset' | translate }}</span>
         <select formControlName="assetId">
           <option [ngValue]="0">
@@ -272,12 +285,13 @@
 
       <label class="form-field">
         <span>{{ 'asset-management.gateways.form.location' | translate }}</span>
-        <input
-          type="text"
-          formControlName="location"
-          [placeholder]="'asset-management.gateways.form.location-placeholder' | translate"
-        />
-        @if (hasGatewayControlError('location')) {
+        <select formControlName="locationId">
+          <option [ngValue]="0">{{ 'asset-management.form.select-location' | translate }}</option>
+          @for (location of organizationLocations(); track location.id) {
+            <option [ngValue]="location.id">{{ location.name }}</option>
+          }
+        </select>
+        @if (hasGatewayControlError('locationId')) {
           <small>{{ 'asset-management.gateways.form.location-error' | translate }}</small>
         }
       </label>
@@ -452,7 +466,7 @@
                 {{ gateway.name }}
               </td>
               <td [attr.data-label]="'asset-management.gateways.table.location' | translate">
-                {{ gateway.location }}
+                {{ gatewayLocationFor(gateway) }}
               </td>
               <td [attr.data-label]="'asset-management.gateways.table.network' | translate">
                 {{ gateway.network }}

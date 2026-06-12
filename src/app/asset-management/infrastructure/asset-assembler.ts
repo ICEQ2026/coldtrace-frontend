@@ -1,4 +1,5 @@
 import { BaseAssembler } from '../../shared/infrastructure/base-assembler';
+import { ConnectivityStatus } from '../domain/model/connectivity-status.enum';
 import { Asset } from '../domain/model/asset.entity';
 import { AssetResource, AssetsResponse } from './assets-response';
 
@@ -22,16 +23,15 @@ export class AssetAssembler implements BaseAssembler<Asset, AssetResource, Asset
       resource.organizationId,
       resource.uuid,
       resource.type,
-      resource.gatewayId ?? null,
+      resource.locationId,
       resource.name,
-      resource.location,
       resource.capacity,
       resource.description,
       resource.status,
-      resource.lastIncident,
-      resource.currentTemperature,
-      resource.entryDate,
-      resource.connectivity,
+      'none',
+      '-',
+      '',
+      ConnectivityStatus.Online,
     );
   }
 
@@ -42,18 +42,13 @@ export class AssetAssembler implements BaseAssembler<Asset, AssetResource, Asset
     return {
       id: entity.id,
       organizationId: entity.organizationId,
+      locationId: entity.locationId,
       uuid: entity.uuid,
       type: entity.type,
-      gatewayId: entity.gatewayId,
       name: entity.name,
-      location: entity.location,
       capacity: entity.capacity,
       description: entity.description,
       status: entity.status,
-      lastIncident: entity.lastIncident,
-      currentTemperature: entity.currentTemperature,
-      entryDate: entity.entryDate,
-      connectivity: entity.connectivity,
     };
   }
 }

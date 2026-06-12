@@ -14,11 +14,14 @@ export const DEFAULT_ASSET_SETTING_VALUES = {
   ],
   minimumTemperature: -5,
   maximumTemperature: 8,
+  minimumHumidity: 0,
   maximumHumidity: 85,
   calibrationFrequencyDays: 180,
   temperatureUnit: '°C',
   humidityUnit: '%',
   weightUnit: 'kg',
+  readingFrequencySeconds: 3600,
+  alertThresholdMinutes: 15,
 };
 
 /**
@@ -39,12 +42,16 @@ export function buildDefaultAssetSettings(
     [...(fallbackSettings?.iotDeviceTypes ?? DEFAULT_ASSET_SETTING_VALUES.iotDeviceTypes)],
     fallbackSettings?.minimumTemperature ?? DEFAULT_ASSET_SETTING_VALUES.minimumTemperature,
     fallbackSettings?.maximumTemperature ?? DEFAULT_ASSET_SETTING_VALUES.maximumTemperature,
+    fallbackSettings?.minimumHumidity ?? DEFAULT_ASSET_SETTING_VALUES.minimumHumidity,
     fallbackSettings?.maximumHumidity ?? DEFAULT_ASSET_SETTING_VALUES.maximumHumidity,
     fallbackSettings?.calibrationFrequencyDays ??
       DEFAULT_ASSET_SETTING_VALUES.calibrationFrequencyDays,
     fallbackSettings?.temperatureUnit ?? DEFAULT_ASSET_SETTING_VALUES.temperatureUnit,
     fallbackSettings?.humidityUnit ?? DEFAULT_ASSET_SETTING_VALUES.humidityUnit,
     fallbackSettings?.weightUnit ?? DEFAULT_ASSET_SETTING_VALUES.weightUnit,
+    fallbackSettings?.readingFrequencySeconds ??
+      DEFAULT_ASSET_SETTING_VALUES.readingFrequencySeconds,
+    fallbackSettings?.alertThresholdMinutes ?? DEFAULT_ASSET_SETTING_VALUES.alertThresholdMinutes,
     assetId,
   );
 }

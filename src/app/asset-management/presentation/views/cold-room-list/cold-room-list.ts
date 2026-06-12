@@ -104,13 +104,14 @@ export class ColdRoomList implements OnInit {
   protected readonly coldRoomForm = this.fb.nonNullable.group({
     internalId: ['', [Validators.required, Validators.minLength(3)]],
     name: ['', [Validators.required, Validators.minLength(3)]],
-    gatewayId: [0, [Validators.required, Validators.min(1)]],
+    locationId: [0, [Validators.required, Validators.min(1)]],
     capacity: [0, [Validators.required, Validators.min(1)]],
     description: [''],
   });
 
   protected readonly iotDeviceForm = this.fb.nonNullable.group({
     internalId: ['', [Validators.required, Validators.minLength(3)]],
+    gatewayId: [0, [Validators.required, Validators.min(1)]],
     deviceType: ['', [Validators.required]],
     model: ['', [Validators.required, Validators.minLength(3)]],
     measurementType: ['', [Validators.required]],
@@ -121,7 +122,7 @@ export class ColdRoomList implements OnInit {
   protected readonly gatewayForm = this.fb.nonNullable.group({
     internalId: ['', [Validators.required, Validators.minLength(3)]],
     name: ['', [Validators.required, Validators.minLength(3)]],
-    location: ['', [Validators.required, Validators.minLength(3)]],
+    locationId: [0, [Validators.required, Validators.min(1)]],
     network: ['', [Validators.required, Validators.minLength(2)]],
     status: [GatewayStatus.Active, [Validators.required]],
   });
@@ -132,6 +133,7 @@ export class ColdRoomList implements OnInit {
   protected readonly assets = this.assetManagementStore.assets;
   protected readonly iotDevices = this.assetManagementStore.iotDevices;
   protected readonly gateways = this.assetManagementStore.gateways;
+  protected readonly locations = this.assetManagementStore.locations;
   protected readonly activeOrganizationName = computed(() => {
     return this.identityAccessStore.currentOrganizationNameFrom(this.users(), this.organizations());
   });
@@ -210,6 +212,13 @@ export class ColdRoomList implements OnInit {
     return this.gateways().filter((gateway) => gateway.organizationId === organizationId);
   });
 
+  protected readonly organizationLocations = computed(() => {
+    return this.assetManagementStore.locationsForOrganization(
+      this.activeOrganizationId(),
+      this.locations(),
+    );
+  });
+
   protected readonly calibrationSummary = computed(() => {
     return [
       {
@@ -267,6 +276,7 @@ export class ColdRoomList implements OnInit {
     this.assetManagementStore.loadAssets();
     this.assetManagementStore.loadIoTDevices();
     this.assetManagementStore.loadGateways();
+    this.assetManagementStore.loadLocations();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -326,12 +336,12 @@ export class ColdRoomList implements OnInit {
       return;
     }
 
-    const gatewayId = Number(this.coldRoomForm.controls.gatewayId.value);
-    const gateway = this.organizationGateways().find(
-      (currentGateway) => currentGateway.id === gatewayId,
+    const locationId = Number(this.coldRoomForm.controls.locationId.value);
+    const location = this.organizationLocations().find(
+      (currentLocation) => currentLocation.id === locationId,
     );
 
-    if (!gateway) {
+    if (!location) {
       this.feedback.set('server-error');
       return;
     }
@@ -352,9 +362,8 @@ export class ColdRoomList implements OnInit {
       organizationId,
       internalId,
       this.selectedAssetType(),
-      gateway.id,
+      location.id,
       this.coldRoomForm.controls.name.value.trim(),
-      gateway.location,
       Number(this.coldRoomForm.controls.capacity.value),
       this.coldRoomForm.controls.description.value.trim(),
       AssetStatus.Active,
@@ -406,13 +415,24 @@ export class ColdRoomList implements OnInit {
     }
 
     const assetId = Number(this.iotDeviceForm.controls.assetId.value) || null;
+    const gatewayId = Number(this.iotDeviceForm.controls.gatewayId.value);
+    const gateway = this.organizationGateways().find(
+      (currentGateway) => currentGateway.id === gatewayId,
+    );
     const nextCalibrationDate = this.iotDeviceForm.controls.nextCalibrationDate.value.trim();
     const measurementParameters = this.measurementParametersForDeviceType(
       this.iotDeviceForm.controls.deviceType.value,
     );
+
+    if (!gateway) {
+      this.feedback.set('server-error');
+      return;
+    }
+
     const iotDevice = new IoTDevice(
       Math.max(...this.iotDevices().map((currentIoTDevice) => currentIoTDevice.id), 0) + 1,
       organizationId,
+      gateway.id,
       internalId,
       this.iotDeviceForm.controls.deviceType.value,
       this.iotDeviceForm.controls.model.value.trim(),
@@ -466,12 +486,22 @@ export class ColdRoomList implements OnInit {
       return;
     }
 
+    const locationId = Number(this.gatewayForm.controls.locationId.value);
+    const location = this.organizationLocations().find(
+      (currentLocation) => currentLocation.id === locationId,
+    );
+
+    if (!location) {
+      this.feedback.set('server-error');
+      return;
+    }
+
     const gateway = new Gateway(
       Math.max(...this.gateways().map((currentGateway) => currentGateway.id), 0) + 1,
       organizationId,
+      location.id,
       internalId,
       this.gatewayForm.controls.name.value.trim(),
-      this.gatewayForm.controls.location.value.trim(),
       this.gatewayForm.controls.network.value.trim(),
       this.gatewayForm.controls.status.value,
     );
@@ -529,28 +559,32 @@ export class ColdRoomList implements OnInit {
   }
 
   protected gatewayNameForAsset(asset: Asset): string {
-    return this.gatewayNameById(asset.gatewayId);
+    const gateway = this.assetManagementStore.gatewayForAsset(
+      asset,
+      this.organizationIoTDevices(),
+      this.organizationGateways(),
+    );
+
+    return gateway ? this.gatewayDisplayName(gateway) : 'asset-management.gateways.unassigned';
   }
 
   protected gatewayNameForIoTDevice(iotDevice: IoTDevice): string {
-    const asset = this.assets().find((currentAsset) => currentAsset.id === iotDevice.assetId);
-    return asset
-      ? this.gatewayNameById(asset.gatewayId)
-      : 'asset-management.iot-devices.unassigned';
+    return this.gatewayNameById(iotDevice.gatewayId);
   }
 
   protected gatewayAssetCount(gateway: Gateway): number {
-    return this.organizationAssets().filter((asset) => asset.gatewayId === gateway.id).length;
+    const assetIds = new Set(
+      this.organizationIoTDevices()
+        .filter((iotDevice) => iotDevice.gatewayId === gateway.id && iotDevice.assetId !== null)
+        .map((iotDevice) => iotDevice.assetId),
+    );
+
+    return this.organizationAssets().filter((asset) => assetIds.has(asset.id)).length;
   }
 
   protected gatewayDeviceCount(gateway: Gateway): number {
-    const assetIds = this.organizationAssets()
-      .filter((asset) => asset.gatewayId === gateway.id)
-      .map((asset) => asset.id);
-
-    return this.organizationIoTDevices().filter((iotDevice) => {
-      return !!iotDevice.assetId && assetIds.includes(iotDevice.assetId);
-    }).length;
+    return this.organizationIoTDevices().filter((iotDevice) => iotDevice.gatewayId === gateway.id)
+      .length;
   }
 
   protected assetTypeLabelKey(assetType: AssetManagementTab): string {
@@ -724,14 +758,18 @@ export class ColdRoomList implements OnInit {
     return classByStatus[status];
   }
 
-  protected selectedGatewayForForm(): Gateway | null {
-    const gatewayId = Number(this.coldRoomForm.controls.gatewayId.value);
+  protected selectedLocationForForm(): string {
+    const locationId = Number(this.coldRoomForm.controls.locationId.value);
 
-    return this.organizationGateways().find((gateway) => gateway.id === gatewayId) ?? null;
+    return this.assetManagementStore.locationNameById(locationId, this.organizationLocations());
   }
 
   protected assetLocationFor(asset: Asset): string {
-    return this.assetManagementStore.locationForAsset(asset, this.organizationGateways());
+    return this.assetManagementStore.locationForAsset(asset, this.organizationLocations());
+  }
+
+  protected gatewayLocationFor(gateway: Gateway): string {
+    return this.assetManagementStore.locationForGateway(gateway, this.organizationLocations());
   }
 
   protected incidentLabelKey(lastIncident: string): string {
@@ -743,6 +781,7 @@ export class ColdRoomList implements OnInit {
       'high-temperature': 'warning',
       'connection-lost': 'report',
       'high-humidity': 'warning_amber',
+      'low-humidity': 'water_drop',
       'low-temperature': 'change_history',
       none: 'check_circle',
     };
@@ -755,6 +794,7 @@ export class ColdRoomList implements OnInit {
       'high-temperature': 'danger',
       'connection-lost': 'danger',
       'high-humidity': 'warning',
+      'low-humidity': 'warning',
       'low-temperature': 'cold',
       none: 'stable',
     };
@@ -817,7 +857,7 @@ export class ColdRoomList implements OnInit {
     this.coldRoomForm.reset({
       internalId: this.generatedAssetUuid(this.selectedAssetType()),
       name: '',
-      gatewayId: 0,
+      locationId: 0,
       capacity: 0,
       description: '',
     });
@@ -826,6 +866,7 @@ export class ColdRoomList implements OnInit {
   private resetIoTDeviceForm(): void {
     this.iotDeviceForm.reset({
       internalId: this.generatedIoTDeviceUuid(),
+      gatewayId: 0,
       deviceType: '',
       model: '',
       measurementType: '',
@@ -838,7 +879,7 @@ export class ColdRoomList implements OnInit {
     this.gatewayForm.reset({
       internalId: this.generatedGatewayUuid(),
       name: '',
-      location: '',
+      locationId: 0,
       network: '',
       status: GatewayStatus.Active,
     });
@@ -871,9 +912,8 @@ export class ColdRoomList implements OnInit {
       asset.organizationId,
       asset.uuid,
       asset.type,
-      asset.gatewayId,
+      asset.locationId,
       asset.name,
-      asset.location,
       asset.capacity,
       asset.description,
       fields.status ?? asset.status,
@@ -892,11 +932,13 @@ export class ColdRoomList implements OnInit {
     });
   }
 
-  private gatewayNameById(gatewayId: number | null): string {
+  protected gatewayNameById(gatewayId: number | null): string {
     const gateway = this.gateways().find((currentGateway) => currentGateway.id === gatewayId);
-    return gateway
-      ? `${gateway.uuid} - ${gateway.location}`
-      : 'asset-management.gateways.unassigned';
+    return gateway ? this.gatewayDisplayName(gateway) : 'asset-management.gateways.unassigned';
+  }
+
+  private gatewayDisplayName(gateway: Gateway): string {
+    return `${gateway.uuid} - ${this.gatewayLocationFor(gateway)}`;
   }
 
   private generatedAssetUuid(assetType: AssetType): string {

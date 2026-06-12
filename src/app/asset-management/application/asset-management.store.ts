@@ -9,6 +9,7 @@ import { Gateway } from '../domain/model/gateway.entity';
 import { GatewayStatus } from '../domain/model/gateway-status.enum';
 import { IoTDevice } from '../domain/model/iot-device.entity';
 import { IoTDeviceStatus } from '../domain/model/iot-device-status.enum';
+import { Location } from '../domain/model/location.entity';
 import { AssetManagementApi } from '../infrastructure/asset-management-api';
 
 /**
@@ -29,6 +30,7 @@ export interface AssetOperationalSummary {
  */
 @Injectable({ providedIn: 'root' })
 export class AssetManagementStore {
+  private readonly locationsSignal = signal<Location[]>([]);
   private readonly assetsSignal = signal<Asset[]>([]);
   private readonly iotDevicesSignal = signal<IoTDevice[]>([]);
   private readonly gatewaysSignal = signal<Gateway[]>([]);
@@ -36,6 +38,7 @@ export class AssetManagementStore {
   private readonly loadingSignal = signal<boolean>(false);
   private readonly errorSignal = signal<string | null>(null);
 
+  readonly locations = this.locationsSignal.asReadonly();
   readonly assets = this.assetsSignal.asReadonly();
   readonly iotDevices = this.iotDevicesSignal.asReadonly();
   readonly gateways = this.gatewaysSignal.asReadonly();
@@ -46,6 +49,20 @@ export class AssetManagementStore {
   private telemetryUpdateStep = 0;
 
   constructor(private assetManagementApi: AssetManagementApi) {}
+
+  /**
+   * @summary Returns locations scoped to one organization.
+   */
+  locationsForOrganization(
+    organizationId: number | null,
+    locations = this.locations(),
+  ): Location[] {
+    if (!organizationId) {
+      return [];
+    }
+
+    return locations.filter((location) => location.organizationId === organizationId);
+  }
 
   /**
    * @summary Returns the number of assets with operational issues for one organization.
@@ -120,24 +137,42 @@ export class AssetManagementStore {
   }
 
   /**
-   * @summary Resolves an asset location from its assigned gateway before using the stored fallback.
+   * @summary Resolves an asset location from the location catalog.
    */
-  locationForAsset(asset: Asset, gateways: Gateway[] = this.gateways()): string {
-    return this.locationForGateway(asset.gatewayId, gateways) ?? asset.location;
+  locationForAsset(asset: Asset, locations: Location[] = this.locations()): string {
+    return this.locationNameById(asset.locationId, locations);
   }
 
   /**
    * @summary Resolves a gateway location by identifier.
    */
-  locationForGateway(
-    gatewayId: number | null,
-    gateways: Gateway[] = this.gateways(),
-  ): string | null {
-    if (!gatewayId) {
-      return null;
+  locationForGateway(gateway: Gateway, locations: Location[] = this.locations()): string {
+    return this.locationNameById(gateway.locationId, locations);
+  }
+
+  /**
+   * @summary Resolves a readable location name by identifier.
+   */
+  locationNameById(locationId: number | null, locations: Location[] = this.locations()): string {
+    if (!locationId) {
+      return 'N/A';
     }
 
-    return gateways.find((gateway) => gateway.id === gatewayId)?.location ?? null;
+    return locations.find((location) => location.id === locationId)?.name ?? 'N/A';
+  }
+
+  /**
+   * @summary Finds the gateway connected to an IoT device assigned to an asset.
+   */
+  gatewayForAsset(
+    asset: Asset,
+    iotDevices: IoTDevice[] = this.iotDevices(),
+    gateways: Gateway[] = this.gateways(),
+  ): Gateway | null {
+    const iotDevice = iotDevices.find((device) => device.assetId === asset.id);
+    return iotDevice
+      ? gateways.find((gateway) => gateway.id === iotDevice.gatewayId) ?? null
+      : null;
   }
 
   /**
@@ -233,6 +268,25 @@ export class AssetManagementStore {
     this.assetManagementApi.getAssets().subscribe({
       next: (assets) => {
         this.assetsSignal.set(assets);
+        this.loadingSignal.set(false);
+      },
+      error: (error) => {
+        this.errorSignal.set(error.message);
+        this.loadingSignal.set(false);
+      },
+    });
+  }
+
+  /**
+   * @summary Loads locations data into local state.
+   */
+  loadLocations(): void {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+
+    this.assetManagementApi.getLocations().subscribe({
+      next: (locations) => {
+        this.locationsSignal.set(locations);
         this.loadingSignal.set(false);
       },
       error: (error) => {
@@ -453,7 +507,7 @@ export class AssetManagementStore {
       return;
     }
 
-    const gateway = gateways.find((currentGateway) => currentGateway.id === asset.gatewayId);
+    const gateway = this.gatewayForAsset(asset, iotDevices, gateways);
     const iotDevice = iotDevices.find((currentIoTDevice) => currentIoTDevice.assetId === asset.id);
     const settings = this.settingsForAsset(organizationId, asset.id);
     const connectivity = this.randomConnectivity(gateway ?? null, iotDevice ?? null);
@@ -490,9 +544,8 @@ export class AssetManagementStore {
       asset.organizationId,
       asset.uuid,
       asset.type,
-      asset.gatewayId,
+      asset.locationId,
       asset.name,
-      asset.location,
       asset.capacity,
       asset.description,
       fields.status ?? asset.status,
@@ -515,6 +568,7 @@ export class AssetManagementStore {
     return new IoTDevice(
       iotDevice.id,
       iotDevice.organizationId,
+      iotDevice.gatewayId,
       iotDevice.uuid,
       iotDevice.deviceType,
       iotDevice.model,
@@ -538,9 +592,9 @@ export class AssetManagementStore {
     return new Gateway(
       gateway.id,
       gateway.organizationId,
+      gateway.locationId,
       gateway.uuid,
       gateway.name,
-      gateway.location,
       gateway.network,
       fields.status ?? gateway.status,
     );
