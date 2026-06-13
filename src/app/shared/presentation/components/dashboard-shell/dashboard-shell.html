@@ -23,14 +23,19 @@
           }
         </a>
 
-        <a class="menu-item" routerLink="/monitoring/assets" routerLinkActive="active">
-          <mat-icon class="menu-icon">sensors</mat-icon>
-          <span class="menu-label">{{ 'dashboard-shell.nav-monitoring' | translate }}</span>
-        </a>
+        @if (canMonitorAssets) {
+          <a class="menu-item" routerLink="/monitoring/assets" routerLinkActive="active">
+            <mat-icon class="menu-icon">sensors</mat-icon>
+            <span class="menu-label">{{ 'dashboard-shell.nav-monitoring' | translate }}</span>
+          </a>
+        }
 
         <a class="menu-item" routerLink="/alerts/incidents" routerLinkActive="active">
           <mat-icon class="menu-icon">warning</mat-icon>
           <span class="menu-label">{{ 'dashboard-shell.nav-alerts' | translate }}</span>
+          @if (pendingAlertsCount > 0) {
+            <span class="counter badge-red">{{ pendingAlertsCount }}</span>
+          }
         </a>
 
         <div
@@ -58,7 +63,7 @@
               >
                 {{ 'dashboard-shell.nav-users' | translate }}
               </a>
-              @if (canManageAccess) {
+              @if (canManageUsers) {
                 <a
                   class="sub-menu-link"
                   routerLink="/identity-access/roles-permissions/users/new"
@@ -66,6 +71,8 @@
                 >
                   {{ 'dashboard-shell.nav-new-user' | translate }}
                 </a>
+              }
+              @if (canManageAccess) {
                 <a
                   class="sub-menu-link"
                   routerLink="/identity-access/roles-permissions/permissions"
@@ -175,6 +182,9 @@
         <a class="menu-item" routerLink="/alerts/notifications" routerLinkActive="active">
           <mat-icon class="menu-icon">notifications</mat-icon>
           <span class="menu-label">{{ 'dashboard-shell.nav-notifications' | translate }}</span>
+          @if (pendingAlertsCount > 0) {
+            <span class="counter badge-red">{{ pendingAlertsCount }}</span>
+          }
         </a>
       </nav>
     </div>
@@ -203,6 +213,23 @@
   <!-- WORKSPACE -->
   <section class="workspace">
     <header class="topbar">
+      @if (pendingAlertsCount > 0) {
+        <a
+          class="notification-shortcut"
+          routerLink="/alerts/notifications"
+          [attr.aria-label]="
+            'dashboard-shell.notification-shortcut' | translate: { count: pendingAlertsCount }
+          "
+        >
+          <mat-icon>notifications_active</mat-icon>
+          <span>
+            {{
+              'dashboard-shell.notification-shortcut' | translate: { count: pendingAlertsCount }
+            }}
+          </span>
+        </a>
+      }
+
       <div class="user-profile">
         <div class="avatar-wrapper">
           <div class="avatar-container">

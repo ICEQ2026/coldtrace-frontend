@@ -30,7 +30,10 @@ export class DashboardShell {
   @Input() profileUserName = 'ColdTrace';
   @Input() profileRoleLabelKey = 'roles-permissions.roles.unassigned';
   @Input() canManageAccess = false;
+  @Input() canManageUsers = false;
+  @Input() canMonitorAssets = false;
   @Input() assetIssuesCount = 0;
+  @Input() pendingAlertsCount = 0;
 
   @Output() signedOut = new EventEmitter<void>();
   @Output() monthlyReportRequested = new EventEmitter<void>();

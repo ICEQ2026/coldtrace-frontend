@@ -93,7 +93,7 @@
 
     <div class="filter-meta">
       <span>{{ 'asset-management.operational-parameters.form.current-interval' | translate }}</span>
-      <strong>{{ selectedIntervalLabel() }}</strong>
+      <strong>{{ currentIntervalLabel() }}</strong>
     </div>
   </section>
 
@@ -160,6 +160,7 @@
             max="1440"
             step="5"
             formControlName="readingFrequencyMinutes"
+            (input)="updateReadingFrequencyPreview($any($event.target).value)"
           />
           @if (hasFrequencyError()) {
             <small>{{

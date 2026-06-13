@@ -10,7 +10,7 @@ import { Role } from '../../../domain/model/role.entity';
 import { User } from '../../../domain/model/user.entity';
 import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 
-type RolePermissionFeedback = 'idle' | 'server-error';
+type RolePermissionFeedback = 'idle' | 'saved' | 'server-error';
 
 /**
  * @summary Presents the role permission form user interface in the identity access bounded context.
@@ -28,6 +28,7 @@ export class RolePermissionForm implements OnInit {
   private readonly router = inject(Router);
 
   protected readonly loading = signal(false);
+  protected readonly savingRoleId = signal<number | null>(null);
   protected readonly feedback = signal<RolePermissionFeedback>('idle');
   protected readonly roles = signal<Role[]>([]);
   protected readonly users = signal<User[]>([]);
@@ -41,7 +42,7 @@ export class RolePermissionForm implements OnInit {
     () => this.identityAccessStore.currentRoleLabelKeyFrom(this.users(), this.roles())
   );
   protected readonly canManageAccess = computed(
-    () => this.identityAccessStore.canManageAccess(this.users(), this.roles())
+    () => this.identityAccessStore.canManageRolePermissions(this.users(), this.roles())
   );
   protected readonly assetIssueCount = computed(() => {
     return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
@@ -70,9 +71,7 @@ export class RolePermissionForm implements OnInit {
           this.users.set(users);
           this.roles.set(roles);
           this.organizations.set(organizations);
-          this.identityAccessStore.setCurrentRoleFrom(users, roles);
-          this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
-          this.identityAccessStore.initializeRolePermissions(roles);
+          this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
         },
         error: () => this.feedback.set('server-error'),
       });
@@ -91,7 +90,11 @@ export class RolePermissionForm implements OnInit {
   }
 
   protected isPermissionToggleDisabled(role: Role, permissionKey: string): boolean {
-    return !this.canManageAccess() || this.identityAccessStore.isPermissionToggleDisabled(role, permissionKey);
+    return (
+      !this.canManageAccess() ||
+      this.savingRoleId() === role.id ||
+      this.identityAccessStore.isPermissionToggleDisabled(role, permissionKey)
+    );
   }
 
   protected toggleRolePermission(role: Role, permissionKey: string, checked: boolean): void {
@@ -99,7 +102,20 @@ export class RolePermissionForm implements OnInit {
       return;
     }
 
-    this.identityAccessStore.toggleRolePermission(role, permissionKey, checked);
+    this.savingRoleId.set(role.id);
+    this.feedback.set('idle');
+    this.identityAccessStore
+      .toggleRolePermission(role, permissionKey, checked)
+      .pipe(finalize(() => this.savingRoleId.set(null)))
+      .subscribe({
+        next: (savedRole) => {
+          this.roles.update((roles) =>
+            roles.map((currentRole) => (currentRole.id === savedRole.id ? savedRole : currentRole)),
+          );
+          this.feedback.set('saved');
+        },
+        error: () => this.feedback.set('server-error'),
+      });
   }
 
   protected logout(): void {

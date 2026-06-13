@@ -5,7 +5,10 @@
     [profileUserName]="profileUserName()"
     [profileRoleLabelKey]="profileRoleLabelKey()"
     [canManageAccess]="canManageAccess()"
+    [canManageUsers]="canManageUsers()"
+    [canMonitorAssets]="canMonitorAssets()"
     [assetIssuesCount]="assetIssueCount()"
+    [pendingAlertsCount]="pendingAlertsCount()"
     (signedOut)="logout()"
     (monthlyReportRequested)="downloadCurrentMonthReport()"
   >

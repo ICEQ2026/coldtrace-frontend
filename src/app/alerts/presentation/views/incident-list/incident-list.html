@@ -22,6 +22,107 @@
       <mat-spinner diameter="40" />
     </div>
   } @else {
+    @if (canResolveAlerts()) {
+      <div #closureCard class="premium-card closure-card">
+        <div class="card-header closure-header">
+          <div>
+            <h3 class="card-title">{{ 'alerts.incident-list.closure-title' | translate }}</h3>
+            <p class="closure-subtitle">{{ 'alerts.incident-list.closure-subtitle' | translate }}</p>
+          </div>
+          <span class="closure-count">
+            {{ pendingClosureIncidents().length }} {{ 'alerts.incident-list.closure-pending' | translate }}
+          </span>
+        </div>
+
+        <form class="closure-form" [formGroup]="closureForm" (ngSubmit)="closeIncident()">
+          <label class="closure-field">
+            <span>{{ 'alerts.incident-list.form-incident' | translate }}</span>
+            <select formControlName="incidentId">
+              <option [ngValue]="0">
+                {{ 'alerts.incident-list.form-select-incident' | translate }}
+              </option>
+              @for (incident of pendingClosureIncidents(); track incident.id) {
+                <option [ngValue]="incident.id">
+                  {{ incident.assetName }} - {{ typeLabelKey(incident) | translate }}
+                </option>
+              }
+            </select>
+            @if (hasClosureControlError('incidentId')) {
+              <small>{{ 'alerts.incident-list.form-incident-error' | translate }}</small>
+            }
+          </label>
+
+          <label class="closure-field">
+            <span>{{ 'alerts.incident-list.form-corrective-action' | translate }}</span>
+            <textarea
+              rows="3"
+              formControlName="correctiveAction"
+              [placeholder]="'alerts.incident-list.form-corrective-placeholder' | translate"
+            ></textarea>
+            @if (hasClosureControlError('correctiveAction')) {
+              <small>{{ 'alerts.incident-list.form-corrective-error' | translate }}</small>
+            }
+          </label>
+
+          <label class="closure-field">
+            <span>{{ 'alerts.incident-list.form-evidence' | translate }}</span>
+            <textarea
+              rows="3"
+              formControlName="closureEvidence"
+              [placeholder]="'alerts.incident-list.form-evidence-placeholder' | translate"
+            ></textarea>
+            @if (hasClosureControlError('closureEvidence')) {
+              <small>{{ 'alerts.incident-list.form-evidence-error' | translate }}</small>
+            }
+          </label>
+
+          @if (selectedClosureIncident(); as selectedIncident) {
+            <div
+              class="closure-condition"
+              [class.closure-condition-ready]="selectedIncident.isConditionStable"
+              [class.closure-condition-blocked]="!selectedIncident.isConditionStable"
+            >
+              <mat-icon>{{ selectedIncident.isConditionStable ? 'task_alt' : 'warning' }}</mat-icon>
+              <span>{{ conditionLabelKey(selectedIncident) | translate }}</span>
+              @if (!selectedIncident.isConditionStable) {
+                <button
+                  type="button"
+                  class="stabilize-reading-btn"
+                  [disabled]="alertsStore.stabilizingId() === selectedIncident.id"
+                  (click)="stabilizeSelectedIncident()"
+                >
+                  @if (alertsStore.stabilizingId() === selectedIncident.id) {
+                    <mat-spinner diameter="14" />
+                  } @else {
+                    <mat-icon>speed</mat-icon>
+                  }
+                  {{ 'alerts.incident-list.action-stabilize' | translate }}
+                </button>
+              }
+            </div>
+          }
+
+          <button
+            type="submit"
+            class="close-incident-btn"
+            [disabled]="
+              alertsStore.closingId() !== null ||
+              alertsStore.stabilizingId() !== null ||
+              !selectedClosureIncident() ||
+              !selectedClosureIncident()?.isConditionStable
+            "
+          >
+            @if (alertsStore.closingId() !== null) {
+              <mat-spinner diameter="14" />
+            } @else {
+              <mat-icon>assignment_turned_in</mat-icon>
+            }
+            {{ 'alerts.incident-list.action-close' | translate }}
+          </button>
+        </form>
+      </div>
+    }
+
     <div class="premium-card table-card">
       <div class="card-header">
         <h3 class="card-title">{{ 'alerts.incident-list.title' | translate }}</h3>
@@ -52,7 +153,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (incident of alertsStore.incidents(); track incident.id) {
+            @for (incident of activeIncidents(); track incident.id) {
               <tr [class.recognized-row]="incident.isRecognized">
                 <td class="asset-name">{{ incident.assetName }}</td>
                 <td>
@@ -183,86 +284,5 @@
         </div>
       }
     </div>
-
-    @if (canResolveAlerts()) {
-      <div class="premium-card closure-card">
-        <div class="card-header closure-header">
-          <div>
-            <h3 class="card-title">{{ 'alerts.incident-list.closure-title' | translate }}</h3>
-            <p class="closure-subtitle">{{ 'alerts.incident-list.closure-subtitle' | translate }}</p>
-          </div>
-          <span class="closure-count">
-            {{ pendingClosureIncidents().length }} {{ 'alerts.incident-list.closure-pending' | translate }}
-          </span>
-        </div>
-
-        <form class="closure-form" [formGroup]="closureForm" (ngSubmit)="closeIncident()">
-          <label class="closure-field">
-            <span>{{ 'alerts.incident-list.form-incident' | translate }}</span>
-            <select formControlName="incidentId">
-              <option [ngValue]="0">
-                {{ 'alerts.incident-list.form-select-incident' | translate }}
-              </option>
-              @for (incident of pendingClosureIncidents(); track incident.id) {
-                <option [ngValue]="incident.id">
-                  {{ incident.assetName }} - {{ typeLabelKey(incident) | translate }}
-                </option>
-              }
-            </select>
-            @if (hasClosureControlError('incidentId')) {
-              <small>{{ 'alerts.incident-list.form-incident-error' | translate }}</small>
-            }
-          </label>
-
-          <label class="closure-field">
-            <span>{{ 'alerts.incident-list.form-corrective-action' | translate }}</span>
-            <textarea
-              rows="3"
-              formControlName="correctiveAction"
-              [placeholder]="'alerts.incident-list.form-corrective-placeholder' | translate"
-            ></textarea>
-            @if (hasClosureControlError('correctiveAction')) {
-              <small>{{ 'alerts.incident-list.form-corrective-error' | translate }}</small>
-            }
-          </label>
-
-          <label class="closure-field">
-            <span>{{ 'alerts.incident-list.form-evidence' | translate }}</span>
-            <textarea
-              rows="3"
-              formControlName="closureEvidence"
-              [placeholder]="'alerts.incident-list.form-evidence-placeholder' | translate"
-            ></textarea>
-            @if (hasClosureControlError('closureEvidence')) {
-              <small>{{ 'alerts.incident-list.form-evidence-error' | translate }}</small>
-            }
-          </label>
-
-          @if (selectedClosureIncident(); as selectedIncident) {
-            <div
-              class="closure-condition"
-              [class.closure-condition-ready]="selectedIncident.isConditionStable"
-              [class.closure-condition-blocked]="!selectedIncident.isConditionStable"
-            >
-              <mat-icon>{{ selectedIncident.isConditionStable ? 'task_alt' : 'warning' }}</mat-icon>
-              <span>{{ conditionLabelKey(selectedIncident) | translate }}</span>
-            </div>
-          }
-
-          <button
-            type="submit"
-            class="close-incident-btn"
-            [disabled]="alertsStore.closingId() !== null || !pendingClosureIncidents().length"
-          >
-            @if (alertsStore.closingId() !== null) {
-              <mat-spinner diameter="14" />
-            } @else {
-              <mat-icon>assignment_turned_in</mat-icon>
-            }
-            {{ 'alerts.incident-list.action-close' | translate }}
-          </button>
-        </form>
-      </div>
-    }
   }
 </div>

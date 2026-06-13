@@ -1,9 +1,18 @@
 import { computed, Injectable, signal } from '@angular/core';
+import { catchError, Observable, of, tap, throwError } from 'rxjs';
 import { Organization } from '../domain/model/organization.entity';
+import { PermissionAction } from '../domain/model/permission-action.enum';
+import { Permission } from '../domain/model/permission.entity';
 import { RoleName } from '../domain/model/role-name.enum';
 import { Role } from '../domain/model/role.entity';
 import { User } from '../domain/model/user.entity';
 import { IdentityAccessApi } from '../infrastructure/identity-access-api';
+
+interface PermissionDefinition {
+  key: string;
+  resource: string;
+  action: PermissionAction;
+}
 
 /**
  * @summary Manages identity access state and workflows for presentation components.
@@ -21,15 +30,50 @@ export class IdentityAccessStore {
   private readonly currentOrganizationNameSignal = signal<string>('');
   private readonly rolePermissionKeysByRoleIdSignal = signal<Record<number, string[]>>({});
   readonly manageAdministratorsPermissionKey = 'roles-permissions.permissions.manage-administrators';
-  readonly availablePermissionKeys = [
-    this.manageAdministratorsPermissionKey,
-    'roles-permissions.permissions.manage-users',
-    'roles-permissions.permissions.manage-assets',
-    'roles-permissions.permissions.view-reports',
-    'roles-permissions.permissions.resolve-alerts',
-    'roles-permissions.permissions.monitor-assets',
-    'roles-permissions.permissions.read-only',
+  readonly manageUsersPermissionKey = 'roles-permissions.permissions.manage-users';
+  readonly manageAssetsPermissionKey = 'roles-permissions.permissions.manage-assets';
+  readonly viewReportsPermissionKey = 'roles-permissions.permissions.view-reports';
+  readonly resolveAlertsPermissionKey = 'roles-permissions.permissions.resolve-alerts';
+  readonly monitorAssetsPermissionKey = 'roles-permissions.permissions.monitor-assets';
+  readonly readOnlyPermissionKey = 'roles-permissions.permissions.read-only';
+  private readonly permissionDefinitions: PermissionDefinition[] = [
+    {
+      key: this.manageAdministratorsPermissionKey,
+      resource: 'administrators',
+      action: PermissionAction.Manage,
+    },
+    {
+      key: this.manageUsersPermissionKey,
+      resource: 'users',
+      action: PermissionAction.Manage,
+    },
+    {
+      key: this.manageAssetsPermissionKey,
+      resource: 'assets',
+      action: PermissionAction.Manage,
+    },
+    {
+      key: this.viewReportsPermissionKey,
+      resource: 'reports',
+      action: PermissionAction.View,
+    },
+    {
+      key: this.resolveAlertsPermissionKey,
+      resource: 'alerts',
+      action: PermissionAction.Update,
+    },
+    {
+      key: this.monitorAssetsPermissionKey,
+      resource: 'monitoring',
+      action: PermissionAction.View,
+    },
+    {
+      key: this.readOnlyPermissionKey,
+      resource: 'workspace',
+      action: PermissionAction.View,
+    },
   ];
+  readonly availablePermissionKeys = this.permissionDefinitions.map((definition) => definition.key);
 
   /**
    * @summary Frontend permission matrix used until real backend authorization exists.
@@ -40,17 +84,17 @@ export class IdentityAccessStore {
       (permissionKey) => permissionKey !== this.manageAdministratorsPermissionKey,
     ),
     [RoleName.OperationsManager]: [
-      'roles-permissions.permissions.manage-assets',
-      'roles-permissions.permissions.resolve-alerts',
-      'roles-permissions.permissions.view-reports',
+      this.manageAssetsPermissionKey,
+      this.resolveAlertsPermissionKey,
+      this.viewReportsPermissionKey,
     ],
     [RoleName.Operator]: [
-      'roles-permissions.permissions.monitor-assets',
-      'roles-permissions.permissions.resolve-alerts',
+      this.monitorAssetsPermissionKey,
+      this.resolveAlertsPermissionKey,
     ],
     [RoleName.Auditor]: [
-      'roles-permissions.permissions.view-reports',
-      'roles-permissions.permissions.read-only',
+      this.viewReportsPermissionKey,
+      this.readOnlyPermissionKey,
     ],
   };
 
@@ -157,6 +201,15 @@ export class IdentityAccessStore {
   }
 
   /**
+   * @summary Resolves and stores the current role, organization, and editable permissions.
+   */
+  setCurrentContextFrom(users: User[], roles: Role[], organizations: Organization[]): void {
+    this.setCurrentRoleFrom(users, roles);
+    this.setCurrentOrganizationFrom(users, organizations);
+    this.initializeRolePermissions(roles);
+  }
+
+  /**
    * @summary Clears the current user, role, and organization selection state.
    */
   clearCurrentUser(): void {
@@ -220,19 +273,7 @@ export class IdentityAccessStore {
    * @summary Initializes editable permission keys for loaded roles.
    */
   initializeRolePermissions(roles: Role[]): void {
-    if (Object.keys(this.rolePermissionKeysByRoleIdSignal()).length) {
-      return;
-    }
-
-    this.rolePermissionKeysByRoleIdSignal.set(
-      roles.reduce(
-        (state, role) => ({
-          ...state,
-          [role.id]: this.defaultPermissionKeysByRoleName[role.name] ?? [],
-        }),
-        {},
-      ),
-    );
+    this.rolePermissionKeysByRoleIdSignal.set(this.permissionStateFromRoles(roles));
   }
 
   /**
@@ -245,8 +286,7 @@ export class IdentityAccessStore {
 
     const permissionKeys =
       this.rolePermissionKeysByRoleIdSignal()[role.id] ??
-      this.defaultPermissionKeysByRoleName[role.name] ??
-      [];
+      this.permissionKeysFromRole(role);
 
     return permissionKeys.length ? permissionKeys : ['roles-permissions.permissions.none'];
   }
@@ -284,8 +324,42 @@ export class IdentityAccessStore {
    * @summary Checks whether the current user can manage access records.
    */
   canManageAccess(users: User[], roles: Role[]): boolean {
+    return this.canManageRolePermissions(users, roles);
+  }
+
+  /**
+   * @summary Checks whether the current user can update role permission matrices.
+   */
+  canManageRolePermissions(users: User[], roles: Role[]): boolean {
     const role = this.currentRoleFrom(users, roles);
     return this.isSuperAdministratorRole(role) || this.isAdministratorRole(role);
+  }
+
+  /**
+   * @summary Checks whether the current user can create users or assign operational roles.
+   */
+  canManageUsers(users: User[], roles: Role[]): boolean {
+    return this.permissionKeysForRole(this.currentRoleFrom(users, roles)).includes(
+      this.manageUsersPermissionKey,
+    );
+  }
+
+  /**
+   * @summary Checks whether the current user can manage operational asset records.
+   */
+  canManageAssets(users: User[], roles: Role[]): boolean {
+    return this.permissionKeysForRole(this.currentRoleFrom(users, roles)).includes(
+      this.manageAssetsPermissionKey,
+    );
+  }
+
+  /**
+   * @summary Checks whether the current user can inspect monitored asset readings.
+   */
+  canMonitorAssets(users: User[], roles: Role[]): boolean {
+    return this.permissionKeysForRole(this.currentRoleFrom(users, roles)).includes(
+      this.monitorAssetsPermissionKey,
+    );
   }
 
   /**
@@ -299,7 +373,7 @@ export class IdentityAccessStore {
    * @summary Checks whether the current user may assign a target role.
    */
   canAssignRole(role: Role | undefined, users: User[], roles: Role[]): boolean {
-    if (!role || !this.canManageAccess(users, roles) || this.isSuperAdministratorRole(role)) {
+    if (!role || !this.canManageUsers(users, roles) || this.isSuperAdministratorRole(role)) {
       return false;
     }
 
@@ -314,7 +388,7 @@ export class IdentityAccessStore {
    * @summary Checks whether the current user may edit another user role.
    */
   canManageUserRole(user: User | undefined, users: User[], roles: Role[]): boolean {
-    if (!user || !this.canManageAccess(users, roles)) {
+    if (!user || !this.canManageUsers(users, roles)) {
       return false;
     }
 
@@ -365,35 +439,135 @@ export class IdentityAccessStore {
   }
 
   /**
-   * @summary Adds or removes a permission for a role in local state.
+   * @summary Adds or removes a permission for a role and persists it.
    */
-  toggleRolePermission(role: Role, permissionKey: string, checked: boolean): void {
+  toggleRolePermission(role: Role, permissionKey: string, checked: boolean): Observable<Role> {
     if (
       this.isSuperAdministratorRole(role) ||
       this.isAdministratorRole(role) ||
       permissionKey === this.manageAdministratorsPermissionKey
     ) {
-      return;
+      return of(role);
     }
 
-    this.rolePermissionKeysByRoleIdSignal.update((current) => {
-      const currentKeys = current[role.id] ?? this.defaultPermissionKeysByRoleName[role.name] ?? [];
-      const nextPermissionKeys = checked
-        ? [...currentKeys, permissionKey]
-        : currentKeys.filter((currentKey) => currentKey !== permissionKey);
-      const orderedPermissionKeys = this.availablePermissionKeys.filter((currentKey) =>
-        nextPermissionKeys.includes(currentKey),
-      );
+    const previousKeys = this.permissionKeysForRole(role).filter(
+      (currentKey) => currentKey !== 'roles-permissions.permissions.none',
+    );
+    const nextKeys = this.nextPermissionKeys(previousKeys, permissionKey, checked);
 
-      if (orderedPermissionKeys.length === this.availablePermissionKeys.length) {
-        return current;
-      }
+    if (nextKeys.length === this.availablePermissionKeys.length) {
+      return of(role);
+    }
 
-      return {
-        ...current,
-        [role.id]: orderedPermissionKeys,
-      };
-    });
+    const updatedRole = this.roleWithPermissionKeys(role, nextKeys);
+    this.setPermissionKeysForRole(role.id, nextKeys);
+    this.updateRoleState(updatedRole);
+
+    return this.identityAccessApi.updateRole(updatedRole).pipe(
+      tap((savedRole) => {
+        const savedKeys = this.permissionKeysFromRole(savedRole);
+        this.setPermissionKeysForRole(savedRole.id, savedKeys);
+        this.updateRoleState(savedRole);
+      }),
+      catchError((error) => {
+        this.setPermissionKeysForRole(role.id, previousKeys);
+        this.updateRoleState(this.roleWithPermissionKeys(role, previousKeys));
+        return throwError(() => error);
+      }),
+    );
   }
 
+  private permissionStateFromRoles(roles: Role[]): Record<number, string[]> {
+    return roles.reduce(
+      (state, role) => ({
+        ...state,
+        [role.id]: this.permissionKeysFromRole(role),
+      }),
+      {},
+    );
+  }
+
+  private permissionKeysFromRole(role: Role): string[] {
+    const persistedPermissionKeys = role.permissions
+      .map((permission) => this.permissionKeyFrom(permission))
+      .filter((permissionKey): permissionKey is string => permissionKey !== null);
+
+    return this.orderPermissionKeys(
+      persistedPermissionKeys.length
+        ? persistedPermissionKeys
+        : this.defaultPermissionKeysByRoleName[role.name] ?? [],
+    );
+  }
+
+  private permissionKeyFrom(permission: Permission): string | null {
+    const descriptionKey = this.availablePermissionKeys.find(
+      (permissionKey) => permissionKey === permission.description,
+    );
+
+    if (descriptionKey) {
+      return descriptionKey;
+    }
+
+    return (
+      this.permissionDefinitions.find(
+        (definition) =>
+          definition.resource === permission.resource && definition.action === permission.action,
+      )?.key ?? null
+    );
+  }
+
+  private roleWithPermissionKeys(role: Role, permissionKeys: string[]): Role {
+    return new Role(
+      role.id,
+      role.name,
+      role.label,
+      this.orderPermissionKeys(permissionKeys).map(
+        (permissionKey, index) =>
+          new Permission(
+            index + 1,
+            this.permissionDefinitionFor(permissionKey).resource,
+            this.permissionDefinitionFor(permissionKey).action,
+            permissionKey,
+          ),
+      ),
+    );
+  }
+
+  private permissionDefinitionFor(permissionKey: string): PermissionDefinition {
+    return (
+      this.permissionDefinitions.find((definition) => definition.key === permissionKey) ??
+      this.permissionDefinitions[this.permissionDefinitions.length - 1]
+    );
+  }
+
+  private nextPermissionKeys(
+    currentKeys: string[],
+    permissionKey: string,
+    checked: boolean,
+  ): string[] {
+    const nextKeys = checked
+      ? [...currentKeys, permissionKey]
+      : currentKeys.filter((currentKey) => currentKey !== permissionKey);
+
+    return this.orderPermissionKeys(nextKeys);
+  }
+
+  private orderPermissionKeys(permissionKeys: string[]): string[] {
+    return this.availablePermissionKeys.filter((permissionKey) =>
+      permissionKeys.includes(permissionKey),
+    );
+  }
+
+  private setPermissionKeysForRole(roleId: number, permissionKeys: string[]): void {
+    this.rolePermissionKeysByRoleIdSignal.update((current) => ({
+      ...current,
+      [roleId]: this.orderPermissionKeys(permissionKeys),
+    }));
+  }
+
+  private updateRoleState(role: Role): void {
+    this.rolesSignal.update((roles) =>
+      roles.map((currentRole) => (currentRole.id === role.id ? role : currentRole)),
+    );
+  }
 }

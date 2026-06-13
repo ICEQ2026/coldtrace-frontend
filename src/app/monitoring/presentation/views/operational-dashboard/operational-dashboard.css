@@ -1,6 +1,7 @@
 .dashboard-content {
   background: #f5f6f8;
   box-sizing: border-box;
+  container-type: inline-size;
   min-height: 100%;
   padding: 8px 18px 40px;
 }
@@ -18,9 +19,10 @@
 .dashboard-board {
   display: grid;
   gap: 24px;
-  grid-template-columns: minmax(660px, 1fr) 508px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.58fr);
   margin: 0;
   max-width: 1352px;
+  width: 100%;
 }
 
 .primary-column,
@@ -42,7 +44,7 @@
 .right-kpis {
   display: grid;
   gap: 20px;
-  grid-template-columns: 244px 244px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .feature-kpis,
@@ -146,6 +148,7 @@
 @media (max-width: 1180px) {
   .dashboard-board {
     grid-template-columns: 1fr;
+    margin-inline: auto;
     max-width: 760px;
   }
 
@@ -159,6 +162,46 @@
 
   .incidents-box {
     height: 430px;
+  }
+}
+
+@container (max-width: 1210px) {
+  .dashboard-board {
+    grid-template-columns: 1fr;
+    margin-inline: auto;
+    max-width: 760px;
+  }
+
+  .right-kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .lower-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .incidents-box {
+    height: 430px;
+  }
+}
+
+@container (max-width: 680px) {
+  .dashboard-content {
+    padding: 8px 12px 32px;
+  }
+
+  .temp-chart-container,
+  .storage-box,
+  .maintenance-box,
+  .alerts-row,
+  .incidents-box {
+    height: auto;
+    min-height: 260px;
+  }
+
+  .feature-kpis app-stat-card,
+  .compact-kpis app-stat-card {
+    height: 190px;
   }
 }
 

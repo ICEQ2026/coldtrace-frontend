@@ -15,9 +15,10 @@
 
         <div class="legend-bar">
           <div class="legend-item"><span class="indicator green"></span> {{ 'monitoring.operational.legend-temperature' | translate }}</div>
-          <div class="legend-item"><span class="indicator dashed-red"></span> {{ 'monitoring.operational.legend-max-limit' | translate }}</div>
-          <div class="legend-item"><span class="indicator dashed-blue"></span> {{ 'monitoring.operational.legend-min-limit' | translate }}</div>
+          <div class="legend-item"><span class="indicator dashed-red"></span> {{ 'monitoring.operational.legend-max-limit' | translate: { value: maxLimitLabel } }}</div>
+          <div class="legend-item"><span class="indicator dashed-blue"></span> {{ 'monitoring.operational.legend-min-limit' | translate: { value: minLimitLabel } }}</div>
         </div>
+        <p class="chart-helper">{{ 'monitoring.operational.chart-temp-helper' | translate }}</p>
       }
 
       <div class="chart-container">

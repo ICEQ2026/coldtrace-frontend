@@ -2,6 +2,7 @@ import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angula
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, interval } from 'rxjs';
+import { AlertsStore } from '../../../../alerts/application/alerts.store';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
 import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
@@ -25,6 +26,7 @@ export class Layout implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly identityAccessStore = inject(IdentityAccessStore);
   private readonly assetManagementStore = inject(AssetManagementStore);
+  private readonly alertsStore = inject(AlertsStore);
   private readonly monitoringStore = inject(MonitoringStore);
   private readonly reportsStore = inject(ReportsStore);
 
@@ -161,7 +163,21 @@ export class Layout implements OnInit {
   });
 
   protected readonly canManageAccess = computed(() => {
-    return this.identityAccessStore.canManageAccess(
+    return this.identityAccessStore.canManageRolePermissions(
+      this.identityAccessStore.users(),
+      this.identityAccessStore.roles(),
+    );
+  });
+
+  protected readonly canManageUsers = computed(() => {
+    return this.identityAccessStore.canManageUsers(
+      this.identityAccessStore.users(),
+      this.identityAccessStore.roles(),
+    );
+  });
+
+  protected readonly canMonitorAssets = computed(() => {
+    return this.identityAccessStore.canMonitorAssets(
       this.identityAccessStore.users(),
       this.identityAccessStore.roles(),
     );
@@ -183,6 +199,8 @@ export class Layout implements OnInit {
   protected readonly assetIssueCount = computed(() => {
     return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
   });
+
+  protected readonly pendingAlertsCount = computed(() => this.alertsStore.openIncidentsCount());
 
   constructor() {
     this.router.events
@@ -237,6 +255,7 @@ export class Layout implements OnInit {
     this.assetManagementStore.loadGateways();
     this.assetManagementStore.loadAssetSettings();
     this.monitoringStore.loadReadings();
+    this.alertsStore.loadIncidents();
     this.reportsStore.loadReports();
   }
 
@@ -246,6 +265,7 @@ export class Layout implements OnInit {
       .subscribe(() => {
         if (this.showDashboardShell()) {
           this.assetManagementStore.updateOrganizationTelemetry(this.activeOrganizationId());
+          this.alertsStore.loadIncidents({ silent: true });
         }
       });
   }

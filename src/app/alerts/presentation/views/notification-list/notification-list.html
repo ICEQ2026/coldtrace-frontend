@@ -15,23 +15,37 @@
       <div class="card-header notification-header">
         <div>
           <h3 class="card-title">{{ 'alerts.notification-list.card-title' | translate }}</h3>
-          <p class="notification-subtitle">{{ 'alerts.notification-list.card-subtitle' | translate }}</p>
+          <p class="notification-subtitle">
+            {{ 'alerts.notification-list.card-subtitle' | translate }}
+          </p>
         </div>
         <div class="notification-summary">
           <span class="notification-count">
-            {{ alertsStore.notifications().length }} {{ 'alerts.notification-list.total' | translate }}
+            {{ notifications().length }} {{ 'alerts.notification-list.total' | translate }}
+          </span>
+          <span class="notification-count active">
+            {{ alertsStore.openIncidentsCount() }}
+            {{ 'alerts.notification-list.active-alerts' | translate }}
           </span>
           <span class="notification-count pending">
-            {{ alertsStore.pendingNotificationsCount() }} {{ 'alerts.notification-list.pending' | translate }}
+            {{ alertsStore.pendingNotificationsCount() }}
+            {{ 'alerts.notification-list.pending' | translate }}
           </span>
           <span class="notification-count failed">
-            {{ alertsStore.failedNotificationsCount() }} {{ 'alerts.notification-list.failed' | translate }}
+            {{ alertsStore.failedNotificationsCount() }}
+            {{ 'alerts.notification-list.failed' | translate }}
           </span>
         </div>
       </div>
 
+      @if (alertsStore.feedback(); as feedbackKey) {
+        <div class="notification-feedback">
+          {{ feedbackKey | translate }}
+        </div>
+      }
+
       <div class="notification-list">
-        @for (notification of alertsStore.notifications(); track notification.id) {
+        @for (notification of notifications(); track notification.id) {
           <div class="notification-row">
             <div
               class="notification-channel"
@@ -47,12 +61,23 @@
                 <span>{{ notification.assetName }}</span>
                 <small>{{ notificationChannelLabelKey(notification) | translate }}</small>
                 @if (incidentForNotification(notification); as incident) {
+                  <small
+                    class="notification-severity"
+                    [class.notification-critical]="incident.severity === 'critical'"
+                    [class.notification-warning]="incident.severity === 'warning'"
+                  >
+                    {{ severityLabelKey(incident) | translate }}
+                  </small>
                   @if (incident.escalationStatus !== 'none') {
                     <small
                       class="notification-escalation"
                       [class.notification-escalated]="incident.isEscalated"
-                      [class.notification-escalation-pending]="incident.isPendingEscalationConfiguration"
-                      [class.notification-escalation-reviewed]="incident.escalationStatus === 'reviewed'"
+                      [class.notification-escalation-pending]="
+                        incident.isPendingEscalationConfiguration
+                      "
+                      [class.notification-escalation-reviewed]="
+                        incident.escalationStatus === 'reviewed'
+                      "
                     >
                       {{ escalationLabelKey(incident) | translate }}
                     </small>
@@ -75,6 +100,25 @@
                 {{ notificationStatusLabelKey(notification) | translate }}
               </span>
               <small>{{ formatDate(notification.createdAt) }}</small>
+              @if (incidentForNotification(notification); as actionIncident) {
+                @if (actionIncident.isOpen) {
+                  <button
+                    mat-stroked-button
+                    class="attend-action"
+                    type="button"
+                    [disabled]="!canAttendNotifications() || isAttending(notification)"
+                    (click)="attendNotification(notification)"
+                  >
+                    <mat-icon>done</mat-icon>
+                    {{
+                      (isAttending(notification)
+                        ? 'alerts.notification-list.attending'
+                        : 'alerts.notification-list.action-attend'
+                      ) | translate
+                    }}
+                  </button>
+                }
+              }
             </div>
           </div>
         } @empty {

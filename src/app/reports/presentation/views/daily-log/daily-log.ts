@@ -95,6 +95,7 @@ export class DailyLog implements OnInit {
     this.feedback.set('idle');
     this.assetManagementStore.loadAssets();
     this.assetManagementStore.loadIoTDevices();
+    this.assetManagementStore.loadGateways();
     this.monitoringStore.loadReadings();
     this.reportsStore.loadReports();
 
@@ -109,9 +110,7 @@ export class DailyLog implements OnInit {
           this.users.set(users);
           this.roles.set(roles);
           this.organizations.set(organizations);
-          this.identityAccessStore.setCurrentRoleFrom(users, roles);
-          this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
-          this.identityAccessStore.initializeRolePermissions(roles);
+          this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
         },
         error: () => this.feedback.set('server-error'),
       });

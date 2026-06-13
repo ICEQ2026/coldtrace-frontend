@@ -825,7 +825,7 @@ export class ReportsStore {
       organizationId,
       asset.id,
       asset.name,
-      asset.location,
+      this.assetLocationFor(asset),
       type,
       severity,
       status,
@@ -859,7 +859,7 @@ export class ReportsStore {
     return {
       assetId: asset.id,
       assetName: asset.name,
-      assetLocation: asset.location,
+      assetLocation: this.assetLocationFor(asset),
       totalReadings: assetReadings.length,
       expectedReadings,
       averageTemperature: this.average(temperatureReadings),
@@ -902,7 +902,7 @@ export class ReportsStore {
     return {
       assetId: asset.id,
       assetName: asset.name,
-      assetLocation: asset.location,
+      assetLocation: this.assetLocationFor(asset),
       totalReadings: assetReadings.length,
       expectedReadings,
       validReadings,
@@ -943,7 +943,7 @@ export class ReportsStore {
     return {
       assetId: asset.id,
       assetName: asset.name,
-      assetLocation: asset.location,
+      assetLocation: this.assetLocationFor(asset),
       totalReadings: assetReadings.length,
       validReadings,
       outOfRangeCount,
@@ -1030,6 +1030,10 @@ export class ReportsStore {
     return Number((total / values.length).toFixed(1));
   }
 
+  private assetLocationFor(asset: Asset | null | undefined): string {
+    return asset ? this.assetManagementStore.locationForAsset(asset) : 'N/A';
+  }
+
   private historyReadingEvent(
     reading: SensorReading,
     assets: Asset[],
@@ -1041,7 +1045,7 @@ export class ReportsStore {
       id: reading.id,
       assetId: reading.assetId,
       assetName: asset?.name ?? `#${reading.assetId}`,
-      assetLocation: asset?.location ?? 'N/A',
+      assetLocation: this.assetLocationFor(asset),
       eventType: 'reading',
       severity: reading.isOutOfRange ? 'warning' : 'normal',
       icon: 'sensors',
@@ -1068,7 +1072,7 @@ export class ReportsStore {
       id: 100000 + reading.id,
       assetId: reading.assetId,
       assetName: asset?.name ?? `#${reading.assetId}`,
-      assetLocation: asset?.location ?? 'N/A',
+      assetLocation: this.assetLocationFor(asset),
       eventType: 'alert',
       severity,
       icon: this.alertIcon(reading, settings),
@@ -1100,7 +1104,7 @@ export class ReportsStore {
         id: 200000 + asset.id,
         assetId: asset.id,
         assetName: asset.name,
-        assetLocation: asset.location,
+        assetLocation: this.assetLocationFor(asset),
         eventType: 'incident',
         severity: incidentKey === 'connection-lost' ? 'critical' : 'warning',
         icon: incidentKey === 'connection-lost' ? 'wifi_off' : 'report_problem',
@@ -1116,7 +1120,7 @@ export class ReportsStore {
         id: 300000 + asset.id,
         assetId: asset.id,
         assetName: asset.name,
-        assetLocation: asset.location,
+        assetLocation: this.assetLocationFor(asset),
         eventType: 'incident',
         severity: asset.connectivity === ConnectivityStatus.Offline ? 'critical' : 'warning',
         icon: 'wifi_off',

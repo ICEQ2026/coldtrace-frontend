@@ -93,6 +93,7 @@ export class OperationalHistory implements OnInit {
     this.identityLoading.set(true);
     this.assetManagementStore.loadAssets();
     this.assetManagementStore.loadIoTDevices();
+    this.assetManagementStore.loadGateways();
     this.assetManagementStore.loadAssetSettings();
     this.monitoringStore.loadReadings();
 
@@ -107,9 +108,7 @@ export class OperationalHistory implements OnInit {
           this.users.set(users);
           this.roles.set(roles);
           this.organizations.set(organizations);
-          this.identityAccessStore.setCurrentRoleFrom(users, roles);
-          this.identityAccessStore.setCurrentOrganizationFrom(users, organizations);
-          this.identityAccessStore.initializeRolePermissions(roles);
+          this.identityAccessStore.setCurrentContextFrom(users, roles, organizations);
         },
         error: () => this.identityLoading.set(false),
       });

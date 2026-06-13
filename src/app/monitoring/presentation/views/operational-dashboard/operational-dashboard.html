@@ -1,5 +1,5 @@
 <div class="dashboard-content">
-  @if (monitoringStore.loading() || assetStore.loading() || identityLoading()) {
+  @if (monitoringStore.loading() || assetStore.loading() || identityLoading() || maintenanceLoading() || alertsLoading()) {
     <div class="loading-overlay">
       <mat-spinner diameter="40"></mat-spinner>
     </div>
@@ -121,7 +121,7 @@
         </div>
       </aside>
     </div>
-  } @else if (!monitoringStore.loading() && !assetStore.loading() && !identityLoading()) {
+  } @else if (!monitoringStore.loading() && !assetStore.loading() && !identityLoading() && !maintenanceLoading() && !alertsLoading()) {
     <div class="empty-state">
       <mat-icon>dashboard</mat-icon>
       <h2>{{ 'monitoring.operational.empty-title' | translate }}</h2>

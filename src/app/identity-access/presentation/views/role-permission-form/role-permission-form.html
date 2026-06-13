@@ -13,6 +13,10 @@
       <p class="feedback error">{{ 'roles-permissions.feedback.server-error' | translate }}</p>
     }
 
+    @if (feedback() === 'saved') {
+      <p class="feedback success">{{ 'roles-permissions.feedback.permissions-saved' | translate }}</p>
+    }
+
     @if (loading()) {
       <p class="feedback neutral">{{ 'roles-permissions.feedback.loading' | translate }}</p>
     } @else if (!canManageAccess()) {

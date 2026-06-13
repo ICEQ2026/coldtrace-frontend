@@ -6,15 +6,19 @@ import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { interval } from 'rxjs';
 
+import { AlertsStore } from '../../../../alerts/application/alerts.store';
+import { Incident } from '../../../../alerts/domain/model/incident.entity';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { Asset } from '../../../../asset-management/domain/model/asset.entity';
 import { AssetStatus } from '../../../../asset-management/domain/model/asset-status.enum';
 import { CalibrationStatus } from '../../../../asset-management/domain/model/calibration-status.enum';
-import { ConnectivityStatus } from '../../../../asset-management/domain/model/connectivity-status.enum';
 import { GatewayStatus } from '../../../../asset-management/domain/model/gateway-status.enum';
 import { IoTDeviceStatus } from '../../../../asset-management/domain/model/iot-device-status.enum';
 import { AssetSettings } from '../../../../asset-management/domain/model/asset-settings.entity';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
+import { MaintenanceManagementStore } from '../../../../maintenance-management/application/maintenance-management.store';
+import { MaintenanceScheduleStatus } from '../../../../maintenance-management/domain/model/maintenance-schedule-status.enum';
+import { TechnicalServiceStatus } from '../../../../maintenance-management/domain/model/technical-service-status.enum';
 import { TELEMETRY_POLLING_INTERVAL_MS } from '../../../../shared/domain/model/polling-interval.constant';
 import { MonitoringStore } from '../../../application/monitoring.store';
 import { IncidentDay } from '../../../domain/model/incident-day.entity';
@@ -59,7 +63,9 @@ interface TemperatureLimits {
 export class OperationalDashboard implements OnInit {
   protected readonly monitoringStore = inject(MonitoringStore);
   protected readonly assetStore = inject(AssetManagementStore);
+  protected readonly alertsStore = inject(AlertsStore);
   protected readonly identityStore = inject(IdentityAccessStore);
+  protected readonly maintenanceStore = inject(MaintenanceManagementStore);
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -79,19 +85,31 @@ export class OperationalDashboard implements OnInit {
   protected readonly organizationGateways = computed(() => {
     return this.assetStore.gatewaysForOrganization(this.activeOrganizationId());
   });
+  protected readonly organizationMaintenanceSchedules = computed(() => {
+    return this.maintenanceStore.schedulesForOrganization(this.activeOrganizationId());
+  });
+  protected readonly organizationTechnicalServices = computed(() => {
+    return this.maintenanceStore.technicalServicesForOrganization(this.activeOrganizationId());
+  });
   protected readonly organizationReadings = computed(() => {
     const since = new Date();
     since.setHours(since.getHours() - 24);
     return this.monitoringStore.readingsForAssetIdsSince(this.organizationAssetIds(), since);
   });
+  protected readonly organizationIncidents = computed(() => this.alertsStore.incidents());
+  protected readonly activeIncidents = computed(() =>
+    this.organizationIncidents().filter((incident) => !incident.isClosed),
+  );
+  protected readonly activeCriticalIncidents = computed(() =>
+    this.activeIncidents().filter((incident) => incident.severity === 'critical'),
+  );
   protected readonly assetSummary = computed(() => {
     return this.assetStore.operationalSummaryFor(this.activeOrganizationId());
   });
   protected readonly currentSettings = computed(() => {
     return (
-      this.assetStore
-        .assetSettings()
-        .find((assetSettings) => assetSettings.organizationId === this.activeOrganizationId()) ??
+      this.assetStore.defaultSettingsForOrganization(this.activeOrganizationId()) ??
+      this.assetStore.assetSettingsForOrganization(this.activeOrganizationId())[0] ??
       null
     );
   });
@@ -107,13 +125,23 @@ export class OperationalDashboard implements OnInit {
   protected readonly incidentDays = computed(() => this.buildIncidentDays());
   protected readonly timeline = computed(() => this.buildTimeline());
   protected readonly maintenanceCompletionRate = computed(() => {
-    const summary = this.assetSummary();
+    const schedules = this.organizationMaintenanceSchedules().filter(
+      (schedule) => schedule.status !== MaintenanceScheduleStatus.Canceled,
+    );
+    const technicalServices = this.organizationTechnicalServices();
+    const total = schedules.length + technicalServices.length;
 
-    if (!summary.totalDevices) {
+    if (!total) {
       return 0;
     }
 
-    return Math.round((summary.connectedDevices / summary.totalDevices) * 100);
+    const completed =
+      schedules.filter((schedule) => schedule.status === MaintenanceScheduleStatus.Completed)
+        .length +
+      technicalServices.filter((request) => request.status === TechnicalServiceStatus.Closed)
+        .length;
+
+    return Math.round((completed / total) * 100);
   });
   protected readonly activeOrganizationName = computed(() => {
     return this.identityStore.currentOrganizationNameFrom(
@@ -137,14 +165,18 @@ export class OperationalDashboard implements OnInit {
     );
   });
   protected readonly identityLoading = computed(() => this.identityStore.loading());
+  protected readonly maintenanceLoading = computed(() => this.maintenanceStore.loading());
+  protected readonly alertsLoading = computed(() => this.alertsStore.loading());
   protected readonly assetIssueCount = computed(() => this.assetSummary().assetsWithIssues);
-  protected readonly openAlertsCount = computed(() => this.recentAlerts().length);
   protected readonly hasOperationalData = computed(() => {
     return (
       this.assetSummary().totalAssets > 0 ||
       this.organizationIoTDevices().length > 0 ||
       this.organizationGateways().length > 0 ||
-      this.organizationReadings().length > 0
+      this.organizationMaintenanceSchedules().length > 0 ||
+      this.organizationTechnicalServices().length > 0 ||
+      this.organizationReadings().length > 0 ||
+      this.organizationIncidents().length > 0
     );
   });
 
@@ -159,6 +191,9 @@ export class OperationalDashboard implements OnInit {
     this.assetStore.loadIoTDevices();
     this.assetStore.loadGateways();
     this.assetStore.loadAssetSettings();
+    this.maintenanceStore.loadMaintenanceSchedules();
+    this.maintenanceStore.loadTechnicalServiceRequests();
+    this.alertsStore.loadIncidents();
     this.monitoringStore.loadReadings();
     this.startReadingsUpdates();
   }
@@ -213,12 +248,14 @@ export class OperationalDashboard implements OnInit {
   }
 
   private buildCriticalAlertsKpi(): DashboardKpi {
+    const criticalCount = this.activeCriticalIncidents().length;
+
     return this.kpi({
       id: 2,
       key: 'critical-alerts',
       title: 'monitoring.operational.metric-critical-alerts',
-      value: `${this.openAlertsCount()}`,
-      valueUnit: 'monitoring.operational.label-active',
+      value: `${criticalCount}`,
+      valueUnit: 'monitoring.operational.label-open',
       size: 'large',
       type: 'wave',
       color: {
@@ -253,7 +290,7 @@ export class OperationalDashboard implements OnInit {
       id: 3,
       key: 'active-sensors',
       title: 'monitoring.operational.metric-sensors',
-      value: `${summary.connectedDevices}`,
+      value: `${linkedDevices}`,
       valueUnit: 'monitoring.operational.unit-devices',
       size: 'small',
       color: {
@@ -278,7 +315,12 @@ export class OperationalDashboard implements OnInit {
   }
 
   private buildIncidentsKpi(): DashboardKpi {
-    const count = this.openAlertsCount();
+    const activeIncidents = this.activeIncidents();
+    const count = activeIncidents.length;
+    const openCount = activeIncidents.filter((incident) => incident.isOpen).length;
+    const recognizedCount = activeIncidents.filter((incident) => incident.isRecognized).length;
+    const warningCount = activeIncidents.filter((incident) => incident.severity === 'warning').length;
+    const criticalCount = activeIncidents.filter((incident) => incident.severity === 'critical').length;
 
     return this.kpi({
       id: 4,
@@ -294,13 +336,14 @@ export class OperationalDashboard implements OnInit {
         chart: '#8B31E3',
       },
       tooltip: {
-        text: 'monitoring.operational.label-recent',
+        text: 'monitoring.operational.label-open',
         position: 78,
       },
       chartData: this.buildStatusBars([
-        count,
-        this.assetSummary().connectivityIssues,
-        this.monitoringStore.outOfRangeCountForAssetIds(this.organizationAssetIds()),
+        openCount,
+        recognizedCount,
+        warningCount,
+        criticalCount,
       ]),
       highlightedBar: 5,
       showAnchor: false,
@@ -308,9 +351,10 @@ export class OperationalDashboard implements OnInit {
   }
 
   private buildThermalComplianceKpi(): DashboardKpi {
-    const compliance = this.monitoringStore.thermalComplianceForAssetIds(
-      this.organizationAssetIds(),
+    const thermalReadings = this.organizationReadings().filter(
+      (reading) => reading.temperature !== null,
     );
+    const compliance = this.thermalComplianceFor(thermalReadings);
 
     return this.kpi({
       id: 5,
@@ -330,9 +374,9 @@ export class OperationalDashboard implements OnInit {
         position: 85,
       },
       chartData: this.buildStatusBars(
-        this.organizationReadings()
+        thermalReadings
           .slice(0, 11)
-          .map((reading) => (reading.isOutOfRange ? 42 : 92)),
+          .map((reading) => (this.isThermalReadingInRange(reading) ? 92 : 42)),
       ),
       highlightedBar: 9,
       showAnchor: false,
@@ -342,8 +386,16 @@ export class OperationalDashboard implements OnInit {
   private buildTemperaturePoints(): TemperaturePoint[] {
     const { max: maxLimit, min: minLimit } = this.currentTemperatureLimits();
     const readings = this.organizationReadings().filter((reading) => reading.temperature !== null);
+
+    if (!readings.length) {
+      return [];
+    }
+
     const now = new Date();
-    const initialTemperature = this.averageAssetTemperature() ?? (minLimit + maxLimit) / 2;
+    const initialTemperature =
+      [...readings].sort(
+        (left, right) => new Date(left.recordedAt).getTime() - new Date(right.recordedAt).getTime(),
+      )[0]?.temperature ?? (minLimit + maxLimit) / 2;
     let previousTemperature = initialTemperature;
 
     return Array.from({ length: 24 }, (_, index) => {
@@ -449,6 +501,48 @@ export class OperationalDashboard implements OnInit {
   }
 
   private buildMaintenanceTasks(): MaintenanceTask[] {
+    const technicalServiceTasks = this.organizationTechnicalServices()
+      .filter((request) => request.status !== TechnicalServiceStatus.Closed)
+      .sort((left, right) => this.priorityForRequest(right.priority) - this.priorityForRequest(left.priority))
+      .slice(0, 3)
+      .map(
+        (request, index) =>
+          new MaintenanceTask({
+            id: index + 1,
+            label: `${request.uuid} · ${this.assetNameFor(request.assetId)}`,
+            icon: this.iconForTechnicalService(request.priority),
+            status: request.status === TechnicalServiceStatus.PendingReview ? 'doing' : 'to-do',
+          }),
+      );
+
+    const preventiveTasks = this.organizationMaintenanceSchedules()
+      .filter((schedule) => schedule.status !== MaintenanceScheduleStatus.Canceled)
+      .sort(
+        (left, right) =>
+          this.maintenanceStatusWeight(left.status) - this.maintenanceStatusWeight(right.status) ||
+          new Date(left.scheduledDate).getTime() - new Date(right.scheduledDate).getTime(),
+      )
+      .slice(0, Math.max(0, 5 - technicalServiceTasks.length))
+      .map(
+        (schedule, index) =>
+          new MaintenanceTask({
+            id: technicalServiceTasks.length + index + 1,
+            label: this.maintenanceScheduleLabel(schedule.assetId, schedule.iotDeviceId),
+            icon: schedule.iotDeviceId ? 'sensors' : 'inventory_2',
+            status: this.maintenanceTaskStatus(schedule.status),
+          }),
+      );
+
+    const maintenanceTasks = [...technicalServiceTasks, ...preventiveTasks];
+
+    if (maintenanceTasks.length) {
+      return maintenanceTasks.slice(0, 5);
+    }
+
+    return this.buildOperationalMaintenanceFallbackTasks();
+  }
+
+  private buildOperationalMaintenanceFallbackTasks(): MaintenanceTask[] {
     const calibrationTasks = this.organizationIoTDevices()
       .filter((iotDevice) => iotDevice.calibrationStatus !== CalibrationStatus.Compliant)
       .slice(0, 3)
@@ -491,53 +585,78 @@ export class OperationalDashboard implements OnInit {
     return [...calibrationTasks, ...gatewayTasks, ...assetTasks].slice(0, 5);
   }
 
+  private maintenanceScheduleLabel(assetId: number, iotDeviceId: number | null): string {
+    const iotDevice = iotDeviceId
+      ? this.organizationIoTDevices().find((device) => device.id === iotDeviceId)
+      : null;
+
+    if (iotDevice) {
+      return `${iotDevice.uuid} · ${iotDevice.model}`;
+    }
+
+    const asset = this.organizationAssets().find((currentAsset) => currentAsset.id === assetId);
+
+    return asset ? `${asset.uuid} · ${asset.name}` : `Asset #${assetId}`;
+  }
+
+  private assetNameFor(assetId: number): string {
+    return this.organizationAssets().find((asset) => asset.id === assetId)?.name ?? `Asset #${assetId}`;
+  }
+
+  private maintenanceTaskStatus(
+    status: MaintenanceScheduleStatus,
+  ): 'to-do' | 'doing' | 'done' {
+    if (status === MaintenanceScheduleStatus.Completed) {
+      return 'done';
+    }
+
+    return status === MaintenanceScheduleStatus.Pending ? 'doing' : 'to-do';
+  }
+
+  private maintenanceStatusWeight(status: MaintenanceScheduleStatus): number {
+    if (status === MaintenanceScheduleStatus.Pending) {
+      return 0;
+    }
+
+    if (status === MaintenanceScheduleStatus.Scheduled) {
+      return 1;
+    }
+
+    return 2;
+  }
+
+  private priorityForRequest(priority: string): number {
+    const weights: Record<string, number> = {
+      critical: 4,
+      high: 3,
+      medium: 2,
+      low: 1,
+    };
+
+    return weights[priority] ?? 0;
+  }
+
+  private iconForTechnicalService(priority: string): string {
+    return priority === 'critical' || priority === 'high' ? 'build_circle' : 'construction';
+  }
+
   private buildRecentAlerts(): RecentAlert[] {
-    const assets = this.organizationAssets();
-    const settings = this.currentSettings();
-
-    const outOfRangeAlerts = this.organizationReadings()
-      .filter((reading) => reading.isOutOfRange)
-      .slice(0, 4)
-      .map((reading) => {
-        const asset = assets.find((currentAsset) => currentAsset.id === reading.assetId);
-        const severity =
-          reading.temperature !== null
-            ? this.getThermalSeverity(reading.temperature, settings)
-            : 'warning';
-
-        return new RecentAlert({
-          id: reading.id,
-          assetName: asset?.name ?? `#${reading.assetId}`,
-          type: this.alertTypeKey(reading),
-          value: this.readingValueLabel(reading),
-          date: this.formatDate(reading.recordedAt),
-          status: 'Unacknowledged',
-          severity: severity === 'normal' ? 'warning' : severity,
-          icon:
-            reading.temperature !== null
-              ? this.getThermalIcon(reading.temperature, settings)
-              : this.readingIcon(reading),
-        });
-      });
-
-    const connectivityAlerts = assets
-      .filter((asset) => asset.connectivity !== ConnectivityStatus.Online)
-      .slice(0, Math.max(0, 5 - outOfRangeAlerts.length))
+    return [...this.activeIncidents()]
+      .sort((left, right) => new Date(right.detectedAt).getTime() - new Date(left.detectedAt).getTime())
+      .slice(0, 5)
       .map(
-        (asset) =>
+        (incident) =>
           new RecentAlert({
-            id: 10000 + asset.id,
-            assetName: asset.name,
-            type: 'monitoring.operational.type-connectivity',
-            value: asset.connectivity,
-            date: asset.entryDate,
-            status: 'Unacknowledged',
-            severity: asset.connectivity === ConnectivityStatus.Offline ? 'critical' : 'warning',
-            icon: 'wifi_off',
+            id: incident.id,
+            assetName: incident.assetName,
+            type: this.incidentTypeKey(incident),
+            value: incident.value,
+            date: this.formatDate(incident.detectedAt),
+            status: incident.isRecognized ? 'Acknowledged' : 'Unacknowledged',
+            severity: incident.severity,
+            icon: this.incidentIcon(incident),
           }),
       );
-
-    return [...outOfRangeAlerts, ...connectivityAlerts].slice(0, 5);
   }
 
   private buildIncidentDays(): IncidentDay[] {
@@ -551,11 +670,10 @@ export class OperationalDashboard implements OnInit {
       offline: 0,
     }));
 
-    this.applyReadingIncidents(days, this.organizationReadings(), (reading) => {
-      const day = new Date(reading.recordedAt).getDay();
+    this.applyIncidentRecords(days, this.incidentsSince(this.startOfCurrentWeek()), (incident) => {
+      const day = new Date(incident.detectedAt).getDay();
       return day === 0 ? 6 : day - 1;
     });
-    days[this.currentWeekdayIndex()].offline += this.currentOfflineCount();
 
     return days.map((day) => new IncidentDay(day));
   }
@@ -570,39 +688,119 @@ export class OperationalDashboard implements OnInit {
       offline: 0,
     }));
 
-    this.applyReadingIncidents(hours, this.organizationReadings(), (reading) =>
-      new Date(reading.recordedAt).getHours(),
+    const since = new Date();
+    since.setHours(since.getHours() - 24);
+    this.applyIncidentRecords(hours, this.incidentsSince(since), (incident) =>
+      new Date(incident.detectedAt).getHours(),
     );
-    hours[new Date().getHours()].offline += this.currentOfflineCount();
 
     return hours.map((hour) => new IncidentDay(hour));
   }
 
-  private applyReadingIncidents(
+  private applyIncidentRecords(
     buckets: { normal: number; warning: number; critical: number; offline: number }[],
-    readings: SensorReading[],
-    indexFor: (reading: SensorReading) => number,
+    incidents: Incident[],
+    indexFor: (incident: Incident) => number,
   ): void {
-    readings.forEach((reading) => {
-      const bucket = buckets[indexFor(reading)];
+    incidents.forEach((incident) => {
+      const bucket = buckets[indexFor(incident)];
 
       if (!bucket) {
         return;
       }
 
-      const severity =
-        reading.temperature !== null
-          ? this.getThermalSeverity(reading.temperature, this.settingsForReading(reading))
-          : 'warning';
-
-      if (severity === 'normal' && !reading.isOutOfRange) {
+      if (incident.isClosed) {
         bucket.normal += 1;
-      } else if (severity === 'critical') {
+      } else if (incident.type === 'connectivity' || incident.conditionKey === 'low-signal') {
+        bucket.offline += 1;
+      } else if (incident.severity === 'critical') {
         bucket.critical += 1;
       } else {
         bucket.warning += 1;
       }
     });
+  }
+
+  private incidentsSince(since: Date): Incident[] {
+    const sinceTime = since.getTime();
+
+    return this.organizationIncidents().filter((incident) => {
+      const detectedAt = new Date(incident.detectedAt).getTime();
+      return Number.isFinite(detectedAt) && detectedAt >= sinceTime;
+    });
+  }
+
+  private startOfCurrentWeek(): Date {
+    const date = new Date();
+    const day = date.getDay();
+    const mondayOffset = day === 0 ? -6 : 1 - day;
+    date.setDate(date.getDate() + mondayOffset);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }
+
+  private incidentTypeKey(incident: Incident): string {
+    switch (incident.conditionKey) {
+      case 'high-temperature':
+        return 'monitoring.operational.type-high-temp';
+      case 'low-temperature':
+        return 'monitoring.operational.type-low-temp';
+      case 'high-humidity':
+        return 'monitoring.operational.type-high-humidity';
+      case 'low-battery':
+        return 'monitoring.operational.type-low-battery';
+      case 'low-signal':
+        return 'monitoring.operational.type-low-signal';
+      case 'thermal-configuration-pending':
+        return 'monitoring.operational.type-configuration';
+      default:
+        break;
+    }
+
+    if (incident.type === 'connectivity') {
+      return 'monitoring.operational.type-connectivity';
+    }
+
+    if (incident.type === 'humidity') {
+      return 'monitoring.operational.type-high-humidity';
+    }
+
+    if (incident.type === 'temperature') {
+      return 'monitoring.operational.type-high-temp';
+    }
+
+    return 'monitoring.operational.type-other';
+  }
+
+  private incidentIcon(incident: Incident): string {
+    switch (incident.conditionKey) {
+      case 'low-temperature':
+        return 'ac_unit';
+      case 'high-temperature':
+        return 'device_thermostat';
+      case 'high-humidity':
+        return 'water_drop';
+      case 'low-battery':
+        return 'battery_alert';
+      case 'low-signal':
+        return 'signal_wifi_bad';
+      default:
+        break;
+    }
+
+    if (incident.type === 'connectivity') {
+      return 'wifi_off';
+    }
+
+    if (incident.type === 'humidity') {
+      return 'water_drop';
+    }
+
+    if (incident.type === 'temperature') {
+      return 'device_thermostat';
+    }
+
+    return 'report_problem';
   }
 
   private alertTypeKey(reading: SensorReading): string {
@@ -710,6 +908,30 @@ export class OperationalDashboard implements OnInit {
     return temperature > settings.maximumTemperature ? 'device_thermostat' : 'ac_unit';
   }
 
+  private thermalComplianceFor(readings: SensorReading[]): number {
+    if (!readings.length) {
+      return 0;
+    }
+
+    const compliantReadings = readings.filter((reading) => this.isThermalReadingInRange(reading))
+      .length;
+
+    return Math.round((compliantReadings / readings.length) * 100);
+  }
+
+  private isThermalReadingInRange(reading: SensorReading): boolean {
+    const settings = this.settingsForReading(reading);
+
+    if (!settings || reading.temperature === null) {
+      return false;
+    }
+
+    return (
+      reading.temperature >= settings.minimumTemperature &&
+      reading.temperature <= settings.maximumTemperature
+    );
+  }
+
   private settingsForReading(reading: SensorReading): AssetSettings | null {
     return this.assetStore.settingsForAsset(this.activeOrganizationId(), reading.assetId) ?? null;
   }
@@ -743,25 +965,6 @@ export class OperationalDashboard implements OnInit {
 
   private hourLabel(date: string): string {
     return `${new Date(date).getHours().toString().padStart(2, '0')}:00`;
-  }
-
-  private currentWeekdayIndex(): number {
-    const day = new Date().getDay();
-    return day === 0 ? 6 : day - 1;
-  }
-
-  private currentOfflineCount(): number {
-    const offlineAssets = this.organizationAssets().filter(
-      (asset) => asset.connectivity !== ConnectivityStatus.Online,
-    ).length;
-    const offlineDevices = this.organizationIoTDevices().filter(
-      (iotDevice) => iotDevice.status === IoTDeviceStatus.Offline,
-    ).length;
-    const offlineGateways = this.organizationGateways().filter(
-      (gateway) => gateway.status === GatewayStatus.Offline,
-    ).length;
-
-    return offlineAssets + offlineDevices + offlineGateways;
   }
 
   private averageAssetTemperature(): number | null {
@@ -836,7 +1039,9 @@ export class OperationalDashboard implements OnInit {
   }
 
   private formatDate(date: string): string {
-    return new Intl.DateTimeFormat('en-GB', {
+    const locale = this.translate.currentLang === 'es' ? 'es-PE' : 'en-GB';
+
+    return new Intl.DateTimeFormat(locale, {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
