@@ -419,6 +419,7 @@ app-language-switcher {
   flex: 1;
   overflow: auto;
   background: #f5f6f8;
+  padding: 0 34px 34px;
 }
 
 @media (max-width: 1180px) {
@@ -563,6 +564,10 @@ app-language-switcher {
     gap: 10px;
     height: 70px;
     padding: 8px 14px 0;
+  }
+
+  .content-scroll {
+    padding: 0 14px 24px;
   }
 
   .profile-meta,

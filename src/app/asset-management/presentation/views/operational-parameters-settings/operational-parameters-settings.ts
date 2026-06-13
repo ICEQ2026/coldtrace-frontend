@@ -11,6 +11,7 @@ import { Organization } from '../../../../identity-access/domain/model/organizat
 import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { AssetManagementStore } from '../../../application/asset-management.store';
 import { AssetStatus } from '../../../domain/model/asset-status.enum';
 import { Asset } from '../../../domain/model/asset.entity';
@@ -38,7 +39,15 @@ type OperationalParametersFeedback =
  */
 @Component({
   selector: 'app-operational-parameters-settings',
-  imports: [MatButton, MatIcon, MatProgressSpinner, NgClass, ReactiveFormsModule, TranslatePipe],
+  imports: [
+    MatButton,
+    MatIcon,
+    MatProgressSpinner,
+    NgClass,
+    ReactiveFormsModule,
+    TranslatePipe,
+    ListPagination,
+  ],
   templateUrl: './operational-parameters-settings.html',
   styleUrl: './operational-parameters-settings.css',
 })
@@ -63,6 +72,8 @@ export class OperationalParametersSettings implements OnInit {
   protected readonly feedback = signal<OperationalParametersFeedback>('idle');
   protected readonly selectedAssetId = signal(0);
   protected readonly selectedIoTDeviceId = signal(0);
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -144,6 +155,9 @@ export class OperationalParametersSettings implements OnInit {
       .filter((iotDevice) => iotDevice.assetId !== null)
       .sort((a, b) => this.assetNameFor(a).localeCompare(this.assetNameFor(b)));
   });
+  protected readonly paginatedConfiguredDevices = computed(() =>
+    this.paginate(this.configuredDevices(), this.currentPage()),
+  );
   protected readonly currentIntervalLabel = computed(() => {
     const iotDevice = this.selectedIoTDevice();
     const seconds = iotDevice?.readingFrequencySeconds ?? 3600;
@@ -205,6 +219,10 @@ export class OperationalParametersSettings implements OnInit {
     this.feedback.set('idle');
     this.submitted.set(false);
     this.resetOperationalForm();
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
   }
 
   protected updateReadingFrequencyPreview(value: string): void {
@@ -484,6 +502,14 @@ export class OperationalParametersSettings implements OnInit {
 
   private minutesLabel(minutes: number): string {
     return Number.isFinite(minutes) && minutes > 0 ? `${minutes} min` : 'N/A';
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 
   private upsertLocalIoTDevice(iotDevice: IoTDevice): void {

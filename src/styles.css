@@ -1,6 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Varela+Round&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
+:root {
+  --color-background: #f7f8fa;
+  --color-text: #404040;
+  --color-primary: #9aaee7;
+  --color-border: #e4e7eb;
+}
+
 html,
 body {
   margin: 0;
@@ -8,14 +15,38 @@ body {
   overflow: hidden;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
 body {
-  font-family: 'Inter', Arial, sans-serif;
-  background: #f7f8fa;
+  min-height: 100vh;
+  color: var(--color-text);
+  background: var(--color-background);
+  line-height: 1.6;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
+}
+
+.summary-grid span {
+  line-height: 20px;
+}
+
+.summary-grid strong {
+  line-height: 28px;
 }
 
 .brand-organization {

@@ -201,7 +201,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (settings of currentProfiles(); track settings.id) {
+          @for (settings of paginatedProfiles(); track settings.id) {
             <tr>
               <td>
                 <strong>
@@ -241,5 +241,11 @@
         </tbody>
       </table>
     </div>
+    <app-list-pagination
+      [page]="currentPage()"
+      [total]="currentProfiles().length"
+      [pageSize]="pageSize"
+      (pageChange)="updatePage($event)"
+    />
   </section>
 </section>

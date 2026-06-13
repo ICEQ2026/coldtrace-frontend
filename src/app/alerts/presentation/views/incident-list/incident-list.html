@@ -153,7 +153,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (incident of activeIncidents(); track incident.id) {
+            @for (incident of paginatedIncidents(); track incident.id) {
               <tr [class.recognized-row]="incident.isRecognized">
                 <td class="asset-name">{{ incident.assetName }}</td>
                 <td>
@@ -276,6 +276,15 @@
           </tbody>
         </table>
       </div>
+
+      @if (activeIncidents().length > 0) {
+        <app-list-pagination
+          [page]="currentPage()"
+          [total]="activeIncidents().length"
+          [pageSize]="pageSize"
+          (pageChange)="updatePage($event)"
+        />
+      }
 
       @if (!canResolveAlerts()) {
         <div class="access-notice">

@@ -235,7 +235,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (iotDevice of configuredDevices(); track iotDevice.id) {
+          @for (iotDevice of paginatedConfiguredDevices(); track iotDevice.id) {
             <tr>
               <td>{{ assetNameFor(iotDevice) }}</td>
               <td>{{ assetLocationFor(iotDevice) }}</td>
@@ -258,5 +258,11 @@
         </tbody>
       </table>
     </div>
+    <app-list-pagination
+      [page]="currentPage()"
+      [total]="configuredDevices().length"
+      [pageSize]="pageSize"
+      (pageChange)="updatePage($event)"
+    />
   </section>
 </section>

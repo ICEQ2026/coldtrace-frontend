@@ -11,7 +11,7 @@
           <button
             type="button"
             [class.active]="activeType() === tab.type"
-            (click)="activeType.set(tab.type)"
+            (click)="selectAssetType(tab.type)"
           >
             {{ tab.labelKey | translate }}
           </button>
@@ -54,7 +54,7 @@
     </div>
   } @else {
     <div class="monitoring-list">
-      @for (item of filteredItems(); track item.asset.id) {
+      @for (item of paginatedItems(); track item.asset.id) {
         <app-monitoring-asset-card
           [asset]="item.asset"
           [device]="item.device"
@@ -70,6 +70,15 @@
           <mat-icon>inventory_2</mat-icon>
           <p>{{ 'monitoring.asset-monitoring.empty' | translate }}</p>
         </div>
+      }
+
+      @if (filteredItems().length > 0) {
+        <app-list-pagination
+          [page]="currentPage()"
+          [total]="filteredItems().length"
+          [pageSize]="pageSize"
+          (pageChange)="updatePage($event)"
+        />
       }
     </div>
   }

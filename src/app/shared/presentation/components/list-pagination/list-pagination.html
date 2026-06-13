@@ -1,0 +1,41 @@
+@if (total() > 0) {
+  <footer class="table-pagination">
+    <div class="footer-meta">
+      <span>{{ 'pagination.item-count' | translate: { count: pageSize() } }}</span>
+      <span class="page-range">{{ pageStart() }}-{{ pageEnd() }} / {{ total() }}</span>
+    </div>
+
+    <div class="pager" aria-label="Pagination">
+      <button
+        type="button"
+        [disabled]="currentPage() === 1"
+        aria-label="Previous page"
+        (click)="goToPage(currentPage() - 1)"
+      >
+        <mat-icon aria-hidden="true">chevron_left</mat-icon>
+      </button>
+      @for (pageNumber of visiblePages(); track pageNumber) {
+        @if (isNumber(pageNumber)) {
+          <button
+            type="button"
+            [ngClass]="{ active: currentPage() === pageNumber }"
+            [attr.aria-current]="currentPage() === pageNumber ? 'page' : null"
+            (click)="goToPage(pageNumber)"
+          >
+            {{ pageNumber }}
+          </button>
+        } @else {
+          <span class="pager-ellipsis" aria-hidden="true">...</span>
+        }
+      }
+      <button
+        type="button"
+        [disabled]="currentPage() === pageCount()"
+        aria-label="Next page"
+        (click)="goToPage(currentPage() + 1)"
+      >
+        <mat-icon aria-hidden="true">chevron_right</mat-icon>
+      </button>
+    </div>
+  </footer>
+}

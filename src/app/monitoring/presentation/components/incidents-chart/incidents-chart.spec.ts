@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideTranslateService } from '@ngx-translate/core';
 
 import { IncidentsChart } from './incidents-chart';
 
@@ -9,6 +10,7 @@ describe('IncidentsChart', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [IncidentsChart],
+      providers: [provideTranslateService()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(IncidentsChart);

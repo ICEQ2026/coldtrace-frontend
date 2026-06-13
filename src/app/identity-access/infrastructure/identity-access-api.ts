@@ -47,6 +47,13 @@ export class IdentityAccessApi extends BaseApi {
   }
 
   /**
+   * @summary Deletes a user through the API endpoint.
+   */
+  deleteUser(id: number): Observable<void> {
+    return this.usersEndpoint.delete(id);
+  }
+
+  /**
    * @summary Fetches organizations from the API endpoint.
    */
   getOrganizations(): Observable<Organization[]> {

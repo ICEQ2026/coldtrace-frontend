@@ -14,6 +14,7 @@ import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
 import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { DailyLogEntry, DailyLogStatus } from '../../../domain/model/daily-log.entity';
 import { ReportsStore } from '../../../application/reports.store';
 
@@ -24,7 +25,15 @@ type DailyLogFeedback = 'idle' | 'generated' | 'server-error';
  */
 @Component({
   selector: 'app-daily-log',
-  imports: [FormsModule, MatButton, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
+  imports: [
+    FormsModule,
+    MatButton,
+    MatIcon,
+    MatProgressSpinner,
+    NgClass,
+    TranslatePipe,
+    ListPagination,
+  ],
   templateUrl: './daily-log.html',
   styleUrl: './daily-log.css',
 })
@@ -40,6 +49,8 @@ export class DailyLog implements OnInit {
   protected readonly feedback = signal<DailyLogFeedback>('idle');
   protected readonly selectedDate = signal('');
   protected readonly selectedAssetId = signal(0);
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -77,6 +88,9 @@ export class DailyLog implements OnInit {
 
     return this.dailyLog().entries.filter((entry) => entry.assetId === selectedAssetId);
   });
+  protected readonly paginatedEntries = computed(() =>
+    this.paginate(this.filteredEntries(), this.currentPage()),
+  );
   protected readonly generatedReportsCount = computed(() => {
     return this.reportsStore.reportsForOrganization(this.activeOrganizationId()).length;
   });
@@ -120,10 +134,12 @@ export class DailyLog implements OnInit {
     const maxDate = this.maxDate();
     this.selectedDate.set(value > maxDate ? maxDate : value);
     this.feedback.set('idle');
+    this.currentPage.set(1);
   }
 
   protected selectAsset(value: string): void {
     this.selectedAssetId.set(Number(value));
+    this.currentPage.set(1);
   }
 
   protected generateDailyLog(): void {
@@ -171,10 +187,22 @@ export class DailyLog implements OnInit {
     return entry.assetId;
   }
 
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
+  }
+
   private formatTime(value: string): string {
     return new Intl.DateTimeFormat('en', {
       hour: '2-digit',
       minute: '2-digit',
     }).format(new Date(value));
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }

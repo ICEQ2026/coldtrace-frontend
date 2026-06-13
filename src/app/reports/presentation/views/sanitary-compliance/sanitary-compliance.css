@@ -67,29 +67,94 @@
 .heading-actions {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   justify-content: flex-end;
 }
 
 .primary-action,
 .secondary-action {
+  align-items: center;
   border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
   font-size: 12px;
   font-weight: 800;
   gap: 8px;
+  justify-content: center;
   min-height: 36px;
   padding: 7px 12px;
 }
 
 .primary-action {
-  background: #2563eb;
-  color: #ffffff;
+  background: #2563eb !important;
+  border: 0 !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  box-sizing: border-box;
+  color: #ffffff !important;
+  font-family: 'Varela Round', Arial, sans-serif;
+  height: 48px;
+  line-height: 24px;
+  transition: background-color 160ms ease, color 160ms ease;
+  width: 100%;
 }
 
 .secondary-action {
   background: #ffffff;
-  border: 1px solid #ebeef2;
-  color: #606c80;
+  border: 1px solid #ebeef2 !important;
+  color: #606c80 !important;
+  height: 36px !important;
+  line-height: 32px;
+}
+
+.heading-actions .primary-action,
+.heading-actions .primary-action.mat-mdc-unelevated-button {
+  height: 48px !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.heading-actions .secondary-action,
+.heading-actions .secondary-action.mat-mdc-outlined-button {
+  min-width: 0 !important;
+  padding: 7px 12px !important;
+  width: auto !important;
+}
+
+.primary-action.mat-mdc-unelevated-button {
+  --mdc-filled-button-container-color: #2563eb;
+  --mdc-filled-button-container-height: 48px;
+  --mdc-filled-button-disabled-container-color: #2563eb;
+  --mdc-filled-button-disabled-label-text-color: #ffffff;
+  --mdc-filled-button-label-text-color: #ffffff;
+  --mat-filled-button-horizontal-padding: 12px;
+  --mat-filled-button-state-layer-color: #ffffff;
+  --mat-filled-button-ripple-color: rgba(255, 255, 255, 0.12);
+}
+
+.secondary-action.mat-mdc-outlined-button {
+  --mdc-outlined-button-container-height: 36px;
+  --mdc-outlined-button-disabled-label-text-color: #606c80;
+  --mdc-outlined-button-label-text-color: #606c80;
+  --mdc-outlined-button-outline-color: #ebeef2;
+  --mdc-outlined-button-outline-width: 1px;
+  --mat-outlined-button-horizontal-padding: 12px;
+  --mat-outlined-button-state-layer-color: #2563eb;
+  --mat-outlined-button-ripple-color: rgba(37, 99, 235, 0.08);
+}
+
+.primary-action mat-icon,
+.secondary-action mat-icon {
+  font-size: 18px;
+  height: 18px;
+  line-height: 18px;
+  width: 18px;
+}
+
+.primary-action:disabled,
+.secondary-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .feedback,
@@ -159,12 +224,17 @@
 .filter-field input,
 .filter-field select {
   background: #f4f4f4;
+  border: 0;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14);
   box-sizing: border-box;
   color: #404040;
+  font-family: inherit;
   font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
   min-height: 38px;
+  outline: none;
   padding: 9px 12px;
   width: 100%;
 }
@@ -180,6 +250,7 @@
   color: var(--accent-text, #2563eb);
   font-size: 24px;
   font-weight: 800;
+  line-height: 30px;
 }
 
 .summary-grid {
@@ -275,9 +346,11 @@
 
 .data-table td {
   border-top: 1px solid #ebeef2;
+  color: #404040;
   font-size: 12px;
   font-weight: 700;
   padding: 12px 10px;
+  vertical-align: top;
 }
 
 .data-table td strong {
@@ -297,6 +370,7 @@
   border-radius: 16px;
   display: inline-flex !important;
   padding: 3px 8px;
+  white-space: nowrap;
 }
 
 .status-compliant {

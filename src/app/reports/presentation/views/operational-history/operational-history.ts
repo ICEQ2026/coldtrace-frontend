@@ -13,6 +13,7 @@ import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
 import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import {
   OperationalHistoryEvent,
   OperationalHistoryFilterType,
@@ -24,7 +25,14 @@ import { ReportsStore } from '../../../application/reports.store';
  */
 @Component({
   selector: 'app-operational-history',
-  imports: [FormsModule, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
+  imports: [
+    FormsModule,
+    MatIcon,
+    MatProgressSpinner,
+    NgClass,
+    TranslatePipe,
+    ListPagination,
+  ],
   templateUrl: './operational-history.html',
   styleUrl: './operational-history.css',
 })
@@ -41,6 +49,8 @@ export class OperationalHistory implements OnInit {
   protected readonly selectedEventType = signal<OperationalHistoryFilterType>('all');
   protected readonly fromDate = signal('');
   protected readonly toDate = signal('');
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -81,6 +91,9 @@ export class OperationalHistory implements OnInit {
     });
   });
   protected readonly hasEvents = computed(() => this.history().totalEvents > 0);
+  protected readonly paginatedEvents = computed(() =>
+    this.paginate(this.history().events, this.currentPage()),
+  );
 
   /**
    * @summary Initializes the operational history view state.
@@ -116,10 +129,12 @@ export class OperationalHistory implements OnInit {
 
   protected selectAsset(value: string): void {
     this.selectedAssetId.set(Number(value));
+    this.currentPage.set(1);
   }
 
   protected selectEventType(value: string): void {
     this.selectedEventType.set(value as OperationalHistoryFilterType);
+    this.currentPage.set(1);
   }
 
   protected updateFromDate(value: string): void {
@@ -130,12 +145,14 @@ export class OperationalHistory implements OnInit {
     if (this.effectiveToDate() < nextDate) {
       this.toDate.set(nextDate);
     }
+    this.currentPage.set(1);
   }
 
   protected updateToDate(value: string): void {
     const maxDate = this.maxDate();
     const nextDate = value > maxDate ? maxDate : value;
     this.toDate.set(nextDate < this.effectiveFromDate() ? this.effectiveFromDate() : nextDate);
+    this.currentPage.set(1);
   }
 
   protected logout(): void {
@@ -167,5 +184,17 @@ export class OperationalHistory implements OnInit {
 
   protected trackEvent(_: number, event: OperationalHistoryEvent): number {
     return event.id;
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }

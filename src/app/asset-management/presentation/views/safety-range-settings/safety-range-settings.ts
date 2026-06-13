@@ -11,6 +11,7 @@ import { Organization } from '../../../../identity-access/domain/model/organizat
 import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { AssetManagementStore } from '../../../application/asset-management.store';
 import { Asset } from '../../../domain/model/asset.entity';
 import {
@@ -29,7 +30,15 @@ type SafetyRangeFeedback = 'idle' | 'saved' | 'invalid' | 'access-denied' | 'ser
  */
 @Component({
   selector: 'app-safety-range-settings',
-  imports: [MatButton, MatIcon, MatProgressSpinner, NgClass, ReactiveFormsModule, TranslatePipe],
+  imports: [
+    MatButton,
+    MatIcon,
+    MatProgressSpinner,
+    NgClass,
+    ReactiveFormsModule,
+    TranslatePipe,
+    ListPagination,
+  ],
   templateUrl: './safety-range-settings.html',
   styleUrl: './safety-range-settings.css',
 })
@@ -45,6 +54,8 @@ export class SafetyRangeSettings implements OnInit {
   protected readonly submitted = signal(false);
   protected readonly feedback = signal<SafetyRangeFeedback>('idle');
   protected readonly selectedAssetId = signal(0);
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -144,6 +155,9 @@ export class SafetyRangeSettings implements OnInit {
       return this.scopeNameFor(a).localeCompare(this.scopeNameFor(b));
     });
   });
+  protected readonly paginatedProfiles = computed(() =>
+    this.paginate(this.currentProfiles(), this.currentPage()),
+  );
 
   /**
    * @summary Initializes the safety range settings view state.
@@ -188,6 +202,10 @@ export class SafetyRangeSettings implements OnInit {
     this.feedback.set('idle');
     this.submitted.set(false);
     this.resetRangeForm();
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
   }
 
   protected updateMinimumTemperaturePreview(value: string): void {
@@ -395,6 +413,14 @@ export class SafetyRangeSettings implements OnInit {
     const numericValue = Number(value);
 
     return value.trim() && Number.isFinite(numericValue) ? numericValue : Number.NaN;
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 
   private upsertLocalSettings(settings: AssetSettings): void {

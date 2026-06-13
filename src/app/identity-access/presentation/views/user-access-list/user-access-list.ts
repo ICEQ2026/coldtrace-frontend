@@ -1,9 +1,9 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { IdentityAccessStore } from '../../../application/identity-access.store';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { Organization } from '../../../domain/model/organization.entity';
@@ -11,7 +11,13 @@ import { Role } from '../../../domain/model/role.entity';
 import { User } from '../../../domain/model/user.entity';
 import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 
-type UserAccessFeedback = 'idle' | 'saved' | 'invalid-role' | 'server-error';
+type UserAccessFeedback =
+  | 'idle'
+  | 'saved'
+  | 'invalid-role'
+  | 'delete-forbidden'
+  | 'deleted'
+  | 'server-error';
 
 interface UserAccessRow {
   user: User;
@@ -27,7 +33,7 @@ interface UserAccessRow {
  */
 @Component({
   selector: 'app-user-access-list',
-  imports: [MatButton, MatIcon, RouterLink, TranslatePipe],
+  imports: [MatIcon, RouterLink, TranslatePipe, ListPagination],
   templateUrl: './user-access-list.html',
   styleUrl: './user-access-list.css',
 })
@@ -35,6 +41,7 @@ export class UserAccessList implements OnInit {
   protected readonly identityAccessStore = inject(IdentityAccessStore);
   protected readonly assetManagementStore = inject(AssetManagementStore);
   private readonly identityAccessApi = inject(IdentityAccessApi);
+  private readonly translate = inject(TranslateService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -43,7 +50,10 @@ export class UserAccessList implements OnInit {
   protected readonly feedback = signal<UserAccessFeedback>('idle');
   protected readonly savedUserId = signal<number | null>(null);
   protected readonly invalidUserId = signal<number | null>(null);
+  protected readonly deletingUserId = signal<number | null>(null);
   protected readonly searchTerm = signal('');
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -72,6 +82,11 @@ export class UserAccessList implements OnInit {
           .toLowerCase()
           .includes(normalizedSearch);
       });
+  });
+
+  protected readonly paginatedRows = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.pageSize;
+    return this.rows().slice(startIndex, startIndex + this.pageSize);
   });
 
   protected readonly administratorCount = computed(
@@ -213,6 +228,11 @@ export class UserAccessList implements OnInit {
 
   protected updateSearchTerm(value: string): void {
     this.searchTerm.set(value);
+    this.currentPage.set(1);
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
   }
 
   protected loadAccessData(): void {
@@ -242,6 +262,56 @@ export class UserAccessList implements OnInit {
     void this.router.navigate(['/identity-access/sign-in']);
   }
 
+  protected canDeleteUser(user: User): boolean {
+    return this.identityAccessStore.canDeleteUser(user, this.users(), this.roles());
+  }
+
+  protected deleteUser(user: User): void {
+    if (!this.canDeleteUser(user)) {
+      this.feedback.set('delete-forbidden');
+      this.invalidUserId.set(user.id);
+      this.savedUserId.set(null);
+      return;
+    }
+
+    const label = user.fullName || user.email;
+    const confirmed = window.confirm(
+      this.translate.instant('roles-permissions.delete-confirm', { name: label }),
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.deletingUserId.set(user.id);
+    this.feedback.set('idle');
+    this.identityAccessStore.deleteUser(user, this.users(), this.roles()).subscribe({
+      next: (result) => {
+        if (result.status !== 'success') {
+          this.feedback.set('delete-forbidden');
+          this.invalidUserId.set(user.id);
+          return;
+        }
+
+        this.users.update((users) => users.filter((currentUser) => currentUser.id !== user.id));
+        this.selectedRoleByUserId.update((current) => {
+          const next = { ...current };
+          delete next[user.id];
+          return next;
+        });
+        this.feedback.set('deleted');
+        this.savedUserId.set(null);
+        this.invalidUserId.set(null);
+        this.currentPage.set(Math.min(this.currentPage(), this.pageCountFor(this.rows().length)));
+      },
+      error: () => {
+        this.feedback.set('server-error');
+        this.invalidUserId.set(user.id);
+      },
+      complete: () => this.deletingUserId.set(null),
+    });
+  }
+
   private toUserAccessRow(user: User): UserAccessRow {
     const selectedRoleId = this.selectedRoleByUserId()[user.id] ?? user.roleId;
     const currentRole = this.roleFor(user.roleId);
@@ -259,6 +329,10 @@ export class UserAccessList implements OnInit {
 
   private activeOrganizationId(): number | null {
     return this.identityAccessStore.currentOrganizationIdFrom(this.users());
+  }
+
+  private pageCountFor(total: number): number {
+    return Math.max(Math.ceil(total / this.pageSize), 1);
   }
 
   private roleFor(roleId: number): Role | undefined {

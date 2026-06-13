@@ -117,7 +117,7 @@
             </tr>
           </thead>
           <tbody>
-            @for (entry of filteredEntries(); track trackEntry($index, entry)) {
+            @for (entry of paginatedEntries(); track trackEntry($index, entry)) {
               <tr>
                 <td>
                   <strong>{{ entry.assetName }}</strong>
@@ -155,6 +155,13 @@
           </tbody>
         </table>
       </div>
+
+      <app-list-pagination
+        [page]="currentPage()"
+        [total]="filteredEntries().length"
+        [pageSize]="pageSize"
+        (pageChange)="updatePage($event)"
+      />
     } @else {
       <div class="empty-state">
         <mat-icon aria-hidden="true">event_busy</mat-icon>

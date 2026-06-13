@@ -14,6 +14,7 @@ import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
 import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { ReportsStore } from '../../../application/reports.store';
 import {
   ComplianceFinding,
@@ -30,7 +31,15 @@ type ComplianceFindingsFeedback = 'idle' | 'closed' | 'access-denied' | 'server-
  */
 @Component({
   selector: 'app-compliance-findings',
-  imports: [FormsModule, MatButton, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
+  imports: [
+    FormsModule,
+    MatButton,
+    MatIcon,
+    MatProgressSpinner,
+    NgClass,
+    TranslatePipe,
+    ListPagination,
+  ],
   templateUrl: './compliance-findings.html',
   styleUrl: './compliance-findings.css',
 })
@@ -49,6 +58,8 @@ export class ComplianceFindings implements OnInit {
   protected readonly selectedStatus = signal<ComplianceFindingStatusFilter>('all');
   protected readonly fromDate = signal('');
   protected readonly toDate = signal('');
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -102,6 +113,9 @@ export class ComplianceFindings implements OnInit {
     });
   });
   protected readonly hasFindings = computed(() => this.complianceReport().hasFindings);
+  protected readonly paginatedFindings = computed(() =>
+    this.paginate(this.complianceReport().findings, this.currentPage()),
+  );
 
   /**
    * @summary Initializes the compliance findings view state.
@@ -146,6 +160,7 @@ export class ComplianceFindings implements OnInit {
     }
 
     this.feedback.set('idle');
+    this.currentPage.set(1);
   }
 
   protected updateToDate(value: string): void {
@@ -153,11 +168,13 @@ export class ComplianceFindings implements OnInit {
     const nextDate = value > maxDate ? maxDate : value;
     this.toDate.set(nextDate < this.effectiveFromDate() ? this.effectiveFromDate() : nextDate);
     this.feedback.set('idle');
+    this.currentPage.set(1);
   }
 
   protected selectAsset(value: string): void {
     this.selectedAssetId.set(Number(value));
     this.feedback.set('idle');
+    this.currentPage.set(1);
   }
 
   protected selectStatus(value: string): void {
@@ -167,6 +184,7 @@ export class ComplianceFindings implements OnInit {
 
     this.selectedStatus.set(status);
     this.feedback.set('idle');
+    this.currentPage.set(1);
   }
 
   protected closeFinding(finding: ComplianceFinding): void {
@@ -212,6 +230,10 @@ export class ComplianceFindings implements OnInit {
     return finding.id;
   }
 
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
+  }
+
   private defaultFromDate(): string {
     const date = new Date(`${this.maxDate()}T00:00:00`);
     date.setDate(date.getDate() - 6);
@@ -225,5 +247,13 @@ export class ComplianceFindings implements OnInit {
     const day = `${date.getDate()}`.padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }

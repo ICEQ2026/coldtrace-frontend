@@ -23,7 +23,7 @@
       <p class="feedback error">{{ 'roles-permissions.denied.message' | translate }}</p>
     } @else {
       <div class="role-permission-list">
-        @for (role of roles(); track role.id) {
+        @for (role of paginatedRoles(); track role.id) {
           <article class="role-permission-row">
             <span class="role-pill">{{ roleLabelKey(role) | translate }}</span>
             <div class="permission-list">
@@ -41,6 +41,12 @@
             </div>
           </article>
         }
+        <app-list-pagination
+          [page]="currentPage()"
+          [total]="roles().length"
+          [pageSize]="pageSize"
+          (pageChange)="updatePage($event)"
+        />
       </div>
     }
 </section>
