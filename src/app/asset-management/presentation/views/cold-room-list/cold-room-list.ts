@@ -27,6 +27,7 @@ import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 
 type AssetFeedback =
   | 'idle'
@@ -34,8 +35,11 @@ type AssetFeedback =
   | 'updated'
   | 'duplicate-id'
   | 'server-error'
+  | 'asset-deleted'
   | 'iot-device-created'
-  | 'gateway-created';
+  | 'iot-device-deleted'
+  | 'gateway-created'
+  | 'gateway-deleted';
 type AssetManagementTab = AssetType | 'iot-device' | 'gateway';
 
 /**
@@ -51,6 +55,7 @@ type AssetManagementTab = AssetType | 'iot-device' | 'gateway';
     NgClass,
     ReactiveFormsModule,
     TranslatePipe,
+    ListPagination,
   ],
   templateUrl: './cold-room-list.html',
   styleUrl: './cold-room-list.css',
@@ -91,11 +96,16 @@ export class ColdRoomList implements OnInit {
   protected readonly identityLoading = signal(false);
   protected readonly creating = signal(false);
   protected readonly updatingAssetId = signal<number | null>(null);
+  protected readonly deletingResourceKey = signal('');
   protected readonly pendingAssetStatuses = signal<Record<number, AssetStatus>>({});
   protected readonly submitted = signal(false);
   protected readonly formVisible = signal(false);
   protected readonly feedback = signal<AssetFeedback>('idle');
   protected readonly searchTerm = signal('');
+  protected readonly pageSize = 10;
+  protected readonly assetPage = signal(1);
+  protected readonly iotDevicePage = signal(1);
+  protected readonly gatewayPage = signal(1);
   protected readonly selectedTab = signal<AssetManagementTab>(AssetType.ColdRoom);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
@@ -147,6 +157,9 @@ export class ColdRoomList implements OnInit {
   protected readonly canManageAssets = computed(() =>
     this.identityAccessStore.canManageAssets(this.users(), this.roles()),
   );
+  protected readonly canDeleteAssetResources = computed(() =>
+    this.identityAccessStore.canDeleteAssetResources(this.users(), this.roles()),
+  );
   protected readonly selectedAssetType = computed(() => {
     return this.selectedTab() === AssetType.Transport ? AssetType.Transport : AssetType.ColdRoom;
   });
@@ -159,9 +172,15 @@ export class ColdRoomList implements OnInit {
     );
   });
   protected readonly positiveFeedback = computed(() => {
-    return ['success', 'updated', 'iot-device-created', 'gateway-created'].includes(
-      this.feedback(),
-    );
+    return [
+      'success',
+      'updated',
+      'asset-deleted',
+      'iot-device-created',
+      'iot-device-deleted',
+      'gateway-created',
+      'gateway-deleted',
+    ].includes(this.feedback());
   });
 
   protected readonly selectedAssets = computed(() => {
@@ -251,8 +270,18 @@ export class ColdRoomList implements OnInit {
         .join(' ')
         .toLowerCase()
         .includes(normalizedSearch);
-    });
+      });
   });
+
+  protected readonly paginatedAssets = computed(() =>
+    this.paginate(this.filteredAssets(), this.assetPage()),
+  );
+  protected readonly paginatedIoTDevices = computed(() =>
+    this.paginate(this.organizationIoTDevices(), this.iotDevicePage()),
+  );
+  protected readonly paginatedGateways = computed(() =>
+    this.paginate(this.organizationGateways(), this.gatewayPage()),
+  );
 
   /**
    * @summary Initializes the cold room list view state.
@@ -267,6 +296,7 @@ export class ColdRoomList implements OnInit {
     this.assetManagementStore.loadAssets();
     this.assetManagementStore.loadIoTDevices();
     this.assetManagementStore.loadGateways();
+    this.assetManagementStore.loadAssetSettings();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -287,6 +317,7 @@ export class ColdRoomList implements OnInit {
 
   protected updateSearchTerm(value: string): void {
     this.searchTerm.set(value);
+    this.assetPage.set(1);
   }
 
   protected selectAssetType(tab: AssetManagementTab): void {
@@ -296,6 +327,9 @@ export class ColdRoomList implements OnInit {
 
     this.selectedTab.set(tab);
     this.searchTerm.set('');
+    this.assetPage.set(1);
+    this.iotDevicePage.set(1);
+    this.gatewayPage.set(1);
     this.formVisible.set(false);
     this.feedback.set('idle');
     this.submitted.set(false);
@@ -519,6 +553,91 @@ export class ColdRoomList implements OnInit {
       });
   }
 
+  protected deleteAsset(asset: Asset): void {
+    if (!this.canDeleteAssetResources()) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      this.translate.instant('asset-management.delete-confirm', { name: asset.name }),
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.deletingResourceKey.set(this.resourceKey('asset', asset.id));
+    this.feedback.set('idle');
+    this.assetManagementStore
+      .deleteAsset(asset)
+      .pipe(finalize(() => this.deletingResourceKey.set('')))
+      .subscribe({
+        next: () => {
+          this.feedback.set('asset-deleted');
+          this.assetPage.set(Math.min(this.assetPage(), this.lastPageFor(this.filteredAssets())));
+        },
+        error: () => this.feedback.set('server-error'),
+      });
+  }
+
+  protected deleteIoTDevice(iotDevice: IoTDevice): void {
+    if (!this.canDeleteAssetResources()) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      this.translate.instant('asset-management.delete-confirm', { name: iotDevice.uuid }),
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.deletingResourceKey.set(this.resourceKey('iot-device', iotDevice.id));
+    this.feedback.set('idle');
+    this.assetManagementStore
+      .deleteIoTDevice(iotDevice)
+      .pipe(finalize(() => this.deletingResourceKey.set('')))
+      .subscribe({
+        next: () => {
+          this.feedback.set('iot-device-deleted');
+          this.iotDevicePage.set(
+            Math.min(this.iotDevicePage(), this.lastPageFor(this.organizationIoTDevices())),
+          );
+        },
+        error: () => this.feedback.set('server-error'),
+      });
+  }
+
+  protected deleteGateway(gateway: Gateway): void {
+    if (!this.canDeleteAssetResources()) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      this.translate.instant('asset-management.delete-confirm', { name: gateway.name }),
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.deletingResourceKey.set(this.resourceKey('gateway', gateway.id));
+    this.feedback.set('idle');
+    this.assetManagementStore
+      .deleteGateway(gateway)
+      .pipe(finalize(() => this.deletingResourceKey.set('')))
+      .subscribe({
+        next: () => {
+          this.feedback.set('gateway-deleted');
+          this.gatewayPage.set(
+            Math.min(this.gatewayPage(), this.lastPageFor(this.organizationGateways())),
+          );
+        },
+        error: () => this.feedback.set('server-error'),
+      });
+  }
+
   protected assetNameForIoTDevice(iotDevice: IoTDevice): string {
     const asset = this.assets().find((currentAsset) => currentAsset.id === iotDevice.assetId);
     return asset ? `${asset.uuid} - ${asset.name}` : 'asset-management.iot-devices.unassigned';
@@ -602,12 +721,24 @@ export class ColdRoomList implements OnInit {
       return 'asset-management.update.feedback-updated';
     }
 
+    if (this.feedback() === 'asset-deleted') {
+      return 'asset-management.feedback-deleted';
+    }
+
     if (this.feedback() === 'iot-device-created') {
       return 'asset-management.iot-devices.feedback-created';
     }
 
+    if (this.feedback() === 'iot-device-deleted') {
+      return 'asset-management.iot-devices.feedback-deleted';
+    }
+
     if (this.feedback() === 'gateway-created') {
       return 'asset-management.gateways.feedback-created';
+    }
+
+    if (this.feedback() === 'gateway-deleted') {
+      return 'asset-management.gateways.feedback-deleted';
     }
 
     return `asset-management.sections.${this.selectedAssetType()}.feedback-created`;
@@ -789,8 +920,33 @@ export class ColdRoomList implements OnInit {
     void this.router.navigate(['/identity-access/sign-in']);
   }
 
+  protected updateAssetPage(page: number): void {
+    this.assetPage.set(page);
+  }
+
+  protected updateIoTDevicePage(page: number): void {
+    this.iotDevicePage.set(page);
+  }
+
+  protected updateGatewayPage(page: number): void {
+    this.gatewayPage.set(page);
+  }
+
+  protected resourceKey(type: string, id: number): string {
+    return `${type}-${id}`;
+  }
+
   private activeOrganizationId(): number | null {
     return this.identityAccessStore.currentOrganizationIdFrom(this.users());
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const startIndex = (page - 1) * this.pageSize;
+    return items.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  private lastPageFor(items: unknown[]): number {
+    return Math.max(Math.ceil(items.length / this.pageSize), 1);
   }
 
   private entryDate(): string {

@@ -2,6 +2,9 @@
   "app": {
     "name": "ColdTrace"
   },
+  "pagination": {
+    "item-count": "Elementos por página: {{ count }}"
+  },
   "sign-in": {
     "title": "Iniciar sesión",
     "email": "Correo electrónico",
@@ -82,6 +85,9 @@
     "reload": "Recargar",
     "save": "Guardar",
     "saved": "Guardado",
+    "delete": "Eliminar",
+    "delete-confirm": "Eliminar {{ name }}? Esta acción no se puede deshacer.",
+    "deleting": "Eliminando...",
     "empty": "No hay usuarios para esta búsqueda.",
     "empty-section-message": "Esta sección todavía no tiene contenido.",
     "menu": {
@@ -146,6 +152,8 @@
       "permissions-saved": "Permisos del rol actualizados.",
       "duplicate-email": "Ya existe un usuario con este correo.",
       "invalid-role": "Selecciona un rol válido antes de guardar.",
+      "delete-forbidden": "Tu rol actual no puede eliminar este usuario.",
+      "deleted": "Usuario eliminado correctamente.",
       "server-error": "No se pudo cargar la información de acceso. Inténtalo nuevamente.",
       "loading": "Cargando información de acceso..."
     },
@@ -162,6 +170,10 @@
     "cold-room-subtitle": "Registra y revisa cámaras frigoríficas de la organización activa.",
     "empty": "No hay cámaras frigoríficas para esta búsqueda.",
     "item-count": "Ítems por página: {{ count }}",
+    "delete": "Eliminar",
+    "delete-confirm": "Eliminar {{ name }}? Esta acción no se puede deshacer.",
+    "deleting": "Eliminando...",
+    "feedback-deleted": "Activo eliminado correctamente.",
     "tabs": {
       "cold-room": "Cámara",
       "transport": "Transporte",
@@ -203,7 +215,8 @@
       "temperature": "Temp.",
       "entry-date": "Fecha de ingreso",
       "status": "Estado",
-      "connectivity": "Conectividad"
+      "connectivity": "Conectividad",
+      "actions": "Acciones"
     },
     "incidents": {
       "high-temperature": "Temperatura alta",
@@ -232,6 +245,7 @@
       "unassigned": "Sin asignar",
       "empty": "No hay dispositivos IoT registrados para esta organización.",
       "feedback-created": "Dispositivo IoT creado correctamente.",
+      "feedback-deleted": "Dispositivo IoT eliminado correctamente.",
       "feedback-duplicate": "Ya existe un dispositivo IoT con este ID.",
       "form": {
         "internal-id": "ID interno",
@@ -299,6 +313,7 @@
       "unassigned": "Sin asignar",
       "empty": "No hay gateways registrados para esta organización.",
       "feedback-created": "Gateway creado correctamente.",
+      "feedback-deleted": "Gateway eliminado correctamente.",
       "feedback-duplicate": "Ya existe un gateway con este ID.",
       "form": {
         "internal-id": "ID interno",
@@ -807,7 +822,11 @@
         "no-readings": "Sin lecturas disponibles"
       },
       "incident": {
-        "out-of-range": "Lectura fuera de rango"
+        "out-of-range": "Lectura fuera de rango",
+        "high-temperature": "Temperatura alta",
+        "connection-lost": "Conexión perdida",
+        "low-temperature": "Temperatura baja",
+        "none": "Sin incidentes"
       }
     }
   },

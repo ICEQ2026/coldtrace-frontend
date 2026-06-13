@@ -82,23 +82,57 @@
 .secondary-action {
   align-items: center;
   border-radius: 8px;
+  cursor: pointer;
   display: inline-flex;
   font-size: 12px;
   font-weight: 800;
   gap: 8px;
+  justify-content: center;
   min-height: 36px;
   padding: 7px 12px;
 }
 
 .primary-action {
-  background: #2563eb;
-  color: #ffffff;
+  background: #2563eb !important;
+  border: 0 !important;
+  color: #ffffff !important;
+  line-height: 24px;
 }
 
 .secondary-action {
   background: #ffffff;
-  border: 1px solid #ebeef2;
-  color: #606c80;
+  border: 1px solid #ebeef2 !important;
+  color: #606c80 !important;
+  height: 36px !important;
+  line-height: 32px;
+}
+
+.heading-actions .primary-action,
+.heading-actions .primary-action.mat-mdc-unelevated-button {
+  height: 48px !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.heading-actions .secondary-action,
+.heading-actions .secondary-action.mat-mdc-outlined-button {
+  min-width: 0 !important;
+  padding: 7px 12px !important;
+  width: auto !important;
+}
+
+.primary-action:disabled,
+.secondary-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.primary-action mat-icon,
+.secondary-action mat-icon {
+  font-size: 18px;
+  height: 18px;
+  line-height: 18px;
+  width: 18px;
 }
 
 .feedback,
@@ -164,14 +198,20 @@
 .filter-field input,
 .filter-field select {
   background: #f4f4f4;
+  border: 0;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14);
   box-sizing: border-box;
   color: #404040;
   font-size: 13px;
   min-height: 38px;
+  outline: none;
   padding: 9px 12px;
   width: 100%;
+}
+
+.filter-field select {
+  padding-right: 34px;
 }
 
 .filter-meta {

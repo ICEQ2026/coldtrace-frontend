@@ -9,6 +9,7 @@ import { Organization } from '../../../domain/model/organization.entity';
 import { Role } from '../../../domain/model/role.entity';
 import { User } from '../../../domain/model/user.entity';
 import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 
 type RolePermissionFeedback = 'idle' | 'saved' | 'server-error';
 
@@ -17,7 +18,7 @@ type RolePermissionFeedback = 'idle' | 'saved' | 'server-error';
  */
 @Component({
   selector: 'app-role-permission-form',
-  imports: [MatButton, TranslatePipe],
+  imports: [MatButton, TranslatePipe, ListPagination],
   templateUrl: './role-permission-form.html',
   styleUrl: '../user-access-list/user-access-list.css',
 })
@@ -30,6 +31,8 @@ export class RolePermissionForm implements OnInit {
   protected readonly loading = signal(false);
   protected readonly savingRoleId = signal<number | null>(null);
   protected readonly feedback = signal<RolePermissionFeedback>('idle');
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly roles = signal<Role[]>([]);
   protected readonly users = signal<User[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -46,6 +49,11 @@ export class RolePermissionForm implements OnInit {
   );
   protected readonly assetIssueCount = computed(() => {
     return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
+  });
+  protected readonly paginatedRoles = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.pageSize;
+
+    return this.roles().slice(startIndex, startIndex + this.pageSize);
   });
 
   /**
@@ -121,6 +129,10 @@ export class RolePermissionForm implements OnInit {
   protected logout(): void {
     this.identityAccessStore.clearCurrentUser();
     void this.router.navigate(['/identity-access/sign-in']);
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
   }
 
   private activeOrganizationId(): number | null {

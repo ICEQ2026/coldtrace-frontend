@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
 
@@ -14,7 +15,13 @@ import { Incident } from '../../../domain/model/incident.entity';
 @Component({
   selector: 'app-incident-list',
   standalone: true,
-  imports: [TranslateModule, MatIconModule, MatProgressSpinnerModule, ReactiveFormsModule],
+  imports: [
+    TranslateModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    ReactiveFormsModule,
+    ListPagination,
+  ],
   templateUrl: './incident-list.html',
   styleUrl: './incident-list.css',
 })
@@ -24,12 +31,17 @@ export class IncidentList implements OnInit {
   private readonly fb = inject(FormBuilder);
   @ViewChild('closureCard') private closureCard?: ElementRef<HTMLElement>;
   protected readonly closureSubmitted = signal(false);
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly canResolveAlerts = computed(() => this.alertsStore.canResolveAlerts());
   protected readonly profileUserName = computed(() =>
     this.identityStore.currentUserNameFrom(this.identityStore.users()),
   );
   protected readonly activeIncidents = computed(() =>
     this.alertsStore.incidents().filter((incident) => !incident.isClosed),
+  );
+  protected readonly paginatedIncidents = computed(() =>
+    this.paginate(this.activeIncidents(), this.currentPage()),
   );
   protected readonly pendingClosureIncidents = computed(() =>
     this.activeIncidents().filter((incident) => incident.isRecognized),
@@ -74,6 +86,10 @@ export class IncidentList implements OnInit {
     this.alertsStore.recognizeIncident(incident, userName).subscribe({
       error: () => undefined,
     });
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
   }
 
   protected closeIncident(): void {
@@ -229,5 +245,13 @@ export class IncidentList implements OnInit {
       hour: '2-digit',
       minute: '2-digit',
     }).format(new Date(isoDate));
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }

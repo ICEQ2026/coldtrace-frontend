@@ -15,7 +15,7 @@
     </div>
 
     <div class="heading-actions">
-      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+      <button type="button" class="secondary-action" (click)="loadPageData()">
         <mat-icon aria-hidden="true">refresh</mat-icon>
         {{ 'maintenance.technical-service.reload' | translate }}
       </button>
@@ -108,7 +108,6 @@
         </div>
 
         <button
-          mat-stroked-button
           type="button"
           class="secondary-action"
           [disabled]="saving()"
@@ -170,7 +169,6 @@
         </label>
 
         <button
-          mat-flat-button
           type="submit"
           class="primary-action"
           [disabled]="saving() || !canManageTechnicalService()"
@@ -191,7 +189,6 @@
         </div>
 
         <button
-          mat-stroked-button
           type="button"
           class="secondary-action"
           [disabled]="saving()"
@@ -252,7 +249,6 @@
         </label>
 
         <button
-          mat-flat-button
           type="submit"
           class="primary-action"
           [disabled]="saving() || !canManageTechnicalService() || !openRequests().length"
@@ -287,7 +283,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (request of organizationRequests(); track request.id) {
+          @for (request of paginatedRequests(); track request.id) {
             <tr>
               <td>
                 <strong>{{ request.uuid }}</strong>
@@ -319,5 +315,12 @@
         </tbody>
       </table>
     </div>
+
+    <app-list-pagination
+      [page]="currentPage()"
+      [total]="organizationRequests().length"
+      [pageSize]="pageSize"
+      (pageChange)="updatePage($event)"
+    />
   </section>
 </section>

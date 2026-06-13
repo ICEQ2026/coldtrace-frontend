@@ -131,7 +131,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (row of monthlyReport().rows; track trackRow($index, row)) {
+              @for (row of paginatedRows(); track trackRow($index, row)) {
                 <tr>
                   <td>
                     <strong>{{ row.assetName }}</strong>
@@ -169,6 +169,13 @@
             </tbody>
           </table>
         </div>
+
+        <app-list-pagination
+          [page]="currentPage()"
+          [total]="monthlyReport().rows.length"
+          [pageSize]="pageSize"
+          (pageChange)="updatePage($event)"
+        />
       } @else {
         <div class="empty-state">
           <mat-icon aria-hidden="true">event_busy</mat-icon>

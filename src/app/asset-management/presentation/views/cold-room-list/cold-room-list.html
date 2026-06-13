@@ -356,10 +356,13 @@
             <th>{{ 'asset-management.iot-devices.table.status' | translate }}</th>
             <th>{{ 'asset-management.iot-devices.table.calibration' | translate }}</th>
             <th>{{ 'asset-management.iot-devices.table.next-calibration' | translate }}</th>
+            @if (canDeleteAssetResources()) {
+              <th>{{ 'asset-management.table.actions' | translate }}</th>
+            }
           </tr>
         </thead>
         <tbody>
-          @for (iotDevice of organizationIoTDevices(); track iotDevice.id) {
+          @for (iotDevice of paginatedIoTDevices(); track iotDevice.id) {
             <tr>
               <td [attr.data-label]="'asset-management.iot-devices.table.id' | translate">
                 {{ iotDevice.uuid }}
@@ -403,10 +406,27 @@
               >
                 {{ iotDevice.nextCalibrationDate }}
               </td>
+              @if (canDeleteAssetResources()) {
+                <td [attr.data-label]="'asset-management.table.actions' | translate">
+                  <button
+                    class="danger-action"
+                    type="button"
+                    [disabled]="deletingResourceKey() === resourceKey('iot-device', iotDevice.id)"
+                    (click)="deleteIoTDevice(iotDevice)"
+                  >
+                    {{
+                      (deletingResourceKey() === resourceKey('iot-device', iotDevice.id)
+                        ? 'asset-management.deleting'
+                        : 'asset-management.delete'
+                      ) | translate
+                    }}
+                  </button>
+                </td>
+              }
             </tr>
           } @empty {
             <tr>
-              <td class="empty-state" colspan="9">
+              <td class="empty-state" [attr.colspan]="canDeleteAssetResources() ? 10 : 9">
                 {{ 'asset-management.iot-devices.empty' | translate }}
               </td>
             </tr>
@@ -414,6 +434,12 @@
         </tbody>
       </table>
     </div>
+    <app-list-pagination
+      [page]="iotDevicePage()"
+      [total]="organizationIoTDevices().length"
+      [pageSize]="pageSize"
+      (pageChange)="updateIoTDevicePage($event)"
+    />
   </section>
 }
 
@@ -440,10 +466,13 @@
             <th>{{ 'asset-management.gateways.table.assets' | translate }}</th>
             <th>{{ 'asset-management.gateways.table.devices' | translate }}</th>
             <th>{{ 'asset-management.gateways.table.status' | translate }}</th>
+            @if (canDeleteAssetResources()) {
+              <th>{{ 'asset-management.table.actions' | translate }}</th>
+            }
           </tr>
         </thead>
         <tbody>
-          @for (gateway of organizationGateways(); track gateway.id) {
+          @for (gateway of paginatedGateways(); track gateway.id) {
             <tr>
               <td [attr.data-label]="'asset-management.gateways.table.id' | translate">
                 {{ gateway.uuid }}
@@ -468,10 +497,27 @@
                   {{ gatewayStatusLabelKey(gateway.status) | translate }}
                 </span>
               </td>
+              @if (canDeleteAssetResources()) {
+                <td [attr.data-label]="'asset-management.table.actions' | translate">
+                  <button
+                    class="danger-action"
+                    type="button"
+                    [disabled]="deletingResourceKey() === resourceKey('gateway', gateway.id)"
+                    (click)="deleteGateway(gateway)"
+                  >
+                    {{
+                      (deletingResourceKey() === resourceKey('gateway', gateway.id)
+                        ? 'asset-management.deleting'
+                        : 'asset-management.delete'
+                      ) | translate
+                    }}
+                  </button>
+                </td>
+              }
             </tr>
           } @empty {
             <tr>
-              <td class="empty-state" colspan="7">
+              <td class="empty-state" [attr.colspan]="canDeleteAssetResources() ? 8 : 7">
                 {{ 'asset-management.gateways.empty' | translate }}
               </td>
             </tr>
@@ -479,6 +525,12 @@
         </tbody>
       </table>
     </div>
+    <app-list-pagination
+      [page]="gatewayPage()"
+      [total]="organizationGateways().length"
+      [pageSize]="pageSize"
+      (pageChange)="updateGatewayPage($event)"
+    />
   </section>
 }
 
@@ -513,10 +565,13 @@
               <th>{{ 'asset-management.table.entry-date' | translate }}</th>
               <th>{{ 'asset-management.table.status' | translate }}</th>
               <th>{{ 'asset-management.table.connectivity' | translate }}</th>
+              @if (canDeleteAssetResources()) {
+                <th>{{ 'asset-management.table.actions' | translate }}</th>
+              }
             </tr>
           </thead>
           <tbody>
-            @for (asset of filteredAssets(); track asset.id) {
+            @for (asset of paginatedAssets(); track asset.id) {
               <tr>
                 <td [attr.data-label]="'asset-management.table.id' | translate">
                   {{ asset.uuid }}
@@ -590,10 +645,27 @@
                     {{ connectivityLabelKey(asset.connectivity) | translate }}
                   </span>
                 </td>
+                @if (canDeleteAssetResources()) {
+                  <td [attr.data-label]="'asset-management.table.actions' | translate">
+                    <button
+                      class="danger-action"
+                      type="button"
+                      [disabled]="deletingResourceKey() === resourceKey('asset', asset.id)"
+                      (click)="deleteAsset(asset)"
+                    >
+                      {{
+                        (deletingResourceKey() === resourceKey('asset', asset.id)
+                          ? 'asset-management.deleting'
+                          : 'asset-management.delete'
+                        ) | translate
+                      }}
+                    </button>
+                  </td>
+                }
               </tr>
             } @empty {
               <tr>
-                <td class="empty-state" colspan="9">
+                <td class="empty-state" [attr.colspan]="canDeleteAssetResources() ? 10 : 9">
                   {{ 'asset-management.empty' | translate }}
                 </td>
               </tr>
@@ -602,14 +674,12 @@
         </table>
       </div>
 
-      <footer class="table-footer">
-        <span>{{
-          'asset-management.item-count' | translate: { count: filteredAssets().length }
-        }}</span>
-        <div class="pager" aria-label="Pagination">
-          <button mat-stroked-button type="button" disabled>1</button>
-        </div>
-      </footer>
+      <app-list-pagination
+        [page]="assetPage()"
+        [total]="filteredAssets().length"
+        [pageSize]="pageSize"
+        (pageChange)="updateAssetPage($event)"
+      />
     }
   </section>
 }

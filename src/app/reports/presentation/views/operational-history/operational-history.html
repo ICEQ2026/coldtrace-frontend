@@ -113,7 +113,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (event of history().events; track trackEvent($index, event)) {
+              @for (event of paginatedEvents(); track trackEvent($index, event)) {
                 <tr>
                   <td>{{ formatDateTime(event.occurredAt) }}</td>
                   <td>
@@ -138,6 +138,13 @@
             </tbody>
           </table>
         </div>
+
+        <app-list-pagination
+          [page]="currentPage()"
+          [total]="history().events.length"
+          [pageSize]="pageSize"
+          (pageChange)="updatePage($event)"
+        />
       } @else {
         <div class="empty-state">
           <mat-icon aria-hidden="true">manage_search</mat-icon>

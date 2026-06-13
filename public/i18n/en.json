@@ -2,6 +2,9 @@
   "app": {
     "name": "ColdTrace"
   },
+  "pagination": {
+    "item-count": "Items per page: {{ count }}"
+  },
   "sign-in": {
     "title": "Sign in",
     "email": "Email address",
@@ -82,6 +85,9 @@
     "reload": "Reload",
     "save": "Save",
     "saved": "Saved",
+    "delete": "Delete",
+    "delete-confirm": "Delete {{ name }}? This action cannot be undone.",
+    "deleting": "Deleting...",
     "empty": "No users match this search.",
     "empty-section-message": "This section does not have content yet.",
     "menu": {
@@ -146,6 +152,8 @@
       "permissions-saved": "Role permissions updated.",
       "duplicate-email": "A user with this email already exists.",
       "invalid-role": "Select a valid role before saving.",
+      "delete-forbidden": "Your current role cannot delete this user.",
+      "deleted": "User deleted successfully.",
       "server-error": "We could not load access data. Try again later.",
       "loading": "Loading access data..."
     },
@@ -162,6 +170,10 @@
     "cold-room-subtitle": "Register and review cold rooms from the active organization.",
     "empty": "No cold rooms match this search.",
     "item-count": "Item per page: {{ count }}",
+    "delete": "Delete",
+    "delete-confirm": "Delete {{ name }}? This action cannot be undone.",
+    "deleting": "Deleting...",
+    "feedback-deleted": "Asset deleted successfully.",
     "tabs": {
       "cold-room": "Cold Room",
       "transport": "Transport",
@@ -203,7 +215,8 @@
       "temperature": "Temp.",
       "entry-date": "Entry date",
       "status": "Status",
-      "connectivity": "Connectivity"
+      "connectivity": "Connectivity",
+      "actions": "Actions"
     },
     "incidents": {
       "high-temperature": "High temperature",
@@ -232,6 +245,7 @@
       "unassigned": "Unassigned",
       "empty": "No IoT devices registered for this organization.",
       "feedback-created": "IoT device created successfully.",
+      "feedback-deleted": "IoT device deleted successfully.",
       "feedback-duplicate": "An IoT device with this ID already exists.",
       "form": {
         "internal-id": "Internal ID",
@@ -299,6 +313,7 @@
       "unassigned": "Unassigned",
       "empty": "No gateways registered for this organization.",
       "feedback-created": "Gateway created successfully.",
+      "feedback-deleted": "Gateway deleted successfully.",
       "feedback-duplicate": "A gateway with this ID already exists.",
       "form": {
         "internal-id": "Internal ID",
@@ -807,7 +822,11 @@
         "no-readings": "No readings available"
       },
       "incident": {
-        "out-of-range": "Out-of-range reading"
+        "out-of-range": "Out-of-range reading",
+        "high-temperature": "High temperature",
+        "connection-lost": "Connection lost",
+        "low-temperature": "Low temperature",
+        "none": "No incidents"
       }
     }
   },

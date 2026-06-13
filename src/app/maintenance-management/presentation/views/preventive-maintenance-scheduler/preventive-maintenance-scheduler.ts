@@ -16,6 +16,7 @@ import { Organization } from '../../../../identity-access/domain/model/organizat
 import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { MaintenanceManagementStore } from '../../../application/maintenance-management.store';
 import { MaintenanceSchedule } from '../../../domain/model/maintenance-schedule.entity';
 import { MaintenanceScheduleStatus } from '../../../domain/model/maintenance-schedule-status.enum';
@@ -35,7 +36,15 @@ type PreventiveMaintenanceFeedback =
  */
 @Component({
   selector: 'app-preventive-maintenance-scheduler',
-  imports: [MatButton, MatIcon, MatProgressSpinner, NgClass, ReactiveFormsModule, TranslatePipe],
+  imports: [
+    MatButton,
+    MatIcon,
+    MatProgressSpinner,
+    NgClass,
+    ReactiveFormsModule,
+    TranslatePipe,
+    ListPagination,
+  ],
   templateUrl: './preventive-maintenance-scheduler.html',
   styleUrl: './preventive-maintenance-scheduler.css',
 })
@@ -53,6 +62,8 @@ export class PreventiveMaintenanceScheduler implements OnInit {
   protected readonly saving = signal(false);
   protected readonly submitted = signal(false);
   protected readonly feedback = signal<PreventiveMaintenanceFeedback>('idle');
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -103,6 +114,9 @@ export class PreventiveMaintenanceScheduler implements OnInit {
       .filter((schedule) => schedule.organizationId === organizationId)
       .sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate));
   });
+  protected readonly paginatedSchedules = computed(() =>
+    this.paginate(this.organizationSchedules(), this.currentPage()),
+  );
   protected readonly openSchedules = computed(() => {
     return this.organizationSchedules().filter((schedule) => this.isOpenSchedule(schedule));
   });
@@ -246,6 +260,10 @@ export class PreventiveMaintenanceScheduler implements OnInit {
     return this.hasControlError('scheduledDate') || (this.submitted() && this.isPastDate());
   }
 
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
+  }
+
   protected assetNameFor(schedule: MaintenanceSchedule): string {
     const asset = this.assetFor(schedule.assetId);
 
@@ -329,5 +347,13 @@ export class PreventiveMaintenanceScheduler implements OnInit {
     const day = `${date.getDate()}`.padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }

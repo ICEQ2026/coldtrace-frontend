@@ -14,6 +14,7 @@ import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
 import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { ReportsStore } from '../../../application/reports.store';
 import { MonthlyReportRow, MonthlyReportStatus } from '../../../domain/model/monthly-report.entity';
 import { ReportType } from '../../../domain/model/report-type.enum';
@@ -25,7 +26,15 @@ type MonthlyReportFeedback = 'idle' | 'downloaded' | 'insufficient' | 'server-er
  */
 @Component({
   selector: 'app-monthly-report',
-  imports: [FormsModule, MatButton, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
+  imports: [
+    FormsModule,
+    MatButton,
+    MatIcon,
+    MatProgressSpinner,
+    NgClass,
+    TranslatePipe,
+    ListPagination,
+  ],
   templateUrl: './monthly-report.html',
   styleUrl: './monthly-report.css',
 })
@@ -40,6 +49,8 @@ export class MonthlyReport implements OnInit {
   protected readonly identityLoading = signal(false);
   protected readonly feedback = signal<MonthlyReportFeedback>('idle');
   protected readonly selectedMonth = signal('');
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -78,6 +89,9 @@ export class MonthlyReport implements OnInit {
   });
   protected readonly hasRows = computed(() => this.monthlyReport().rows.length > 0);
   protected readonly canDownloadReport = computed(() => this.monthlyReport().canDownload);
+  protected readonly paginatedRows = computed(() =>
+    this.paginate(this.monthlyReport().rows, this.currentPage()),
+  );
 
   /**
    * @summary Initializes the monthly report view state.
@@ -116,6 +130,7 @@ export class MonthlyReport implements OnInit {
     const maxMonth = this.maxMonth();
     this.selectedMonth.set(value > maxMonth ? maxMonth : value);
     this.feedback.set('idle');
+    this.currentPage.set(1);
   }
 
   protected downloadMonthlyReport(): void {
@@ -172,6 +187,10 @@ export class MonthlyReport implements OnInit {
     return row.assetId;
   }
 
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
+  }
+
   private downloadMonthlyCsv(): void {
     const csv = this.reportsStore.monthlyReportCsv(this.monthlyReport());
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -201,7 +220,15 @@ export class MonthlyReport implements OnInit {
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '') || 'organization'
+      .replace(/(^-|-$)/g, '') || 'organization'
     );
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }

@@ -193,7 +193,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (schedule of organizationSchedules(); track schedule.id) {
+          @for (schedule of paginatedSchedules(); track schedule.id) {
             <tr>
               <td>{{ schedule.uuid }}</td>
               <td>{{ assetNameFor(schedule) }}</td>
@@ -223,5 +223,12 @@
         </tbody>
       </table>
     </div>
+
+    <app-list-pagination
+      [page]="currentPage()"
+      [total]="organizationSchedules().length"
+      [pageSize]="pageSize"
+      (pageChange)="updatePage($event)"
+    />
   </section>
 </section>

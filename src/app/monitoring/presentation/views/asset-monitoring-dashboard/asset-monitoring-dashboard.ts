@@ -8,6 +8,7 @@ import { Asset } from '../../../../asset-management/domain/model/asset.entity';
 import { AssetType } from '../../../../asset-management/domain/model/asset-type.enum';
 import { IoTDevice } from '../../../../asset-management/domain/model/iot-device.entity';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { MonitoringStore } from '../../../application/monitoring.store';
 import { SensorReading } from '../../../domain/model/sensor-reading.entity';
 import { TemperaturePoint } from '../../../domain/model/temperature-point.entity';
@@ -38,7 +39,7 @@ interface TemperatureLimits {
 @Component({
   selector: 'app-asset-monitoring-dashboard',
   standalone: true,
-  imports: [CommonModule, MatIconModule, TranslateModule, MonitoringAssetCard],
+  imports: [CommonModule, MatIconModule, TranslateModule, MonitoringAssetCard, ListPagination],
   templateUrl: './asset-monitoring-dashboard.html',
   styleUrl: './asset-monitoring-dashboard.css',
 })
@@ -48,6 +49,8 @@ export class AssetMonitoringDashboard implements OnInit {
   private readonly monitoringStore = inject(MonitoringStore);
 
   protected readonly searchTerm = signal('');
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly tabs: AssetMonitoringTab[] = [
     { type: AssetType.ColdRoom, labelKey: 'monitoring.asset-monitoring.tabs.cold-room' },
     { type: AssetType.Transport, labelKey: 'monitoring.asset-monitoring.tabs.transport' },
@@ -81,6 +84,9 @@ export class AssetMonitoringDashboard implements OnInit {
         return rightIssue - leftIssue || left.asset.name.localeCompare(right.asset.name);
       });
   });
+  protected readonly paginatedItems = computed(() =>
+    this.paginate(this.filteredItems(), this.currentPage()),
+  );
 
   protected readonly totalAssets = computed(() => this.filteredItems().length);
   protected readonly assetsWithReadings = computed(
@@ -107,6 +113,16 @@ export class AssetMonitoringDashboard implements OnInit {
   protected updateSearchTerm(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.searchTerm.set(input.value);
+    this.currentPage.set(1);
+  }
+
+  protected selectAssetType(type: AssetType): void {
+    this.activeType.set(type);
+    this.currentPage.set(1);
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
   }
 
   private buildMonitoringItem(asset: Asset): AssetMonitoringItem {
@@ -209,5 +225,13 @@ export class AssetMonitoringDashboard implements OnInit {
 
   private assetLocationFor(asset: Asset): string {
     return this.assetStore.locationForAsset(asset);
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }

@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { forkJoin, Observable, of, switchMap, tap } from 'rxjs';
 import { Asset } from '../domain/model/asset.entity';
 import { AssetSettings } from '../domain/model/asset-settings.entity';
 import { AssetStatus } from '../domain/model/asset-status.enum';
@@ -269,6 +269,43 @@ export class AssetManagementStore {
   }
 
   /**
+   * @summary Deletes an asset and detaches dependent local resources first.
+   */
+  deleteAsset(asset: Asset): Observable<void> {
+    const linkedDevices = this.iotDevices().filter((iotDevice) => iotDevice.assetId === asset.id);
+    const linkedSettings = this.assetSettings().filter((settings) => settings.assetId === asset.id);
+    const preparationRequests = [
+      ...linkedDevices.map((iotDevice) =>
+        this.updateIoTDevice(
+          this.nextIoTDevice(iotDevice, {
+            assetId: null,
+            status: IoTDeviceStatus.Available,
+          }),
+        ),
+      ),
+      ...linkedSettings.map((settings) =>
+        this.assetManagementApi.deleteAssetSettings(settings.id).pipe(
+          tap(() => {
+            this.assetSettingsSignal.update((currentSettings) =>
+              currentSettings.filter((assetSettings) => assetSettings.id !== settings.id),
+            );
+          }),
+        ),
+      ),
+    ];
+    const preparation = preparationRequests.length ? forkJoin(preparationRequests) : of([]);
+
+    return preparation.pipe(
+      switchMap(() => this.assetManagementApi.deleteAsset(asset.id)),
+      tap(() => {
+        this.assetsSignal.update((assets) =>
+          assets.filter((currentAsset) => currentAsset.id !== asset.id),
+        );
+      }),
+    );
+  }
+
+  /**
    * @summary Loads IoT devices data into local state.
    */
   loadIoTDevices(): void {
@@ -314,6 +351,19 @@ export class AssetManagementStore {
   }
 
   /**
+   * @summary Deletes an IoT device and removes it from local state.
+   */
+  deleteIoTDevice(iotDevice: IoTDevice): Observable<void> {
+    return this.assetManagementApi.deleteIoTDevice(iotDevice.id).pipe(
+      tap(() => {
+        this.iotDevicesSignal.update((iotDevices) =>
+          iotDevices.filter((currentIoTDevice) => currentIoTDevice.id !== iotDevice.id),
+        );
+      }),
+    );
+  }
+
+  /**
    * @summary Loads gateways data into local state.
    */
   loadGateways(): void {
@@ -353,6 +403,31 @@ export class AssetManagementStore {
           gateways.map((currentGateway) =>
             currentGateway.id === updatedGateway.id ? updatedGateway : currentGateway,
           ),
+        );
+      }),
+    );
+  }
+
+  /**
+   * @summary Deletes a gateway and leaves linked assets unassigned.
+   */
+  deleteGateway(gateway: Gateway): Observable<void> {
+    const linkedAssets = this.assets().filter((asset) => asset.gatewayId === gateway.id);
+    const preparationRequests = linkedAssets.map((asset) =>
+      this.updateAsset(
+        this.nextAsset(asset, {
+          gatewayId: null,
+          location: asset.location || gateway.location,
+        }),
+      ),
+    );
+    const preparation = preparationRequests.length ? forkJoin(preparationRequests) : of([]);
+
+    return preparation.pipe(
+      switchMap(() => this.assetManagementApi.deleteGateway(gateway.id)),
+      tap(() => {
+        this.gatewaysSignal.update((gateways) =>
+          gateways.filter((currentGateway) => currentGateway.id !== gateway.id),
         );
       }),
     );
@@ -479,6 +554,8 @@ export class AssetManagementStore {
   private nextAsset(
     asset: Asset,
     fields: Partial<{
+      gatewayId: number | null;
+      location: string;
       status: AssetStatus;
       lastIncident: string;
       currentTemperature: string;
@@ -490,9 +567,9 @@ export class AssetManagementStore {
       asset.organizationId,
       asset.uuid,
       asset.type,
-      asset.gatewayId,
+      fields.gatewayId !== undefined ? fields.gatewayId : asset.gatewayId,
       asset.name,
-      asset.location,
+      fields.location ?? asset.location,
       asset.capacity,
       asset.description,
       fields.status ?? asset.status,

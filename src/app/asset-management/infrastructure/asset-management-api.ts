@@ -51,6 +51,13 @@ export class AssetManagementApi extends BaseApi {
   }
 
   /**
+   * @summary Deletes an asset by identifier.
+   */
+  deleteAsset(id: number): Observable<void> {
+    return this.assetsEndpoint.delete(id);
+  }
+
+  /**
    * @summary Fetches IoT devices from the API endpoint.
    */
   getIoTDevices(): Observable<IoTDevice[]> {
@@ -69,6 +76,13 @@ export class AssetManagementApi extends BaseApi {
    */
   updateIoTDevice(iotDevice: IoTDevice): Observable<IoTDevice> {
     return this.iotDevicesEndpoint.update(iotDevice, iotDevice.id);
+  }
+
+  /**
+   * @summary Deletes an IoT device by identifier.
+   */
+  deleteIoTDevice(id: number): Observable<void> {
+    return this.iotDevicesEndpoint.delete(id);
   }
 
   /**
@@ -93,6 +107,13 @@ export class AssetManagementApi extends BaseApi {
   }
 
   /**
+   * @summary Deletes a gateway by identifier.
+   */
+  deleteGateway(id: number): Observable<void> {
+    return this.gatewaysEndpoint.delete(id);
+  }
+
+  /**
    * @summary Fetches asset settings from the API endpoint.
    */
   getAssetSettings(): Observable<AssetSettings[]> {
@@ -111,5 +132,12 @@ export class AssetManagementApi extends BaseApi {
    */
   updateAssetSettings(assetSettings: AssetSettings): Observable<AssetSettings> {
     return this.assetSettingsEndpoint.update(assetSettings, assetSettings.id);
+  }
+
+  /**
+   * @summary Deletes asset settings by identifier.
+   */
+  deleteAssetSettings(id: number): Observable<void> {
+    return this.assetSettingsEndpoint.delete(id);
   }
 }

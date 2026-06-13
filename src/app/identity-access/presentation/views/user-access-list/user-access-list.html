@@ -39,7 +39,6 @@
         <div class="table-actions">
           @if (canManageAccess()) {
             <button
-              mat-stroked-button
               type="button"
               class="reload-action"
               routerLink="/identity-access/roles-permissions/users/new"
@@ -47,7 +46,7 @@
               {{ 'roles-permissions.create-user' | translate }}
             </button>
           }
-          <button mat-stroked-button type="button" class="reload-action" (click)="loadAccessData()">
+          <button type="button" class="reload-action" (click)="loadAccessData()">
             {{ 'roles-permissions.reload' | translate }}
           </button>
         </div>
@@ -59,6 +58,16 @@
 
       @if (feedback() === 'invalid-role') {
         <p class="feedback error">{{ 'roles-permissions.feedback.invalid-role' | translate }}</p>
+      }
+
+      @if (feedback() === 'delete-forbidden') {
+        <p class="feedback error">
+          {{ 'roles-permissions.feedback.delete-forbidden' | translate }}
+        </p>
+      }
+
+      @if (feedback() === 'deleted') {
+        <p class="feedback success">{{ 'roles-permissions.feedback.deleted' | translate }}</p>
       }
 
       @if (feedback() === 'server-error') {
@@ -79,7 +88,7 @@
               }
               <col style="width: 330px" />
               @if (canManageAccess()) {
-                <col style="width: 90px" />
+                <col style="width: 150px" />
               }
             </colgroup>
             <thead>
@@ -97,7 +106,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (row of rows(); track row.user.id) {
+              @for (row of paginatedRows(); track row.user.id) {
                 <tr
                   [class.saved-row]="savedUserId() === row.user.id"
                   [class.invalid-row]="invalidUserId() === row.user.id"
@@ -139,18 +148,32 @@
                   </td>
                   @if (canManageAccess()) {
                     <td [attr.data-label]="'roles-permissions.table.actions' | translate">
-                      <button
-                        mat-stroked-button
-                        type="button"
-                        class="save-action"
-                        [disabled]="!row.pending || !canManageUserRole(row.user)"
-                        (click)="saveRole(row.user)"
-                      >
-                        {{
-                          (row.pending ? 'roles-permissions.save' : 'roles-permissions.saved')
-                            | translate
-                        }}
-                      </button>
+                      <div class="row-actions">
+                        <button
+                          type="button"
+                          class="save-action"
+                          [disabled]="!row.pending || !canManageUserRole(row.user)"
+                          (click)="saveRole(row.user)"
+                        >
+                          {{
+                            (row.pending ? 'roles-permissions.save' : 'roles-permissions.saved')
+                              | translate
+                          }}
+                        </button>
+                        <button
+                          type="button"
+                          class="delete-action"
+                          [disabled]="deletingUserId() === row.user.id || !canDeleteUser(row.user)"
+                          (click)="deleteUser(row.user)"
+                        >
+                          {{
+                            (deletingUserId() === row.user.id
+                              ? 'roles-permissions.deleting'
+                              : 'roles-permissions.delete'
+                            ) | translate
+                          }}
+                        </button>
+                      </div>
                     </td>
                   }
                 </tr>
@@ -163,6 +186,12 @@
               }
             </tbody>
           </table>
+          <app-list-pagination
+            [page]="currentPage()"
+            [total]="rows().length"
+            [pageSize]="pageSize"
+            (pageChange)="updatePage($event)"
+          />
         </div>
       }
     </section>

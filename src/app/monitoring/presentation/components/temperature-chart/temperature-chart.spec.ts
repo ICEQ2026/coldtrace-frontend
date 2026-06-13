@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideTranslateService } from '@ngx-translate/core';
 
 import { TemperatureChart } from './temperature-chart';
 
@@ -9,6 +10,7 @@ describe('TemperatureChart', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [TemperatureChart],
+      providers: [provideTranslateService()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TemperatureChart);

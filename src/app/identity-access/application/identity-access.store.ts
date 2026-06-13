@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { catchError, Observable, of, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
 import { Organization } from '../domain/model/organization.entity';
 import { PermissionAction } from '../domain/model/permission-action.enum';
 import { Permission } from '../domain/model/permission.entity';
@@ -370,6 +370,41 @@ export class IdentityAccessStore {
   }
 
   /**
+   * @summary Checks whether the current user may delete another user.
+   */
+  canDeleteUser(user: User | undefined, users: User[], roles: Role[]): boolean {
+    if (!user || this.currentUserFrom(users)?.id === user.id) {
+      return false;
+    }
+
+    const actorRole = this.currentRoleFrom(users, roles);
+    const targetRole = roles.find((role) => role.id === user.roleId);
+
+    if (this.isSuperAdministratorRole(actorRole)) {
+      return true;
+    }
+
+    if (!this.isAdministratorRole(actorRole)) {
+      return false;
+    }
+
+    return !this.isSuperAdministratorRole(targetRole) && !this.isAdministratorRole(targetRole);
+  }
+
+  /**
+   * @summary Checks whether the current user may delete asset resources.
+   */
+  canDeleteAssetResources(users: User[], roles: Role[]): boolean {
+    const role = this.currentRoleFrom(users, roles);
+
+    return (
+      this.isSuperAdministratorRole(role) ||
+      this.isAdministratorRole(role) ||
+      role?.name === RoleName.OperationsManager
+    );
+  }
+
+  /**
    * @summary Checks whether the current user may assign a target role.
    */
   canAssignRole(role: Role | undefined, users: User[], roles: Role[]): boolean {
@@ -474,6 +509,44 @@ export class IdentityAccessStore {
         this.updateRoleState(this.roleWithPermissionKeys(role, previousKeys));
         return throwError(() => error);
       }),
+    );
+  }
+
+  /**
+   * @summary Deletes a user when the current role is allowed to do it.
+   */
+  deleteUser(
+    user: User,
+    users: User[] = this.users(),
+    roles: Role[] = this.roles(),
+  ): Observable<{ status: 'success' | 'forbidden' }> {
+    if (!this.canDeleteUser(user, users, roles)) {
+      return of({ status: 'forbidden' });
+    }
+
+    const previousUsers = this.users();
+    this.usersSignal.update((currentUsers) =>
+      currentUsers.filter((currentUser) => currentUser.id !== user.id),
+    );
+
+    return this.identityAccessApi.deleteUser(user.id).pipe(
+      map(() => ({ status: 'success' as const })),
+      catchError((error) =>
+        this.identityAccessApi.getUsers().pipe(
+          map((remoteUsers) => {
+            if (!remoteUsers.some((remoteUser) => remoteUser.id === user.id)) {
+              return { status: 'success' as const };
+            }
+
+            this.usersSignal.set(previousUsers);
+            throw error;
+          }),
+          catchError(() => {
+            this.usersSignal.set(previousUsers);
+            return throwError(() => error);
+          }),
+        ),
+      ),
     );
   }
 

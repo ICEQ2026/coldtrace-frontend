@@ -14,6 +14,7 @@ import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
 import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { ReportsStore } from '../../../application/reports.store';
 import { ComplianceFinding } from '../../../domain/model/compliance-finding.entity';
 import { EvidenceItem } from '../../../domain/model/evidence-item.entity';
@@ -26,7 +27,15 @@ type AuditEvidenceFeedback = 'idle' | 'exported' | 'insufficient' | 'server-erro
  */
 @Component({
   selector: 'app-audit-evidence',
-  imports: [FormsModule, MatButton, MatIcon, MatProgressSpinner, NgClass, TranslatePipe],
+  imports: [
+    FormsModule,
+    MatButton,
+    MatIcon,
+    MatProgressSpinner,
+    NgClass,
+    TranslatePipe,
+    ListPagination,
+  ],
   templateUrl: './audit-evidence.html',
   styleUrl: './audit-evidence.css',
 })
@@ -43,6 +52,9 @@ export class AuditEvidence implements OnInit {
   protected readonly selectedAssetId = signal(0);
   protected readonly fromDate = signal('');
   protected readonly toDate = signal('');
+  protected readonly reportsPage = signal(1);
+  protected readonly findingsPage = signal(1);
+  protected readonly pageSize = 10;
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -85,6 +97,12 @@ export class AuditEvidence implements OnInit {
   protected readonly canExportEvidence = computed(() => {
     return this.canPrepareEvidence() && this.auditEvidence().hasEvidence;
   });
+  protected readonly paginatedReports = computed(() =>
+    this.paginate(this.auditEvidence().reports, this.reportsPage()),
+  );
+  protected readonly paginatedFindings = computed(() =>
+    this.paginate(this.auditEvidence().findings, this.findingsPage()),
+  );
 
   /**
    * @summary Initializes the audit evidence view state.
@@ -130,6 +148,7 @@ export class AuditEvidence implements OnInit {
     }
 
     this.feedback.set('idle');
+    this.resetPagination();
   }
 
   protected updateToDate(value: string): void {
@@ -137,11 +156,13 @@ export class AuditEvidence implements OnInit {
     const nextDate = value > maxDate ? maxDate : value;
     this.toDate.set(nextDate < this.effectiveFromDate() ? this.effectiveFromDate() : nextDate);
     this.feedback.set('idle');
+    this.resetPagination();
   }
 
   protected selectAsset(value: string): void {
     this.selectedAssetId.set(Number(value));
     this.feedback.set('idle');
+    this.resetPagination();
   }
 
   protected exportEvidence(): void {
@@ -199,6 +220,14 @@ export class AuditEvidence implements OnInit {
     return finding.id;
   }
 
+  protected updateReportsPage(page: number): void {
+    this.reportsPage.set(page);
+  }
+
+  protected updateFindingsPage(page: number): void {
+    this.findingsPage.set(page);
+  }
+
   private downloadEvidenceCsv(): void {
     const csv = this.reportsStore.auditEvidenceCsv(this.auditEvidence());
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -236,7 +265,20 @@ export class AuditEvidence implements OnInit {
         .replace(/[\u0300-\u036f]/g, '')
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)/g, '') || 'organization'
+      .replace(/(^-|-$)/g, '') || 'organization'
     );
+  }
+
+  private resetPagination(): void {
+    this.reportsPage.set(1);
+    this.findingsPage.set(1);
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }
