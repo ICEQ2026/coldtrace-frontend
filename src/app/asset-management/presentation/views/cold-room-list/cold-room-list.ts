@@ -4,7 +4,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { AssetManagementStore } from '../../../application/asset-management.store';
@@ -71,6 +71,7 @@ export class ColdRoomList implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly translate = inject(TranslateService);
   private readonly identityAccessApi = inject(IdentityAccessApi);
+  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
   protected readonly assetTypeTabs: AssetManagementTab[] = [
@@ -279,7 +280,7 @@ export class ColdRoomList implements OnInit {
         .join(' ')
         .toLowerCase()
         .includes(normalizedSearch);
-      });
+    });
   });
 
   protected readonly paginatedAssets = computed(() =>
@@ -296,6 +297,9 @@ export class ColdRoomList implements OnInit {
    * @summary Initializes the cold room list view state.
    */
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      this.applySelectedTab(this.tabFromQueryParam(params.get('tab')));
+    });
     this.loadPageData();
   }
 
@@ -335,15 +339,13 @@ export class ColdRoomList implements OnInit {
       return;
     }
 
-    this.selectedTab.set(tab);
-    this.searchTerm.set('');
-    this.assetPage.set(1);
-    this.iotDevicePage.set(1);
-    this.gatewayPage.set(1);
-    this.formVisible.set(false);
-    this.feedback.set('idle');
-    this.submitted.set(false);
-    this.resetForms();
+    this.applySelectedTab(tab);
+    void this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { tab },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
   }
 
   protected toggleForm(): void {
@@ -976,6 +978,27 @@ export class ColdRoomList implements OnInit {
     return `${type}-${id}`;
   }
 
+  private applySelectedTab(tab: AssetManagementTab): void {
+    if (this.selectedTab() === tab) {
+      return;
+    }
+
+    this.selectedTab.set(tab);
+    this.searchTerm.set('');
+    this.assetPage.set(1);
+    this.iotDevicePage.set(1);
+    this.gatewayPage.set(1);
+    this.formVisible.set(false);
+    this.feedback.set('idle');
+    this.submitted.set(false);
+    this.resetForms();
+  }
+
+  private tabFromQueryParam(value: string | null): AssetManagementTab {
+    return this.assetTypeTabs.includes(value as AssetManagementTab)
+      ? (value as AssetManagementTab)
+      : AssetType.ColdRoom;
+  }
   private activeOrganizationId(): number | null {
     return this.identityAccessStore.currentOrganizationIdFrom(this.users());
   }
@@ -1149,5 +1172,3 @@ export class ColdRoomList implements OnInit {
     return candidate;
   }
 }
-
-

@@ -3,7 +3,7 @@
 }
 
 .access-page {
-  background: #f5f6f8;
+  background: var(--color-background);
   display: grid;
   grid-template-columns: 318px 1fr;
   height: 100vh;
@@ -286,13 +286,13 @@ app-language-switcher {
 
 .topbar {
   align-items: center;
-  background: #f5f6f8;
+  background: var(--color-background);
   display: flex;
   flex-shrink: 0;
   gap: 16px;
-  height: 82px;
-  justify-content: flex-end;
-  padding: 10px 34px 0;
+  height: 78px;
+  justify-content: space-between;
+  padding: 12px 34px 0;
 }
 
 .notification-shortcut {
@@ -418,7 +418,7 @@ app-language-switcher {
 .content-scroll {
   flex: 1;
   overflow: auto;
-  background: #f5f6f8;
+  background: var(--color-background);
   padding: 0 34px 34px;
 }
 
@@ -458,7 +458,7 @@ app-language-switcher {
 
   .side-panel:hover,
   .side-panel:focus-within {
-    background: #f5f6f8;
+    background: var(--color-background);
     box-shadow: 18px 0 34px rgba(15, 23, 42, 0.08);
     width: min(318px, calc(100vw - 18px));
   }
@@ -519,7 +519,6 @@ app-language-switcher {
   .notification-shortcut span {
     display: none;
   }
-
 }
 
 @media (max-width: 640px) {
@@ -562,7 +561,8 @@ app-language-switcher {
 
   .topbar {
     gap: 10px;
-    height: 70px;
+    height: auto;
+    min-height: 70px;
     padding: 8px 14px 0;
   }
 

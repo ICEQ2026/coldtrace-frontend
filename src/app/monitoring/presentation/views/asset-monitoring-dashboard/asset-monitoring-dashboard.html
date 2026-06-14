@@ -6,20 +6,6 @@
     </div>
 
     @if (canMonitorAssets()) {
-      <nav class="monitoring-tabs">
-        @for (tab of tabs; track tab) {
-          <button
-            type="button"
-            [class.active]="activeType() === tab.type"
-            (click)="selectAssetType(tab.type)"
-          >
-            {{ tab.labelKey | translate }}
-          </button>
-        }
-      </nav>
-    }
-
-    @if (canMonitorAssets()) {
       <div class="assets-toolbar">
         <label class="search-box">
           <mat-icon class="search-icon">search</mat-icon>
@@ -33,7 +19,8 @@
 
         <div class="summary-pills" aria-label="Monitoring summary">
           <span
-            >{{ 'monitoring.asset-monitoring.summary-assets' | translate }}: {{ totalAssets() }}</span
+            >{{ 'monitoring.asset-monitoring.summary-assets' | translate }}:
+            {{ totalAssets() }}</span
           >
           <span
             >{{ 'monitoring.asset-monitoring.summary-readings' | translate }}:

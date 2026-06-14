@@ -20,7 +20,7 @@
 
 .asset-tabs a.active,
 .asset-tabs button.active {
-  color: #98a2b3;
+  color: #2563eb;
   text-decoration: underline;
 }
 
@@ -30,7 +30,7 @@
   flex-wrap: wrap;
   gap: 12px;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 0;
 }
 
 .search-box {
@@ -145,7 +145,7 @@
   box-shadow:
     0 1px 3px rgba(96, 108, 128, 0.14),
     0 4px 4px rgba(0, 0, 0, 0.16);
-  margin-top: 20px;
+  margin-top: 0;
   max-width: 100%;
   padding: 20px 24px;
 }
@@ -396,7 +396,7 @@
 }
 
 .assets-table-wrapper {
-  margin-top: 20px;
+  margin-top: 0;
   overflow-x: auto;
 }
 

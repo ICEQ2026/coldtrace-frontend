@@ -1,15 +1,3 @@
-<nav class="asset-tabs" aria-label="Asset sections">
-  @for (assetType of assetTypeTabs; track assetType) {
-    <button
-      type="button"
-      [class.active]="selectedTab() === assetType"
-      (click)="selectAssetType(assetType)"
-    >
-      {{ assetTypeLabelKey(assetType) | translate }}
-    </button>
-  }
-</nav>
-
 <div class="assets-toolbar">
   <label class="search-box">
     <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
@@ -23,6 +11,7 @@
 
   @if (canManageAssets() && canCreateSelectedResource()) {
     <button mat-flat-button type="button" class="primary-action" (click)="toggleForm()">
+      <mat-icon aria-hidden="true">{{ formVisible() ? 'close' : 'add' }}</mat-icon>
       {{ createButtonKey() | translate }}
     </button>
   }
@@ -344,7 +333,8 @@
         <p>{{ 'asset-management.iot-devices.subtitle' | translate }}</p>
       </div>
       <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
-        {{ 'asset-management.reload' | translate }}
+        `r`n <mat-icon aria-hidden="true">refresh</mat-icon>`r`n
+        {{ 'asset-management.reload' | translate }}`r`n
       </button>
     </div>
 
@@ -465,7 +455,8 @@
         <p>{{ 'asset-management.gateways.subtitle' | translate }}</p>
       </div>
       <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
-        {{ 'asset-management.reload' | translate }}
+        `r`n <mat-icon aria-hidden="true">refresh</mat-icon>`r`n
+        {{ 'asset-management.reload' | translate }}`r`n
       </button>
     </div>
 
@@ -556,7 +547,8 @@
         <p>{{ pageSubtitleKey() | translate }}</p>
       </div>
       <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
-        {{ 'asset-management.reload' | translate }}
+        `r`n <mat-icon aria-hidden="true">refresh</mat-icon>`r`n
+        {{ 'asset-management.reload' | translate }}`r`n
       </button>
     </div>
 

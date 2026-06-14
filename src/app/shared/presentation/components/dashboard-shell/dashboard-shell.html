@@ -213,37 +213,53 @@
   <!-- WORKSPACE -->
   <section class="workspace">
     <header class="topbar">
-      @if (pendingAlertsCount > 0) {
-        <a
-          class="notification-shortcut"
-          routerLink="/alerts/notifications"
-          [attr.aria-label]="
-            'dashboard-shell.notification-shortcut' | translate: { count: pendingAlertsCount }
-          "
-        >
-          <mat-icon>notifications_active</mat-icon>
-          <span>
-            {{
-              'dashboard-shell.notification-shortcut' | translate: { count: pendingAlertsCount }
-            }}
-          </span>
-        </a>
-      }
+      <nav class="context-nav" aria-label="Section navigation">
+        @for (link of contextualLinks(); track link.path) {
+          @if (link.visible) {
+            <a
+              [routerLink]="link.path"
+              [queryParams]="link.queryParams"
+              [class.active]="isContextLinkActive(link)"
+            >
+              {{ link.labelKey | translate }}
+            </a>
+          }
+        }
+      </nav>
 
-      <div class="user-profile">
-        <div class="avatar-wrapper">
-          <div class="avatar-container">
-            <mat-icon class="avatar-placeholder">person</mat-icon>
+      <div class="topbar-actions">
+        @if (pendingAlertsCount > 0) {
+          <a
+            class="notification-shortcut"
+            routerLink="/alerts/notifications"
+            [attr.aria-label]="
+              'dashboard-shell.notification-shortcut' | translate: { count: pendingAlertsCount }
+            "
+          >
+            <mat-icon>notifications_active</mat-icon>
+            <span>
+              {{
+                'dashboard-shell.notification-shortcut' | translate: { count: pendingAlertsCount }
+              }}
+            </span>
+          </a>
+        }
+
+        <div class="user-profile">
+          <div class="avatar-wrapper">
+            <div class="avatar-container">
+              <mat-icon class="avatar-placeholder">person</mat-icon>
+            </div>
+            <span class="profile-status"></span>
           </div>
-          <span class="profile-status"></span>
-        </div>
-        <div class="profile-meta">
-          <span class="name">{{ profileUserName }}</span>
-          <span class="role">{{ profileRoleLabelKey | translate }}</span>
-        </div>
-        <div class="user-actions">
-          <button mat-icon-button><mat-icon>settings</mat-icon></button>
-          <button mat-icon-button (click)="logout()"><mat-icon>logout</mat-icon></button>
+          <div class="profile-meta">
+            <span class="name">{{ profileUserName }}</span>
+            <span class="role">{{ profileRoleLabelKey | translate }}</span>
+          </div>
+          <div class="user-actions">
+            <button mat-icon-button><mat-icon>settings</mat-icon></button>
+            <button mat-icon-button (click)="logout()"><mat-icon>logout</mat-icon></button>
+          </div>
         </div>
       </div>
     </header>
