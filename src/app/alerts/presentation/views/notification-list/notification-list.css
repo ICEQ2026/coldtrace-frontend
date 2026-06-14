@@ -306,3 +306,80 @@
     grid-column: 2;
   }
 }
+
+.notification-toolbar {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  min-height: 40px;
+}
+
+.search-box {
+  align-items: center;
+  color: #98a2b3;
+  display: flex;
+  gap: 10px;
+  min-width: min(460px, 100%);
+}
+
+.search-icon {
+  color: #98a2b3;
+  font-size: 24px;
+  height: 24px;
+  opacity: 0.68;
+  width: 24px;
+}
+
+.search-box input {
+  background: transparent;
+  border: 0;
+  color: #263348;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif;
+  outline: 0;
+  width: 100%;
+}
+
+.toolbar-summary {
+  justify-content: flex-end;
+}
+
+.notification-card {
+  border-radius: 8px;
+}
+
+.notification-count,
+.notification-status,
+.notification-title-line .notification-escalation,
+.notification-title-line .notification-severity {
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  border-radius: 8px;
+}
+
+.notification-row {
+  border-color: #e4e7ec;
+}
+
+.notification-content p {
+  color: #667085;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .notification-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .search-box,
+  .toolbar-summary {
+    width: 100%;
+  }
+
+  .toolbar-summary {
+    justify-content: flex-start;
+  }
+}

@@ -33,13 +33,38 @@ export class NotificationList implements OnInit {
   private feedbackDismissTimeoutId: number | null = null;
   protected readonly pageSize = 10;
   protected readonly currentPage = signal(1);
+  protected readonly searchTerm = signal('');
   protected readonly notifications = computed(() => {
     return [...this.alertsStore.activeNotifications()].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
   });
+  protected readonly filteredNotifications = computed(() => {
+    const normalizedSearch = this.searchTerm().trim().toLowerCase();
+
+    if (!normalizedSearch) {
+      return this.notifications();
+    }
+
+    return this.notifications().filter((notification) => {
+      const incident = this.incidentForNotification(notification);
+
+      return [
+        notification.assetName,
+        notification.message,
+        notification.recipient,
+        notification.channel,
+        notification.status,
+        incident?.severity ?? '',
+        incident?.escalationStatus ?? '',
+      ]
+        .join(' ')
+        .toLowerCase()
+        .includes(normalizedSearch);
+    });
+  });
   protected readonly paginatedNotifications = computed(() =>
-    this.paginate(this.notifications(), this.currentPage()),
+    this.paginate(this.filteredNotifications(), this.currentPage()),
   );
   protected readonly canAttendNotifications = computed(() => this.alertsStore.canResolveAlerts());
 
@@ -115,6 +140,11 @@ export class NotificationList implements OnInit {
       next: () => this.showTimedFeedback('alerts.notification-list.feedback-attended'),
       error: () => this.showTimedFeedback('alerts.notification-list.feedback-error'),
     });
+  }
+
+  protected updateSearchTerm(value: string): void {
+    this.searchTerm.set(value);
+    this.currentPage.set(1);
   }
 
   protected updatePage(page: number): void {
