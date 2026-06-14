@@ -27,6 +27,8 @@ import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
+import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
+import { SensorReading } from '../../../../monitoring/domain/model/sensor-reading.entity';
 import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 
 type AssetFeedback =
@@ -71,6 +73,7 @@ export class ColdRoomList implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly translate = inject(TranslateService);
   private readonly identityAccessApi = inject(IdentityAccessApi);
+  private readonly monitoringStore = inject(MonitoringStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
 
@@ -311,6 +314,7 @@ export class ColdRoomList implements OnInit {
     this.assetManagementStore.loadGateways();
     this.assetManagementStore.loadLocations();
     this.assetManagementStore.loadAssetSettings();
+    this.monitoringStore.loadReadings();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -1012,12 +1016,47 @@ export class ColdRoomList implements OnInit {
     return Math.max(Math.ceil(items.length / this.pageSize), 1);
   }
 
+  protected temperatureLabelFor(asset: Asset): string {
+    const latestReading = this.latestReadingForAsset(asset);
+
+    if (typeof latestReading?.temperature === 'number') {
+      return `${latestReading.temperature.toFixed(1)}°C`;
+    }
+
+    return asset.currentTemperature?.trim() || '—';
+  }
+
+  protected entryDateLabelFor(asset: Asset): string {
+    const latestReading = this.latestReadingForAsset(asset);
+    const dateSource = latestReading?.recordedAt || asset.entryDate;
+
+    if (!dateSource || dateSource === '—') {
+      return '—';
+    }
+
+    return this.formatDisplayDate(dateSource);
+  }
+
   private entryDate(): string {
+    return this.formatDisplayDate(new Date());
+  }
+
+  private latestReadingForAsset(asset: Asset): SensorReading | null {
+    return this.monitoringStore.getReadingsByAsset(asset.id)[0] ?? null;
+  }
+
+  private formatDisplayDate(value: string | Date): string {
+    const date = value instanceof Date ? value : new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+      return typeof value === 'string' && value.trim() ? value : '—';
+    }
+
     return new Intl.DateTimeFormat('en-GB', {
       day: '2-digit',
       month: 'short',
       year: 'numeric',
-    }).format(new Date());
+    }).format(date);
   }
 
   private calibrationCount(status: CalibrationStatus): number {

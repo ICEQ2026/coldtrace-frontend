@@ -85,7 +85,6 @@ select {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
 button,
 a,
 input,
@@ -111,7 +110,7 @@ textarea {
     sans-serif;
 }
 
-/* ColdTrace visual normalization shared across routed views */
+/* Dashboard shell contextual navigation */
 body .context-nav {
   align-items: center;
   display: flex;
@@ -122,8 +121,7 @@ body .context-nav {
   padding-right: 8px;
 }
 
-body .context-nav a,
-body .asset-tabs button {
+body .context-nav a {
   border-bottom: 2px solid transparent;
   color: var(--color-text-subtle);
   flex: 0 0 auto;
@@ -135,9 +133,7 @@ body .asset-tabs button {
 }
 
 body .context-nav a.active,
-body .context-nav a:hover,
-body .asset-tabs button.active,
-body .asset-tabs button:hover {
+body .context-nav a:hover {
   border-bottom-color: var(--color-primary);
   color: var(--color-primary);
   text-decoration: none;
@@ -151,144 +147,419 @@ body .topbar-actions {
   margin-left: auto;
 }
 
-body .asset-tabs {
-  align-items: center;
-  gap: 26px;
-  margin: 0 0 18px;
-  min-height: 40px;
+body .content-scroll > app-cold-room-list,
+body .content-scroll > app-asset-monitoring-dashboard,
+body .content-scroll > app-user-access-list,
+body .content-scroll > app-user-form,
+body .content-scroll > app-role-permission-form,
+body .content-scroll > app-safety-range-settings,
+body .content-scroll > app-operational-parameters-settings,
+body .content-scroll > app-preventive-maintenance-scheduler,
+body .content-scroll > app-technical-service-tracker,
+body .content-scroll > app-daily-log,
+body .content-scroll > app-monthly-report,
+body .content-scroll > app-operational-history,
+body .content-scroll > app-sanitary-compliance,
+body .content-scroll > app-compliance-findings,
+body .content-scroll > app-audit-evidence,
+body .content-scroll > app-incident-list,
+body .content-scroll > app-notification-list {
+  display: block;
+  min-height: 100%;
 }
 
-body .assets-toolbar,
-body .search-box {
+body
+  :is(
+    app-cold-room-list,
+    app-asset-monitoring-dashboard,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(
+    .page,
+    .history-page,
+    .monitoring-page,
+    .incident-list-view,
+    .notification-list-view,
+    .daily-log-page
+  ) {
+  background: var(--color-background) !important;
+  padding-top: 2px !important;
+}
+
+body
+  :is(
+    app-cold-room-list,
+    app-asset-monitoring-dashboard,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(.view-header, .monitoring-header, .page-heading) {
+  margin-bottom: 18px;
+}
+
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(
+    .page-heading,
+    .section-heading,
+    .feedback,
+    .filter-card,
+    .summary-grid,
+    .table-card,
+    .observation-banner,
+    .access-banner,
+    .evidence-grid
+  ) {
+  max-width: none !important;
+}
+
+body :is(app-cold-room-list, app-asset-monitoring-dashboard) :is(.assets-toolbar, .search-box) {
   margin-top: 0;
 }
 
-body .search-box {
+body :is(app-cold-room-list, app-asset-monitoring-dashboard, app-user-access-list) .search-box {
   min-height: 38px;
 }
 
-body .search-icon {
+body :is(app-cold-room-list, app-asset-monitoring-dashboard, app-user-access-list) .search-icon {
   color: var(--color-text-subtle);
   opacity: 0.62;
 }
 
-body .search-box input {
+body
+  :is(app-cold-room-list, app-asset-monitoring-dashboard, app-user-access-list)
+  .search-box
+  input {
   color: var(--color-text);
   font-family: Inter, Arial, sans-serif;
   font-size: 12px;
   font-weight: 800;
 }
 
-body .primary-action,
-body .secondary-action,
-body .reload-action,
-body .save-action,
-body .delete-action,
-body .danger-action,
-body .primary-form-action,
-body .recognize-btn,
-body .close-shortcut-btn,
-body .review-escalation-btn,
-body .close-incident-btn,
-body .stabilize-reading-btn,
-body .attend-action {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(
+    .primary-action,
+    .secondary-action,
+    .reload-action,
+    .save-action,
+    .delete-action,
+    .danger-action,
+    .primary-form-action,
+    .recognize-btn,
+    .close-shortcut-btn,
+    .review-escalation-btn,
+    .close-incident-btn,
+    .stabilize-reading-btn,
+    .attend-action,
+    .row-action
+  ) {
   border-radius: var(--radius-control) !important;
   box-shadow: none !important;
   font-family: Inter, Arial, sans-serif !important;
   font-weight: 800 !important;
 }
 
-body .secondary-action,
-body .reload-action,
-body .save-action {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(.secondary-action, .reload-action, .save-action) {
   border-color: var(--color-border) !important;
   color: var(--color-text-muted) !important;
 }
 
-body .secondary-action:hover,
-body .reload-action:hover,
-body .save-action:hover {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(.secondary-action:hover, .reload-action:hover, .save-action:hover) {
   border-color: var(--color-primary) !important;
   color: var(--color-primary) !important;
 }
 
-body .table-card,
-body .premium-card,
-body .summary-grid article,
-body .summary-card,
-body .filter-card,
-body .form-card,
-body .access-denied {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(
+    .table-card,
+    .summary-card,
+    .filter-card,
+    .form-card,
+    .access-denied,
+    .observation-banner,
+    .access-banner
+  ) {
   border: 1px solid var(--color-border) !important;
   border-radius: var(--radius-card) !important;
   box-shadow: var(--shadow-card) !important;
 }
 
-body .section-heading h2,
-body .table-heading h2,
-body .card-title,
-body .view-title,
-body .page-heading h1 {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(.section-heading h2, .table-heading h2, .card-title, .view-title, .page-heading h1) {
   color: var(--color-text) !important;
   font-family: Inter, Arial, sans-serif !important;
   font-weight: 800 !important;
 }
 
-body .section-heading p,
-body .table-heading p,
-body .view-subtitle,
-body .page-heading p,
-body .notification-subtitle,
-body .closure-subtitle {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(
+    .section-heading p,
+    .table-heading p,
+    .view-subtitle,
+    .page-heading p,
+    .notification-subtitle,
+    .closure-subtitle
+  ) {
   color: var(--color-text-subtle) !important;
   font-family: Inter, Arial, sans-serif !important;
   font-weight: 700 !important;
 }
 
-body .assets-table th,
-body .assets-table td,
-body .access-table th,
-body .access-table td,
-body .data-table th,
-body .data-table td,
-body .daily-log-table th,
-body .daily-log-table td,
-body .premium-table th,
-body .premium-table td {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(.assets-table, .access-table, .data-table, .daily-log-table, .premium-table, .history-table)
+  :is(th, td) {
   font-family: Inter, Arial, sans-serif !important;
 }
 
-body .assets-table th,
-body .access-table th,
-body .data-table th,
-body .daily-log-table th,
-body .premium-table th {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(.assets-table, .access-table, .data-table, .daily-log-table, .premium-table, .history-table)
+  th {
   color: var(--color-text-subtle) !important;
   font-weight: 800 !important;
 }
 
-body .assets-table td,
-body .access-table td,
-body .data-table td,
-body .daily-log-table td,
-body .premium-table td {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(.assets-table, .access-table, .data-table, .daily-log-table, .premium-table, .history-table)
+  td {
   color: var(--color-text) !important;
   font-weight: 600 !important;
 }
 
-body .status-pill,
-body .status-select-field,
-body .role-pill,
-body .permission-list span,
-body .badge,
-body .condition-pill,
-body .source-pill,
-body .escalation-pill,
-body .notification-status,
-body .notification-count,
-body .open-count,
-body .escalated-count,
-body .closure-count {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(
+    .status-pill,
+    .status-select-field,
+    .role-pill,
+    .permission-list span,
+    .badge,
+    .condition-pill,
+    .source-pill,
+    .escalation-pill,
+    .notification-status,
+    .notification-count,
+    .open-count,
+    .escalated-count,
+    .closure-count,
+    .severity-pill,
+    .inline-pill
+  ) {
   border-radius: 8px !important;
   font-family: Inter, Arial, sans-serif !important;
   font-weight: 800 !important;
@@ -321,101 +592,191 @@ body app-cold-room-list .form-card::before {
   z-index: -1;
 }
 
-body .form-field input,
-body .form-field textarea,
-body .form-field select,
-body .filter-field input,
-body .filter-field select,
-body .filter-field textarea,
-body .closure-field select,
-body .closure-field textarea,
-body .derived-field,
-body .parameter-list {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(
+    .form-field input,
+    .form-field textarea,
+    .form-field select,
+    .filter-field input,
+    .filter-field select,
+    .filter-field textarea,
+    .closure-field select,
+    .closure-field textarea,
+    .derived-field,
+    .parameter-list
+  ) {
   background: var(--color-surface-muted) !important;
   border: 1px solid var(--color-border) !important;
   box-shadow: none !important;
   color: var(--color-text) !important;
 }
 
-body .form-field input:focus,
-body .form-field textarea:focus,
-body .form-field select:focus,
-body .filter-field input:focus,
-body .filter-field select:focus,
-body .filter-field textarea:focus,
-body .closure-field select:focus,
-body .closure-field textarea:focus {
+body
+  :is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+  :is(
+    .form-field input:focus,
+    .form-field textarea:focus,
+    .form-field select:focus,
+    .filter-field input:focus,
+    .filter-field select:focus,
+    .filter-field textarea:focus,
+    .closure-field select:focus,
+    .closure-field textarea:focus
+  ) {
   border-color: var(--color-primary) !important;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
   outline: none;
 }
 
-body .summary-card strong,
-body .summary-grid strong {
+body
+  :is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .summary-grid {
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+}
+
+body
+  :is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  :is(.summary-grid article, .summary-card) {
+  min-height: 92px;
+}
+
+body
+  :is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  :is(.summary-card strong, .summary-grid strong) {
   color: var(--accent-text, var(--color-text)) !important;
 }
 
-body .accent-blue {
+body
+  :is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .accent-blue {
   --accent-bg: var(--color-primary-soft);
   --accent-text: var(--color-primary);
 }
-body .accent-green {
+body
+  :is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .accent-green {
   --accent-bg: var(--color-success-soft);
   --accent-text: var(--color-success);
 }
-body .accent-amber {
+body
+  :is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .accent-amber {
   --accent-bg: var(--color-warning-soft);
   --accent-text: var(--color-warning);
 }
-body .accent-red {
+body
+  :is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .accent-red {
   --accent-bg: var(--color-danger-soft);
   --accent-text: var(--color-danger);
 }
 
-@media (max-width: 640px) {
-  body .context-nav {
-    gap: 16px;
-  }
-
-  body .topbar-actions {
-    gap: 10px;
-  }
-
-  body app-cold-room-list .form-card {
-    max-width: calc(100vw - 24px);
-    width: calc(100vw - 24px);
-  }
-}
-
-body .monitoring-tabs {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 26px;
-  margin: 0 0 2px;
-}
-
-body .monitoring-tabs button {
-  background: transparent;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  color: var(--color-text-subtle);
-  cursor: pointer;
-  font-family: Inter, Arial, sans-serif;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 20px;
-  padding: 8px 0;
-}
-
-body .monitoring-tabs button.active,
-body .monitoring-tabs button:hover {
-  border-bottom-color: var(--color-primary);
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-body .access-summary article {
+body app-user-access-list .access-summary article {
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -423,7 +784,7 @@ body .access-summary article {
   min-height: 96px;
 }
 
-body .access-summary article mat-icon {
+body app-user-access-list .access-summary article mat-icon {
   align-items: center;
   background: var(--accent-bg, var(--color-primary-soft));
   border-radius: 8px;
@@ -436,55 +797,36 @@ body .access-summary article mat-icon {
   width: 42px;
 }
 
-body .access-summary article div {
+body app-user-access-list .access-summary article div {
   display: grid;
   gap: 4px;
   min-width: 0;
 }
 
-body .view-header,
-body .monitoring-header,
-body .page-heading {
-  margin-bottom: 18px;
-}
-
-body .monitoring-page,
-body .incident-list-view,
-body .notification-list-view,
-body .daily-log-page,
-body .page {
-  background: var(--color-background) !important;
-  padding-top: 2px !important;
-}
-
-body .page-heading,
-body .section-heading,
-body .feedback,
-body .filter-card,
-body .summary-grid,
-body .table-card,
-body .observation-banner,
-body .access-banner {
-  max-width: none !important;
-}
-
-body .filter-card {
+body :is(app-safety-range-settings, app-operational-parameters-settings) .filter-card {
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
 }
 
-body .heading-actions .primary-action,
-body .heading-actions .primary-action.mat-mdc-unelevated-button {
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker
+  )
+  .heading-actions
+  .primary-action,
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker
+  )
+  .heading-actions
+  .primary-action.mat-mdc-unelevated-button {
   height: 36px !important;
   width: auto !important;
-}
-
-body .summary-grid {
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
-}
-
-body .summary-grid article,
-body .summary-card {
-  min-height: 92px;
 }
 
 body app-user-form .form-card {
@@ -523,59 +865,332 @@ body app-role-permission-form .permission-toggle span {
   min-height: 26px;
 }
 
+body :is(app-operational-parameters-settings, app-role-permission-form) .parameter-option {
+  background: var(--color-surface-muted) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text-muted) !important;
+}
+
 @media (max-width: 720px) {
   body app-user-form .user-form {
     grid-template-columns: 1fr;
   }
 }
 
-body .history-page {
-  background: var(--color-background) !important;
-  padding-top: 2px !important;
+@media (max-width: 640px) {
+  body .context-nav {
+    gap: 16px;
+  }
+
+  body .topbar-actions {
+    gap: 10px;
+  }
+
+  body app-cold-room-list .form-card {
+    max-width: calc(100vw - 24px);
+    width: calc(100vw - 24px);
+  }
 }
 
-body .history-page .page-heading,
-body .history-page .section-heading,
-body .history-page .filter-card,
-body .history-page .summary-grid,
-body .history-page .table-card,
-body .history-page .access-banner,
-body .evidence-grid {
-  max-width: none !important;
+/* Normalized operational layout */
+body app-incident-list .incident-toolbar {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  min-height: 40px;
 }
 
-body .history-table th,
-body .history-table td {
-  font-family: Inter, Arial, sans-serif !important;
+body app-incident-list .search-box {
+  align-items: center;
+  color: #98a2b3;
+  display: flex;
+  gap: 10px;
+  min-width: min(430px, 100%);
 }
 
-body .history-table th {
-  color: var(--color-text-subtle) !important;
-  font-weight: 800 !important;
+body app-incident-list .search-icon {
+  color: #98a2b3;
+  font-size: 24px;
+  height: 24px;
+  opacity: 0.68;
+  width: 24px;
 }
 
-body .history-table td {
+body app-incident-list .search-box input {
+  background: transparent;
+  border: 0;
+  color: #263348;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif;
+  outline: 0;
+  width: 100%;
+}
+
+body app-incident-list .incident-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+body app-incident-list .metric-pill,
+body app-incident-list .open-count,
+body app-incident-list .escalated-count,
+body app-incident-list .closure-count {
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  display: inline-flex;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+
+body app-incident-list .metric-open,
+body app-incident-list .open-count {
+  background: #feeceb;
+  color: #b51313;
+}
+
+body app-incident-list .metric-escalated,
+body app-incident-list .escalated-count,
+body app-incident-list .metric-pending {
+  background: #fff8e8;
+  color: #b16f0b;
+}
+
+body app-incident-list .table-card,
+body app-incident-list .closure-card {
+  border-radius: 8px;
+  padding: 22px 28px;
+}
+
+body app-incident-list .premium-table td {
+  color: #263348;
+  font-weight: 600;
+  height: 48px;
+  padding-block: 10px;
+}
+
+body app-incident-list .badge,
+body app-incident-list .condition-pill,
+body app-incident-list .source-pill,
+body app-incident-list .escalation-pill {
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  border-radius: 8px;
+}
+
+body app-incident-list .type-cell.crit,
+body app-incident-list .type-cell.warn {
+  color: #263348;
+}
+
+body app-incident-list .type-cell.crit mat-icon {
+  color: #d92d20;
+}
+
+body app-incident-list .type-cell.warn mat-icon {
+  color: #f59e0b;
+}
+
+body app-incident-list .recognize-btn,
+body app-incident-list .close-shortcut-btn,
+body app-incident-list .review-escalation-btn {
+  border-radius: 8px;
+  font-weight: 800;
+  min-height: 32px;
+}
+
+@media (max-width: 860px) {
+  body app-incident-list .incident-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  body app-incident-list .incident-metrics,
+  body app-incident-list .search-box {
+    width: 100%;
+  }
+
+  body app-incident-list .incident-metrics {
+    justify-content: flex-start;
+  }
+}
+
+/* Settings, maintenance and reports rhythm normalization */
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .section-kicker {
+  display: none !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .page-heading {
+  align-items: flex-start !important;
+  margin-top: 0 !important;
+  min-height: 0;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .page-heading
+  h1 {
   color: var(--color-text) !important;
-  font-weight: 600 !important;
+  font:
+    800 24px/30px Inter,
+    Arial,
+    sans-serif !important;
 }
 
-body .severity-pill,
-body .inline-pill,
-body .row-action {
-  border-radius: 8px !important;
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .heading-actions {
+  align-items: center !important;
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 10px;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .heading-actions
+  :is(.primary-action, .secondary-action, .mat-mdc-button-base) {
+  height: 36px !important;
+  min-width: 0 !important;
+  width: auto !important;
+}
+
+body app-technical-service-tracker .forms-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  max-width: none !important;
+  width: 100%;
+}
+
+body app-technical-service-tracker > .page > .table-card {
+  max-width: none !important;
+  width: 100%;
+}
+
+body app-technical-service-tracker .service-card {
+  min-height: 0;
+  padding: 22px 24px !important;
+}
+
+body app-technical-service-tracker .service-form {
+  align-content: start;
+}
+
+body app-technical-service-tracker .table-wrapper {
+  overflow-x: auto;
+}
+
+body app-technical-service-tracker .data-table td {
+  height: 58px;
+  line-height: 18px;
+  vertical-align: top;
+}
+
+body app-daily-log .heading-actions .primary-action,
+body app-daily-log .heading-actions .secondary-action {
+  padding-inline: 12px !important;
+}
+
+body app-daily-log .summary-card,
+body app-safety-range-settings .summary-card,
+body app-technical-service-tracker .summary-card {
+  align-content: center;
+  border: 1px solid var(--color-border);
+  min-height: 92px;
+}
+
+body app-safety-range-settings .summary-card strong,
+body app-daily-log .summary-card strong,
+body app-technical-service-tracker .summary-card strong {
+  font-size: 22px !important;
+  line-height: 28px !important;
+}
+
+body app-safety-range-settings .primary-action,
+body app-daily-log .primary-action,
+body app-technical-service-tracker .primary-action {
   font-family: Inter, Arial, sans-serif !important;
-  font-weight: 800 !important;
 }
 
-body .parameter-option,
-body .compatibility-banner,
-body .evidence-panel,
-body .evidence-row {
-  font-family: Inter, Arial, sans-serif !important;
+body app-safety-range-settings .primary-action mat-icon,
+body app-daily-log .primary-action mat-icon,
+body app-technical-service-tracker .primary-action mat-icon,
+body app-safety-range-settings .secondary-action mat-icon,
+body app-daily-log .secondary-action mat-icon,
+body app-technical-service-tracker .secondary-action mat-icon {
+  font-size: 18px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+  width: 18px !important;
 }
 
-body .parameter-option {
-  background: var(--color-surface-muted) !important;
-  border-color: var(--color-border) !important;
-  color: var(--color-text-muted) !important;
+@media (max-width: 1080px) {
+  body app-technical-service-tracker .forms-grid {
+    grid-template-columns: 1fr !important;
+  }
 }

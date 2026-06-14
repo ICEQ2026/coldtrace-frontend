@@ -333,8 +333,8 @@
         <p>{{ 'asset-management.iot-devices.subtitle' | translate }}</p>
       </div>
       <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
-        `r`n <mat-icon aria-hidden="true">refresh</mat-icon>`r`n
-        {{ 'asset-management.reload' | translate }}`r`n
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'asset-management.reload' | translate }}
       </button>
     </div>
 
@@ -455,8 +455,8 @@
         <p>{{ 'asset-management.gateways.subtitle' | translate }}</p>
       </div>
       <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
-        `r`n <mat-icon aria-hidden="true">refresh</mat-icon>`r`n
-        {{ 'asset-management.reload' | translate }}`r`n
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'asset-management.reload' | translate }}
       </button>
     </div>
 
@@ -547,8 +547,8 @@
         <p>{{ pageSubtitleKey() | translate }}</p>
       </div>
       <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
-        `r`n <mat-icon aria-hidden="true">refresh</mat-icon>`r`n
-        {{ 'asset-management.reload' | translate }}`r`n
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'asset-management.reload' | translate }}
       </button>
     </div>
 
@@ -606,10 +606,10 @@
                   </span>
                 </td>
                 <td [attr.data-label]="'asset-management.table.temperature' | translate">
-                  {{ asset.currentTemperature }}
+                  {{ temperatureLabelFor(asset) }}
                 </td>
                 <td [attr.data-label]="'asset-management.table.entry-date' | translate">
-                  {{ asset.entryDate }}
+                  {{ entryDateLabelFor(asset) }}
                 </td>
                 <td [attr.data-label]="'asset-management.table.status' | translate">
                   @if (canManageAssets()) {

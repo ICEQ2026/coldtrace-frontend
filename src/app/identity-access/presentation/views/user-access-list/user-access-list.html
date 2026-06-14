@@ -5,6 +5,13 @@
     <p>{{ 'roles-permissions.denied.message' | translate }}</p>
   </section>
 } @else {
+  <section class="access-header" aria-labelledby="access-view-title">
+    <div>
+      <h1 id="access-view-title">{{ 'dashboard-shell.nav-access' | translate }}</h1>
+      <p>{{ 'roles-permissions.table-subtitle' | translate }}</p>
+    </div>
+  </section>
+
   <label class="search-box">
     <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
     <input

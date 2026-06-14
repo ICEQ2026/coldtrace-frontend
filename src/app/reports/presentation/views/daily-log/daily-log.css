@@ -109,9 +109,9 @@
 
 .heading-actions .primary-action,
 .heading-actions .primary-action.mat-mdc-unelevated-button {
-  height: 48px !important;
+  height: 36px !important;
   min-width: 0 !important;
-  width: 100% !important;
+  width: auto !important;
 }
 
 .heading-actions .secondary-action,

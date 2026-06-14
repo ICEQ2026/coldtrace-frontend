@@ -11,10 +11,38 @@
         [class.feedback-success]="isSuccessFeedback(alertsStore.feedback()!)"
         [class.feedback-error]="!isSuccessFeedback(alertsStore.feedback()!)"
       >
-        <mat-icon>{{ isSuccessFeedback(alertsStore.feedback()!) ? 'check_circle' : 'error_outline' }}</mat-icon>
+        <mat-icon>{{
+          isSuccessFeedback(alertsStore.feedback()!) ? 'check_circle' : 'error_outline'
+        }}</mat-icon>
         <span>{{ alertsStore.feedback()! | translate }}</span>
       </div>
     }
+  </div>
+
+  <div class="incident-toolbar">
+    <label class="search-box">
+      <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
+      <input
+        type="search"
+        [value]="searchTerm()"
+        placeholder="Search incidents by asset, type, value or status..."
+        (input)="updateSearchTerm($any($event.target).value)"
+      />
+    </label>
+
+    <div class="incident-metrics" aria-label="Incident summary">
+      <span class="metric-pill metric-open">
+        {{ alertsStore.openIncidentsCount() }} {{ 'alerts.incident-list.status-open' | translate }}
+      </span>
+      <span class="metric-pill metric-escalated">
+        {{ alertsStore.escalatedIncidentsCount() }}
+        {{ 'alerts.incident-list.escalated-count' | translate }}
+      </span>
+      <span class="metric-pill metric-pending">
+        {{ pendingClosureIncidents().length }}
+        {{ 'alerts.incident-list.closure-pending' | translate }}
+      </span>
+    </div>
   </div>
 
   @if (alertsStore.loading()) {
@@ -27,10 +55,13 @@
         <div class="card-header closure-header">
           <div>
             <h3 class="card-title">{{ 'alerts.incident-list.closure-title' | translate }}</h3>
-            <p class="closure-subtitle">{{ 'alerts.incident-list.closure-subtitle' | translate }}</p>
+            <p class="closure-subtitle">
+              {{ 'alerts.incident-list.closure-subtitle' | translate }}
+            </p>
           </div>
           <span class="closure-count">
-            {{ pendingClosureIncidents().length }} {{ 'alerts.incident-list.closure-pending' | translate }}
+            {{ pendingClosureIncidents().length }}
+            {{ 'alerts.incident-list.closure-pending' | translate }}
           </span>
         </div>
 
@@ -126,12 +157,6 @@
     <div class="premium-card table-card">
       <div class="card-header">
         <h3 class="card-title">{{ 'alerts.incident-list.title' | translate }}</h3>
-        <span class="open-count">
-          {{ alertsStore.openIncidentsCount() }} {{ 'alerts.incident-list.status-open' | translate }}
-        </span>
-        <span class="escalated-count">
-          {{ alertsStore.escalatedIncidentsCount() }} {{ 'alerts.incident-list.escalated-count' | translate }}
-        </span>
       </div>
 
       <div class="table-container">
@@ -157,7 +182,11 @@
               <tr [class.recognized-row]="incident.isRecognized">
                 <td class="asset-name">{{ incident.assetName }}</td>
                 <td>
-                  <div class="type-cell" [class.crit]="incident.severity === 'critical'" [class.warn]="incident.severity === 'warning'">
+                  <div
+                    class="type-cell"
+                    [class.crit]="incident.severity === 'critical'"
+                    [class.warn]="incident.severity === 'warning'"
+                  >
                     <mat-icon>{{ severityIcon(incident) }}</mat-icon>
                     <span>{{ typeLabelKey(incident) | translate }}</span>
                   </div>
@@ -206,14 +235,16 @@
                     </span>
                     @if (incident.isEscalated) {
                       <small>
-                        {{ 'alerts.incident-list.escalation-level' | translate }} {{ incident.escalationLevel }}
-                        · {{ escalationTargetLabelKey(incident) | translate }}
+                        {{ 'alerts.incident-list.escalation-level' | translate }}
+                        {{ incident.escalationLevel }} ·
+                        {{ escalationTargetLabelKey(incident) | translate }}
                       </small>
                     } @else if (incident.isPendingEscalationConfiguration) {
                       <small>{{ 'alerts.incident-list.escalation-no-policy' | translate }}</small>
                     } @else if (incident.escalationPolicyMinutes) {
                       <small>
-                        {{ incident.escalationPolicyMinutes }} {{ 'alerts.incident-list.escalation-minutes' | translate }}
+                        {{ incident.escalationPolicyMinutes }}
+                        {{ 'alerts.incident-list.escalation-minutes' | translate }}
                       </small>
                     }
                   </div>
@@ -269,7 +300,9 @@
                 <td [attr.colspan]="canResolveAlerts() ? 10 : 9" class="empty-cell">
                   <mat-icon class="empty-icon">check_circle</mat-icon>
                   <p class="empty-title">{{ 'alerts.incident-list.empty-title' | translate }}</p>
-                  <p class="empty-description">{{ 'alerts.incident-list.empty-description' | translate }}</p>
+                  <p class="empty-description">
+                    {{ 'alerts.incident-list.empty-description' | translate }}
+                  </p>
                 </td>
               </tr>
             }
@@ -277,10 +310,10 @@
         </table>
       </div>
 
-      @if (activeIncidents().length > 0) {
+      @if (filteredIncidents().length > 0) {
         <app-list-pagination
           [page]="currentPage()"
-          [total]="activeIncidents().length"
+          [total]="filteredIncidents().length"
           [pageSize]="pageSize"
           (pageChange)="updatePage($event)"
         />
