@@ -724,6 +724,18 @@ export class ColdRoomList implements OnInit {
     return `asset-management.sections.${this.selectedAssetType()}.subtitle`;
   }
 
+  protected selectedResourceSubtitleKey(): string {
+    if (this.selectedTab() === 'iot-device') {
+      return 'asset-management.iot-devices.subtitle';
+    }
+
+    if (this.selectedTab() === 'gateway') {
+      return 'asset-management.gateways.subtitle';
+    }
+
+    return this.pageSubtitleKey();
+  }
+
   protected formTitleKey(): string {
     return `asset-management.sections.${this.selectedAssetType()}.form-title`;
   }
@@ -1236,4 +1248,3 @@ export class ColdRoomList implements OnInit {
     return candidate;
   }
 }
-

@@ -797,8 +797,8 @@
       "empty-description": "Agrega activos, dispositivos y lecturas para ver el dashboard operativo de esta organización."
     },
     "asset-monitoring": {
-      "page-title": "Monitoreo de activos",
-      "title": "Monitoreo de activos",
+      "page-title": "Monitoreo",
+      "title": "Monitoreo",
       "subtitle": "Revisa lecturas en vivo, dispositivos vinculados y estado térmico por activo.",
       "search-placeholder": "Buscar por activo, ID, ubicación o notas...",
       "summary-assets": "Activos",

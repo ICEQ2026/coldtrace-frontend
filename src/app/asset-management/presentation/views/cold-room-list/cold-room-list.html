@@ -1,4 +1,11 @@
-<div class="assets-toolbar">
+<header class="asset-view-header">
+  <div>
+    <h1>{{ 'asset-management.title' | translate }}</h1>
+    <p>{{ selectedResourceSubtitleKey() | translate }}</p>
+  </div>
+</header>
+
+<div class="assets-toolbar assets-workbar" aria-label="Assets filters and actions">
   <label class="search-box">
     <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
     <input

@@ -797,8 +797,8 @@
       "empty-description": "Add assets, devices, and readings to see the operational dashboard for this organization."
     },
     "asset-monitoring": {
-      "page-title": "Asset monitoring",
-      "title": "Asset monitoring",
+      "page-title": "Monitoring",
+      "title": "Monitoring",
       "subtitle": "Review live readings, linked devices, and thermal status by asset.",
       "search-placeholder": "Search by asset, ID, location, or notes...",
       "summary-assets": "Assets",
