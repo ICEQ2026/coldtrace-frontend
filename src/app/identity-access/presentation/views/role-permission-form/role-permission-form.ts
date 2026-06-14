@@ -1,5 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
@@ -18,7 +19,7 @@ type RolePermissionFeedback = 'idle' | 'saved' | 'server-error';
  */
 @Component({
   selector: 'app-role-permission-form',
-  imports: [MatButton, TranslatePipe, ListPagination],
+  imports: [MatButton, MatIcon, TranslatePipe, ListPagination],
   templateUrl: './role-permission-form.html',
   styleUrl: '../user-access-list/user-access-list.css',
 })
@@ -40,12 +41,14 @@ export class RolePermissionForm implements OnInit {
   protected readonly activeOrganizationName = computed(() => {
     return this.identityAccessStore.currentOrganizationNameFrom(this.users(), this.organizations());
   });
-  protected readonly profileUserName = computed(() => this.identityAccessStore.currentUserNameFrom(this.users()));
-  protected readonly profileRoleLabelKey = computed(
-    () => this.identityAccessStore.currentRoleLabelKeyFrom(this.users(), this.roles())
+  protected readonly profileUserName = computed(() =>
+    this.identityAccessStore.currentUserNameFrom(this.users()),
   );
-  protected readonly canManageAccess = computed(
-    () => this.identityAccessStore.canManageRolePermissions(this.users(), this.roles())
+  protected readonly profileRoleLabelKey = computed(() =>
+    this.identityAccessStore.currentRoleLabelKeyFrom(this.users(), this.roles()),
+  );
+  protected readonly canManageAccess = computed(() =>
+    this.identityAccessStore.canManageRolePermissions(this.users(), this.roles()),
   );
   protected readonly assetIssueCount = computed(() => {
     return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
