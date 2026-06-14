@@ -3,7 +3,7 @@
   box-sizing: border-box;
   container-type: inline-size;
   min-height: 100%;
-  padding: 8px 22px 40px;
+  padding: 8px 18px 40px;
 }
 
 .loading-overlay {
@@ -18,10 +18,10 @@
 
 .dashboard-board {
   display: grid;
-  gap: 22px;
-  grid-template-columns: minmax(0, 1fr) minmax(430px, 0.58fr);
+  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.58fr);
   margin: 0;
-  max-width: 1360px;
+  max-width: 1352px;
   width: 100%;
 }
 
@@ -64,21 +64,21 @@
 
 .lower-grid {
   display: grid;
-  gap: 22px;
-  grid-template-columns: minmax(0, 1.68fr) minmax(260px, 0.92fr);
+  gap: 24px;
+  grid-template-columns: minmax(0, 1.62fr) minmax(260px, 0.95fr);
 }
 
 .storage-box,
 .maintenance-box {
-  height: 300px;
+  height: 292px;
 }
 
 .alerts-row {
-  height: 344px;
+  height: 336px;
 }
 
 .incidents-box {
-  height: 526px;
+  height: 534px;
 }
 
 .empty-state {

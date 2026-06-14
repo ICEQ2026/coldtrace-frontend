@@ -169,6 +169,12 @@ body .content-scroll > app-notification-list {
   min-height: 100%;
 }
 
+body .content-scroll > app-cold-room-list,
+body .content-scroll > app-user-form {
+  box-sizing: border-box;
+  padding: 2px 22px 44px;
+}
+
 body
   :is(
     app-cold-room-list,
@@ -1602,57 +1608,6 @@ body app-preventive-maintenance-scheduler .summary-grid {
   margin-top: 18px;
 }
 
-body app-operational-dashboard .dashboard-content {
-  padding-inline: 22px;
-}
-
-body app-operational-dashboard .dashboard-board {
-  gap: 22px;
-  grid-template-columns: minmax(0, 1fr) minmax(430px, 0.58fr);
-}
-
-body app-operational-dashboard .lower-grid {
-  grid-template-columns: minmax(0, 1.68fr) minmax(260px, 0.92fr);
-}
-
-body app-storage-distribution .distribution-card,
-body app-recent-alerts .table-card,
-body app-incidents-chart .incidents-card {
-  border: 1px solid #e4e7ec;
-  box-shadow:
-    0 1px 2px rgba(16, 24, 40, 0.04),
-    0 8px 18px rgba(16, 24, 40, 0.06);
-}
-
-body app-storage-distribution .card-title,
-body app-recent-alerts .card-title,
-body app-incidents-chart .card-title {
-  color: #0f172a;
-  font:
-    800 16px/22px Inter,
-    Arial,
-    sans-serif;
-}
-
-body app-incidents-chart .avg-metric {
-  color: #263348;
-  font:
-    800 24px/30px Inter,
-    Arial,
-    sans-serif;
-}
-
-body app-incidents-chart .legend-row {
-  gap: 12px;
-}
-
-@media (max-width: 1180px) {
-  body app-operational-dashboard .dashboard-board {
-    grid-template-columns: 1fr;
-    max-width: 780px;
-  }
-}
-
 @media (max-width: 920px) {
   body app-user-access-list .access-summary,
   body
@@ -1766,58 +1721,6 @@ body app-user-access-list .access-summary .summary-copy span,
 body app-user-access-list .access-summary .summary-copy strong,
 body app-user-access-list .access-summary .summary-copy small {
   text-align: left;
-}
-
-body app-incident-list .incident-workbar {
-  align-items: center;
-  display: grid;
-  gap: 14px;
-  grid-template-columns: minmax(0, 1fr);
-}
-
-body app-incident-list .incident-section-tabs {
-  align-items: center;
-  border-bottom: 1px solid #e4e7ec;
-  display: flex;
-  gap: 26px;
-  min-height: 42px;
-  width: 100%;
-}
-
-body app-incident-list .incident-section-tabs button {
-  border-bottom: 2px solid transparent;
-  border-radius: 0;
-  color: #98a2b3;
-  gap: 7px;
-  min-height: 42px;
-  padding: 0 0 8px;
-}
-
-body app-incident-list .incident-section-tabs button.active {
-  border-bottom-color: #2563eb;
-  color: #2563eb;
-}
-
-body app-incident-list .incident-section-tabs button strong {
-  background: #eef4ff;
-  border-radius: 999px;
-  color: #2563eb;
-  font-size: 11px;
-  min-width: 24px;
-  padding: 2px 7px;
-  text-align: center;
-}
-
-body app-incident-list .incident-toolbar {
-  align-items: center;
-  display: grid;
-  gap: 14px;
-  grid-template-columns: minmax(320px, 520px) minmax(0, 1fr);
-}
-
-body app-incident-list .incident-metrics {
-  align-items: center;
-  justify-content: flex-end;
 }
 
 body
@@ -2011,9 +1914,480 @@ html
   min-height: 56px !important;
 }
 
-@media (max-width: 860px) {
-  body app-incident-list .incident-toolbar {
+/* Work-surface normalization: settings and reports */
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  :is(.page, .daily-log-page, .history-page) {
+  padding: 2px 22px 44px !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .page-heading {
+  align-items: flex-start !important;
+  display: flex !important;
+  gap: 18px !important;
+  justify-content: space-between !important;
+  margin: 0 0 18px !important;
+  min-height: 0 !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .page-heading
+  h1 {
+  color: #263348 !important;
+  font:
+    800 24px/30px Inter,
+    Arial,
+    sans-serif !important;
+  margin: 0 !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .page-heading
+  p {
+  color: #667085 !important;
+  font:
+    700 13px/20px Inter,
+    Arial,
+    sans-serif !important;
+  margin: 4px 0 0 !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .heading-actions {
+  align-items: center !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  justify-content: flex-end !important;
+}
+
+html
+  body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .heading-actions
+  :is(button.primary-action, button.secondary-action, .mat-mdc-button-base) {
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif !important;
+  gap: 8px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  min-width: 0 !important;
+  padding: 0 12px !important;
+  width: auto !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .filter-card {
+  align-items: end !important;
+  background: #ffffff !important;
+  border: 1px solid #e4e7ec !important;
+  border-radius: 8px !important;
+  box-shadow: var(--shadow-card) !important;
+  margin-top: 0 !important;
+  min-height: 92px;
+  padding: 18px 22px !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  :is(.filter-field input, .filter-field select, .filter-field textarea) {
+  background: #f8fafc !important;
+  border: 1px solid #e4e7ec !important;
+  box-shadow: none !important;
+  color: #263348 !important;
+  font:
+    700 13px/20px Inter,
+    Arial,
+    sans-serif !important;
+  min-height: 38px !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .filter-meta {
+  align-self: center;
+  color: #263348;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .filter-meta
+  span {
+  color: #263348 !important;
+  font:
+    800 12px/18px Inter,
+    Arial,
+    sans-serif !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .filter-meta
+  strong {
+  color: #2563eb !important;
+  font:
+    800 22px/26px Inter,
+    Arial,
+    sans-serif !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .summary-grid {
+  gap: 14px !important;
+  margin-top: 18px !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .summary-card {
+  align-content: center;
+  background:
+    linear-gradient(90deg, var(--accent-bg, #eff4ff) 0 4px, #ffffff 4px 100%) !important;
+  border: 1px solid #e4e7ec !important;
+  border-radius: 8px !important;
+  box-shadow: var(--shadow-card) !important;
+  display: grid;
+  gap: 4px;
+  min-height: 88px !important;
+  padding: 16px 18px 16px 20px !important;
+  text-align: left;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .summary-card
+  span {
+  color: #98a2b3 !important;
+  font:
+    800 12px/18px Inter,
+    Arial,
+    sans-serif !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .summary-card
+  strong {
+  color: var(--accent-text, #2563eb) !important;
+  font:
+    800 24px/30px Inter,
+    Arial,
+    sans-serif !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  :is(.feedback, .observation-banner, .access-banner) {
+  align-items: flex-start !important;
+  border: 1px solid #e4e7ec !important;
+  border-left: 4px solid var(--banner-accent, #2563eb) !important;
+  border-radius: 8px !important;
+  box-shadow: var(--shadow-card) !important;
+  color: #263348 !important;
+  gap: 12px !important;
+  margin-top: 18px !important;
+  padding: 14px 16px !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  :is(.observation-banner h2, .access-banner h2) {
+  color: #263348 !important;
+  font:
+    800 14px/20px Inter,
+    Arial,
+    sans-serif !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  :is(.observation-banner p, .access-banner p) {
+  color: #667085 !important;
+  font:
+    700 12px/18px Inter,
+    Arial,
+    sans-serif !important;
+  margin: 3px 0 0 !important;
+}
+
+body app-incident-list .incident-workbar {
+  align-items: center;
+  border-bottom: 1px solid #e4e7ec;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: auto minmax(300px, 460px) minmax(260px, 1fr);
+  min-height: 48px;
+}
+
+body app-incident-list .incident-toolbar {
+  display: contents;
+}
+
+body app-incident-list .incident-toolbar .search-box {
+  margin: 0;
+}
+
+body app-incident-list .incident-metrics {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+body app-incident-list .metric-pill {
+  align-items: center;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  display: inline-flex;
+  font:
+    800 12px/18px Inter,
+    Arial,
+    sans-serif;
+  min-height: 30px;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+body app-incident-list .metric-open {
+  background: #fff5f5;
+  border-color: #fee2e2;
+  color: #b42318;
+}
+
+body app-incident-list .metric-escalated,
+body app-incident-list .metric-pending {
+  background: #fffaf0;
+  border-color: #fdecc8;
+  color: #9a650d;
+}
+
+body app-incident-list .metric-pending {
+  background: #f5f7ff;
+  border-color: #dbe4ff;
+  color: #2563eb;
+}
+
+@media (max-width: 1080px) {
+  body app-incident-list .incident-workbar {
     grid-template-columns: 1fr;
+    padding-bottom: 12px;
+  }
+
+  body app-incident-list .incident-toolbar {
+    display: grid;
+    gap: 12px;
   }
 
   body app-incident-list .incident-metrics {

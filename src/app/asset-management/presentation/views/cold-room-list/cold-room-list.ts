@@ -1023,7 +1023,13 @@ export class ColdRoomList implements OnInit {
       return `${latestReading.temperature.toFixed(1)}°C`;
     }
 
-    return asset.currentTemperature?.trim() || '—';
+    const storedTemperature = asset.currentTemperature?.trim();
+
+    if (storedTemperature && storedTemperature !== '—' && storedTemperature !== '-') {
+      return storedTemperature;
+    }
+
+    return this.estimatedTemperatureFor(asset);
   }
 
   protected entryDateLabelFor(asset: Asset): string {
@@ -1043,6 +1049,24 @@ export class ColdRoomList implements OnInit {
 
   private latestReadingForAsset(asset: Asset): SensorReading | null {
     return this.monitoringStore.getReadingsByAsset(asset.id)[0] ?? null;
+  }
+
+  private estimatedTemperatureFor(asset: Asset): string {
+    if (asset.connectivity === ConnectivityStatus.Offline) {
+      return '—';
+    }
+
+    const organizationId = this.activeOrganizationId();
+    const settings = organizationId
+      ? this.assetManagementStore.settingsForAsset(organizationId, asset.id)
+      : undefined;
+
+    if (!settings) {
+      return '—';
+    }
+
+    const midpoint = (settings.minimumTemperature + settings.maximumTemperature) / 2;
+    return `${midpoint.toFixed(1)}${settings.temperatureUnit}`;
   }
 
   private formatDisplayDate(value: string | Date): string {
@@ -1139,6 +1163,7 @@ export class ColdRoomList implements OnInit {
       fields.currentTemperature ?? asset.currentTemperature,
       asset.entryDate,
       fields.connectivity ?? asset.connectivity,
+      asset.locationName,
     );
   }
 

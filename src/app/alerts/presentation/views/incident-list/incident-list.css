@@ -1,9 +1,9 @@
 .incident-list-view {
-  padding: 2px 22px 44px;
   display: flex;
   flex-direction: column;
   gap: 18px;
   min-height: 100%;
+  padding: 2px 22px 44px;
   box-sizing: border-box;
 }
 
@@ -612,8 +612,8 @@ tr:last-child td {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 18px;
-  margin-top: -4px;
+  gap: 22px;
+  margin: 0;
 }
 
 .incident-section-tabs button {
