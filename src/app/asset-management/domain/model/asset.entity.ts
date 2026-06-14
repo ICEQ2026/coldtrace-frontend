@@ -21,6 +21,7 @@ export class Asset implements BaseEntity {
     private _currentTemperature: string,
     private _entryDate: string,
     private _connectivity: ConnectivityStatus,
+    private readonly _locationName: string | null = null,
   ) {}
 
   get id(): number {
@@ -78,4 +79,9 @@ export class Asset implements BaseEntity {
   get connectivity(): ConnectivityStatus {
     return this._connectivity;
   }
+
+  get locationName(): string | null {
+    return this._locationName;
+  }
 }
+

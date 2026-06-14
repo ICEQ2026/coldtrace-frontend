@@ -1211,3 +1211,4 @@ export class ColdRoomList implements OnInit {
     return candidate;
   }
 }
+

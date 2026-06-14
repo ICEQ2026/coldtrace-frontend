@@ -23,15 +23,16 @@ export class AssetAssembler implements BaseAssembler<Asset, AssetResource, Asset
       resource.organizationId,
       resource.uuid,
       resource.type,
-      resource.locationId,
+      Number(resource.locationId ?? 0),
       resource.name,
       resource.capacity,
       resource.description,
       resource.status,
-      'none',
-      '-',
-      '',
-      ConnectivityStatus.Online,
+      resource.lastIncident ?? 'none',
+      resource.currentTemperature ?? '-',
+      resource.entryDate ?? '',
+      resource.connectivity ?? ConnectivityStatus.Online,
+      resource.location?.trim() || null,
     );
   }
 
@@ -52,3 +53,4 @@ export class AssetAssembler implements BaseAssembler<Asset, AssetResource, Asset
     };
   }
 }
+

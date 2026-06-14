@@ -24,24 +24,27 @@
 
   <section class="summary-grid access-summary" aria-label="Access summary">
     <article class="summary-card accent-blue">
-      <mat-icon aria-hidden="true">group</mat-icon>
-      <div>
+      <div class="summary-icon"><mat-icon aria-hidden="true">group</mat-icon></div>
+      <div class="summary-copy">
         <span>{{ 'roles-permissions.summary.users' | translate }}</span>
         <strong>{{ organizationUsers().length }}</strong>
+        <small>Active organization accounts</small>
       </div>
     </article>
     <article class="summary-card accent-green">
-      <mat-icon aria-hidden="true">admin_panel_settings</mat-icon>
-      <div>
+      <div class="summary-icon"><mat-icon aria-hidden="true">admin_panel_settings</mat-icon></div>
+      <div class="summary-copy">
         <span>{{ 'roles-permissions.summary.admins' | translate }}</span>
         <strong>{{ administratorCount() }}</strong>
+        <small>Users with elevated access</small>
       </div>
     </article>
     <article class="summary-card accent-amber">
-      <mat-icon aria-hidden="true">pending_actions</mat-icon>
-      <div>
+      <div class="summary-icon"><mat-icon aria-hidden="true">pending_actions</mat-icon></div>
+      <div class="summary-copy">
         <span>{{ 'roles-permissions.summary.pending' | translate }}</span>
         <strong>{{ pendingChangeCount() }}</strong>
+        <small>Unsaved role assignments</small>
       </div>
     </article>
   </section>
@@ -56,14 +59,14 @@
         @if (canManageAccess()) {
           <button
             type="button"
-            class="reload-action"
+            class="primary-action"
             routerLink="/identity-access/roles-permissions/users/new"
           >
             <mat-icon aria-hidden="true">person_add</mat-icon>
             {{ 'roles-permissions.create-user' | translate }}
           </button>
         }
-        <button type="button" class="reload-action" (click)="loadAccessData()">
+        <button type="button" class="secondary-action" (click)="loadAccessData()">
           <mat-icon aria-hidden="true">refresh</mat-icon>
           {{ 'roles-permissions.reload' | translate }}
         </button>
@@ -214,3 +217,5 @@
     }
   </section>
 }
+
+

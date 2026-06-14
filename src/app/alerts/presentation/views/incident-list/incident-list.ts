@@ -18,6 +18,8 @@ import { ListPagination } from '../../../../shared/presentation/components/list-
 import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
 
+type IncidentPanel = 'incidents' | 'closure';
+
 /**
  * @summary Presents the incident list user interface in the alerts bounded context.
  */
@@ -43,6 +45,7 @@ export class IncidentList implements OnInit {
   protected readonly pageSize = 10;
   protected readonly currentPage = signal(1);
   protected readonly searchTerm = signal('');
+  protected readonly selectedIncidentPanel = signal<IncidentPanel>('incidents');
   protected readonly canResolveAlerts = computed(() => this.alertsStore.canResolveAlerts());
   protected readonly profileUserName = computed(() =>
     this.identityStore.currentUserNameFrom(this.identityStore.users()),
@@ -126,6 +129,14 @@ export class IncidentList implements OnInit {
     this.currentPage.set(1);
   }
 
+  protected selectIncidentPanel(panel: IncidentPanel): void {
+    if (panel === 'closure' && !this.canResolveAlerts()) {
+      return;
+    }
+
+    this.selectedIncidentPanel.set(panel);
+  }
+
   protected updatePage(page: number): void {
     this.currentPage.set(page);
   }
@@ -197,6 +208,7 @@ export class IncidentList implements OnInit {
     }
 
     this.closureForm.controls.incidentId.setValue(incident.id);
+    this.selectedIncidentPanel.set('closure');
     this.alertsStore.clearFeedback();
     queueMicrotask(() =>
       this.closureCard?.nativeElement.scrollIntoView({
@@ -300,3 +312,5 @@ export class IncidentList implements OnInit {
     return items.slice(startIndex, startIndex + this.pageSize);
   }
 }
+
+

@@ -73,20 +73,32 @@
 
   <section class="summary-grid" aria-label="Safety range summary">
     <article class="summary-card accent-blue">
-      <span>{{ 'asset-management.safety-ranges.summary-assets' | translate }}</span>
-      <strong>{{ monitoredAssets().length }}</strong>
+      <mat-icon aria-hidden="true">inventory_2</mat-icon>
+      <div>
+        <span>{{ 'asset-management.safety-ranges.summary-assets' | translate }}</span>
+        <strong>{{ monitoredAssets().length }}</strong>
+      </div>
     </article>
     <article class="summary-card accent-green">
-      <span>{{ 'asset-management.safety-ranges.summary-profiles' | translate }}</span>
-      <strong>{{ assetSpecificSettingsCount() }}</strong>
+      <mat-icon aria-hidden="true">tune</mat-icon>
+      <div>
+        <span>{{ 'asset-management.safety-ranges.summary-profiles' | translate }}</span>
+        <strong>{{ assetSpecificSettingsCount() }}</strong>
+      </div>
     </article>
     <article class="summary-card accent-amber">
-      <span>{{ 'asset-management.safety-ranges.summary-temperature' | translate }}</span>
-      <strong>{{ selectedRangeLabel() }}</strong>
+      <mat-icon aria-hidden="true">device_thermostat</mat-icon>
+      <div>
+        <span>{{ 'asset-management.safety-ranges.summary-temperature' | translate }}</span>
+        <strong>{{ selectedRangeLabel() }}</strong>
+      </div>
     </article>
     <article class="summary-card accent-red">
-      <span>{{ 'asset-management.safety-ranges.summary-humidity' | translate }}</span>
-      <strong>{{ selectedHumidityLabel() }}</strong>
+      <mat-icon aria-hidden="true">humidity_percentage</mat-icon>
+      <div>
+        <span>{{ 'asset-management.safety-ranges.summary-humidity' | translate }}</span>
+        <strong>{{ selectedHumidityLabel() }}</strong>
+      </div>
     </article>
   </section>
 
@@ -249,3 +261,6 @@
     />
   </section>
 </section>
+
+
+

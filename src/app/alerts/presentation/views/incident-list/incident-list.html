@@ -44,13 +44,35 @@
       </span>
     </div>
   </div>
+  <nav class="incident-section-tabs" aria-label="Incident workflow sections">
+    <button
+      type="button"
+      [class.active]="selectedIncidentPanel() === 'incidents'"
+      (click)="selectIncidentPanel('incidents')"
+    >
+      <mat-icon aria-hidden="true">table_rows</mat-icon>
+      <span>{{ 'alerts.incident-list.title' | translate }}</span>
+      <strong>{{ filteredIncidents().length }}</strong>
+    </button>
 
+    @if (canResolveAlerts()) {
+      <button
+        type="button"
+        [class.active]="selectedIncidentPanel() === 'closure'"
+        (click)="selectIncidentPanel('closure')"
+      >
+        <mat-icon aria-hidden="true">assignment_turned_in</mat-icon>
+        <span>{{ 'alerts.incident-list.closure-title' | translate }}</span>
+        <strong>{{ pendingClosureIncidents().length }}</strong>
+      </button>
+    }
+  </nav>
   @if (alertsStore.loading()) {
     <div class="loading-container">
       <mat-spinner diameter="40" />
     </div>
   } @else {
-    @if (canResolveAlerts()) {
+    @if (canResolveAlerts() && selectedIncidentPanel() === 'closure') {
       <div #closureCard class="premium-card closure-card">
         <div class="card-header closure-header">
           <div>
@@ -153,7 +175,7 @@
         </form>
       </div>
     }
-
+    @if (selectedIncidentPanel() === 'incidents') {
     <div class="premium-card table-card">
       <div class="card-header">
         <h3 class="card-title">{{ 'alerts.incident-list.title' | translate }}</h3>
@@ -326,5 +348,6 @@
         </div>
       }
     </div>
+    }
   }
 </div>

@@ -85,20 +85,32 @@
 
     <section class="summary-grid" aria-label="Audit evidence summary">
       <article class="summary-card accent-blue">
-        <span>{{ 'reports.audit.summary-completeness' | translate }}</span>
-        <strong>{{ auditEvidence().completenessRate }}%</strong>
+        <mat-icon aria-hidden="true">analytics</mat-icon>
+        <div>
+          <span>{{ 'reports.audit.summary-completeness' | translate }}</span>
+          <strong>{{ auditEvidence().completenessRate }}%</strong>
+        </div>
       </article>
       <article class="summary-card accent-green">
-        <span>{{ 'reports.audit.summary-readings' | translate }}</span>
-        <strong>{{ auditEvidence().readingsCount }}</strong>
+        <mat-icon aria-hidden="true">sensors</mat-icon>
+        <div>
+          <span>{{ 'reports.audit.summary-readings' | translate }}</span>
+          <strong>{{ auditEvidence().readingsCount }}</strong>
+        </div>
       </article>
       <article class="summary-card accent-amber">
-        <span>{{ 'reports.audit.summary-reports' | translate }}</span>
-        <strong>{{ auditEvidence().reports.length }}</strong>
+        <mat-icon aria-hidden="true">description</mat-icon>
+        <div>
+          <span>{{ 'reports.audit.summary-reports' | translate }}</span>
+          <strong>{{ auditEvidence().reports.length }}</strong>
+        </div>
       </article>
       <article class="summary-card accent-red">
-        <span>{{ 'reports.audit.summary-pending' | translate }}</span>
-        <strong>{{ auditEvidence().incompleteItems }}</strong>
+        <mat-icon aria-hidden="true">rule</mat-icon>
+        <div>
+          <span>{{ 'reports.audit.summary-pending' | translate }}</span>
+          <strong>{{ auditEvidence().incompleteItems }}</strong>
+        </div>
       </article>
     </section>
 
@@ -237,3 +249,6 @@
     </section>
   }
 </section>
+
+
+

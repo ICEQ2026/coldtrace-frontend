@@ -140,25 +140,31 @@ export class AssetManagementStore {
    * @summary Resolves an asset location from the location catalog.
    */
   locationForAsset(asset: Asset, locations: Location[] = this.locations()): string {
-    return this.locationNameById(asset.locationId, locations);
+    return this.locationNameById(asset.locationId, locations, asset.locationName);
   }
 
   /**
    * @summary Resolves a gateway location by identifier.
    */
   locationForGateway(gateway: Gateway, locations: Location[] = this.locations()): string {
-    return this.locationNameById(gateway.locationId, locations);
+    return this.locationNameById(gateway.locationId, locations, gateway.locationName);
   }
 
   /**
    * @summary Resolves a readable location name by identifier.
    */
-  locationNameById(locationId: number | null, locations: Location[] = this.locations()): string {
+  locationNameById(
+    locationId: number | null,
+    locations: Location[] = this.locations(),
+    fallback: string | null = null,
+  ): string {
+    const fallbackName = fallback?.trim() || 'N/A';
+
     if (!locationId) {
-      return 'N/A';
+      return fallbackName;
     }
 
-    return locations.find((location) => location.id === locationId)?.name ?? 'N/A';
+    return locations.find((location) => location.id === locationId)?.name ?? fallbackName;
   }
 
   /**
@@ -289,8 +295,8 @@ export class AssetManagementStore {
         this.locationsSignal.set(locations);
         this.loadingSignal.set(false);
       },
-      error: (error) => {
-        this.errorSignal.set(error.message);
+      error: () => {
+        this.locationsSignal.set([]);
         this.loadingSignal.set(false);
       },
     });
@@ -620,6 +626,7 @@ export class AssetManagementStore {
       fields.currentTemperature ?? asset.currentTemperature,
       asset.entryDate,
       fields.connectivity ?? asset.connectivity,
+      asset.locationName,
     );
   }
 
@@ -664,6 +671,7 @@ export class AssetManagementStore {
       gateway.name,
       gateway.network,
       fields.status ?? gateway.status,
+      gateway.locationName,
     );
   }
 
@@ -798,6 +806,10 @@ export class AssetManagementStore {
     return items[Math.floor(Math.random() * items.length)];
   }
 }
+
+
+
+
 
 
 

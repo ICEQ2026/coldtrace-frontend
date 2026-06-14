@@ -5,7 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
-import { finalize, forkJoin } from 'rxjs';
+import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
 import { Organization } from '../../../../identity-access/domain/model/organization.entity';
 import { Role } from '../../../../identity-access/domain/model/role.entity';
@@ -177,7 +177,7 @@ export class SafetyRangeSettings implements OnInit {
       organizations: this.identityAccessApi.getOrganizations(),
       assets: this.assetManagementApi.getAssets(),
       iotDevices: this.assetManagementApi.getIoTDevices(),
-      locations: this.assetManagementApi.getLocations(),
+      locations: this.assetManagementApi.getLocations().pipe(catchError(() => of([] as Location[]))),
       assetSettings: this.assetManagementApi.getAssetSettings(),
     })
       .pipe(finalize(() => this.identityLoading.set(false)))
@@ -435,3 +435,4 @@ export class SafetyRangeSettings implements OnInit {
     });
   }
 }
+
