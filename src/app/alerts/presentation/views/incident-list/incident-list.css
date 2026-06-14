@@ -1,8 +1,8 @@
 .incident-list-view {
-  padding: 28px 32px;
+  padding: 2px 22px 44px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   min-height: 100%;
   box-sizing: border-box;
 }
@@ -23,15 +23,20 @@
 
 .view-title {
   margin: 0;
-  font-size: 20px;
-  font-weight: 700;
-  color: #111827;
+  color: #263348;
+  font:
+    800 24px/30px Inter,
+    Arial,
+    sans-serif;
 }
 
 .view-subtitle {
   margin: 0;
-  font-size: 13px;
-  color: #6b7280;
+  color: #697386;
+  font:
+    700 13px/20px Inter,
+    Arial,
+    sans-serif;
 }
 
 /* Feedback banner */
@@ -619,7 +624,10 @@ tr:last-child td {
   color: #98a2b3;
   cursor: pointer;
   display: inline-flex;
-  font: 800 12px/20px 'Inter', Arial, sans-serif;
+  font:
+    800 12px/20px 'Inter',
+    Arial,
+    sans-serif;
   gap: 8px;
   min-height: 34px;
   padding: 0 2px 8px;

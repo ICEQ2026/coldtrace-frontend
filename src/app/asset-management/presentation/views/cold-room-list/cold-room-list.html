@@ -30,297 +30,303 @@
 }
 
 @if (formVisible() && canManageAssets() && isAssetTab()) {
-  <section class="form-card" aria-labelledby="cold-room-form-title">
-    <div class="section-heading">
-      <div>
-        <h2 id="cold-room-form-title">{{ formTitleKey() | translate }}</h2>
-        <p>{{ formSubtitleKey() | translate }}</p>
-      </div>
-    </div>
-
-    <form class="cold-room-form" [formGroup]="coldRoomForm" (ngSubmit)="submit()">
-      <label class="form-field">
-        <span>{{ 'asset-management.form.internal-id' | translate }}</span>
-        <input
-          type="text"
-          formControlName="internalId"
-          [placeholder]="internalIdPlaceholder()"
-          readonly
-        />
-        @if (hasControlError('internalId')) {
-          <small>{{ 'asset-management.form.internal-id-error' | translate }}</small>
-        }
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.form.name' | translate }}</span>
-        <input
-          type="text"
-          formControlName="name"
-          [placeholder]="namePlaceholderKey() | translate"
-        />
-        @if (hasControlError('name')) {
-          <small>{{ 'asset-management.form.name-error' | translate }}</small>
-        }
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.form.location' | translate }}</span>
-        <select formControlName="locationId">
-          <option [ngValue]="0">{{ 'asset-management.form.select-location' | translate }}</option>
-          @for (location of organizationLocations(); track location.id) {
-            <option [ngValue]="location.id">{{ location.name }}</option>
-          }
-        </select>
-        @if (hasControlError('locationId')) {
-          <small>{{ 'asset-management.form.location-error' | translate }}</small>
-        }
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.form.capacity' | translate }}</span>
-        <input type="number" min="1" formControlName="capacity" placeholder="1200" />
-        @if (hasControlError('capacity')) {
-          <small>{{ 'asset-management.form.capacity-error' | translate }}</small>
-        }
-      </label>
-
-      <div class="form-field">
-        <span>{{ 'asset-management.form.location' | translate }}</span>
-        <div class="derived-field" [class.empty]="selectedLocationForForm() === 'N/A'">
-          @if (selectedLocationForForm() !== 'N/A') {
-            {{ selectedLocationForForm() }}
-          } @else {
-            {{ 'asset-management.form.location-derived-empty' | translate }}
-          }
+  <div class="asset-modal-backdrop">
+    <section class="form-card asset-modal" aria-labelledby="cold-room-form-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="cold-room-form-title">{{ formTitleKey() | translate }}</h2>
+          <p>{{ formSubtitleKey() | translate }}</p>
         </div>
       </div>
 
-      <label class="form-field full">
-        <span>{{ 'asset-management.form.description' | translate }}</span>
-        <textarea
-          rows="3"
-          formControlName="description"
-          [placeholder]="'asset-management.form.description-placeholder' | translate"
-        ></textarea>
-      </label>
+      <form class="cold-room-form" [formGroup]="coldRoomForm" (ngSubmit)="submit()">
+        <label class="form-field">
+          <span>{{ 'asset-management.form.internal-id' | translate }}</span>
+          <input
+            type="text"
+            formControlName="internalId"
+            [placeholder]="internalIdPlaceholder()"
+            readonly
+          />
+          @if (hasControlError('internalId')) {
+            <small>{{ 'asset-management.form.internal-id-error' | translate }}</small>
+          }
+        </label>
 
-      <div class="form-actions">
-        <button mat-stroked-button type="button" class="secondary-action" (click)="toggleForm()">
-          {{ 'asset-management.form.cancel' | translate }}
-        </button>
-        <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
-          {{ (creating() ? 'asset-management.form.creating' : formCreateKey()) | translate }}
-        </button>
-      </div>
-    </form>
-  </section>
+        <label class="form-field">
+          <span>{{ 'asset-management.form.name' | translate }}</span>
+          <input
+            type="text"
+            formControlName="name"
+            [placeholder]="namePlaceholderKey() | translate"
+          />
+          @if (hasControlError('name')) {
+            <small>{{ 'asset-management.form.name-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.form.location' | translate }}</span>
+          <select formControlName="locationId">
+            <option [ngValue]="0">{{ 'asset-management.form.select-location' | translate }}</option>
+            @for (location of organizationLocations(); track location.id) {
+              <option [ngValue]="location.id">{{ location.name }}</option>
+            }
+          </select>
+          @if (hasControlError('locationId')) {
+            <small>{{ 'asset-management.form.location-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.form.capacity' | translate }}</span>
+          <input type="number" min="1" formControlName="capacity" placeholder="1200" />
+          @if (hasControlError('capacity')) {
+            <small>{{ 'asset-management.form.capacity-error' | translate }}</small>
+          }
+        </label>
+
+        <div class="form-field">
+          <span>{{ 'asset-management.form.location' | translate }}</span>
+          <div class="derived-field" [class.empty]="selectedLocationForForm() === 'N/A'">
+            @if (selectedLocationForForm() !== 'N/A') {
+              {{ selectedLocationForForm() }}
+            } @else {
+              {{ 'asset-management.form.location-derived-empty' | translate }}
+            }
+          </div>
+        </div>
+
+        <label class="form-field full">
+          <span>{{ 'asset-management.form.description' | translate }}</span>
+          <textarea
+            rows="3"
+            formControlName="description"
+            [placeholder]="'asset-management.form.description-placeholder' | translate"
+          ></textarea>
+        </label>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" class="secondary-action" (click)="toggleForm()">
+            {{ 'asset-management.form.cancel' | translate }}
+          </button>
+          <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
+            {{ (creating() ? 'asset-management.form.creating' : formCreateKey()) | translate }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
 }
 
 @if (formVisible() && canManageAssets() && selectedTab() === 'iot-device') {
-  <section class="form-card" aria-labelledby="iot-device-form-title">
-    <div class="section-heading">
-      <div>
-        <h2 id="iot-device-form-title">
-          {{ 'asset-management.iot-devices.form-title' | translate }}
-        </h2>
-        <p>{{ 'asset-management.iot-devices.form-subtitle' | translate }}</p>
-      </div>
-    </div>
-
-    <form class="cold-room-form" [formGroup]="iotDeviceForm" (ngSubmit)="submitIoTDevice()">
-      <label class="form-field">
-        <span>{{ 'asset-management.iot-devices.form.internal-id' | translate }}</span>
-        <input
-          type="text"
-          formControlName="internalId"
-          [placeholder]="'asset-management.iot-devices.form.internal-id-placeholder' | translate"
-          readonly
-        />
-        @if (hasIoTDeviceControlError('internalId')) {
-          <small>{{ 'asset-management.iot-devices.form.internal-id-error' | translate }}</small>
-        }
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.iot-devices.form.type' | translate }}</span>
-        <select
-          formControlName="deviceType"
-          (change)="selectIoTDeviceType($any($event.target).value)"
-        >
-          <option value="">
-            {{ 'asset-management.iot-devices.form.select-type' | translate }}
-          </option>
-          @for (deviceType of iotDeviceTypes; track deviceType) {
-            <option [value]="deviceType">{{ deviceTypeLabelKey(deviceType) | translate }}</option>
-          }
-        </select>
-        @if (hasIoTDeviceControlError('deviceType')) {
-          <small>{{ 'asset-management.iot-devices.form.type-error' | translate }}</small>
-        }
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.iot-devices.form.model' | translate }}</span>
-        <input
-          type="text"
-          formControlName="model"
-          [placeholder]="'asset-management.iot-devices.form.model-placeholder' | translate"
-        />
-        @if (hasIoTDeviceControlError('model')) {
-          <small>{{ 'asset-management.iot-devices.form.model-error' | translate }}</small>
-        }
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.iot-devices.form.measurement' | translate }}</span>
-        <div class="parameter-list">
-          @for (parameter of selectedIoTDeviceParameters(); track parameter) {
-            <span>{{ measurementParameterLabelKey(parameter) | translate }}</span>
-          } @empty {
-            <span>{{ 'asset-management.iot-devices.form.select-type' | translate }}</span>
-          }
+  <div class="asset-modal-backdrop">
+    <section class="form-card asset-modal" aria-labelledby="iot-device-form-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="iot-device-form-title">
+            {{ 'asset-management.iot-devices.form-title' | translate }}
+          </h2>
+          <p>{{ 'asset-management.iot-devices.form-subtitle' | translate }}</p>
         </div>
-        <input type="hidden" formControlName="measurementType" />
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.iot-devices.table.gateway' | translate }}</span>
-        <select formControlName="gatewayId">
-          <option [ngValue]="0">{{ 'asset-management.form.select-gateway' | translate }}</option>
-          @for (gateway of organizationGateways(); track gateway.id) {
-            <option [ngValue]="gateway.id">{{ gatewayNameById(gateway.id) }}</option>
-          }
-        </select>
-        @if (hasIoTDeviceControlError('gatewayId')) {
-          <small>{{ 'asset-management.form.gateway-error' | translate }}</small>
-        }
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.iot-devices.form.asset' | translate }}</span>
-        <select formControlName="assetId">
-          <option [ngValue]="0">
-            {{ 'asset-management.iot-devices.form.unassigned' | translate }}
-          </option>
-          @for (asset of organizationAssets(); track asset.id) {
-            <option [ngValue]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
-          }
-        </select>
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.iot-devices.form.next-calibration' | translate }}</span>
-        <input
-          type="text"
-          formControlName="nextCalibrationDate"
-          [placeholder]="
-            'asset-management.iot-devices.form.next-calibration-placeholder' | translate
-          "
-        />
-      </label>
-
-      <div class="form-actions">
-        <button mat-stroked-button type="button" class="secondary-action" (click)="toggleForm()">
-          {{ 'asset-management.form.cancel' | translate }}
-        </button>
-        <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
-          {{
-            (creating()
-              ? 'asset-management.form.creating'
-              : 'asset-management.iot-devices.form-create'
-            ) | translate
-          }}
-        </button>
       </div>
-    </form>
-  </section>
+
+      <form class="cold-room-form" [formGroup]="iotDeviceForm" (ngSubmit)="submitIoTDevice()">
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.internal-id' | translate }}</span>
+          <input
+            type="text"
+            formControlName="internalId"
+            [placeholder]="'asset-management.iot-devices.form.internal-id-placeholder' | translate"
+            readonly
+          />
+          @if (hasIoTDeviceControlError('internalId')) {
+            <small>{{ 'asset-management.iot-devices.form.internal-id-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.type' | translate }}</span>
+          <select
+            formControlName="deviceType"
+            (change)="selectIoTDeviceType($any($event.target).value)"
+          >
+            <option value="">
+              {{ 'asset-management.iot-devices.form.select-type' | translate }}
+            </option>
+            @for (deviceType of iotDeviceTypes; track deviceType) {
+              <option [value]="deviceType">{{ deviceTypeLabelKey(deviceType) | translate }}</option>
+            }
+          </select>
+          @if (hasIoTDeviceControlError('deviceType')) {
+            <small>{{ 'asset-management.iot-devices.form.type-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.model' | translate }}</span>
+          <input
+            type="text"
+            formControlName="model"
+            [placeholder]="'asset-management.iot-devices.form.model-placeholder' | translate"
+          />
+          @if (hasIoTDeviceControlError('model')) {
+            <small>{{ 'asset-management.iot-devices.form.model-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.measurement' | translate }}</span>
+          <div class="parameter-list">
+            @for (parameter of selectedIoTDeviceParameters(); track parameter) {
+              <span>{{ measurementParameterLabelKey(parameter) | translate }}</span>
+            } @empty {
+              <span>{{ 'asset-management.iot-devices.form.select-type' | translate }}</span>
+            }
+          </div>
+          <input type="hidden" formControlName="measurementType" />
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.table.gateway' | translate }}</span>
+          <select formControlName="gatewayId">
+            <option [ngValue]="0">{{ 'asset-management.form.select-gateway' | translate }}</option>
+            @for (gateway of organizationGateways(); track gateway.id) {
+              <option [ngValue]="gateway.id">{{ gatewayNameById(gateway.id) }}</option>
+            }
+          </select>
+          @if (hasIoTDeviceControlError('gatewayId')) {
+            <small>{{ 'asset-management.form.gateway-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.asset' | translate }}</span>
+          <select formControlName="assetId">
+            <option [ngValue]="0">
+              {{ 'asset-management.iot-devices.form.unassigned' | translate }}
+            </option>
+            @for (asset of organizationAssets(); track asset.id) {
+              <option [ngValue]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.iot-devices.form.next-calibration' | translate }}</span>
+          <input
+            type="text"
+            formControlName="nextCalibrationDate"
+            [placeholder]="
+              'asset-management.iot-devices.form.next-calibration-placeholder' | translate
+            "
+          />
+        </label>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" class="secondary-action" (click)="toggleForm()">
+            {{ 'asset-management.form.cancel' | translate }}
+          </button>
+          <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
+            {{
+              (creating()
+                ? 'asset-management.form.creating'
+                : 'asset-management.iot-devices.form-create'
+              ) | translate
+            }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
 }
 
 @if (formVisible() && canManageAssets() && selectedTab() === 'gateway') {
-  <section class="form-card" aria-labelledby="gateway-form-title">
-    <div class="section-heading">
-      <div>
-        <h2 id="gateway-form-title">{{ 'asset-management.gateways.form-title' | translate }}</h2>
-        <p>{{ 'asset-management.gateways.form-subtitle' | translate }}</p>
+  <div class="asset-modal-backdrop">
+    <section class="form-card asset-modal" aria-labelledby="gateway-form-title">
+      <div class="section-heading">
+        <div>
+          <h2 id="gateway-form-title">{{ 'asset-management.gateways.form-title' | translate }}</h2>
+          <p>{{ 'asset-management.gateways.form-subtitle' | translate }}</p>
+        </div>
       </div>
-    </div>
 
-    <form class="cold-room-form" [formGroup]="gatewayForm" (ngSubmit)="submitGateway()">
-      <label class="form-field">
-        <span>{{ 'asset-management.gateways.form.internal-id' | translate }}</span>
-        <input
-          type="text"
-          formControlName="internalId"
-          [placeholder]="'asset-management.gateways.form.internal-id-placeholder' | translate"
-          readonly
-        />
-        @if (hasGatewayControlError('internalId')) {
-          <small>{{ 'asset-management.gateways.form.internal-id-error' | translate }}</small>
-        }
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.gateways.form.name' | translate }}</span>
-        <input
-          type="text"
-          formControlName="name"
-          [placeholder]="'asset-management.gateways.form.name-placeholder' | translate"
-        />
-        @if (hasGatewayControlError('name')) {
-          <small>{{ 'asset-management.gateways.form.name-error' | translate }}</small>
-        }
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.gateways.form.location' | translate }}</span>
-        <select formControlName="locationId">
-          <option [ngValue]="0">{{ 'asset-management.form.select-location' | translate }}</option>
-          @for (location of organizationLocations(); track location.id) {
-            <option [ngValue]="location.id">{{ location.name }}</option>
+      <form class="cold-room-form" [formGroup]="gatewayForm" (ngSubmit)="submitGateway()">
+        <label class="form-field">
+          <span>{{ 'asset-management.gateways.form.internal-id' | translate }}</span>
+          <input
+            type="text"
+            formControlName="internalId"
+            [placeholder]="'asset-management.gateways.form.internal-id-placeholder' | translate"
+            readonly
+          />
+          @if (hasGatewayControlError('internalId')) {
+            <small>{{ 'asset-management.gateways.form.internal-id-error' | translate }}</small>
           }
-        </select>
-        @if (hasGatewayControlError('locationId')) {
-          <small>{{ 'asset-management.gateways.form.location-error' | translate }}</small>
-        }
-      </label>
+        </label>
 
-      <label class="form-field">
-        <span>{{ 'asset-management.gateways.form.network' | translate }}</span>
-        <input
-          type="text"
-          formControlName="network"
-          [placeholder]="'asset-management.gateways.form.network-placeholder' | translate"
-        />
-        @if (hasGatewayControlError('network')) {
-          <small>{{ 'asset-management.gateways.form.network-error' | translate }}</small>
-        }
-      </label>
-
-      <label class="form-field">
-        <span>{{ 'asset-management.gateways.form.status' | translate }}</span>
-        <select formControlName="status">
-          @for (status of gatewayStatuses; track status) {
-            <option [value]="status">{{ gatewayStatusLabelKey(status) | translate }}</option>
+        <label class="form-field">
+          <span>{{ 'asset-management.gateways.form.name' | translate }}</span>
+          <input
+            type="text"
+            formControlName="name"
+            [placeholder]="'asset-management.gateways.form.name-placeholder' | translate"
+          />
+          @if (hasGatewayControlError('name')) {
+            <small>{{ 'asset-management.gateways.form.name-error' | translate }}</small>
           }
-        </select>
-      </label>
+        </label>
 
-      <div class="form-actions">
-        <button mat-stroked-button type="button" class="secondary-action" (click)="toggleForm()">
-          {{ 'asset-management.form.cancel' | translate }}
-        </button>
-        <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
-          {{
-            (creating()
-              ? 'asset-management.form.creating'
-              : 'asset-management.gateways.form-create'
-            ) | translate
-          }}
-        </button>
-      </div>
-    </form>
-  </section>
+        <label class="form-field">
+          <span>{{ 'asset-management.gateways.form.location' | translate }}</span>
+          <select formControlName="locationId">
+            <option [ngValue]="0">{{ 'asset-management.form.select-location' | translate }}</option>
+            @for (location of organizationLocations(); track location.id) {
+              <option [ngValue]="location.id">{{ location.name }}</option>
+            }
+          </select>
+          @if (hasGatewayControlError('locationId')) {
+            <small>{{ 'asset-management.gateways.form.location-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.gateways.form.network' | translate }}</span>
+          <input
+            type="text"
+            formControlName="network"
+            [placeholder]="'asset-management.gateways.form.network-placeholder' | translate"
+          />
+          @if (hasGatewayControlError('network')) {
+            <small>{{ 'asset-management.gateways.form.network-error' | translate }}</small>
+          }
+        </label>
+
+        <label class="form-field">
+          <span>{{ 'asset-management.gateways.form.status' | translate }}</span>
+          <select formControlName="status">
+            @for (status of gatewayStatuses; track status) {
+              <option [value]="status">{{ gatewayStatusLabelKey(status) | translate }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="form-actions">
+          <button mat-stroked-button type="button" class="secondary-action" (click)="toggleForm()">
+            {{ 'asset-management.form.cancel' | translate }}
+          </button>
+          <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
+            {{
+              (creating()
+                ? 'asset-management.form.creating'
+                : 'asset-management.gateways.form-create'
+              ) | translate
+            }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
 }
 
 @if (selectedTab() === 'iot-device') {

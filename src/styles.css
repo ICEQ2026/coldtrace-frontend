@@ -118,6 +118,7 @@ body .context-nav {
   gap: 26px;
   min-width: 0;
   overflow-x: auto;
+  padding-left: 22px;
   padding-right: 8px;
 }
 
@@ -665,7 +666,6 @@ body
 
 body
   :is(
-    app-user-access-list,
     app-safety-range-settings,
     app-operational-parameters-settings,
     app-preventive-maintenance-scheduler,
@@ -676,7 +676,11 @@ body
     app-audit-evidence
   )
   .summary-grid {
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+body app-user-access-list .access-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
 }
 
 body
@@ -803,8 +807,12 @@ body app-user-access-list .access-summary article div {
   min-width: 0;
 }
 
-body :is(app-safety-range-settings, app-operational-parameters-settings) .filter-card {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+body app-safety-range-settings .filter-card {
+  grid-template-columns: minmax(260px, 420px) minmax(240px, 1fr) !important;
+}
+
+body app-operational-parameters-settings .filter-card {
+  grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr) minmax(240px, 0.8fr) !important;
 }
 
 body
@@ -1196,39 +1204,484 @@ body app-technical-service-tracker .secondary-action mat-icon {
 }
 
 /* ColdTrace frontend visual refinement pass */
-body app-user-access-list .access-header { margin: 22px 0 16px; }
-body app-user-access-list .access-header h1 { color: #0f172a; font: 800 28px/34px Inter, Arial, sans-serif; }
-body app-user-access-list .search-box { margin: 28px 0 22px; width: min(520px, 100%); }
-body app-user-access-list .access-summary { gap: 18px; grid-template-columns: repeat(3, minmax(240px, 1fr)); }
-body app-user-access-list .access-summary article { align-items: center; flex-direction: row; gap: 16px; min-height: 118px; padding: 20px 22px; }
-body app-user-access-list .summary-icon { align-items: center; border-radius: 8px; display: inline-flex; height: 44px; justify-content: center; width: 44px; }
-body app-user-access-list .summary-icon mat-icon { font-size: 22px; height: 22px; width: 22px; }
-body app-user-access-list .accent-blue .summary-icon { background: #eef2ff; color: #2563eb; }
-body app-user-access-list .accent-green .summary-icon { background: #eaf8f0; color: #176900; }
-body app-user-access-list .accent-amber .summary-icon { background: #fff6df; color: #9a650d; }
-body app-user-access-list .summary-copy { display: grid; gap: 2px; min-width: 0; }
-body app-user-access-list .summary-copy strong { color: #0f172a; font: 800 28px/34px Inter, Arial, sans-serif; }
-body app-user-access-list .summary-copy small { color: #98a2b3; font: 700 11px/16px Inter, Arial, sans-serif; }
-body app-user-access-list .table-card { padding: 28px 30px 30px; }
-body app-user-access-list .primary-action, body app-user-access-list .secondary-action, body app-user-access-list .reload-action, body app-user-access-list .save-action, body app-user-access-list .delete-action { align-items: center; border-radius: 8px; display: inline-flex; font: 800 12px/20px Inter, Arial, sans-serif; gap: 7px; min-height: 34px; padding: 6px 12px; }
-body app-user-access-list .primary-action { background: #2563eb !important; border: 1px solid #2563eb !important; color: #fff !important; }
-body app-user-access-list .secondary-action, body app-user-access-list .reload-action, body app-user-access-list .save-action { background: #fff !important; border: 1px solid #d7deea !important; color: #526174 !important; }
-body app-user-access-list .delete-action { background: #fff !important; border: 1px solid #f0b8b8 !important; color: #b42318 !important; }
-body app-user-access-list .primary-action mat-icon, body app-user-access-list .secondary-action mat-icon, body app-user-access-list .reload-action mat-icon { font-size: 17px; height: 17px; width: 17px; }
-body app-user-access-list .access-table th, body app-user-access-list .access-table td { font-family: Inter, Arial, sans-serif; }
-body app-user-access-list .access-table th { color: #98a2b3; font-weight: 800; }
-body app-user-access-list .access-table td { color: #323c4d; font-size: 12px; }
-body app-user-access-list .permission-list span, body app-user-access-list .role-pill { border-radius: 7px; }
-body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .page { padding: 26px 36px 44px; }
-body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .section-kicker { display: none; }
-body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .page-heading h1 { color: #0f172a; font: 800 28px/34px Inter, Arial, sans-serif; }
-body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .page-heading p, body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .section-heading p { color: #697386; font: 700 13px/20px Inter, Arial, sans-serif; }
-body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .primary-action, body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .secondary-action, body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .heading-actions .primary-action { border-radius: 8px !important; box-shadow: none !important; font: 800 12px/20px Inter, Arial, sans-serif !important; height: 36px !important; min-height: 36px !important; padding: 7px 12px !important; width: auto !important; }
-body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .primary-action mat-icon, body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .secondary-action mat-icon { font-size: 17px !important; height: 17px !important; width: 17px !important; }
-body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .filter-card, body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .table-card, body :is(app-safety-range-settings, app-operational-parameters-settings, app-preventive-maintenance-scheduler, app-technical-service-tracker, app-daily-log, app-monthly-report, app-operational-history, app-sanitary-compliance, app-compliance-findings, app-audit-evidence) .summary-card { border: 1px solid #e4e7ec; box-shadow: 0 1px 2px rgba(16, 24, 40, .04), 0 8px 18px rgba(16, 24, 40, .06); }
-body :is(app-safety-range-settings, app-audit-evidence) .summary-card { align-items: center; display: flex; gap: 14px; min-height: 88px; padding: 16px 18px; }
-body :is(app-safety-range-settings, app-audit-evidence) .summary-card mat-icon { align-items: center; background: color-mix(in srgb, var(--accent-text, #2563eb) 12%, #fff); border-radius: 8px; color: var(--accent-text, #2563eb); display: inline-flex; flex: 0 0 auto; font-size: 20px; height: 40px; justify-content: center; width: 40px; }
-body :is(app-safety-range-settings, app-audit-evidence) .summary-card div { display: grid; gap: 2px; min-width: 0; }
+body app-user-access-list .access-header {
+  margin: 22px 0 16px;
+}
+body app-user-access-list .access-header h1 {
+  color: #0f172a;
+  font:
+    800 28px/34px Inter,
+    Arial,
+    sans-serif;
+}
+body app-user-access-list .search-box {
+  margin: 28px 0 22px;
+  width: min(520px, 100%);
+}
+body app-user-access-list .access-summary {
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+}
+body app-user-access-list .access-summary article {
+  align-items: center;
+  flex-direction: row;
+  gap: 16px;
+  min-height: 118px;
+  padding: 20px 22px;
+}
+body app-user-access-list .summary-icon {
+  align-items: center;
+  border-radius: 8px;
+  display: inline-flex;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+body app-user-access-list .summary-icon mat-icon {
+  font-size: 22px;
+  height: 22px;
+  width: 22px;
+}
+body app-user-access-list .accent-blue .summary-icon {
+  background: #eef2ff;
+  color: #2563eb;
+}
+body app-user-access-list .accent-green .summary-icon {
+  background: #eaf8f0;
+  color: #176900;
+}
+body app-user-access-list .accent-amber .summary-icon {
+  background: #fff6df;
+  color: #9a650d;
+}
+body app-user-access-list .summary-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+body app-user-access-list .summary-copy strong {
+  color: #0f172a;
+  font:
+    800 28px/34px Inter,
+    Arial,
+    sans-serif;
+}
+body app-user-access-list .summary-copy small {
+  color: #98a2b3;
+  font:
+    700 11px/16px Inter,
+    Arial,
+    sans-serif;
+}
+body app-user-access-list .table-card {
+  padding: 28px 30px 30px;
+}
+body app-user-access-list .primary-action,
+body app-user-access-list .secondary-action,
+body app-user-access-list .reload-action,
+body app-user-access-list .save-action,
+body app-user-access-list .delete-action {
+  align-items: center;
+  border-radius: 8px;
+  display: inline-flex;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif;
+  gap: 7px;
+  min-height: 34px;
+  padding: 6px 12px;
+}
+body app-user-access-list .primary-action {
+  background: #2563eb !important;
+  border: 1px solid #2563eb !important;
+  color: #fff !important;
+}
+body app-user-access-list .secondary-action,
+body app-user-access-list .reload-action,
+body app-user-access-list .save-action {
+  background: #fff !important;
+  border: 1px solid #d7deea !important;
+  color: #526174 !important;
+}
+body app-user-access-list .delete-action {
+  background: #fff !important;
+  border: 1px solid #f0b8b8 !important;
+  color: #b42318 !important;
+}
+body app-user-access-list .primary-action mat-icon,
+body app-user-access-list .secondary-action mat-icon,
+body app-user-access-list .reload-action mat-icon {
+  font-size: 17px;
+  height: 17px;
+  width: 17px;
+}
+body app-user-access-list .access-table th,
+body app-user-access-list .access-table td {
+  font-family: Inter, Arial, sans-serif;
+}
+body app-user-access-list .access-table th {
+  color: #98a2b3;
+  font-weight: 800;
+}
+body app-user-access-list .access-table td {
+  color: #323c4d;
+  font-size: 12px;
+}
+body app-user-access-list .permission-list span,
+body app-user-access-list .role-pill {
+  border-radius: 7px;
+}
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .page {
+  padding: 26px 36px 44px;
+}
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .section-kicker {
+  display: none;
+}
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .page-heading
+  h1 {
+  color: #0f172a;
+  font:
+    800 28px/34px Inter,
+    Arial,
+    sans-serif;
+}
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .page-heading
+  p,
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .section-heading
+  p {
+  color: #697386;
+  font:
+    700 13px/20px Inter,
+    Arial,
+    sans-serif;
+}
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .primary-action,
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .secondary-action,
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .heading-actions
+  .primary-action {
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 7px 12px !important;
+  width: auto !important;
+}
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .primary-action
+  mat-icon,
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .secondary-action
+  mat-icon {
+  font-size: 17px !important;
+  height: 17px !important;
+  width: 17px !important;
+}
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .filter-card,
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .table-card,
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .summary-card {
+  border: 1px solid #e4e7ec;
+  box-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.04),
+    0 8px 18px rgba(16, 24, 40, 0.06);
+}
+body :is(app-safety-range-settings, app-audit-evidence) .summary-card {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  min-height: 88px;
+  padding: 16px 18px;
+}
+body :is(app-safety-range-settings, app-audit-evidence) .summary-card mat-icon {
+  align-items: center;
+  background: color-mix(in srgb, var(--accent-text, #2563eb) 12%, #fff);
+  border-radius: 8px;
+  color: var(--accent-text, #2563eb);
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 20px;
+  height: 40px;
+  justify-content: center;
+  width: 40px;
+}
+body :is(app-safety-range-settings, app-audit-evidence) .summary-card div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+body app-daily-log .filter-card {
+  grid-template-columns: 280px 280px minmax(0, 1fr) !important;
+}
+
+body app-monthly-report .filter-card,
+body app-sanitary-compliance .filter-card,
+body app-compliance-findings .filter-card,
+body app-audit-evidence .filter-card {
+  grid-template-columns: repeat(3, minmax(180px, 240px)) minmax(0, 1fr) !important;
+}
+
+body app-operational-history .summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+body app-technical-service-tracker .summary-grid,
+body app-preventive-maintenance-scheduler .summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  margin-top: 18px;
+}
+
+body app-operational-dashboard .dashboard-content {
+  padding-inline: 22px;
+}
+
+body app-operational-dashboard .dashboard-board {
+  gap: 22px;
+  grid-template-columns: minmax(0, 1fr) minmax(430px, 0.58fr);
+}
+
+body app-operational-dashboard .lower-grid {
+  grid-template-columns: minmax(0, 1.68fr) minmax(260px, 0.92fr);
+}
+
+body app-storage-distribution .distribution-card,
+body app-recent-alerts .table-card,
+body app-incidents-chart .incidents-card {
+  border: 1px solid #e4e7ec;
+  box-shadow:
+    0 1px 2px rgba(16, 24, 40, 0.04),
+    0 8px 18px rgba(16, 24, 40, 0.06);
+}
+
+body app-storage-distribution .card-title,
+body app-recent-alerts .card-title,
+body app-incidents-chart .card-title {
+  color: #0f172a;
+  font:
+    800 16px/22px Inter,
+    Arial,
+    sans-serif;
+}
+
+body app-incidents-chart .avg-metric {
+  color: #263348;
+  font:
+    800 24px/30px Inter,
+    Arial,
+    sans-serif;
+}
+
+body app-incidents-chart .legend-row {
+  gap: 12px;
+}
+
+@media (max-width: 1180px) {
+  body app-operational-dashboard .dashboard-board {
+    grid-template-columns: 1fr;
+    max-width: 780px;
+  }
+}
+
+@media (max-width: 920px) {
+  body app-user-access-list .access-summary,
+  body
+    :is(
+      app-safety-range-settings,
+      app-operational-parameters-settings,
+      app-preventive-maintenance-scheduler,
+      app-technical-service-tracker,
+      app-daily-log,
+      app-monthly-report,
+      app-operational-history,
+      app-sanitary-compliance,
+      app-compliance-findings,
+      app-audit-evidence
+    )
+    .summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  body app-daily-log .filter-card,
+  body app-monthly-report .filter-card,
+  body app-sanitary-compliance .filter-card,
+  body app-compliance-findings .filter-card,
+  body app-audit-evidence .filter-card,
+  body app-safety-range-settings .filter-card,
+  body app-operational-parameters-settings .filter-card {
+    grid-template-columns: 1fr !important;
+  }
+}
 
 body app-audit-evidence .heading-actions .primary-action,
 body app-audit-evidence .heading-actions .primary-action.mat-mdc-unelevated-button {
@@ -1238,9 +1691,332 @@ body app-audit-evidence .heading-actions .primary-action.mat-mdc-unelevated-butt
   width: auto !important;
 }
 
-
-html body app-audit-evidence .page-heading .heading-actions button.primary-action.mat-mdc-unelevated-button.mdc-button {
+html
+  body
+  app-audit-evidence
+  .page-heading
+  .heading-actions
+  button.primary-action.mat-mdc-unelevated-button.mdc-button {
   height: 36px !important;
   min-height: 36px !important;
   width: auto !important;
+}
+
+/* Work-surface polish pass */
+body
+  :is(app-cold-room-list, app-asset-monitoring-dashboard, app-user-access-list, app-incident-list)
+  .search-box {
+  align-items: center !important;
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  box-sizing: border-box;
+  display: flex !important;
+  gap: 10px;
+  min-height: 38px;
+  padding: 0 12px;
+  width: min(520px, 100%);
+}
+
+body
+  :is(app-cold-room-list, app-asset-monitoring-dashboard, app-user-access-list, app-incident-list)
+  .search-icon {
+  color: #98a2b3 !important;
+  font-size: 20px !important;
+  height: 20px !important;
+  opacity: 1 !important;
+  width: 20px !important;
+}
+
+body
+  :is(app-cold-room-list, app-asset-monitoring-dashboard, app-user-access-list, app-incident-list)
+  .search-box
+  input {
+  color: #263348 !important;
+  font:
+    700 12px/20px Inter,
+    Arial,
+    sans-serif !important;
+}
+
+body app-user-access-list .access-summary article.summary-card {
+  align-items: center !important;
+  flex-direction: row !important;
+  gap: 16px !important;
+  justify-content: flex-start !important;
+  text-align: left;
+}
+
+body app-user-access-list .access-summary .summary-icon {
+  display: inline-flex !important;
+  flex: 0 0 auto;
+  height: 44px !important;
+  justify-content: center !important;
+  width: 44px !important;
+}
+
+body app-user-access-list .access-summary .summary-copy {
+  align-items: start;
+  display: grid !important;
+  justify-items: start;
+}
+
+body app-user-access-list .access-summary .summary-copy span,
+body app-user-access-list .access-summary .summary-copy strong,
+body app-user-access-list .access-summary .summary-copy small {
+  text-align: left;
+}
+
+body app-incident-list .incident-workbar {
+  align-items: center;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body app-incident-list .incident-section-tabs {
+  align-items: center;
+  border-bottom: 1px solid #e4e7ec;
+  display: flex;
+  gap: 26px;
+  min-height: 42px;
+  width: 100%;
+}
+
+body app-incident-list .incident-section-tabs button {
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  color: #98a2b3;
+  gap: 7px;
+  min-height: 42px;
+  padding: 0 0 8px;
+}
+
+body app-incident-list .incident-section-tabs button.active {
+  border-bottom-color: #2563eb;
+  color: #2563eb;
+}
+
+body app-incident-list .incident-section-tabs button strong {
+  background: #eef4ff;
+  border-radius: 999px;
+  color: #2563eb;
+  font-size: 11px;
+  min-width: 24px;
+  padding: 2px 7px;
+  text-align: center;
+}
+
+body app-incident-list .incident-toolbar {
+  align-items: center;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(320px, 520px) minmax(0, 1fr);
+}
+
+body app-incident-list .incident-metrics {
+  align-items: center;
+  justify-content: flex-end;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .filter-meta {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+  justify-content: flex-end;
+  min-width: 0;
+  text-align: right;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .filter-meta
+  strong {
+  color: #2563eb !important;
+  font:
+    800 20px/26px Inter,
+    Arial,
+    sans-serif !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  :is(.feedback, .observation-banner, .access-banner) {
+  align-items: center;
+  border: 1px solid #e4e7ec;
+  border-left: 4px solid var(--banner-accent, #2563eb);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  color: #263348;
+  gap: 12px;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  :is(.warning, .observation-banner) {
+  --banner-accent: #b16f0b;
+  background: #fffaf0 !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .error {
+  --banner-accent: #b51313;
+  background: #fff5f5 !important;
+}
+
+body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .success {
+  --banner-accent: #176900;
+  background: #f2fbf6 !important;
+}
+
+html
+  body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .heading-actions
+  :is(button.primary-action, button.secondary-action, .mat-mdc-button-base) {
+  height: 36px !important;
+  min-height: 36px !important;
+  width: auto !important;
+}
+
+html
+  body
+  :is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .heading-actions
+  button.primary-action {
+  min-width: 0 !important;
+  padding-inline: 12px !important;
+}
+
+html
+  body
+  :is(app-monthly-report, app-sanitary-compliance, app-compliance-findings, app-audit-evidence)
+  .page-heading
+  .heading-actions {
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  height: 36px !important;
+}
+
+html
+  body
+  :is(app-monthly-report, app-sanitary-compliance, app-compliance-findings, app-audit-evidence)
+  .page-heading
+  .heading-actions
+  button.primary-action.mat-mdc-unelevated-button.mdc-button {
+  --mdc-filled-button-container-height: 36px !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  min-width: 0 !important;
+  width: auto !important;
+}
+
+html
+  body
+  :is(app-monthly-report, app-sanitary-compliance, app-compliance-findings, app-audit-evidence)
+  .page-heading {
+  min-height: 56px !important;
+}
+
+@media (max-width: 860px) {
+  body app-incident-list .incident-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  body app-incident-list .incident-metrics {
+    justify-content: flex-start;
+  }
 }
