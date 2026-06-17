@@ -1,7 +1,7 @@
 <div class="incident-list-view">
   <div class="view-header">
     <div class="header-text">
-      <h1 class="view-title">{{ 'alerts.incident-list.title' | translate }}</h1>
+      <h1 class="view-title">{{ 'dashboard-shell.nav-alerts' | translate }}</h1>
       <p class="view-subtitle">{{ 'alerts.incident-list.subtitle' | translate }}</p>
     </div>
 
@@ -26,9 +26,7 @@
         [class.active]="selectedIncidentPanel() === 'incidents'"
         (click)="selectIncidentPanel('incidents')"
       >
-        <mat-icon aria-hidden="true">table_rows</mat-icon>
         <span>{{ 'alerts.incident-list.title' | translate }}</span>
-        <strong>{{ filteredIncidents().length }}</strong>
       </button>
 
       @if (canResolveAlerts()) {
@@ -37,9 +35,7 @@
           [class.active]="selectedIncidentPanel() === 'closure'"
           (click)="selectIncidentPanel('closure')"
         >
-          <mat-icon aria-hidden="true">assignment_turned_in</mat-icon>
           <span>{{ 'alerts.incident-list.closure-title' | translate }}</span>
-          <strong>{{ pendingClosureIncidents().length }}</strong>
         </button>
       }
     </nav>

@@ -9,7 +9,7 @@ import { MonitoringStore } from '../../../../monitoring/application/monitoring.s
 import { ReportsStore } from '../../../../reports/application/reports.store';
 import { MonthlyReport } from '../../../../reports/domain/model/monthly-report.entity';
 import { TELEMETRY_POLLING_INTERVAL_MS } from '../../../domain/model/polling-interval.constant';
-import { DashboardShell } from '../dashboard-shell/dashboard-shell';
+import { DashboardShell, OrganizationMemberSummary } from '../dashboard-shell/dashboard-shell';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
 /**
@@ -201,6 +201,38 @@ export class Layout implements OnInit {
   });
 
   protected readonly pendingAlertsCount = computed(() => this.alertsStore.openIncidentsCount());
+
+  protected readonly organizationMembers = computed<OrganizationMemberSummary[]>(() => {
+    const organizationId = this.activeOrganizationId();
+    const roles = this.identityAccessStore.roles();
+
+    if (!organizationId) {
+      return [];
+    }
+
+    return this.identityAccessStore.users()
+      .filter((user) => user.organizationId === organizationId)
+      .slice(0, 5)
+      .map((user, index) => {
+        const role = roles.find((currentRole) => currentRole.id === user.roleId);
+        const initials = user.fullName
+          .split(' ')
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0]?.toUpperCase() ?? '')
+          .join('') || 'US';
+        const status = index === 2 ? 'busy' : index === 4 ? 'offline' : 'online';
+
+        return {
+          id: user.id,
+          fullName: user.fullName,
+          initials,
+          roleLabelKey: this.identityAccessStore.roleLabelKey(role),
+          status,
+          statusLabel: status === 'online' ? 'Online' : status === 'busy' ? 'Reviewing' : 'Away',
+        };
+      });
+  });
 
   constructor() {
     this.router.events

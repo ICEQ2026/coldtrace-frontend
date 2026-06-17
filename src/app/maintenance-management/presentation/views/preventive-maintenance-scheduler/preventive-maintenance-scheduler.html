@@ -8,9 +8,7 @@
   <div class="page-heading">
     <div>
       <span class="section-kicker">{{ activeOrganizationName() }}</span>
-      <h1 id="preventive-maintenance-title">
-        {{ 'maintenance.preventive.title' | translate }}
-      </h1>
+      <h1 id="preventive-maintenance-title">{{ 'dashboard-shell.nav-settings' | translate }}</h1>
       <p>{{ 'maintenance.preventive.subtitle' | translate }}</p>
     </div>
 
@@ -21,6 +19,14 @@
       </button>
     </div>
   </div>
+
+
+  <nav class="work-tabs section-tabs" aria-label="Settings sections">
+    <a routerLink="/asset-management/safety-ranges" routerLinkActive="active">{{ 'dashboard-shell.nav-safety-ranges' | translate }}</a>
+    <a routerLink="/asset-management/operational-parameters" routerLinkActive="active">{{ 'dashboard-shell.nav-operational-parameters' | translate }}</a>
+    <a routerLink="/maintenance/preventive" routerLinkActive="active">{{ 'dashboard-shell.nav-preventive-maintenance' | translate }}</a>
+    <a routerLink="/maintenance/technical-service" routerLinkActive="active">{{ 'dashboard-shell.nav-technical-service' | translate }}</a>
+  </nav>
 
   @if (feedback() === 'scheduled') {
     <p class="feedback success">{{ 'maintenance.preventive.feedback-scheduled' | translate }}</p>

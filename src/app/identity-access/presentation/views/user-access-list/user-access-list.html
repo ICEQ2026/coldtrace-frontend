@@ -12,6 +12,13 @@
     </div>
   </section>
 
+  <div class="access-workbar">
+  <nav class="work-tabs section-tabs" aria-label="Access sections">
+    <a routerLink="/identity-access/roles-permissions" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'dashboard-shell.nav-users' | translate }}</a>
+    <a routerLink="/identity-access/roles-permissions/users/new" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'dashboard-shell.nav-new-user' | translate }}</a>
+    <a routerLink="/identity-access/roles-permissions/permissions" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'dashboard-shell.nav-permissions' | translate }}</a>
+  </nav>
+
   <label class="search-box">
     <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
     <input
@@ -21,6 +28,7 @@
       (input)="updateSearchTerm($any($event.target).value)"
     />
   </label>
+  </div>
 
   <section class="summary-grid access-summary" aria-label="Access summary">
     <article class="summary-card accent-blue">
@@ -217,5 +225,3 @@
     }
   </section>
 }
-
-

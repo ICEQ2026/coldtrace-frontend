@@ -2,7 +2,7 @@ const activeOrganizationId = 1;
 
 export const environment = {
   production: false,
-  platformProviderApiBaseUrl: 'http://localhost:8080',
+  platformProviderApiBaseUrl: 'http://localhost:3000',
   platformProviderActiveOrganizationId: activeOrganizationId,
   platformProviderUsersEndpointPath: `/organizations/${activeOrganizationId}/users`,
   platformProviderOrganizationsEndpointPath: '/organizations',

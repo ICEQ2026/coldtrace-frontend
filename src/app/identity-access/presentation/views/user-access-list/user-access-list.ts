@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
@@ -33,7 +33,7 @@ interface UserAccessRow {
  */
 @Component({
   selector: 'app-user-access-list',
-  imports: [MatIcon, RouterLink, TranslatePipe, ListPagination],
+  imports: [MatIcon, RouterLink, RouterLinkActive, TranslatePipe, ListPagination],
   templateUrl: './user-access-list.html',
   styleUrl: './user-access-list.css',
 })

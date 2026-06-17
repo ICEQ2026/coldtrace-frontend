@@ -1,5 +1,6 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -30,7 +31,7 @@ type SafetyRangeFeedback = 'idle' | 'saved' | 'invalid' | 'access-denied' | 'ser
  */
 @Component({
   selector: 'app-safety-range-settings',
-  imports: [
+  imports: [RouterLink, RouterLinkActive,
     MatButton,
     MatIcon,
     MatProgressSpinner,

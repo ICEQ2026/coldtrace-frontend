@@ -263,3 +263,21 @@
     width: 210px;
   }
 }
+
+/* Restored password-field fixes for browsers that inject their own reveal button. */
+.password-control input {
+  appearance: none;
+  background: transparent;
+  outline: none;
+}
+
+.password-control input:focus {
+  border: 0;
+  box-shadow: none;
+  outline: none;
+}
+
+.password-control input::-ms-clear,
+.password-control input::-ms-reveal {
+  display: none;
+}

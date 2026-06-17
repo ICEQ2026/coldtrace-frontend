@@ -9,6 +9,8 @@ import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
 import { Notification } from '../../../domain/model/notification.entity';
 
+type NotificationFilter = 'all' | 'active' | 'pending' | 'failed';
+
 /**
  * @summary Presents the notification list user interface in the alerts bounded context.
  */
@@ -34,6 +36,7 @@ export class NotificationList implements OnInit {
   protected readonly pageSize = 10;
   protected readonly currentPage = signal(1);
   protected readonly searchTerm = signal('');
+  protected readonly selectedNotificationFilter = signal<NotificationFilter>('active');
   protected readonly notifications = computed(() => {
     return [...this.alertsStore.activeNotifications()].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -41,12 +44,15 @@ export class NotificationList implements OnInit {
   });
   protected readonly filteredNotifications = computed(() => {
     const normalizedSearch = this.searchTerm().trim().toLowerCase();
+    const filteredByStatus = this.notifications().filter((notification) =>
+      this.matchesNotificationFilter(notification),
+    );
 
     if (!normalizedSearch) {
-      return this.notifications();
+      return filteredByStatus;
     }
 
-    return this.notifications().filter((notification) => {
+    return filteredByStatus.filter((notification) => {
       const incident = this.incidentForNotification(notification);
 
       return [
@@ -142,6 +148,11 @@ export class NotificationList implements OnInit {
     });
   }
 
+  protected selectNotificationFilter(filter: NotificationFilter): void {
+    this.selectedNotificationFilter.set(filter);
+    this.currentPage.set(1);
+  }
+
   protected updateSearchTerm(value: string): void {
     this.searchTerm.set(value);
     this.currentPage.set(1);
@@ -179,6 +190,18 @@ export class NotificationList implements OnInit {
     this.feedbackDismissTimeoutId = null;
   }
 
+  private matchesNotificationFilter(notification: Notification): boolean {
+    switch (this.selectedNotificationFilter()) {
+      case 'active':
+        return Boolean(this.incidentForNotification(notification)?.isOpen);
+      case 'pending':
+        return notification.isPending;
+      case 'failed':
+        return notification.isFailed;
+      default:
+        return true;
+    }
+  }
   private paginate<T>(items: T[], page: number): T[] {
     const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
     const currentPage = Math.min(Math.max(page, 1), pageCount);

@@ -1,5 +1,6 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
@@ -36,7 +37,7 @@ type TechnicalServiceFeedback =
  */
 @Component({
   selector: 'app-technical-service-tracker',
-  imports: [
+  imports: [RouterLink, RouterLinkActive,
     MatIcon,
     MatProgressSpinner,
     NgClass,

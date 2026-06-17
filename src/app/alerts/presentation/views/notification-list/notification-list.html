@@ -6,7 +6,31 @@
     </div>
   </div>
 
-  <div class="notification-toolbar">
+  <div class="notification-toolbar notification-workbar">
+    <nav class="work-tabs notification-filter-tabs" aria-label="Notification filters">
+      <button
+        type="button"
+        [class.active]="selectedNotificationFilter() === 'active'"
+        (click)="selectNotificationFilter('active')"
+      >
+        {{ 'alerts.notification-list.filter-active' | translate }}
+      </button>
+      <button
+        type="button"
+        [class.active]="selectedNotificationFilter() === 'pending'"
+        (click)="selectNotificationFilter('pending')"
+      >
+        {{ 'alerts.notification-list.filter-pending' | translate }}
+      </button>
+      <button
+        type="button"
+        [class.active]="selectedNotificationFilter() === 'failed'"
+        (click)="selectNotificationFilter('failed')"
+      >
+        {{ 'alerts.notification-list.filter-failed' | translate }}
+      </button>
+    </nav>
+
     <label class="search-box">
       <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
       <input
@@ -16,24 +40,6 @@
         (input)="updateSearchTerm($any($event.target).value)"
       />
     </label>
-
-    <div class="notification-summary toolbar-summary">
-      <span class="notification-count">
-        {{ notifications().length }} {{ 'alerts.notification-list.total' | translate }}
-      </span>
-      <span class="notification-count active">
-        {{ alertsStore.openIncidentsCount() }}
-        {{ 'alerts.notification-list.active-alerts' | translate }}
-      </span>
-      <span class="notification-count pending">
-        {{ alertsStore.pendingNotificationsCount() }}
-        {{ 'alerts.notification-list.pending' | translate }}
-      </span>
-      <span class="notification-count failed">
-        {{ alertsStore.failedNotificationsCount() }}
-        {{ 'alerts.notification-list.failed' | translate }}
-      </span>
-    </div>
   </div>
 
   @if (alertsStore.loading()) {

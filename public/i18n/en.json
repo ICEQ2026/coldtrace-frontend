@@ -696,6 +696,10 @@
   "monitoring": {
     "operational": {
       "title": "Main Page",
+        "subtitle": "Operational overview for monitored assets, readings and incidents.",
+        "tab-overview": "Overview",
+        "tab-insights": "Insights",
+        "search-placeholder": "Search content...",
       "chart-temp-title": "Temperature",
       "chart-temp-subtitle": "Hourly average across monitored assets",
       "chart-temp-helper": "Read left to right by hour. The line is in range while it stays between both limits; it changes color when it leaves the range.",
@@ -1234,6 +1238,10 @@
       "active-alerts": "active alert(s)",
       "pending": "pending",
       "failed": "failed",
+      "filter-all": "All",
+      "filter-active": "Active alerts",
+      "filter-pending": "Pending",
+      "filter-failed": "Failed",
       "empty-title": "No notifications dispatched",
       "empty-description": "When a reading exceeds range, humidity, battery, or signal limits, a notification will appear here.",
       "recipient": "Recipient:",

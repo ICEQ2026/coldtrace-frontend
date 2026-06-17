@@ -6,6 +6,13 @@
 </header>
 
 <div class="assets-toolbar assets-workbar" aria-label="Assets filters and actions">
+  <nav class="work-tabs" aria-label="Asset resource sections">
+    @for (tab of assetTypeTabs; track tab) {
+      <button type="button" [class.active]="selectedTab() === tab" (click)="selectAssetType(tab)">
+        {{ assetTypeLabelKey(tab) | translate }}
+      </button>
+    }
+  </nav>
   <label class="search-box">
     <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
     <input

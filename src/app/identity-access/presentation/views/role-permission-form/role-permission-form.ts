@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { IdentityAccessStore } from '../../../application/identity-access.store';
@@ -19,7 +19,7 @@ type RolePermissionFeedback = 'idle' | 'saved' | 'server-error';
  */
 @Component({
   selector: 'app-role-permission-form',
-  imports: [MatButton, MatIcon, TranslatePipe, ListPagination],
+  imports: [RouterLink, RouterLinkActive, MatButton, MatIcon, TranslatePipe, ListPagination],
   templateUrl: './role-permission-form.html',
   styleUrl: '../user-access-list/user-access-list.css',
 })

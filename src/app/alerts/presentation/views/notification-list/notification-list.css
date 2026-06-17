@@ -383,3 +383,71 @@
     justify-content: flex-start;
   }
 }
+
+/* Notification list visual recovery: centered channel icons and consistent action buttons. */
+.notification-row {
+  align-items: center !important;
+  grid-template-columns: 42px minmax(0, 1fr) auto !important;
+  min-height: 74px;
+  padding: 12px 14px !important;
+}
+
+.notification-channel {
+  align-self: center !important;
+  height: 36px !important;
+  justify-self: center !important;
+  width: 36px !important;
+}
+
+.notification-channel mat-icon {
+  align-items: center;
+  display: inline-flex;
+  height: 20px !important;
+  justify-content: center;
+  line-height: 20px !important;
+  width: 20px !important;
+}
+
+.notification-state {
+  align-items: flex-end !important;
+  justify-content: center !important;
+}
+
+.attend-action {
+  align-items: center !important;
+  background: #ffffff !important;
+  border: 1px solid #c7d2fe !important;
+  border-radius: 8px !important;
+  color: #2563eb !important;
+  display: inline-flex !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  gap: 6px !important;
+  height: 34px !important;
+  justify-content: center !important;
+  padding: 0 12px !important;
+}
+
+.attend-action mat-icon {
+  font-size: 16px !important;
+  height: 16px !important;
+  line-height: 16px !important;
+  width: 16px !important;
+}
+
+/* Final notification polish: active alerts is the default list and action buttons breathe like the rest of the dashboard. */
+.attend-action {
+  gap: 8px !important;
+  min-width: 128px !important;
+  padding: 0 14px !important;
+}
+
+.attend-action mat-icon {
+  flex: 0 0 16px !important;
+}
+
+/* Give notification actions the same side breathing room as dashboard toolbar buttons. */
+.attend-action {
+  min-width: 140px !important;
+  padding: 0 18px !important;
+}

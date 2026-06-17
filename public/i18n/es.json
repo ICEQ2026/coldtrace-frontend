@@ -696,6 +696,10 @@
   "monitoring": {
     "operational": {
       "title": "Página Principal",
+        "subtitle": "Resumen operativo de activos monitoreados, lecturas e incidencias.",
+        "tab-overview": "Resumen",
+        "tab-insights": "Análisis",
+        "search-placeholder": "Buscar contenido...",
       "chart-temp-title": "Temperatura",
       "chart-temp-subtitle": "Promedio horario de activos monitoreados",
       "chart-temp-helper": "Lee de izquierda a derecha por hora. La línea está dentro de rango cuando se mantiene entre ambos límites; si sale del rango, cambia de color.",
@@ -1234,6 +1238,10 @@
       "active-alerts": "alerta(s) activa(s)",
       "pending": "pendiente(s)",
       "failed": "fallida(s)",
+      "filter-all": "Todas",
+      "filter-active": "Alertas activas",
+      "filter-pending": "Pendientes",
+      "filter-failed": "Fallidas",
       "empty-title": "Sin notificaciones despachadas",
       "empty-description": "Cuando una lectura supere rangos, humedad, batería o señal, aparecerá aquí una notificación.",
       "recipient": "Destinatario:",

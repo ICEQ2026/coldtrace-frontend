@@ -1,3 +1,14 @@
+<section class="access-view-header" aria-labelledby="access-view-title">
+  <h1 id="access-view-title">{{ 'dashboard-shell.nav-access' | translate }}</h1>
+  <p>{{ 'roles-permissions.permissions-subtitle' | translate }}</p>
+</section>
+
+  <nav class="work-tabs section-tabs" aria-label="Access sections">
+    <a routerLink="/identity-access/roles-permissions" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'dashboard-shell.nav-users' | translate }}</a>
+    <a routerLink="/identity-access/roles-permissions/users/new" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'dashboard-shell.nav-new-user' | translate }}</a>
+    <a routerLink="/identity-access/roles-permissions/permissions" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{ 'dashboard-shell.nav-permissions' | translate }}</a>
+  </nav>
+
 <section class="table-card permission-editor" aria-labelledby="role-permissions-title">
   <div class="table-heading">
     <div>

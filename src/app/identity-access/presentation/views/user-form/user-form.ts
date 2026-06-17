@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin, switchMap, throwError } from 'rxjs';
 import { IdentityAccessStore } from '../../../application/identity-access.store';
@@ -18,7 +18,7 @@ type UserFormFeedback = 'idle' | 'duplicate-email' | 'invalid-role' | 'success' 
  */
 @Component({
   selector: 'app-user-form',
-  imports: [MatIcon, ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [MatIcon, ReactiveFormsModule, RouterLink, RouterLinkActive, TranslatePipe],
   templateUrl: './user-form.html',
   styleUrl: './user-form.css',
 })

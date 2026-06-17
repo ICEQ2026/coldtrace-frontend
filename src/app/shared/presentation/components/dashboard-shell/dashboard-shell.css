@@ -592,3 +592,437 @@ app-language-switcher {
 .theme-toggle .toggle-option + .toggle-option::before {
   display: none;
 }
+
+/* Restored local refinements for the dashboard shell after CSS rollback. */
+.context-nav {
+  align-items: center !important;
+  display: flex !important;
+  flex: 1 1 auto !important;
+  gap: 26px !important;
+  min-width: 0 !important;
+  overflow-x: auto !important;
+  padding-left: 22px !important;
+  padding-right: 8px !important;
+}
+
+.context-nav a {
+  border-bottom: 2px solid transparent !important;
+  color: #98a2b3 !important;
+  flex: 0 0 auto !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  line-height: 20px !important;
+  padding: 8px 0 !important;
+  text-decoration: none !important;
+}
+
+.context-nav a.active,
+.context-nav a:hover {
+  border-bottom-color: #2563eb !important;
+  color: #2563eb !important;
+}
+
+.topbar {
+  align-items: center !important;
+  display: flex !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  padding: 10px 20px 0 12px !important;
+  position: static !important;
+  z-index: auto !important;
+}
+
+.topbar-actions {
+  align-items: center !important;
+  display: flex !important;
+  gap: 16px !important;
+  margin-left: auto !important;
+  position: static !important;
+  right: auto !important;
+  top: auto !important;
+  z-index: auto !important;
+}
+
+.notification-shortcut {
+  box-shadow: none !important;
+}
+
+.team-card {
+  background: #ffffff;
+  border: 1px solid #e8edf5;
+  border-radius: 8px;
+  box-sizing: border-box;
+  margin: 0 18px 24px;
+  padding: 14px 15px;
+}
+
+.team-card-header {
+  align-items: center;
+  color: #667085;
+  display: flex;
+  font-size: 12px;
+  font-weight: 800;
+  justify-content: space-between;
+  line-height: 18px;
+  margin-bottom: 10px;
+}
+
+.team-manage-link {
+  align-items: center;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  color: #98a2b3;
+  display: inline-flex;
+  height: 28px;
+  justify-content: center;
+  text-decoration: none;
+  transition: background-color 160ms ease, color 160ms ease, transform 160ms ease;
+  width: 28px;
+}
+
+.team-manage-link:hover {
+  background: #f4f7fb;
+  color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.team-manage-link mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+.team-list {
+  display: grid;
+  gap: 10px;
+}
+
+.team-member {
+  align-items: center;
+  border-radius: 7px;
+  color: #263348;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 34px minmax(0, 1fr);
+  padding: 5px 4px;
+  text-decoration: none;
+}
+
+.team-member:hover {
+  background: #f8fafc;
+}
+
+.member-avatar {
+  align-items: center;
+  background: #f4f7fb;
+  border: 1px solid #e4e7ec;
+  border-radius: 999px;
+  color: #667085;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 800;
+  height: 32px;
+  justify-content: center;
+  position: relative;
+  width: 32px;
+}
+
+.member-status {
+  background: #5ec87b;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  bottom: -1px;
+  height: 8px;
+  position: absolute;
+  right: -1px;
+  width: 8px;
+}
+
+.member-status.busy {
+  background: #f5a623;
+}
+
+.member-status.offline {
+  background: #b8c2d2;
+}
+
+.member-copy {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.member-name {
+  color: #263348;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-role {
+  color: #98a2b3;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.drag-upload {
+  background: #f7fbff !important;
+  border-color: #dbe7f7 !important;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.drag-upload:hover {
+  background: #f1f7ff !important;
+  border-color: #c8ddf7 !important;
+  transform: translateY(-1px);
+}
+
+.toggle-control {
+  overflow: hidden;
+}
+
+.toggle-control::before {
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 1px 3px rgba(96, 108, 128, 0.05), 0 6px 14px rgba(96, 108, 128, 0.12);
+  content: '';
+  height: calc(100% - 8px);
+  left: 4px;
+  position: absolute;
+  top: 4px;
+  transform: translateX(0);
+  transition: transform 220ms ease;
+  width: calc((100% - 8px) / 2);
+  z-index: 0;
+}
+
+.toggle-control:has(.toggle-option:nth-child(2).active)::before {
+  transform: translateX(100%);
+}
+
+.toggle-option {
+  background: transparent !important;
+  box-shadow: none !important;
+  position: relative;
+  transform: none !important;
+  z-index: 1;
+}
+
+.toggle-option + .toggle-option::before {
+  display: none;
+}
+
+/* Final shell polish: align header actions, restore team spacing, and match sidebar toggles. */
+.topbar-actions {
+  padding-top: 10px !important;
+}
+
+:host ::ng-deep app-operational-dashboard {
+  display: block !important;
+  margin-top: -42px !important;
+  padding-top: 0 !important;
+}
+
+:host ::ng-deep app-operational-dashboard .dashboard-hero {
+  margin-top: 0 !important;
+}
+
+.team-card {
+  padding: 16px 16px 15px !important;
+}
+
+.team-card-header {
+  font-size: 13px !important;
+  line-height: 18px !important;
+  margin-bottom: 12px !important;
+}
+
+.team-list {
+  gap: 11px !important;
+  max-height: 86px;
+  overflow: hidden;
+  transition: max-height 220ms ease;
+}
+
+.team-card:hover .team-list,
+.team-card:focus-within .team-list {
+  max-height: 260px;
+}
+
+.team-member {
+  gap: 11px !important;
+  min-height: 38px;
+  padding: 4px 5px !important;
+}
+
+.member-avatar {
+  height: 34px !important;
+  width: 34px !important;
+}
+
+.member-name {
+  font-size: 12.5px !important;
+  line-height: 17px !important;
+}
+
+.member-role {
+  font-size: 10.5px !important;
+  line-height: 15px !important;
+}
+
+.theme-toggle {
+  border-radius: 32px !important;
+  box-sizing: border-box !important;
+  height: 54px !important;
+  padding: 8px !important;
+}
+
+.theme-toggle::before {
+  height: 38px !important;
+  left: 8px !important;
+  top: 8px !important;
+  width: calc((100% - 16px) / 2) !important;
+}
+
+.theme-toggle .toggle-option {
+  min-height: 38px !important;
+  padding: 0 12px !important;
+}
+
+/* Shell alignment recovery: content starts near the brand while header actions stay inline. */
+.content-scroll {
+  margin-top: -42px !important;
+}
+
+:host ::ng-deep app-operational-dashboard {
+  margin-top: 0 !important;
+}
+
+:host ::ng-deep app-operational-dashboard .dashboard-content,
+:host ::ng-deep app-operational-dashboard .dashboard-hero {
+  padding-top: 0 !important;
+}
+
+.topbar-actions {
+  align-items: center !important;
+  padding-top: 4px !important;
+}
+
+.notification-shortcut {
+  box-shadow: none !important;
+}
+
+/* Shell spacing tuning: slightly lower headers and reclaim horizontal workspace. */
+.topbar {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  padding-top: 16px !important;
+}
+
+.topbar-actions {
+  margin-top: 6px !important;
+  padding-top: 0 !important;
+}
+
+.content-scroll {
+  margin-top: -38px !important;
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+/* Final component-owned gutter tuning: keep shell tighter than recovered global overrides. */
+.topbar {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+.content-scroll {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+}
+
+/* Final gutter trim: use the available workspace width up to the header controls. */
+.topbar {
+  padding-left: 8px !important;
+  padding-right: 0 !important;
+}
+
+.content-scroll {
+  padding-left: 4px !important;
+  padding-right: 0 !important;
+}
+
+/* Final readability trim: keep right breathing room and show two full team members. */
+.topbar {
+  padding-right: 14px !important;
+}
+
+.content-scroll {
+  padding-right: 12px !important;
+}
+
+.topbar-actions {
+  right: 14px !important;
+}
+
+.user-profile {
+  min-width: 268px !important;
+}
+
+.profile-meta {
+  min-width: 112px !important;
+  overflow: visible !important;
+}
+
+.team-list {
+  max-height: 96px !important;
+}
+
+/* Keep header actions visible above the lifted page content without making them sticky. */
+.topbar {
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+.content-scroll {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.team-list {
+  max-height: 104px !important;
+}
+
+/* Show exactly two sidebar team members in the collapsed card. */
+.team-list {
+  gap: 10px !important;
+  max-height: 90px !important;
+}
+
+.team-member {
+  min-height: 40px !important;
+  padding-bottom: 4px !important;
+  padding-top: 4px !important;
+}
+
+/* Final visual checkpoint: slightly calmer page titles and balanced sidebar team card. */
+:host ::ng-deep :is(.page-title, .view-title, .asset-view-header h1, .access-header h1, .access-view-header h1, .dashboard-hero h1) {
+  font-size: 24px !important;
+  font-weight: 800 !important;
+  line-height: 30px !important;
+}
+
+.team-card {
+  padding-bottom: 19px !important;
+}
+
+.team-list {
+  max-height: 92px !important;
+}

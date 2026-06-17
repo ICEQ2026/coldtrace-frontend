@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
 interface ContextLink {
   path: string;
@@ -10,7 +11,15 @@ interface ContextLink {
   visible: boolean;
   queryParams?: Record<string, string>;
 }
-import { LanguageSwitcher } from '../language-switcher/language-switcher';
+
+export interface OrganizationMemberSummary {
+  id: number;
+  fullName: string;
+  initials: string;
+  roleLabelKey: string;
+  status: 'online' | 'busy' | 'offline';
+  statusLabel: string;
+}
 
 /**
  * @summary Presents the dashboard shell user interface in the shared bounded context.
@@ -27,7 +36,7 @@ import { LanguageSwitcher } from '../language-switcher/language-switcher';
     LanguageSwitcher,
   ],
   templateUrl: './dashboard-shell.html',
-  styleUrl: './dashboard-shell.css',
+  styleUrls: ['./dashboard-shell.css'],
 })
 export class DashboardShell {
   private readonly router = inject(Router);
@@ -41,95 +50,21 @@ export class DashboardShell {
   @Input() canMonitorAssets = false;
   @Input() assetIssuesCount = 0;
   @Input() pendingAlertsCount = 0;
+  @Input() organizationMembers: OrganizationMemberSummary[] = [];
 
   @Output() signedOut = new EventEmitter<void>();
   @Output() monthlyReportRequested = new EventEmitter<void>();
 
-  protected accessDropdownOpen = false;
-  protected accessDropdownTouched = false;
-  protected reportsDropdownOpen = false;
-  protected reportsDropdownTouched = false;
-  protected settingsDropdownOpen = false;
-  protected settingsDropdownTouched = false;
-
-  protected isAccessDropdownOpen(isActive: boolean): boolean {
-    return this.accessDropdownTouched ? this.accessDropdownOpen : isActive || this.isAccessRoute();
-  }
-
-  protected isReportsDropdownOpen(isActive: boolean): boolean {
-    return this.reportsDropdownTouched
-      ? this.reportsDropdownOpen
-      : isActive || this.isReportsRoute();
-  }
-
-  protected isSettingsDropdownOpen(isActive: boolean): boolean {
-    return this.settingsDropdownTouched
-      ? this.settingsDropdownOpen
-      : isActive || this.isSettingsRoute();
-  }
-
-  protected toggleAccessDropdown(isActive: boolean): void {
-    this.accessDropdownOpen = !this.isAccessDropdownOpen(isActive);
-    this.accessDropdownTouched = true;
-  }
-
-  protected toggleReportsDropdown(isActive: boolean): void {
-    this.reportsDropdownOpen = !this.isReportsDropdownOpen(isActive);
-    this.reportsDropdownTouched = true;
-  }
-
-  protected toggleSettingsDropdown(isActive: boolean): void {
-    this.settingsDropdownOpen = !this.isSettingsDropdownOpen(isActive);
-    this.settingsDropdownTouched = true;
-  }
-
   protected contextualLinks(): ContextLink[] {
     const url = this.router.url;
-
-    if (url.includes('/asset-management/assets')) {
-      return [
-        {
-          path: '/asset-management/assets',
-          labelKey: 'asset-management.tabs.cold-room',
-          visible: true,
-          queryParams: { tab: 'cold-room' },
-        },
-        {
-          path: '/asset-management/assets',
-          labelKey: 'asset-management.tabs.transport',
-          visible: true,
-          queryParams: { tab: 'transport' },
-        },
-        {
-          path: '/asset-management/assets',
-          labelKey: 'asset-management.tabs.iot-device',
-          visible: true,
-          queryParams: { tab: 'iot-device' },
-        },
-        {
-          path: '/asset-management/assets',
-          labelKey: 'asset-management.tabs.gateway',
-          visible: true,
-          queryParams: { tab: 'gateway' },
-        },
-      ];
-    }
-
-    if (url.includes('/monitoring/assets')) {
-      return [
-        {
-          path: '/monitoring/assets',
-          labelKey: 'monitoring.asset-monitoring.tabs.cold-room',
-          visible: true,
-          queryParams: { type: 'cold-room' },
-        },
-        {
-          path: '/monitoring/assets',
-          labelKey: 'monitoring.asset-monitoring.tabs.transport',
-          visible: true,
-          queryParams: { type: 'transport' },
-        },
-      ];
+    if (
+      url.includes('/asset-management/assets') ||
+      url.includes('/monitoring/assets') ||
+      this.isAccessRoute() ||
+      this.isSettingsRoute() ||
+      this.isReportsRoute()
+    ) {
+      return [];
     }
 
     if (this.isAccessRoute()) {
@@ -223,6 +158,9 @@ export class DashboardShell {
       );
     });
   }
+  protected openSettings(): void {
+    void this.router.navigate(['/asset-management/safety-ranges']);
+  }
 
   protected logout(): void {
     this.signedOut.emit();
@@ -232,7 +170,7 @@ export class DashboardShell {
     this.monthlyReportRequested.emit();
   }
 
-  private isAccessRoute(): boolean {
+  protected isAccessRoute(): boolean {
     const url = this.router.url;
 
     return (
@@ -240,13 +178,13 @@ export class DashboardShell {
     );
   }
 
-  private isReportsRoute(): boolean {
+  protected isReportsRoute(): boolean {
     const url = this.router.url;
 
     return url.includes('/reports') || url.includes('/identity-access/reports');
   }
 
-  private isSettingsRoute(): boolean {
+  protected isSettingsRoute(): boolean {
     const url = this.router.url;
 
     return (
