@@ -6,6 +6,42 @@
     </div>
   </div>
 
+  <div class="notification-toolbar">
+    <nav class="notification-filter-tabs" aria-label="Notification filters">
+      <button
+        type="button"
+        [class.active]="selectedNotificationFilter() === 'active'"
+        (click)="selectNotificationFilter('active')"
+      >
+        {{ 'alerts.notification-list.filter-active' | translate }}
+      </button>
+      <button
+        type="button"
+        [class.active]="selectedNotificationFilter() === 'pending'"
+        (click)="selectNotificationFilter('pending')"
+      >
+        {{ 'alerts.notification-list.filter-pending' | translate }}
+      </button>
+      <button
+        type="button"
+        [class.active]="selectedNotificationFilter() === 'failed'"
+        (click)="selectNotificationFilter('failed')"
+      >
+        {{ 'alerts.notification-list.filter-failed' | translate }}
+      </button>
+    </nav>
+
+    <label class="search-box">
+      <mat-icon class="search-icon" aria-hidden="true">search</mat-icon>
+      <input
+        type="search"
+        [value]="searchTerm()"
+        [placeholder]="'alerts.notification-list.search-placeholder' | translate"
+        (input)="updateSearchTerm($any($event.target).value)"
+      />
+    </label>
+  </div>
+
   @if (alertsStore.loading()) {
     <div class="loading-container">
       <mat-spinner diameter="40" />
@@ -58,7 +94,7 @@
 
             <div class="notification-content">
               <div class="notification-title-line">
-                <span>{{ notification.assetName }}</span>
+                <span>{{ notificationTitle(notification) }}</span>
                 <small>{{ notificationChannelLabelKey(notification) | translate }}</small>
                 @if (incidentForNotification(notification); as incident) {
                   <small
@@ -132,7 +168,7 @@
 
       <app-list-pagination
         [page]="currentPage()"
-        [total]="notifications().length"
+        [total]="filteredNotifications().length"
         [pageSize]="pageSize"
         (pageChange)="updatePage($event)"
       />

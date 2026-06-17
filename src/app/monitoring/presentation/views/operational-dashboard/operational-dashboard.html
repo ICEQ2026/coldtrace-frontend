@@ -5,6 +5,13 @@
     </div>
   }
 
+  <header class="dashboard-hero">
+    <div class="dashboard-title-block">
+      <h1>{{ 'monitoring.operational.title' | translate }}</h1>
+      <p>{{ 'monitoring.operational.subtitle' | translate }}</p>
+    </div>
+  </header>
+
   @if (hasOperationalData()) {
     <div class="dashboard-board">
       <section class="primary-column">

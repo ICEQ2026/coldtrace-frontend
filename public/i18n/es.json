@@ -78,7 +78,7 @@
     "table-title": "Usuarios y roles",
     "table-subtitle": "Revisa usuarios de la organización activa y gestiona asignaciones de rol.",
     "permissions-title": "Permisos por rol",
-    "permissions-subtitle": "Activa o desactiva permisos por rol. El super administrador queda fijo con acceso total.",
+    "permissions-subtitle": "Revisa el catálogo de permisos por rol expuesto por el backend.",
     "create-user-title": "Nuevo usuario organizacional",
     "create-user-subtitle": "Registra un usuario dentro de la organización activa y asigna un rol operativo.",
     "create-user": "Crear usuario",
@@ -149,13 +149,11 @@
     "feedback": {
       "saved": "Asignación de rol actualizada.",
       "user-created": "Usuario creado correctamente.",
-      "permissions-saved": "Permisos del rol actualizados.",
       "duplicate-email": "Ya existe un usuario con este correo.",
       "invalid-role": "Selecciona un rol válido antes de guardar.",
-      "delete-forbidden": "Tu rol actual no puede eliminar este usuario.",
-      "deleted": "Usuario eliminado correctamente.",
       "server-error": "No se pudo cargar la información de acceso. Inténtalo nuevamente.",
-      "loading": "Cargando información de acceso..."
+      "loading": "Cargando información de acceso...",
+      "roles-read-only": "Los permisos de rol son de solo lectura porque el backend expone roles como catálogo."
     },
     "denied": {
       "title": "Acceso denegado",
@@ -174,9 +172,11 @@
     "delete-confirm": "Eliminar {{ name }}? Esta acción no se puede deshacer.",
     "deleting": "Eliminando...",
     "feedback-deleted": "Activo eliminado correctamente.",
+    "edit": "Editar",
     "tabs": {
       "cold-room": "Cámara",
       "transport": "Transporte",
+      "location": "Ubicaciones",
       "iot-device": "Dispositivos IoT",
       "gateway": "Gateway",
       "settings": "Ajustes"
@@ -190,6 +190,7 @@
         "form-subtitle": "Crea una cámara frigorífica para la organización activa.",
         "form-create": "Crear cámara",
         "feedback-created": "Cámara creada correctamente.",
+        "feedback-updated": "Cámara actualizada correctamente.",
         "feedback-duplicate": "Ya existe una cámara con este ID.",
         "name-placeholder": "Cámara 21"
       },
@@ -201,6 +202,7 @@
         "form-subtitle": "Crea una unidad de transporte refrigerado para la organización activa.",
         "form-create": "Crear transporte",
         "feedback-created": "Unidad de transporte creada correctamente.",
+        "feedback-updated": "Unidad de transporte actualizada correctamente.",
         "feedback-duplicate": "Ya existe una unidad de transporte con este ID.",
         "name-placeholder": "Camión 08"
       }
@@ -241,11 +243,15 @@
       "subtitle": "Revisa dispositivos de monitoreo de la organización activa.",
       "form-open": "Nuevo dispositivo IoT",
       "form-title": "Registrar dispositivo IoT",
+      "form-edit-title": "Editar dispositivo IoT",
       "form-subtitle": "Crea un dispositivo de monitoreo y asígnalo a un activo si corresponde.",
+      "form-edit-subtitle": "Actualiza la asignación y metadatos operativos del dispositivo seleccionado.",
       "form-create": "Crear dispositivo IoT",
+      "form-update": "Actualizar dispositivo IoT",
       "unassigned": "Sin asignar",
       "empty": "No hay dispositivos IoT registrados para esta organización.",
       "feedback-created": "Dispositivo IoT creado correctamente.",
+      "feedback-updated": "Dispositivo IoT actualizado correctamente.",
       "feedback-deleted": "Dispositivo IoT eliminado correctamente.",
       "feedback-duplicate": "Ya existe un dispositivo IoT con este ID.",
       "form": {
@@ -263,8 +269,14 @@
         "measurement-error": "Ingresa al menos 3 caracteres.",
         "asset": "Activo asignado",
         "unassigned": "Dejar sin asignar",
+        "status": "Estado",
+        "calibration-status": "Estado de calibración",
+        "last-calibration": "Última calibración",
+        "last-calibration-placeholder": "01 Oct 2026",
         "next-calibration": "Próxima calibración",
-        "next-calibration-placeholder": "01 Nov 2026"
+        "next-calibration-placeholder": "01 Nov 2026",
+        "reading-frequency": "Frecuencia de lectura (minutos)",
+        "reading-frequency-error": "Ingresa un valor entre 5 y 1440 minutos."
       },
       "device-types": {
         "temperature-sensor": "Sensor de temperatura",
@@ -304,16 +316,69 @@
         "unknown": "Desconocido"
       }
     },
+    "locations": {
+      "title": "Ubicaciones",
+      "subtitle": "Crea y actualiza ubicaciones operativas usadas por activos y gateways.",
+      "form-open": "Nueva ubicación",
+      "form-title": "Registrar ubicación",
+      "form-edit-title": "Editar ubicación",
+      "form-subtitle": "Crea una ubicación de la organización para activos, gateways y seguimiento operativo.",
+      "form-edit-subtitle": "Actualiza los datos de la ubicación usados por activos y gateways vinculados.",
+      "form-create": "Crear ubicación",
+      "form-update": "Actualizar ubicación",
+      "edit": "Editar",
+      "empty": "No hay ubicaciones registradas para esta organización.",
+      "feedback-created": "Ubicación creada correctamente.",
+      "feedback-updated": "Ubicación actualizada correctamente.",
+      "feedback-duplicate": "Ya existe una ubicación con este nombre.",
+      "form": {
+        "name": "Nombre",
+        "name-placeholder": "Almacén principal",
+        "name-error": "Ingresa al menos 2 caracteres.",
+        "type": "Tipo",
+        "type-error": "Selecciona un tipo de ubicación.",
+        "address": "Dirección",
+        "address-placeholder": "Av. Industrial 123, Lima",
+        "description": "Descripción",
+        "description-placeholder": "Área de almacenamiento en frío para vacunas",
+        "status": "Estado"
+      },
+      "table": {
+        "name": "Nombre",
+        "type": "Tipo",
+        "address": "Dirección",
+        "description": "Descripción",
+        "status": "Estado"
+      },
+      "types": {
+        "WAREHOUSE": "Almacén",
+        "CLIENT_SITE": "Sede de cliente",
+        "ROUTE": "Ruta",
+        "LABORATORY": "Laboratorio",
+        "DISTRIBUTION_CENTER": "Centro de distribución",
+        "facility": "Instalación",
+        "transport-route": "Ruta de transporte"
+      },
+      "status": {
+        "active": "Activo",
+        "maintenance": "Mantenimiento",
+        "inactive": "Inactivo"
+      }
+    },
     "gateways": {
-      "title": "Gateways y ubicaciones",
+      "title": "Gateways",
       "subtitle": "Revisa puntos de transmisión usados por activos y dispositivos IoT de la organización.",
       "form-open": "Nuevo gateway",
       "form-title": "Registrar gateway",
+      "form-edit-title": "Editar gateway",
       "form-subtitle": "Crea un punto de transmisión para una ubicación de la organización.",
+      "form-edit-subtitle": "Actualiza la ubicación, red y estado del gateway seleccionado.",
       "form-create": "Crear gateway",
+      "form-update": "Actualizar gateway",
       "unassigned": "Sin asignar",
       "empty": "No hay gateways registrados para esta organización.",
       "feedback-created": "Gateway creado correctamente.",
+      "feedback-updated": "Gateway actualizado correctamente.",
       "feedback-deleted": "Gateway eliminado correctamente.",
       "feedback-duplicate": "Ya existe un gateway con este ID.",
       "form": {
@@ -403,7 +468,7 @@
       "summary-assets": "Activos monitoreados",
       "summary-profiles": "Perfiles por activo",
       "summary-temperature": "Rango por guardar",
-      "summary-humidity": "Humedad por guardar",
+      "summary-humidity": "Rango de humedad por guardar",
       "empty": "No hay rangos seguros registrados para esta organización.",
       "form": {
         "scope": "Aplicar a",
@@ -411,10 +476,12 @@
         "selected-range": "Rango guardado",
         "minimum-temperature": "Temperatura mínima",
         "maximum-temperature": "Temperatura máxima",
+        "minimum-humidity": "Humedad mínima (%)",
         "maximum-humidity": "Humedad máxima (%)",
         "number-error": "Ingresa un número válido.",
-        "humidity-error": "Ingresa un valor entre 1 y 100.",
-        "temperature-range-error": "La temperatura máxima debe ser mayor que la mínima."
+        "humidity-error": "Ingresa un valor entre 0 y 100.",
+        "temperature-range-error": "La temperatura máxima debe ser mayor que la mínima.",
+        "humidity-range-error": "La humedad máxima debe ser mayor que la mínima."
       },
       "table-title": "Perfiles configurados",
       "table-subtitle": "El perfil general se usa como base; los perfiles por activo reemplazan ese rango durante las lecturas de monitoreo.",
@@ -422,7 +489,7 @@
         "scope": "Alcance",
         "location": "Ubicación",
         "temperature": "Rango de temperatura",
-        "humidity": "Límite de humedad",
+        "humidity": "Rango de humedad",
         "status": "Estado",
         "default-status": "General",
         "asset-status": "Por activo"
@@ -499,8 +566,12 @@
       "location-derived-empty": "Selecciona una ubicación para resolver el almacén.",
       "description": "Descripción",
       "description-placeholder": "Notas operativas de la cámara",
+      "status": "Estado",
       "cancel": "Cancelar",
-      "creating": "Creando..."
+      "creating": "Creando...",
+      "update": "Actualizar activo",
+      "edit-title": "Editar activo",
+      "edit-subtitle": "Actualiza el activo seleccionado usando el contrato del backend."
     },
     "update": {
       "feedback-updated": "Activo actualizado correctamente."
@@ -522,6 +593,7 @@
       "form-title": "Programación de mantenimiento",
       "form-subtitle": "Registra la fecha, alcance y observaciones de la próxima intervención preventiva.",
       "feedback-scheduled": "Mantenimiento preventivo programado correctamente.",
+      "feedback-status-updated": "Estado del mantenimiento actualizado correctamente.",
       "feedback-invalid": "Revisa la fecha y observaciones requeridas antes de guardar.",
       "feedback-invalid-asset": "Selecciona un activo activo antes de programar mantenimiento.",
       "feedback-duplicate": "Ya existe un mantenimiento abierto para este activo en el periodo seleccionado.",
@@ -689,6 +761,8 @@
     "nav-audit-evidence": "Evidencia",
     "nav-notifications": "Notificaciones",
     "notification-shortcut": "Alertas pendientes: {{ count }}",
+    "team-members": "Miembros del equipo",
+    "team-manage": "Gestionar miembros de la organización",
     "download-report": "Descargar reporte mensual",
     "theme-light": "Claro",
     "theme-dark": "Oscuro"
@@ -696,11 +770,12 @@
   "monitoring": {
     "operational": {
       "title": "Página Principal",
+      "subtitle": "Resumen operativo de activos, lecturas, incidencias y mantenimiento.",
       "chart-temp-title": "Temperatura",
       "chart-temp-subtitle": "Promedio horario de activos monitoreados",
       "chart-temp-helper": "Lee de izquierda a derecha por hora. La línea está dentro de rango cuando se mantiene entre ambos límites; si sale del rango, cambia de color.",
       "cold-room-label": "Cámara Fría 01",
-      "chart-storage-title": "Distribución de almacenamiento",
+      "chart-storage-title": "Estado térmico",
       "metric-total-assets": "Total de activos",
       "metric-monitored": "Activos monitoreados",
       "metric-sensors": "Sensores activos",
@@ -733,7 +808,7 @@
       "storage-frozen": "Congelado",
       "storage-refrigerated": "Refrigerado",
       "storage-ambient": "Ambiente",
-      "storage-other": "Otro",
+      "storage-other": "Sin datos",
       "storage-cold-rooms": "Cámaras frías",
       "storage-transport": "Transporte",
       "storage-connected": "Conectados",
@@ -1175,7 +1250,9 @@
       "action-prepare-close": "Preparar cierre",
       "action-close": "Cerrar incidencia",
       "action-stabilize": "Registrar lectura estable",
-      "action-review-escalation": "Revisar",
+      "action-notifications": "Notificaciones",
+      "notifications-title": "Notificaciones de la incidencia",
+      "notifications-empty": "No hay notificaciones registradas para esta incidencia.",
       "escalated-count": "escalada(s)",
       "status-open": "Abierto",
       "status-recognized": "Reconocido",
@@ -1200,7 +1277,6 @@
       "feedback-stabilized": "Lectura estable registrada para el activo.",
       "feedback-stabilize-error": "No se pudo registrar una lectura estable.",
       "feedback-stabilize-missing-device": "No hay un dispositivo de monitoreo vinculado para este activo.",
-      "feedback-escalation-reviewed": "Escalamiento revisado correctamente.",
       "feedback-already-recognized": "Esta incidencia ya fue reconocida.",
       "feedback-missing-evidence": "Registra la acción correctiva y la evidencia antes de cerrar la incidencia.",
       "feedback-condition-active": "La condición sigue activa. Estabiliza el activo antes de cerrar la incidencia.",
@@ -1234,6 +1310,10 @@
       "active-alerts": "alerta(s) activa(s)",
       "pending": "pendiente(s)",
       "failed": "fallida(s)",
+      "filter-active": "Activas",
+      "filter-pending": "Pendientes",
+      "filter-failed": "Fallidas",
+      "search-placeholder": "Buscar notificaciones por activo, destinatario, estado o canal...",
       "empty-title": "Sin notificaciones despachadas",
       "empty-description": "Cuando una lectura supere rangos, humedad, batería o señal, aparecerá aquí una notificación.",
       "recipient": "Destinatario:",

@@ -147,9 +147,7 @@
               <th>{{ 'alerts.incident-list.col-source' | translate }}</th>
               <th>{{ 'alerts.incident-list.col-escalation' | translate }}</th>
               <th>{{ 'alerts.incident-list.col-recognized-by' | translate }}</th>
-              @if (canResolveAlerts()) {
-                <th>{{ 'alerts.incident-list.col-actions' | translate }}</th>
-              }
+              <th>{{ 'alerts.incident-list.col-actions' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -219,22 +217,20 @@
                   </div>
                 </td>
                 <td class="recognized-by">{{ incident.recognizedBy ?? '—' }}</td>
-                @if (canResolveAlerts()) {
-                  <td>
-                    @if (incident.isEscalated || incident.isPendingEscalationConfiguration) {
-                      <button
-                        id="review-escalation-{{ incident.id }}"
-                        class="review-escalation-btn"
-                        [disabled]="alertsStore.reviewingEscalationId() === incident.id"
-                        (click)="reviewEscalation(incident)"
-                      >
-                        @if (alertsStore.reviewingEscalationId() === incident.id) {
-                          <mat-spinner diameter="14" />
-                        } @else {
-                          {{ 'alerts.incident-list.action-review-escalation' | translate }}
-                        }
-                      </button>
-                    } @else if (incident.isOpen) {
+                <td>
+                  <div class="action-stack">
+                    <button
+                      type="button"
+                      class="recognize-btn notifications-btn"
+                      [class.active]="selectedNotificationIncident()?.id === incident.id"
+                      [disabled]="loadingIncidentNotifications()"
+                      (click)="reviewIncidentNotifications(incident)"
+                    >
+                      <mat-icon>notifications</mat-icon>
+                      {{ 'alerts.incident-list.action-notifications' | translate }}
+                    </button>
+                    @if (canResolveAlerts()) {
+                    @if (incident.isOpen) {
                       <button
                         id="recognize-incident-{{ incident.id }}"
                         class="recognize-btn"
@@ -261,12 +257,13 @@
                         <mat-icon>check</mat-icon>
                       </span>
                     }
-                  </td>
-                }
+                    }
+                  </div>
+                </td>
               </tr>
             } @empty {
               <tr>
-                <td [attr.colspan]="canResolveAlerts() ? 10 : 9" class="empty-cell">
+                <td colspan="10" class="empty-cell">
                   <mat-icon class="empty-icon">check_circle</mat-icon>
                   <p class="empty-title">{{ 'alerts.incident-list.empty-title' | translate }}</p>
                   <p class="empty-description">{{ 'alerts.incident-list.empty-description' | translate }}</p>
@@ -276,6 +273,56 @@
           </tbody>
         </table>
       </div>
+
+      @if (selectedNotificationIncident(); as selectedIncident) {
+        <section class="incident-notifications-panel" aria-live="polite">
+          <div class="incident-notifications-header">
+            <div>
+              <h4 class="card-title">{{ 'alerts.incident-list.notifications-title' | translate }}</h4>
+              <p>
+                {{ selectedIncident.assetName }} ·
+                {{ typeLabelKey(selectedIncident) | translate }}
+              </p>
+            </div>
+            @if (loadingIncidentNotifications()) {
+              <mat-spinner diameter="22" />
+            }
+          </div>
+
+          <div class="incident-notifications-list">
+            @for (notification of incidentNotifications(); track notification.id) {
+              <article class="incident-notification-row">
+                <div>
+                  <strong>{{ notificationChannelLabelKey(notification) | translate }}</strong>
+                  <p>{{ notification.message }}</p>
+                  <small>
+                    {{ 'alerts.notification-list.recipient' | translate }}
+                    {{ notification.recipient }}
+                  </small>
+                </div>
+                <div class="incident-notification-meta">
+                  <span
+                    class="badge"
+                    [class.badge-recognized]="notification.isSent"
+                    [class.source-pending]="notification.isPending"
+                    [class.badge-open]="notification.isFailed"
+                  >
+                    {{ notificationStatusLabelKey(notification) | translate }}
+                  </span>
+                  <small>{{ formatDate(notification.createdAt) }}</small>
+                </div>
+              </article>
+            } @empty {
+              @if (!loadingIncidentNotifications()) {
+                <div class="access-notice">
+                  <mat-icon>notifications_off</mat-icon>
+                  <p>{{ 'alerts.incident-list.notifications-empty' | translate }}</p>
+                </div>
+              }
+            }
+          </div>
+        </section>
+      }
 
       @if (activeIncidents().length > 0) {
         <app-list-pagination

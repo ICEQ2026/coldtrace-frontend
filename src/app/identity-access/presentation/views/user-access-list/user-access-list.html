@@ -60,16 +60,6 @@
         <p class="feedback error">{{ 'roles-permissions.feedback.invalid-role' | translate }}</p>
       }
 
-      @if (feedback() === 'delete-forbidden') {
-        <p class="feedback error">
-          {{ 'roles-permissions.feedback.delete-forbidden' | translate }}
-        </p>
-      }
-
-      @if (feedback() === 'deleted') {
-        <p class="feedback success">{{ 'roles-permissions.feedback.deleted' | translate }}</p>
-      }
-
       @if (feedback() === 'server-error') {
         <p class="feedback error">{{ 'roles-permissions.feedback.server-error' | translate }}</p>
       }
@@ -158,19 +148,6 @@
                           {{
                             (row.pending ? 'roles-permissions.save' : 'roles-permissions.saved')
                               | translate
-                          }}
-                        </button>
-                        <button
-                          type="button"
-                          class="delete-action"
-                          [disabled]="deletingUserId() === row.user.id || !canDeleteUser(row.user)"
-                          (click)="deleteUser(row.user)"
-                        >
-                          {{
-                            (deletingUserId() === row.user.id
-                              ? 'roles-permissions.deleting'
-                              : 'roles-permissions.delete'
-                            ) | translate
                           }}
                         </button>
                       </div>

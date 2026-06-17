@@ -179,7 +179,6 @@ export class OperationalParametersSettings implements OnInit {
   protected loadPageData(): void {
     this.identityLoading.set(true);
     this.feedback.set('idle');
-    this.assetManagementStore.loadIoTDevices();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -309,9 +308,15 @@ export class OperationalParametersSettings implements OnInit {
     });
     this.selectedFrequencyMinutes.set(readingFrequencyMinutes);
     this.parameterKeys.forEach((parameter) => {
+      const control = this.operationalForm.controls[parameter];
+
       if (!this.isParameterSupported(parameter)) {
-        this.operationalForm.controls[parameter].setValue(false);
+        control.setValue(false, { emitEvent: false });
+        control.disable({ emitEvent: false });
+        return;
       }
+
+      control.enable({ emitEvent: false });
     });
     this.operationalForm.markAsPristine();
   }

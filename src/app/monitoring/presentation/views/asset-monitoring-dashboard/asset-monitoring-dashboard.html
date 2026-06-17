@@ -6,21 +6,19 @@
     </div>
 
     @if (canMonitorAssets()) {
-      <nav class="monitoring-tabs">
-        @for (tab of tabs; track tab) {
-          <button
-            type="button"
-            [class.active]="activeType() === tab.type"
-            (click)="selectAssetType(tab.type)"
-          >
-            {{ tab.labelKey | translate }}
-          </button>
-        }
-      </nav>
-    }
+      <div class="assets-toolbar monitoring-workbar" aria-label="Monitoring filters and status">
+        <nav class="monitoring-tabs" aria-label="Monitoring asset sections">
+          @for (tab of tabs; track tab.type) {
+            <button
+              type="button"
+              [class.active]="activeType() === tab.type"
+              (click)="selectAssetType(tab.type)"
+            >
+              {{ tab.labelKey | translate }}
+            </button>
+          }
+        </nav>
 
-    @if (canMonitorAssets()) {
-      <div class="assets-toolbar">
         <label class="search-box">
           <mat-icon class="search-icon">search</mat-icon>
           <input

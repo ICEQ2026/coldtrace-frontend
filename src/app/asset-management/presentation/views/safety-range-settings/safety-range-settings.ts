@@ -54,6 +54,9 @@ export class SafetyRangeSettings implements OnInit {
   protected readonly submitted = signal(false);
   protected readonly feedback = signal<SafetyRangeFeedback>('idle');
   protected readonly selectedAssetId = signal(0);
+  protected readonly effectiveSettingsAssetId = signal<number | null>(null);
+  protected readonly effectiveAssetSettings = signal<AssetSettings | null>(null);
+  protected readonly loadingEffectiveSettings = signal(false);
   protected readonly pageSize = 10;
   protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
@@ -69,11 +72,16 @@ export class SafetyRangeSettings implements OnInit {
   protected readonly selectedMaximumTemperature = signal(
     DEFAULT_ASSET_SETTING_VALUES.maximumTemperature,
   );
+  protected readonly selectedMinimumHumidity = signal(DEFAULT_ASSET_SETTING_VALUES.minimumHumidity);
   protected readonly selectedMaximumHumidity = signal(DEFAULT_ASSET_SETTING_VALUES.maximumHumidity);
 
   protected readonly rangeForm = this.fb.nonNullable.group({
     minimumTemperature: [DEFAULT_ASSET_SETTING_VALUES.minimumTemperature, [Validators.required]],
     maximumTemperature: [DEFAULT_ASSET_SETTING_VALUES.maximumTemperature, [Validators.required]],
+    minimumHumidity: [
+      DEFAULT_ASSET_SETTING_VALUES.minimumHumidity,
+      [Validators.required, Validators.min(0), Validators.max(99)],
+    ],
     maximumHumidity: [
       DEFAULT_ASSET_SETTING_VALUES.maximumHumidity,
       [Validators.required, Validators.min(1), Validators.max(100)],
@@ -81,7 +89,7 @@ export class SafetyRangeSettings implements OnInit {
   });
 
   protected readonly loading = computed(() => {
-    return this.identityLoading() || this.saving();
+    return this.identityLoading() || this.saving() || this.loadingEffectiveSettings();
   });
   protected readonly activeOrganizationId = computed(() => {
     return this.identityAccessStore.currentOrganizationIdFrom(this.users());
@@ -127,6 +135,13 @@ export class SafetyRangeSettings implements OnInit {
     return this.organizationAssets().find((asset) => asset.id === selectedAssetId) ?? null;
   });
   protected readonly selectedSettings = computed(() => {
+    const selectedAssetId = this.selectedAssetId();
+    const effectiveSettings = this.effectiveAssetSettings();
+
+    if (selectedAssetId && this.effectiveSettingsAssetId() === selectedAssetId && effectiveSettings) {
+      return effectiveSettings;
+    }
+
     return this.settingsForSelectedScope() ?? this.defaultSettingsForSelectedScope();
   });
   protected readonly currentRangeLabel = computed(() => {
@@ -146,7 +161,11 @@ export class SafetyRangeSettings implements OnInit {
     );
   });
   protected readonly selectedHumidityLabel = computed(() => {
-    return this.humidityLabel(this.selectedMaximumHumidity(), this.selectedSettings().humidityUnit);
+    return this.humidityRangeLabel(
+      this.selectedMinimumHumidity(),
+      this.selectedMaximumHumidity(),
+      this.selectedSettings().humidityUnit,
+    );
   });
   protected readonly currentProfiles = computed(() => {
     return this.organizationSettings().sort((a, b) => {
@@ -169,7 +188,6 @@ export class SafetyRangeSettings implements OnInit {
   protected loadPageData(): void {
     this.identityLoading.set(true);
     this.feedback.set('idle');
-    this.assetManagementStore.loadAssetSettings();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -198,10 +216,20 @@ export class SafetyRangeSettings implements OnInit {
   }
 
   protected selectScope(value: string): void {
-    this.selectedAssetId.set(Number(value));
+    const assetId = Number(value);
+
+    this.selectedAssetId.set(assetId);
     this.feedback.set('idle');
     this.submitted.set(false);
-    this.resetRangeForm();
+
+    if (!assetId) {
+      this.effectiveSettingsAssetId.set(null);
+      this.effectiveAssetSettings.set(null);
+      this.resetRangeForm();
+      return;
+    }
+
+    this.loadEffectiveSettings(assetId);
   }
 
   protected updatePage(page: number): void {
@@ -214,6 +242,10 @@ export class SafetyRangeSettings implements OnInit {
 
   protected updateMaximumTemperaturePreview(value: string): void {
     this.selectedMaximumTemperature.set(this.numberFromInput(value));
+  }
+
+  protected updateMinimumHumidityPreview(value: string): void {
+    this.selectedMinimumHumidity.set(this.numberFromInput(value));
   }
 
   protected updateMaximumHumidityPreview(value: string): void {
@@ -230,7 +262,7 @@ export class SafetyRangeSettings implements OnInit {
       return;
     }
 
-    if (this.rangeForm.invalid || !this.hasValidTemperatureRange()) {
+    if (this.rangeForm.invalid || !this.hasValidTemperatureRange() || !this.hasValidHumidityRange()) {
       this.feedback.set('invalid');
       return;
     }
@@ -253,7 +285,7 @@ export class SafetyRangeSettings implements OnInit {
       fallbackSettings.iotDeviceTypes,
       Number(this.rangeForm.controls.minimumTemperature.value),
       Number(this.rangeForm.controls.maximumTemperature.value),
-      fallbackSettings.minimumHumidity,
+      Number(this.rangeForm.controls.minimumHumidity.value),
       Number(this.rangeForm.controls.maximumHumidity.value),
       fallbackSettings.calibrationFrequencyDays,
       fallbackSettings.temperatureUnit,
@@ -271,7 +303,10 @@ export class SafetyRangeSettings implements OnInit {
     request.pipe(finalize(() => this.saving.set(false))).subscribe({
       next: (savedSettings) => {
         this.upsertLocalSettings(savedSettings);
-        this.assetManagementStore.loadAssetSettings();
+        if (assetId) {
+          this.effectiveSettingsAssetId.set(assetId);
+          this.effectiveAssetSettings.set(savedSettings);
+        }
         this.feedback.set('saved');
         this.submitted.set(false);
         this.rangeForm.markAsPristine();
@@ -288,10 +323,12 @@ export class SafetyRangeSettings implements OnInit {
     this.rangeForm.reset({
       minimumTemperature: settings.minimumTemperature,
       maximumTemperature: settings.maximumTemperature,
+      minimumHumidity: settings.minimumHumidity,
       maximumHumidity: settings.maximumHumidity,
     });
     this.selectedMinimumTemperature.set(settings.minimumTemperature);
     this.selectedMaximumTemperature.set(settings.maximumTemperature);
+    this.selectedMinimumHumidity.set(settings.minimumHumidity);
     this.selectedMaximumHumidity.set(settings.maximumHumidity);
     this.rangeForm.markAsPristine();
   }
@@ -304,6 +341,10 @@ export class SafetyRangeSettings implements OnInit {
 
   protected hasTemperatureRangeError(): boolean {
     return this.submitted() && !this.hasValidTemperatureRange();
+  }
+
+  protected hasHumidityRangeError(): boolean {
+    return this.submitted() && !this.hasValidHumidityRange();
   }
 
   protected scopeNameFor(settings: AssetSettings): string {
@@ -340,11 +381,39 @@ export class SafetyRangeSettings implements OnInit {
     return settings.assetId === null ? 'status-compliant' : 'status-observation';
   }
 
+  private loadEffectiveSettings(assetId: number): void {
+    this.loadingEffectiveSettings.set(true);
+    this.effectiveSettingsAssetId.set(null);
+    this.effectiveAssetSettings.set(null);
+
+    this.assetManagementApi
+      .getAssetSettingsByAssetId(assetId)
+      .pipe(finalize(() => this.loadingEffectiveSettings.set(false)))
+      .subscribe({
+        next: (settings) => {
+          this.effectiveSettingsAssetId.set(assetId);
+          this.effectiveAssetSettings.set(settings);
+          this.upsertLocalSettings(settings);
+          this.resetRangeForm();
+        },
+        error: () => {
+          this.resetRangeForm();
+        },
+      });
+  }
+
   private hasValidTemperatureRange(): boolean {
     const minimumTemperature = Number(this.rangeForm.controls.minimumTemperature.value);
     const maximumTemperature = Number(this.rangeForm.controls.maximumTemperature.value);
 
     return minimumTemperature < maximumTemperature;
+  }
+
+  private hasValidHumidityRange(): boolean {
+    const minimumHumidity = Number(this.rangeForm.controls.minimumHumidity.value);
+    const maximumHumidity = Number(this.rangeForm.controls.maximumHumidity.value);
+
+    return minimumHumidity < maximumHumidity;
   }
 
   private settingsForSelectedScope(): AssetSettings | undefined {
@@ -405,8 +474,16 @@ export class SafetyRangeSettings implements OnInit {
     return `${minimumTemperature}${temperatureUnit} - ${maximumTemperature}${temperatureUnit}`;
   }
 
-  private humidityLabel(maximumHumidity: number, humidityUnit: string): string {
-    return Number.isFinite(maximumHumidity) ? `${maximumHumidity}${humidityUnit}` : 'N/A';
+  private humidityRangeLabel(
+    minimumHumidity: number,
+    maximumHumidity: number,
+    humidityUnit: string,
+  ): string {
+    if (!Number.isFinite(minimumHumidity) || !Number.isFinite(maximumHumidity)) {
+      return 'N/A';
+    }
+
+    return `${minimumHumidity}${humidityUnit} - ${maximumHumidity}${humidityUnit}`;
   }
 
   private numberFromInput(value: string): number {

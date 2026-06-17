@@ -11,7 +11,7 @@ import { User } from '../../../domain/model/user.entity';
 import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 
-type RolePermissionFeedback = 'idle' | 'saved' | 'server-error';
+type RolePermissionFeedback = 'idle' | 'server-error';
 
 /**
  * @summary Presents the role permission form user interface in the identity access bounded context.
@@ -29,7 +29,6 @@ export class RolePermissionForm implements OnInit {
   private readonly router = inject(Router);
 
   protected readonly loading = signal(false);
-  protected readonly savingRoleId = signal<number | null>(null);
   protected readonly feedback = signal<RolePermissionFeedback>('idle');
   protected readonly pageSize = 10;
   protected readonly currentPage = signal(1);
@@ -43,9 +42,6 @@ export class RolePermissionForm implements OnInit {
   protected readonly profileUserName = computed(() => this.identityAccessStore.currentUserNameFrom(this.users()));
   protected readonly profileRoleLabelKey = computed(
     () => this.identityAccessStore.currentRoleLabelKeyFrom(this.users(), this.roles())
-  );
-  protected readonly canManageAccess = computed(
-    () => this.identityAccessStore.canManageRolePermissions(this.users(), this.roles())
   );
   protected readonly assetIssueCount = computed(() => {
     return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
@@ -66,7 +62,6 @@ export class RolePermissionForm implements OnInit {
   protected loadRoles(): void {
     this.loading.set(true);
     this.feedback.set('idle');
-    this.assetManagementStore.loadAssets();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -91,39 +86,6 @@ export class RolePermissionForm implements OnInit {
     }
 
     return `roles-permissions.roles.${role.name}`;
-  }
-
-  protected isPermissionSelected(role: Role, permissionKey: string): boolean {
-    return this.identityAccessStore.isPermissionSelected(role, permissionKey);
-  }
-
-  protected isPermissionToggleDisabled(role: Role, permissionKey: string): boolean {
-    return (
-      !this.canManageAccess() ||
-      this.savingRoleId() === role.id ||
-      this.identityAccessStore.isPermissionToggleDisabled(role, permissionKey)
-    );
-  }
-
-  protected toggleRolePermission(role: Role, permissionKey: string, checked: boolean): void {
-    if (!this.canManageAccess()) {
-      return;
-    }
-
-    this.savingRoleId.set(role.id);
-    this.feedback.set('idle');
-    this.identityAccessStore
-      .toggleRolePermission(role, permissionKey, checked)
-      .pipe(finalize(() => this.savingRoleId.set(null)))
-      .subscribe({
-        next: (savedRole) => {
-          this.roles.update((roles) =>
-            roles.map((currentRole) => (currentRole.id === savedRole.id ? savedRole : currentRole)),
-          );
-          this.feedback.set('saved');
-        },
-        error: () => this.feedback.set('server-error'),
-      });
   }
 
   protected logout(): void {
