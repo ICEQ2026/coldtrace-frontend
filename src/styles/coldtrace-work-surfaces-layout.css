@@ -1,0 +1,736 @@
+body .content-scroll > app-cold-room-list,
+body .content-scroll > app-asset-monitoring-dashboard,
+body .content-scroll > app-user-access-list,
+body .content-scroll > app-user-form,
+body .content-scroll > app-role-permission-form,
+body .content-scroll > app-safety-range-settings,
+body .content-scroll > app-operational-parameters-settings,
+body .content-scroll > app-preventive-maintenance-scheduler,
+body .content-scroll > app-technical-service-tracker,
+body .content-scroll > app-daily-log,
+body .content-scroll > app-monthly-report,
+body .content-scroll > app-operational-history,
+body .content-scroll > app-sanitary-compliance,
+body .content-scroll > app-compliance-findings,
+body .content-scroll > app-audit-evidence,
+body .content-scroll > app-incident-list,
+body .content-scroll > app-notification-list {
+  display: block;
+  min-height: 100%;
+}
+
+body .content-scroll > app-cold-room-list,
+body .content-scroll > app-asset-monitoring-dashboard,
+body .content-scroll > app-user-form {
+  box-sizing: border-box;
+  padding: 18px 22px 44px;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-asset-monitoring-dashboard,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(
+    .page,
+    .history-page,
+    .monitoring-page,
+    .incident-list-view,
+    .notification-list-view,
+    .daily-log-page
+  ) {
+  background: var(--color-background) !important;
+  padding-top: 2px !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-asset-monitoring-dashboard,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(.view-header, .monitoring-header, .page-heading) {
+  margin-bottom: 18px;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(
+    .page-heading,
+    .section-heading,
+    .feedback,
+    .filter-card,
+    .summary-grid,
+    .table-card,
+    .observation-banner,
+    .access-banner,
+    .evidence-grid
+  ) {
+  max-width: none !important;
+}
+
+body :is(app-cold-room-list, app-asset-monitoring-dashboard) :is(.assets-toolbar, .search-box) {
+  margin-top: 0;
+}
+
+body :is(app-cold-room-list, app-asset-monitoring-dashboard, app-user-access-list) .search-box {
+  min-height: 38px;
+}
+
+body :is(app-cold-room-list, app-asset-monitoring-dashboard, app-user-access-list) .search-icon {
+  color: var(--color-text-subtle);
+  opacity: 0.62;
+}
+
+body
+:is(app-cold-room-list, app-asset-monitoring-dashboard, app-user-access-list)
+.search-box
+input {
+  color: var(--color-text);
+  font-family: Inter, Arial, sans-serif;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(
+    .primary-action,
+    .secondary-action,
+    .reload-action,
+    .save-action,
+    .delete-action,
+    .danger-action,
+    .primary-form-action,
+    .recognize-btn,
+    .close-shortcut-btn,
+    .review-escalation-btn,
+    .close-incident-btn,
+    .stabilize-reading-btn,
+    .attend-action,
+    .row-action
+  ) {
+  border-radius: var(--radius-control) !important;
+  box-shadow: none !important;
+  font-family: Inter, Arial, sans-serif !important;
+  font-weight: 800 !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(.secondary-action, .reload-action, .save-action) {
+  border-color: var(--color-border) !important;
+  color: var(--color-text-muted) !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(.secondary-action:hover, .reload-action:hover, .save-action:hover) {
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(
+    .table-card,
+    .summary-card,
+    .filter-card,
+    .form-card,
+    .access-denied,
+    .observation-banner,
+    .access-banner
+  ) {
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-card) !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(.section-heading h2, .table-heading h2, .card-title, .view-title, .page-heading h1) {
+  color: var(--color-text) !important;
+  font-family: Inter, Arial, sans-serif !important;
+  font-weight: 800 !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(
+    .section-heading p,
+    .table-heading p,
+    .view-subtitle,
+    .page-heading p,
+    .notification-subtitle,
+    .closure-subtitle
+  ) {
+  color: var(--color-text-subtle) !important;
+  font-family: Inter, Arial, sans-serif !important;
+  font-weight: 700 !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(.assets-table, .access-table, .data-table, .daily-log-table, .premium-table, .history-table)
+:is(th, td) {
+  font-family: Inter, Arial, sans-serif !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(.assets-table, .access-table, .data-table, .daily-log-table, .premium-table, .history-table)
+th {
+  color: var(--color-text-subtle) !important;
+  font-weight: 800 !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(.assets-table, .access-table, .data-table, .daily-log-table, .premium-table, .history-table)
+td {
+  color: var(--color-text) !important;
+  font-weight: 600 !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(
+    .status-pill,
+    .status-select-field,
+    .role-pill,
+    .permission-list span,
+    .badge,
+    .condition-pill,
+    .source-pill,
+    .escalation-pill,
+    .notification-status,
+    .notification-count,
+    .open-count,
+    .escalated-count,
+    .closure-count,
+    .severity-pill,
+    .inline-pill
+  ) {
+  border-radius: 8px !important;
+  font-family: Inter, Arial, sans-serif !important;
+  font-weight: 800 !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(
+    .form-field input,
+    .form-field textarea,
+    .form-field select,
+    .filter-field input,
+    .filter-field select,
+    .filter-field textarea,
+    .closure-field select,
+    .closure-field textarea,
+    .derived-field,
+    .parameter-list
+  ) {
+  background: var(--color-surface-muted) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: none !important;
+  color: var(--color-text) !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-incident-list,
+    app-notification-list
+  )
+:is(
+    .form-field input:focus,
+    .form-field textarea:focus,
+    .form-field select:focus,
+    .filter-field input:focus,
+    .filter-field select:focus,
+    .filter-field textarea:focus,
+    .closure-field select:focus,
+    .closure-field textarea:focus
+  ) {
+  border-color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12) !important;
+  outline: none;
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+body
+:is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+:is(.summary-grid article, .summary-card) {
+  min-height: 92px;
+}
+
+body
+:is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+:is(.summary-card strong, .summary-grid strong) {
+  color: var(--accent-text, var(--color-text)) !important;
+}
+
+body
+:is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.accent-blue {
+  --accent-bg: var(--color-primary-soft);
+  --accent-text: var(--color-primary);
+}
+
+body
+:is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.accent-green {
+  --accent-bg: var(--color-success-soft);
+  --accent-text: var(--color-success);
+}
+
+body
+:is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.accent-amber {
+  --accent-bg: var(--color-warning-soft);
+  --accent-text: var(--color-warning);
+}
+
+body
+:is(
+    app-user-access-list,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.accent-red {
+  --accent-bg: var(--color-danger-soft);
+  --accent-text: var(--color-danger);
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker
+  )
+.heading-actions
+.primary-action,
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker
+  )
+.heading-actions
+.primary-action.mat-mdc-unelevated-button {
+  height: 36px !important;
+  width: auto !important;
+}
+
+body :is(app-operational-parameters-settings, app-role-permission-form) .parameter-option {
+  background: var(--color-surface-muted) !important;
+  border-color: var(--color-border) !important;
+  color: var(--color-text-muted) !important;
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.section-kicker {
+  display: none !important;
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.page-heading {
+  align-items: flex-start !important;
+  margin-top: 0 !important;
+  min-height: 0;
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.page-heading
+h1 {
+  color: var(--color-text) !important;
+  font:
+    800 24px/30px Inter,
+    Arial,
+    sans-serif !important;
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.heading-actions {
+  align-items: center !important;
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 10px;
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.heading-actions
+:is(.primary-action, .secondary-action, .mat-mdc-button-base) {
+  height: 36px !important;
+  min-width: 0 !important;
+  width: auto !important;
+}

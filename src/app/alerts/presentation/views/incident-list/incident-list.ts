@@ -1,13 +1,4 @@
-import {
-  Component,
-  computed,
-  effect,
-  ElementRef,
-  inject,
-  OnInit,
-  signal,
-  ViewChild,
-} from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -19,8 +10,6 @@ import { ListPagination } from '../../../../shared/presentation/components/list-
 import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
 import { Notification } from '../../../domain/model/notification.entity';
-
-type IncidentPanel = 'incidents' | 'closure';
 
 /**
  * @summary Presents the incident list user interface in the alerts bounded context.
@@ -49,8 +38,6 @@ export class IncidentList implements OnInit {
   protected readonly loadingIncidentNotifications = signal(false);
   protected readonly pageSize = 10;
   protected readonly currentPage = signal(1);
-  protected readonly searchTerm = signal('');
-  protected readonly selectedIncidentPanel = signal<IncidentPanel>('incidents');
   protected readonly canResolveAlerts = computed(() => this.alertsStore.canResolveAlerts());
   protected readonly profileUserName = computed(() =>
     this.identityStore.currentUserNameFrom(this.identityStore.users()),
@@ -58,31 +45,8 @@ export class IncidentList implements OnInit {
   protected readonly activeIncidents = computed(() =>
     this.alertsStore.incidents().filter((incident) => !incident.isClosed),
   );
-  protected readonly filteredIncidents = computed(() => {
-    const normalizedSearch = this.searchTerm().trim().toLowerCase();
-
-    if (!normalizedSearch) {
-      return this.activeIncidents();
-    }
-
-    return this.activeIncidents().filter((incident) => {
-      return [
-        incident.assetName,
-        incident.type,
-        incident.value,
-        incident.status,
-        incident.conditionKey ?? '',
-        incident.severity,
-        incident.recognizedBy ?? '',
-        incident.escalationStatus,
-      ]
-        .join(' ')
-        .toLowerCase()
-        .includes(normalizedSearch);
-    });
-  });
   protected readonly paginatedIncidents = computed(() =>
-    this.paginate(this.filteredIncidents(), this.currentPage()),
+    this.paginate(this.activeIncidents(), this.currentPage()),
   );
   protected readonly pendingClosureIncidents = computed(() =>
     this.activeIncidents().filter((incident) => incident.isRecognized),
@@ -127,19 +91,6 @@ export class IncidentList implements OnInit {
     this.alertsStore.recognizeIncident(incident, userName).subscribe({
       error: () => undefined,
     });
-  }
-
-  protected updateSearchTerm(value: string): void {
-    this.searchTerm.set(value);
-    this.currentPage.set(1);
-  }
-
-  protected selectIncidentPanel(panel: IncidentPanel): void {
-    if (panel === 'closure' && !this.canResolveAlerts()) {
-      return;
-    }
-
-    this.selectedIncidentPanel.set(panel);
   }
 
   protected updatePage(page: number): void {
@@ -200,14 +151,11 @@ export class IncidentList implements OnInit {
     }
 
     this.closureForm.controls.incidentId.setValue(incident.id);
-    this.selectedIncidentPanel.set('closure');
     this.alertsStore.clearFeedback();
-    queueMicrotask(() =>
-      this.closureCard?.nativeElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      }),
-    );
+    queueMicrotask(() => this.closureCard?.nativeElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    }));
   }
 
   protected reviewIncidentNotifications(incident: Incident): void {
@@ -227,11 +175,7 @@ export class IncidentList implements OnInit {
   protected stabilizeSelectedIncident(): void {
     const incident = this.selectedClosureIncident();
 
-    if (
-      !incident ||
-      incident.isConditionStable ||
-      this.alertsStore.stabilizingId() === incident.id
-    ) {
+    if (!incident || incident.isConditionStable || this.alertsStore.stabilizingId() === incident.id) {
       return;
     }
 
@@ -240,19 +184,18 @@ export class IncidentList implements OnInit {
     });
   }
 
-  protected hasClosureControlError(controlName: keyof typeof this.closureForm.controls): boolean {
+  protected hasClosureControlError(
+    controlName: keyof typeof this.closureForm.controls,
+  ): boolean {
     const control = this.closureForm.controls[controlName];
     return control.invalid && (control.touched || this.closureSubmitted());
   }
 
   protected statusLabelKey(incident: Incident): string {
     switch (incident.status) {
-      case 'recognized':
-        return 'alerts.incident-list.status-recognized';
-      case 'closed':
-        return 'alerts.incident-list.status-closed';
-      default:
-        return 'alerts.incident-list.status-open';
+      case 'recognized': return 'alerts.incident-list.status-recognized';
+      case 'closed': return 'alerts.incident-list.status-closed';
+      default: return 'alerts.incident-list.status-open';
     }
   }
 
@@ -326,5 +269,3 @@ export class IncidentList implements OnInit {
     return items.slice(startIndex, startIndex + this.pageSize);
   }
 }
-
-

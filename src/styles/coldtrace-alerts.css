@@ -1,0 +1,1082 @@
+body app-incident-list .incident-toolbar {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  min-height: 40px;
+}
+
+body app-incident-list .search-box {
+  align-items: center;
+  color: #98a2b3;
+  display: flex;
+  gap: 10px;
+  min-width: min(430px, 100%);
+}
+
+body app-incident-list .search-icon {
+  color: #98a2b3;
+  font-size: 24px;
+  height: 24px;
+  opacity: 0.68;
+  width: 24px;
+}
+
+body app-incident-list .search-box input {
+  background: transparent;
+  border: 0;
+  color: #263348;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif;
+  outline: 0;
+  width: 100%;
+}
+
+body app-incident-list .incident-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+body app-incident-list .metric-pill,
+body app-incident-list .open-count,
+body app-incident-list .escalated-count,
+body app-incident-list .closure-count {
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  display: inline-flex;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif;
+  padding: 5px 10px;
+  white-space: nowrap;
+}
+
+body app-incident-list .metric-open,
+body app-incident-list .open-count {
+  background: #feeceb;
+  color: #b51313;
+}
+
+body app-incident-list .metric-escalated,
+body app-incident-list .escalated-count,
+body app-incident-list .metric-pending {
+  background: #fff8e8;
+  color: #b16f0b;
+}
+
+body app-incident-list .table-card,
+body app-incident-list .closure-card {
+  border-radius: 8px;
+  padding: 22px 28px;
+}
+
+body app-incident-list .premium-table td {
+  color: #263348;
+  font-weight: 600;
+  height: 48px;
+  padding-block: 10px;
+}
+
+body app-incident-list .badge,
+body app-incident-list .condition-pill,
+body app-incident-list .source-pill,
+body app-incident-list .escalation-pill {
+  border: 1px solid rgba(16, 24, 40, 0.06);
+  border-radius: 8px;
+}
+
+body app-incident-list .type-cell.crit,
+body app-incident-list .type-cell.warn {
+  color: #263348;
+}
+
+body app-incident-list .type-cell.crit mat-icon {
+  color: #d92d20;
+}
+
+body app-incident-list .type-cell.warn mat-icon {
+  color: #f59e0b;
+}
+
+body app-incident-list .recognize-btn,
+body app-incident-list .close-shortcut-btn,
+body app-incident-list .review-escalation-btn {
+  border-radius: 8px;
+  font-weight: 800;
+  min-height: 32px;
+}
+
+@media (max-width: 860px) {
+body app-incident-list .incident-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 860px) {
+body app-incident-list .incident-metrics,
+  body app-incident-list .search-box {
+    width: 100%;
+  }
+}
+
+@media (max-width: 860px) {
+body app-incident-list .incident-metrics {
+    justify-content: flex-start;
+  }
+}
+
+body app-incident-list .incident-workbar {
+  align-items: center;
+  border-bottom: 1px solid #e4e7ec;
+  display: grid;
+  gap: 18px;
+  grid-template-columns: auto minmax(300px, 460px) minmax(260px, 1fr);
+  min-height: 48px;
+}
+
+body app-incident-list .incident-toolbar {
+  display: contents;
+}
+
+body app-incident-list .incident-toolbar .search-box {
+  margin: 0;
+}
+
+body app-incident-list .incident-metrics {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+body app-incident-list .metric-pill {
+  align-items: center;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  display: inline-flex;
+  font:
+    800 12px/18px Inter,
+    Arial,
+    sans-serif;
+  min-height: 30px;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+body app-incident-list .metric-open {
+  background: #fff5f5;
+  border-color: #fee2e2;
+  color: #b42318;
+}
+
+body app-incident-list .metric-escalated,
+body app-incident-list .metric-pending {
+  background: #fffaf0;
+  border-color: #fdecc8;
+  color: #9a650d;
+}
+
+body app-incident-list .metric-pending {
+  background: #f5f7ff;
+  border-color: #dbe4ff;
+  color: #2563eb;
+}
+
+@media (max-width: 1080px) {
+body app-incident-list .incident-workbar {
+    grid-template-columns: 1fr;
+    padding-bottom: 12px;
+  }
+}
+
+@media (max-width: 1080px) {
+body app-incident-list .incident-toolbar {
+    display: grid;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 1080px) {
+body app-incident-list .incident-metrics {
+    justify-content: flex-start;
+  }
+}
+
+body
+:is(app-incident-list, app-notification-list)
+:is(.incident-list-view, .notification-list-view) {
+  gap: 18px !important;
+  padding: 0 !important;
+}
+
+body .work-tabs,
+body app-incident-list .incident-section-tabs {
+  align-items: center !important;
+  display: flex !important;
+  gap: 26px !important;
+  min-height: 42px !important;
+  overflow-x: auto !important;
+}
+
+body .work-tabs a,
+body .work-tabs button,
+body app-incident-list .incident-section-tabs button {
+  align-items: center !important;
+  appearance: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #98a2b3 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif !important;
+  gap: 8px !important;
+  min-height: 42px !important;
+  padding: 0 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+
+body .work-tabs a.active,
+body .work-tabs a:hover,
+body .work-tabs button.active,
+body .work-tabs button:hover,
+body app-incident-list .incident-section-tabs button.active,
+body app-incident-list .incident-section-tabs button:hover {
+  border-bottom-color: #2563eb !important;
+  color: #2563eb !important;
+}
+
+body app-incident-list .incident-section-tabs mat-icon {
+  display: none !important;
+}
+
+body app-incident-list .incident-section-tabs strong {
+  align-items: center !important;
+  background: #eef2ff !important;
+  border-radius: 999px !important;
+  color: #3b66f5 !important;
+  display: inline-flex !important;
+  font:
+    800 11px/18px Inter,
+    Arial,
+    sans-serif !important;
+  height: 22px !important;
+  justify-content: center !important;
+  min-width: 22px !important;
+  padding: 0 7px !important;
+}
+
+body app-incident-list .incident-toolbar {
+  display: contents !important;
+}
+
+body :is(app-incident-list, app-notification-list) :is(.incident-metrics, .toolbar-summary) {
+  align-items: center !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  justify-content: flex-end !important;
+}
+
+body :is(app-incident-list, app-notification-list) :is(.metric-pill, .notification-count) {
+  align-items: center !important;
+  border: 1px solid #e4e7ec !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 14px rgba(16, 24, 40, 0.04) !important;
+  display: inline-flex !important;
+  font:
+    800 12px/18px Inter,
+    Arial,
+    sans-serif !important;
+  min-height: 32px !important;
+  padding: 0 10px !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 1080px) {
+body :is(app-incident-list, app-notification-list) :is(.incident-metrics, .toolbar-summary) {
+    justify-content: flex-start !important;
+  }
+}
+
+body app-incident-list .incident-list-view {
+  gap: 16px !important;
+}
+
+body app-incident-list .incident-section-tabs {
+  gap: 26px !important;
+  margin: 0 !important;
+  min-height: 42px !important;
+}
+
+body app-incident-list .incident-section-tabs button {
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif !important;
+  min-height: 42px !important;
+  padding: 0 !important;
+}
+
+body app-incident-list .incident-workbar {
+  margin: 2px 0 18px !important;
+}
+
+body app-incident-list .incident-list-view {
+  gap: 14px !important;
+}
+
+body app-incident-list .view-header {
+  margin: 0 !important;
+}
+
+body app-incident-list .incident-workbar {
+  align-items: center !important;
+  display: grid !important;
+  gap: 18px !important;
+  grid-template-columns: auto minmax(260px, 420px) minmax(150px, 1fr) !important;
+  margin: 2px 0 18px !important;
+  min-height: 42px !important;
+}
+
+body app-incident-list .incident-section-tabs {
+  gap: 26px !important;
+  min-height: 42px !important;
+}
+
+body app-incident-list .incident-section-tabs button {
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif !important;
+  min-height: 42px !important;
+}
+
+body app-incident-list .incident-section-tabs :is(mat-icon, strong) {
+  display: none !important;
+}
+
+body app-incident-list .incident-toolbar {
+  display: contents !important;
+}
+
+body app-incident-list .incident-metrics {
+  justify-self: end !important;
+}
+
+@media (max-width: 1080px) {
+body app-incident-list .incident-metrics {
+    justify-self: start !important;
+  }
+}
+
+body app-incident-list .incident-section-tabs button,
+body app-incident-list .incident-section-tabs button span {
+  color: inherit !important;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif !important;
+  letter-spacing: 0 !important;
+}
+
+body app-incident-list .incident-section-tabs button:not(.active) span {
+  color: #98a2b3 !important;
+}
+
+body app-incident-list .incident-section-tabs button.active span,
+body app-incident-list .incident-section-tabs button:hover span {
+  color: #2563eb !important;
+}
+
+body app-notification-list .notification-workbar {
+  grid-template-columns: auto minmax(260px, 420px) minmax(150px, 1fr) !important;
+}
+
+body
+:is(app-incident-list, app-notification-list)
+:is(.incident-list-view, .notification-list-view) {
+  gap: 10px !important;
+}
+
+body :is(app-incident-list, app-notification-list) .view-header {
+  margin: 0 !important;
+}
+
+body
+:is(app-incident-list, app-notification-list)
+:is(.incident-list-view, .notification-list-view) {
+  gap: 0 !important;
+}
+
+body :is(app-incident-list, app-notification-list) .view-header {
+  margin: 0 0 10px !important;
+}
+
+body :is(app-incident-list, app-notification-list) .view-header {
+  margin: 0 0 14px !important;
+}
+
+/* Component styles moved from src/app/alerts/presentation/views/incident-list/incident-list.css. */
+app-incident-list .incident-list-view {
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+/* Header */
+app-incident-list .view-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+app-incident-list .header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+app-incident-list .view-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+app-incident-list .view-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: #6B7280;
+}
+
+/* Feedback banner */
+app-incident-list .feedback-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+app-incident-list .feedback-success {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+app-incident-list .feedback-error {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+app-incident-list .feedback-banner mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Card */
+app-incident-list .premium-card {
+  background: #FFFFFF;
+  border-radius: 14px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+app-incident-list .table-card {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 28px 18px;
+}
+
+app-incident-list .card-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+app-incident-list .card-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin-right: auto;
+}
+
+app-incident-list .open-count,
+app-incident-list .escalated-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: #DC2626;
+  background: #FEE2E2;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+app-incident-list .escalated-count {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+/* Table */
+app-incident-list .table-container {
+  overflow-x: auto;
+}
+
+app-incident-list .premium-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+app-incident-list .premium-table th {
+  text-align: left;
+  padding: 0 12px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #9CA3AF;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
+}
+
+app-incident-list .premium-table td {
+  padding: 8px 12px;
+  font-size: 12px;
+  color: #4B5563;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.035);
+}
+
+app-incident-list .premium-table th:first-child,
+app-incident-list .premium-table td:first-child { padding-left: 0; }
+
+app-incident-list .premium-table th:last-child,
+app-incident-list .premium-table td:last-child {
+  padding-right: 0;
+  text-align: right;
+}
+
+app-incident-list .asset-name {
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+}
+
+app-incident-list .type-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+app-incident-list .type-cell mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+app-incident-list .crit { color: #DC2626; }
+app-incident-list .crit mat-icon { color: #EF4444; }
+app-incident-list .warn { color: #D97706; }
+app-incident-list .warn mat-icon { color: #FBBF24; }
+
+app-incident-list .value {
+  font-weight: 600;
+  color: #111827;
+}
+
+app-incident-list .date {
+  color: #6B7280;
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+
+app-incident-list .recognized-by {
+  color: #374151;
+  font-weight: 500;
+}
+
+app-incident-list .recognized-row {
+  opacity: 0.72;
+}
+
+/* Badges */
+app-incident-list .badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+app-incident-list .badge-open {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+app-incident-list .badge-recognized {
+  background: #DCFCE7;
+  color: #16A34A;
+}
+
+app-incident-list .badge-closed {
+  background: #E5E7EB;
+  color: #374151;
+}
+
+app-incident-list .condition-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+app-incident-list .condition-stable {
+  background: #E0F2FE;
+  color: #0369A1;
+}
+
+app-incident-list .condition-active {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+app-incident-list .source-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+app-incident-list .source-generated {
+  background: #DBEAFE;
+  color: #1D4ED8;
+}
+
+app-incident-list .source-initial {
+  background: #F3F4F6;
+  color: #4B5563;
+}
+
+app-incident-list .source-pending {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+app-incident-list .escalation-cell {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 118px;
+}
+
+app-incident-list .escalation-cell small {
+  color: #9CA3AF;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+app-incident-list .escalation-pill {
+  border-radius: 5px;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+
+app-incident-list .escalation-none {
+  background: #F3F4F6;
+  color: #4B5563;
+}
+
+app-incident-list .escalation-pending {
+  background: #FEF3C7;
+  color: #B45309;
+}
+
+app-incident-list .escalation-escalated {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+app-incident-list .escalation-reviewed {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+/* Recognize button */
+app-incident-list .recognize-btn,
+app-incident-list .close-shortcut-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 5px 14px;
+  border: 1.5px solid #3B66F5;
+  border-radius: 6px;
+  background: transparent;
+  color: #3B66F5;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 90px;
+}
+
+app-incident-list .recognize-btn:hover:not(:disabled),
+app-incident-list .close-shortcut-btn:hover:not(:disabled) {
+  background: #3B66F5;
+  color: #FFFFFF;
+}
+
+app-incident-list .recognize-btn:disabled,
+app-incident-list .close-shortcut-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+app-incident-list .close-shortcut-btn {
+  border-color: #16A34A;
+  color: #15803D;
+}
+
+app-incident-list .close-shortcut-btn:hover:not(:disabled) {
+  background: #16A34A;
+}
+
+app-incident-list .action-done {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  color: #16A34A;
+}
+
+app-incident-list .action-done mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+app-incident-list .action-stack {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+app-incident-list .notifications-btn {
+  background: #F9FAFB;
+  border-color: #E5E7EB;
+  color: #4B5563;
+  min-width: 110px;
+}
+
+app-incident-list .notifications-btn.active {
+  background: #DBEAFE;
+  border-color: #93C5FD;
+  color: #1D4ED8;
+}
+
+app-incident-list .incident-notifications-panel {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 16px;
+}
+
+app-incident-list .incident-notifications-header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+app-incident-list .incident-notifications-header p {
+  color: #6B7280;
+  font-size: 12px;
+  margin: 4px 0 0;
+}
+
+app-incident-list .incident-notifications-list {
+  display: grid;
+  gap: 8px;
+}
+
+app-incident-list .incident-notification-row {
+  background: #FFFFFF;
+  border: 1px solid #EEF2F7;
+  border-radius: 10px;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 12px;
+}
+
+app-incident-list .incident-notification-row p {
+  color: #4B5563;
+  margin: 4px 0;
+}
+
+app-incident-list .incident-notification-meta {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+/* Empty state */
+app-incident-list .empty-cell {
+  text-align: center;
+  padding: 48px 0;
+  border-bottom: none;
+}
+
+app-incident-list .empty-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: #D1FAE5;
+  margin-bottom: 8px;
+}
+
+app-incident-list .empty-title {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+app-incident-list .empty-description {
+  margin: 0;
+  font-size: 12px;
+  color: #6B7280;
+}
+
+/* Access notice */
+app-incident-list .access-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: #F9FAFB;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #6B7280;
+  border: 1px solid #F3F4F6;
+}
+
+app-incident-list .access-notice mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: #9CA3AF;
+}
+
+app-incident-list .closure-card {
+  display: flex;
+  flex-direction: column;
+  padding: 22px 28px;
+}
+
+app-incident-list .closure-header {
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+app-incident-list .closure-subtitle {
+  margin: 4px 0 0;
+  color: #6B7280;
+  font-size: 12px;
+}
+
+app-incident-list .closure-count {
+  background: #EEF2FF;
+  border-radius: 20px;
+  color: #3B66F5;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+app-incident-list .closure-form {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(200px, 0.85fr) minmax(260px, 1fr) minmax(260px, 1fr);
+}
+
+app-incident-list .closure-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+app-incident-list .closure-field span {
+  color: #374151;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+app-incident-list .closure-field select,
+app-incident-list .closure-field textarea {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  color: #111827;
+  font: inherit;
+  font-size: 12px;
+  outline: none;
+  padding: 10px 12px;
+  resize: vertical;
+}
+
+app-incident-list .closure-field select:focus,
+app-incident-list .closure-field textarea:focus {
+  border-color: #3B66F5;
+  box-shadow: 0 0 0 3px rgba(59, 102, 245, 0.12);
+}
+
+app-incident-list .closure-field small {
+  color: #DC2626;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+app-incident-list .closure-condition {
+  align-items: center;
+  border-radius: 8px;
+  display: flex;
+  font-size: 12px;
+  font-weight: 700;
+  gap: 8px;
+  justify-content: space-between;
+  min-height: 38px;
+  padding: 0 12px;
+}
+
+app-incident-list .closure-condition mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+app-incident-list .closure-condition-ready {
+  background: #ECFDF5;
+  color: #047857;
+}
+
+app-incident-list .closure-condition-blocked {
+  background: #FFFBEB;
+  color: #B45309;
+}
+
+app-incident-list .close-incident-btn {
+  align-items: center;
+  align-self: start;
+  background: #16A34A;
+  border: 0;
+  border-radius: 8px;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 12px;
+  font-weight: 700;
+  gap: 8px;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 16px;
+  width: fit-content;
+}
+
+app-incident-list .close-incident-btn mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
+}
+
+app-incident-list .close-incident-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+app-incident-list .stabilize-reading-btn {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #fbbf24;
+  border-radius: 7px;
+  color: #92400e;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 11px;
+  font-weight: 800;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 10px;
+  white-space: nowrap;
+}
+
+app-incident-list .stabilize-reading-btn mat-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+}
+
+app-incident-list .stabilize-reading-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Loading */
+app-incident-list .loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 0;
+}
+
+app-incident-list tr:hover {
+  background: #FAFBFC;
+}
+
+app-incident-list tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 1180px) {
+  app-incident-list .closure-form {
+    grid-template-columns: 1fr;
+  }
+}
+/* End component styles moved from src/app/alerts/presentation/views/incident-list/incident-list.css. */

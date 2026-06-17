@@ -47,6 +47,72 @@
   padding: 22px 28px;
 }
 
+.notification-toolbar {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  min-height: 40px;
+}
+
+.notification-filter-tabs {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.notification-filter-tabs button {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #667085;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  min-height: 36px;
+  padding: 0 14px;
+}
+
+.notification-filter-tabs button.active,
+.notification-filter-tabs button:hover {
+  background: #eff4ff;
+  border-color: #bfdbfe;
+  color: #2563eb;
+}
+
+.search-box {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  color: #98a2b3;
+  display: flex;
+  gap: 10px;
+  min-height: 38px;
+  min-width: min(460px, 100%);
+  padding: 0 12px;
+}
+
+.search-icon {
+  color: #98a2b3;
+  font-size: 20px;
+  height: 20px;
+  width: 20px;
+}
+
+.search-box input {
+  background: transparent;
+  border: 0;
+  color: #263348;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  outline: 0;
+  width: 100%;
+}
+
 .card-header {
   align-items: flex-start;
   display: flex;
@@ -307,147 +373,13 @@
   }
 }
 
-.notification-toolbar {
-  align-items: center;
-  display: flex;
-  gap: 16px;
-  justify-content: space-between;
-  min-height: 40px;
-}
-
-.search-box {
-  align-items: center;
-  color: #98a2b3;
-  display: flex;
-  gap: 10px;
-  min-width: min(460px, 100%);
-}
-
-.search-icon {
-  color: #98a2b3;
-  font-size: 24px;
-  height: 24px;
-  opacity: 0.68;
-  width: 24px;
-}
-
-.search-box input {
-  background: transparent;
-  border: 0;
-  color: #263348;
-  font:
-    800 12px/20px Inter,
-    Arial,
-    sans-serif;
-  outline: 0;
-  width: 100%;
-}
-
-.toolbar-summary {
-  justify-content: flex-end;
-}
-
-.notification-card {
-  border-radius: 8px;
-}
-
-.notification-count,
-.notification-status,
-.notification-title-line .notification-escalation,
-.notification-title-line .notification-severity {
-  border: 1px solid rgba(16, 24, 40, 0.06);
-  border-radius: 8px;
-}
-
-.notification-row {
-  border-color: #e4e7ec;
-}
-
-.notification-content p {
-  color: #667085;
-  font-weight: 600;
-}
-
 @media (max-width: 900px) {
   .notification-toolbar {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .search-box,
-  .toolbar-summary {
+  .search-box {
     width: 100%;
   }
-
-  .toolbar-summary {
-    justify-content: flex-start;
-  }
-}
-
-/* Notification list visual recovery: centered channel icons and consistent action buttons. */
-.notification-row {
-  align-items: center !important;
-  grid-template-columns: 42px minmax(0, 1fr) auto !important;
-  min-height: 74px;
-  padding: 12px 14px !important;
-}
-
-.notification-channel {
-  align-self: center !important;
-  height: 36px !important;
-  justify-self: center !important;
-  width: 36px !important;
-}
-
-.notification-channel mat-icon {
-  align-items: center;
-  display: inline-flex;
-  height: 20px !important;
-  justify-content: center;
-  line-height: 20px !important;
-  width: 20px !important;
-}
-
-.notification-state {
-  align-items: flex-end !important;
-  justify-content: center !important;
-}
-
-.attend-action {
-  align-items: center !important;
-  background: #ffffff !important;
-  border: 1px solid #c7d2fe !important;
-  border-radius: 8px !important;
-  color: #2563eb !important;
-  display: inline-flex !important;
-  font-size: 11px !important;
-  font-weight: 800 !important;
-  gap: 6px !important;
-  height: 34px !important;
-  justify-content: center !important;
-  padding: 0 12px !important;
-}
-
-.attend-action mat-icon {
-  font-size: 16px !important;
-  height: 16px !important;
-  line-height: 16px !important;
-  width: 16px !important;
-}
-
-/* Final notification polish: active alerts is the default list and action buttons breathe like the rest of the dashboard. */
-.attend-action {
-  gap: 8px !important;
-  min-width: 128px !important;
-  padding: 0 14px !important;
-}
-
-.attend-action mat-icon {
-  flex: 0 0 16px !important;
-}
-
-/* Give notification actions the same side breathing room as dashboard toolbar buttons. */
-.attend-action {
-  min-width: 140px !important;
-  padding: 0 18px !important;
 }

@@ -1,0 +1,41 @@
+body app-technical-service-tracker .forms-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+  max-width: none !important;
+  width: 100%;
+}
+
+body app-technical-service-tracker > .page > .table-card {
+  max-width: none !important;
+  width: 100%;
+}
+
+body app-technical-service-tracker .service-card {
+  min-height: 0;
+  padding: 22px 24px !important;
+}
+
+body app-technical-service-tracker .service-form {
+  align-content: start;
+}
+
+body app-technical-service-tracker .table-wrapper {
+  overflow-x: auto;
+}
+
+body app-technical-service-tracker .data-table td {
+  height: 58px;
+  line-height: 18px;
+  vertical-align: top;
+}
+
+@media (max-width: 1080px) {
+body app-technical-service-tracker .forms-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+body app-technical-service-tracker .summary-grid,
+body app-preventive-maintenance-scheduler .summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  margin-top: 18px;
+}

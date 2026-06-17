@@ -1,6 +1,5 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
@@ -38,7 +37,7 @@ type PreventiveMaintenanceFeedback =
  */
 @Component({
   selector: 'app-preventive-maintenance-scheduler',
-  imports: [RouterLink, RouterLinkActive,
+  imports: [
     MatButton,
     MatIcon,
     MatProgressSpinner,

@@ -1,0 +1,507 @@
+body :is(app-operational-parameters-settings, app-safety-range-settings) .feedback.error,
+body :is(app-preventive-maintenance-scheduler, app-technical-service-tracker) .feedback.error,
+body
+:is(
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.feedback.error {
+  background: #fff5f5 !important;
+  border: 1px solid #ffd6d6 !important;
+  border-left: 1px solid #ffd6d6 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 14px rgba(16, 24, 40, 0.04) !important;
+  color: #9f1d1d !important;
+  margin: 0 0 14px !important;
+  padding: 12px 16px !important;
+}
+
+body
+:is(app-operational-parameters-settings, app-safety-range-settings)
+.feedback.error
++ .access-banner,
+body
+:is(app-preventive-maintenance-scheduler, app-technical-service-tracker)
+.feedback.error
++ .access-banner,
+body
+:is(
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.feedback.error
++ .access-banner {
+  margin-top: 0 !important;
+}
+
+body :is(app-incident-list, app-notification-list) .view-header,
+body
+:is(app-user-access-list, app-user-form, app-role-permission-form)
+:is(.access-header, .access-view-header),
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.page-heading {
+  margin: 0 0 16px !important;
+}
+
+body
+:is(app-cold-room-list, app-asset-monitoring-dashboard, app-incident-list, app-notification-list)
+:is(.assets-workbar, .monitoring-workbar, .incident-workbar, .notification-workbar),
+body app-user-access-list .access-workbar {
+  align-items: center !important;
+  display: grid !important;
+  gap: 18px !important;
+  grid-template-columns: auto minmax(260px, 420px) minmax(150px, 1fr) !important;
+  margin: 2px 0 18px !important;
+  min-height: 42px !important;
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.page-heading {
+  display: block !important;
+  position: relative !important;
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.section-tabs {
+  margin: 2px 0 18px !important;
+  padding-right: 260px !important;
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.heading-actions {
+  align-items: center !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 10px !important;
+  justify-content: flex-end !important;
+  position: absolute !important;
+  right: 0 !important;
+  top: 70px !important;
+  z-index: 2 !important;
+}
+
+html
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.heading-actions
+:is(button.primary-action, button.secondary-action, .mat-mdc-button-base) {
+  align-items: center !important;
+  border-radius: 8px !important;
+  display: inline-flex !important;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif !important;
+  gap: 8px !important;
+  height: 40px !important;
+  justify-content: center !important;
+  min-height: 40px !important;
+  min-width: 0 !important;
+  padding: 0 14px !important;
+  width: auto !important;
+}
+
+html
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.heading-actions
+button.primary-action {
+  background: #ffffff !important;
+  border: 1px solid #dbe4ff !important;
+  color: #2563eb !important;
+}
+
+html
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.heading-actions
+button.secondary-action {
+  background: #ffffff !important;
+  border: 1px solid #e4e7ec !important;
+  color: #667085 !important;
+}
+
+body :is(app-operational-parameters-settings, app-safety-range-settings) .feedback.error,
+body :is(app-preventive-maintenance-scheduler, app-technical-service-tracker) .feedback.error,
+body
+:is(
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.feedback.error {
+  margin: 0 0 10px !important;
+}
+
+body :is(app-operational-parameters-settings, app-safety-range-settings) .access-banner,
+body :is(app-preventive-maintenance-scheduler, app-technical-service-tracker) .access-banner,
+body
+:is(
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+.access-banner {
+  margin: 0 0 18px !important;
+}
+
+@media (max-width: 1080px) {
+body
+  :is(
+      app-cold-room-list,
+      app-asset-monitoring-dashboard,
+      app-incident-list,
+      app-notification-list
+    )
+  :is(.assets-workbar, .monitoring-workbar, .incident-workbar, .notification-workbar),
+  body app-user-access-list .access-workbar {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 1080px) {
+body
+  :is(
+      app-safety-range-settings,
+      app-operational-parameters-settings,
+      app-preventive-maintenance-scheduler,
+      app-technical-service-tracker,
+      app-daily-log,
+      app-monthly-report,
+      app-operational-history,
+      app-sanitary-compliance,
+      app-compliance-findings,
+      app-audit-evidence
+    )
+  .heading-actions {
+    margin-top: 12px !important;
+    position: static !important;
+  }
+}
+
+@media (max-width: 1080px) {
+body
+  :is(
+      app-safety-range-settings,
+      app-operational-parameters-settings,
+      app-preventive-maintenance-scheduler,
+      app-technical-service-tracker,
+      app-daily-log,
+      app-monthly-report,
+      app-operational-history,
+      app-sanitary-compliance,
+      app-compliance-findings,
+      app-audit-evidence
+    )
+  .section-tabs {
+    padding-right: 0 !important;
+  }
+}
+
+body
+.content-scroll
+> :is(
+    app-cold-room-list,
+    app-asset-monitoring-dashboard,
+    app-incident-list,
+    app-notification-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  ) {
+  padding-top: 8px !important;
+}
+
+body
+:is(
+    app-cold-room-list,
+    app-asset-monitoring-dashboard,
+    app-incident-list,
+    app-notification-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+:is(
+    .asset-view-header p,
+    .page-subtitle,
+    .view-subtitle,
+    .access-header p,
+    .access-view-header p,
+    .page-heading p
+  ) {
+  color: #98a2b3 !important;
+  font:
+    800 13px/20px Inter,
+    Arial,
+    sans-serif !important;
+  margin: 6px 0 0 !important;
+}
+
+body
+:is(app-asset-monitoring-dashboard, app-incident-list, app-notification-list)
+:is(.monitoring-page, .incident-list-view, .notification-list-view) {
+  padding-top: 0 !important;
+}
+
+body :is(app-incident-list, app-notification-list) .header-text,
+body app-asset-monitoring-dashboard .header-main {
+  gap: 0 !important;
+}
+
+body
+.content-scroll
+> :is(
+    app-cold-room-list,
+    app-asset-monitoring-dashboard,
+    app-incident-list,
+    app-notification-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-operational-dashboard
+  ) {
+  padding-top: 8px !important;
+}
+
+body
+.content-scroll
+> :is(
+    app-cold-room-list,
+    app-asset-monitoring-dashboard,
+    app-incident-list,
+    app-notification-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-operational-dashboard
+  ) {
+  padding-top: 18px !important;
+}
+
+body
+.content-scroll
+> :is(
+    app-cold-room-list,
+    app-asset-monitoring-dashboard,
+    app-incident-list,
+    app-notification-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-operational-dashboard
+  ) {
+  padding-top: 30px !important;
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+:is(.heading-actions button, .primary-action, .secondary-action) {
+  align-items: center !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  display: inline-flex !important;
+  gap: 10px !important;
+  height: 40px !important;
+  justify-content: center !important;
+  min-width: 104px !important;
+  padding: 0 16px !important;
+}
+
+body
+:is(
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+:is(.heading-actions button, .primary-action, .secondary-action)
+mat-icon {
+  font-size: 18px !important;
+  height: 18px !important;
+  margin: 0 !important;
+  width: 18px !important;
+}
+
+body
+.content-scroll
+> :is(
+    app-cold-room-list,
+    app-asset-monitoring-dashboard,
+    app-incident-list,
+    app-notification-list,
+    app-user-access-list,
+    app-user-form,
+    app-role-permission-form,
+    app-safety-range-settings,
+    app-operational-parameters-settings,
+    app-preventive-maintenance-scheduler,
+    app-technical-service-tracker,
+    app-daily-log,
+    app-monthly-report,
+    app-operational-history,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence,
+    app-operational-dashboard
+  ) {
+  padding-top: 4px !important;
+}
