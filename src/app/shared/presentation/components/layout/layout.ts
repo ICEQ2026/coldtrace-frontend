@@ -1,15 +1,17 @@
-import { Component, DestroyRef, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { filter, interval } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { AlertsStore } from '../../../../alerts/application/alerts.store';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
-import { MonitoringStore } from '../../../../monitoring/application/monitoring.store';
 import { ReportsStore } from '../../../../reports/application/reports.store';
 import { MonthlyReport } from '../../../../reports/domain/model/monthly-report.entity';
-import { TELEMETRY_POLLING_INTERVAL_MS } from '../../../domain/model/polling-interval.constant';
-import { DashboardShell, OrganizationMemberSummary } from '../dashboard-shell/dashboard-shell';
+import {
+  DashboardShell,
+  OrganizationMemberSummary,
+} from '../dashboard-shell/dashboard-shell';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
 /**
@@ -17,17 +19,15 @@ import { LanguageSwitcher } from '../language-switcher/language-switcher';
  */
 @Component({
   selector: 'app-layout',
-  imports: [RouterOutlet, LanguageSwitcher, DashboardShell],
+  imports: [RouterOutlet, LanguageSwitcher, DashboardShell, TranslateModule],
   templateUrl: './layout.html',
   styleUrl: './layout.css',
 })
 export class Layout implements OnInit {
   private readonly router = inject(Router);
-  private readonly destroyRef = inject(DestroyRef);
   private readonly identityAccessStore = inject(IdentityAccessStore);
   private readonly assetManagementStore = inject(AssetManagementStore);
   private readonly alertsStore = inject(AlertsStore);
-  private readonly monitoringStore = inject(MonitoringStore);
   private readonly reportsStore = inject(ReportsStore);
 
   protected readonly currentUrl = signal(this.router.url);
@@ -53,6 +53,9 @@ export class Layout implements OnInit {
 
   protected readonly showLanguageSwitcher = computed(() => {
     return !this.showDashboardShell();
+  });
+  protected readonly dashboardContentReady = computed(() => {
+    return !this.showDashboardShell() || !!this.identityAccessStore.currentUserId();
   });
 
   protected readonly pageTitleKey = computed(() => {
@@ -201,37 +204,33 @@ export class Layout implements OnInit {
   });
 
   protected readonly pendingAlertsCount = computed(() => this.alertsStore.openIncidentsCount());
-
   protected readonly organizationMembers = computed<OrganizationMemberSummary[]>(() => {
     const organizationId = this.activeOrganizationId();
     const roles = this.identityAccessStore.roles();
 
-    if (!organizationId) {
-      return [];
-    }
-
     return this.identityAccessStore.users()
       .filter((user) => user.organizationId === organizationId)
       .slice(0, 5)
-      .map((user, index) => {
+      .map((user) => {
         const role = roles.find((currentRole) => currentRole.id === user.roleId);
-        const initials = user.fullName
-          .split(' ')
-          .filter(Boolean)
-          .slice(0, 2)
-          .map((part) => part[0]?.toUpperCase() ?? '')
-          .join('') || 'US';
-        const status = index === 2 ? 'busy' : index === 4 ? 'offline' : 'online';
 
         return {
           id: user.id,
           fullName: user.fullName,
-          initials,
+          initials: this.initialsFor(user.fullName),
           roleLabelKey: this.identityAccessStore.roleLabelKey(role),
-          status,
-          statusLabel: status === 'online' ? 'Online' : status === 'busy' ? 'Reviewing' : 'Away',
         };
       });
+  });
+  protected readonly dashboardContextQueryParams = computed<Record<string, number>>(() => {
+    const userId = this.identityAccessStore.currentUserId();
+    const organizationId = this.activeOrganizationId();
+
+    if (!userId || !organizationId) {
+      return {} as Record<string, number>;
+    }
+
+    return { organizationId, userId };
   });
 
   constructor() {
@@ -240,15 +239,22 @@ export class Layout implements OnInit {
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed(),
       )
-      .subscribe((event) => this.currentUrl.set(event.urlAfterRedirects));
+      .subscribe((event) => {
+        this.currentUrl.set(event.urlAfterRedirects);
+
+        if (this.canLoadShellData()) {
+          this.loadShellData();
+        }
+      });
   }
 
   /**
    * @summary Initializes the layout view state.
    */
   ngOnInit(): void {
-    this.loadShellData();
-    this.startTelemetryUpdates();
+    if (this.canLoadShellData()) {
+      this.loadShellData();
+    }
   }
 
   protected logout(): void {
@@ -258,7 +264,7 @@ export class Layout implements OnInit {
 
   protected downloadCurrentMonthReport(): void {
     if (!this.canDownloadReports()) {
-      void this.router.navigate(['/reports/monthly']);
+      this.navigateToMonthlyReports();
       return;
     }
 
@@ -266,7 +272,7 @@ export class Layout implements OnInit {
     const monthlyReport = this.reportsStore.buildMonthlyReport(this.activeOrganizationId(), month);
 
     if (!monthlyReport.canDownload) {
-      void this.router.navigate(['/reports/monthly']);
+      this.navigateToMonthlyReports();
       return;
     }
 
@@ -274,32 +280,85 @@ export class Layout implements OnInit {
       .createMonthlySummaryReport(this.activeOrganizationId(), monthlyReport)
       .subscribe({
         next: () => this.downloadMonthlyCsv(monthlyReport),
-        error: () => void this.router.navigate(['/reports/monthly']),
+        error: () => this.navigateToMonthlyReports(),
       });
+  }
+
+  private navigateToMonthlyReports(): void {
+    void this.router.navigate(['/reports/monthly'], {
+      queryParams: this.dashboardContextQueryParams(),
+    });
   }
 
   private loadShellData(): void {
+    if (!this.identityAccessStore.currentUserId()) {
+      this.identityAccessStore.loadDemoSession(
+        this.demoSessionContextFromUrl(),
+        () => this.loadShellData(),
+      );
+      return;
+    }
+
+    this.keepDashboardContextInUrl();
     this.identityAccessStore.loadUsers();
     this.identityAccessStore.loadOrganizations();
     this.identityAccessStore.loadRoles();
-    this.assetManagementStore.loadAssets();
-    this.assetManagementStore.loadIoTDevices();
-    this.assetManagementStore.loadGateways();
-    this.assetManagementStore.loadAssetSettings();
-    this.monitoringStore.loadReadings();
-    this.alertsStore.loadIncidents();
-    this.reportsStore.loadReports();
+    this.alertsStore.loadIncidents({ silent: true });
   }
 
-  private startTelemetryUpdates(): void {
-    interval(TELEMETRY_POLLING_INTERVAL_MS)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
-        if (this.showDashboardShell()) {
-          this.assetManagementStore.updateOrganizationTelemetry(this.activeOrganizationId());
-          this.alertsStore.loadIncidents({ silent: true });
-        }
-      });
+  private canLoadShellData(): boolean {
+    return this.showDashboardShell();
+  }
+
+  private demoSessionContextFromUrl(): { organizationId?: number; userId?: number } {
+    const queryParams = this.router.parseUrl(this.router.url).queryParams;
+
+    return {
+      organizationId: this.positiveNumberFrom(queryParams['organizationId']),
+      userId: this.positiveNumberFrom(queryParams['userId']),
+    };
+  }
+
+  private keepDashboardContextInUrl(): void {
+    const userId = this.identityAccessStore.currentUserId();
+    const organizationId =
+      this.activeOrganizationId() ?? this.organizationIdFromCurrentUser();
+    const queryParams = this.router.parseUrl(this.router.url).queryParams;
+
+    if (!userId || !organizationId) {
+      return;
+    }
+
+    if (
+      Number(queryParams['userId']) === userId &&
+      Number(queryParams['organizationId']) === organizationId
+    ) {
+      return;
+    }
+
+    void this.router.navigate([], {
+      queryParams: { organizationId, userId },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    });
+  }
+
+  private positiveNumberFrom(value: unknown): number | undefined {
+    const numberValue = Number(value);
+
+    if (!Number.isFinite(numberValue) || numberValue <= 0) {
+      return undefined;
+    }
+
+    return numberValue;
+  }
+
+  private organizationIdFromCurrentUser(): number | null {
+    const userId = this.identityAccessStore.currentUserId();
+
+    return (
+      this.identityAccessStore.users().find((user) => user.id === userId)?.organizationId ?? null
+    );
   }
 
   private downloadMonthlyCsv(monthlyReport: MonthlyReport): void {
@@ -324,5 +383,16 @@ export class Layout implements OnInit {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)/g, '') || 'organization'
     );
+  }
+
+  private initialsFor(fullName: string): string {
+    const initials = fullName
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase() ?? '')
+      .join('');
+
+    return initials || 'CT';
   }
 }

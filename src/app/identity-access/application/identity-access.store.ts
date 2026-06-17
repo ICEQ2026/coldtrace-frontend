@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { catchError, map, Observable, of, tap, throwError } from 'rxjs';
+import { OrganizationScopeStore } from '../../shared/infrastructure/organization-scope.store';
 import { Organization } from '../domain/model/organization.entity';
 import { PermissionAction } from '../domain/model/permission-action.enum';
 import { Permission } from '../domain/model/permission.entity';
@@ -12,6 +12,20 @@ interface PermissionDefinition {
   key: string;
   resource: string;
   action: PermissionAction;
+}
+
+interface LoadOptions {
+  force?: boolean;
+}
+
+interface DemoSessionContext {
+  organizationId?: number;
+  userId?: number;
+}
+
+interface DemoOrganizationUsers {
+  organization: Organization;
+  users: User[];
 }
 
 /**
@@ -29,6 +43,13 @@ export class IdentityAccessStore {
   private readonly currentRoleLabelKeySignal = signal<string>('');
   private readonly currentOrganizationNameSignal = signal<string>('');
   private readonly rolePermissionKeysByRoleIdSignal = signal<Record<number, string[]>>({});
+  private usersLoadedForOrganizationId: number | null = null;
+  private usersRequestInFlightForOrganizationId: number | null = null;
+  private organizationsLoaded = false;
+  private organizationsRequestInFlight = false;
+  private rolesLoaded = false;
+  private rolesRequestInFlight = false;
+  private demoSessionRequestInFlight = false;
   readonly manageAdministratorsPermissionKey = 'roles-permissions.permissions.manage-administrators';
   readonly manageUsersPermissionKey = 'roles-permissions.permissions.manage-users';
   readonly manageAssetsPermissionKey = 'roles-permissions.permissions.manage-assets';
@@ -110,46 +131,107 @@ export class IdentityAccessStore {
   readonly rolePermissionKeysByRoleId = this.rolePermissionKeysByRoleIdSignal.asReadonly();
   readonly userCount = computed(() => this.users().length);
 
-  constructor(private identityAccessApi: IdentityAccessApi) {}
+  constructor(
+    private identityAccessApi: IdentityAccessApi,
+    private organizationScope: OrganizationScopeStore,
+  ) {}
 
-  /**
+   /**
    * @summary Loads users data into local state.
    */
-  loadUsers(): void {
+  loadUsers(options: LoadOptions = {}): void {
+    const organizationId = this.organizationScope.activeOrganizationId();
+
+    if (!organizationId) {
+      this.usersSignal.set([]);
+      return;
+    }
+
+    if (
+      !options.force &&
+      (this.usersLoadedForOrganizationId === organizationId ||
+        this.usersRequestInFlightForOrganizationId === organizationId)
+    ) {
+      return;
+    }
+
+    this.usersRequestInFlightForOrganizationId = organizationId;
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
     this.identityAccessApi.getUsers().subscribe({
       next: (users) => {
         this.usersSignal.set(users);
+        this.usersLoadedForOrganizationId = organizationId;
+        this.usersRequestInFlightForOrganizationId = null;
         this.loadingSignal.set(false);
       },
       error: (error) => {
         this.errorSignal.set(error.message);
+        this.usersRequestInFlightForOrganizationId = null;
         this.loadingSignal.set(false);
       },
     });
   }
 
-  /**
+   /**
    * @summary Loads organizations data into local state.
    */
-  loadOrganizations(): void {
+  loadOrganizations(options: LoadOptions = {}): void {
+    if (!options.force && (this.organizationsLoaded || this.organizationsRequestInFlight)) {
+      return;
+    }
+
+    this.organizationsRequestInFlight = true;
     this.identityAccessApi.getOrganizations().subscribe({
-      next: (organizations) => this.organizationsSignal.set(organizations),
-      error: (error) => this.errorSignal.set(error.message),
+      next: (organizations) => {
+        this.organizationsSignal.set(organizations);
+        this.organizationsLoaded = true;
+        this.organizationsRequestInFlight = false;
+      },
+      error: (error) => {
+        this.errorSignal.set(error.message);
+        this.organizationsRequestInFlight = false;
+      },
     });
   }
 
-  /**
+   /**
    * @summary Loads roles data into local state.
    */
-  loadRoles(): void {
+  loadRoles(options: LoadOptions = {}): void {
+    if (!options.force && (this.rolesLoaded || this.rolesRequestInFlight)) {
+      return;
+    }
+
+    this.rolesRequestInFlight = true;
     this.identityAccessApi.getRoles().subscribe({
       next: (roles) => {
         this.rolesSignal.set(roles);
         this.initializeRolePermissions(roles);
+        this.rolesLoaded = true;
+        this.rolesRequestInFlight = false;
       },
-      error: (error) => this.errorSignal.set(error.message),
+      error: (error) => {
+        this.errorSignal.set(error.message);
+        this.rolesRequestInFlight = false;
+      },
+    });
+  }
+
+  /**
+   * @summary Loads a seeded demo context while real authentication is not available.
+   */
+  loadDemoSession(context: DemoSessionContext = {}, onReady?: () => void): void {
+    if (this.currentUserId() || this.demoSessionRequestInFlight) {
+      return;
+    }
+
+    this.demoSessionRequestInFlight = true;
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    this.identityAccessApi.getOrganizations().subscribe({
+      next: (organizations) => this.loadDemoOrganizationUsers(organizations, context, onReady),
+      error: (error) => this.handleDemoSessionError(error),
     });
   }
 
@@ -159,6 +241,7 @@ export class IdentityAccessStore {
   setCurrentUser(user: User): void {
     this.currentUserIdSignal.set(user.id);
     this.currentUserNameSignal.set(user.fullName);
+    this.organizationScope.setActiveOrganizationId(user.organizationId);
   }
 
   /**
@@ -186,6 +269,7 @@ export class IdentityAccessStore {
    */
   setCurrentOrganization(organization: Organization): void {
     this.currentOrganizationNameSignal.set(organization.commercialName);
+    this.organizationScope.setActiveOrganizationId(organization.id);
   }
 
   /**
@@ -217,6 +301,9 @@ export class IdentityAccessStore {
     this.currentUserNameSignal.set('');
     this.currentRoleLabelKeySignal.set('');
     this.currentOrganizationNameSignal.set('');
+    this.organizationScope.setActiveOrganizationId(null);
+    this.usersLoadedForOrganizationId = null;
+    this.usersRequestInFlightForOrganizationId = null;
   }
 
   /**
@@ -233,7 +320,6 @@ export class IdentityAccessStore {
       }
     }
 
-    // The demo falls back to the seeded first user when no session service exists yet.
     return users.find(user => user.id === 1) ?? users[0];
   }
 
@@ -370,41 +456,6 @@ export class IdentityAccessStore {
   }
 
   /**
-   * @summary Checks whether the current user may delete another user.
-   */
-  canDeleteUser(user: User | undefined, users: User[], roles: Role[]): boolean {
-    if (!user || this.currentUserFrom(users)?.id === user.id) {
-      return false;
-    }
-
-    const actorRole = this.currentRoleFrom(users, roles);
-    const targetRole = roles.find((role) => role.id === user.roleId);
-
-    if (this.isSuperAdministratorRole(actorRole)) {
-      return true;
-    }
-
-    if (!this.isAdministratorRole(actorRole)) {
-      return false;
-    }
-
-    return !this.isSuperAdministratorRole(targetRole) && !this.isAdministratorRole(targetRole);
-  }
-
-  /**
-   * @summary Checks whether the current user may delete asset resources.
-   */
-  canDeleteAssetResources(users: User[], roles: Role[]): boolean {
-    const role = this.currentRoleFrom(users, roles);
-
-    return (
-      this.isSuperAdministratorRole(role) ||
-      this.isAdministratorRole(role) ||
-      role?.name === RoleName.OperationsManager
-    );
-  }
-
-  /**
    * @summary Checks whether the current user may assign a target role.
    */
   canAssignRole(role: Role | undefined, users: User[], roles: Role[]): boolean {
@@ -451,105 +502,6 @@ export class IdentityAccessStore {
     return `roles-permissions.roles.${role.name}`;
   }
 
-  /**
-   * @summary Checks whether a permission toggle should be locked.
-   */
-  isPermissionToggleDisabled(role: Role, permissionKey: string): boolean {
-    if (this.isSuperAdministratorRole(role) || this.isAdministratorRole(role)) {
-      return true;
-    }
-
-    if (permissionKey === this.manageAdministratorsPermissionKey) {
-      return true;
-    }
-
-    const selectedPermissionKeys = this.permissionKeysForRole(role).filter(
-      (currentKey) => currentKey !== 'roles-permissions.permissions.none',
-    );
-
-    return (
-      !this.isPermissionSelected(role, permissionKey) &&
-      selectedPermissionKeys.length >= this.availablePermissionKeys.length - 1
-    );
-  }
-
-  /**
-   * @summary Adds or removes a permission for a role and persists it.
-   */
-  toggleRolePermission(role: Role, permissionKey: string, checked: boolean): Observable<Role> {
-    if (
-      this.isSuperAdministratorRole(role) ||
-      this.isAdministratorRole(role) ||
-      permissionKey === this.manageAdministratorsPermissionKey
-    ) {
-      return of(role);
-    }
-
-    const previousKeys = this.permissionKeysForRole(role).filter(
-      (currentKey) => currentKey !== 'roles-permissions.permissions.none',
-    );
-    const nextKeys = this.nextPermissionKeys(previousKeys, permissionKey, checked);
-
-    if (nextKeys.length === this.availablePermissionKeys.length) {
-      return of(role);
-    }
-
-    const updatedRole = this.roleWithPermissionKeys(role, nextKeys);
-    this.setPermissionKeysForRole(role.id, nextKeys);
-    this.updateRoleState(updatedRole);
-
-    return this.identityAccessApi.updateRole(updatedRole).pipe(
-      tap((savedRole) => {
-        const savedKeys = this.permissionKeysFromRole(savedRole);
-        this.setPermissionKeysForRole(savedRole.id, savedKeys);
-        this.updateRoleState(savedRole);
-      }),
-      catchError((error) => {
-        this.setPermissionKeysForRole(role.id, previousKeys);
-        this.updateRoleState(this.roleWithPermissionKeys(role, previousKeys));
-        return throwError(() => error);
-      }),
-    );
-  }
-
-  /**
-   * @summary Deletes a user when the current role is allowed to do it.
-   */
-  deleteUser(
-    user: User,
-    users: User[] = this.users(),
-    roles: Role[] = this.roles(),
-  ): Observable<{ status: 'success' | 'forbidden' }> {
-    if (!this.canDeleteUser(user, users, roles)) {
-      return of({ status: 'forbidden' });
-    }
-
-    const previousUsers = this.users();
-    this.usersSignal.update((currentUsers) =>
-      currentUsers.filter((currentUser) => currentUser.id !== user.id),
-    );
-
-    return this.identityAccessApi.deleteUser(user.id).pipe(
-      map(() => ({ status: 'success' as const })),
-      catchError((error) =>
-        this.identityAccessApi.getUsers().pipe(
-          map((remoteUsers) => {
-            if (!remoteUsers.some((remoteUser) => remoteUser.id === user.id)) {
-              return { status: 'success' as const };
-            }
-
-            this.usersSignal.set(previousUsers);
-            throw error;
-          }),
-          catchError(() => {
-            this.usersSignal.set(previousUsers);
-            return throwError(() => error);
-          }),
-        ),
-      ),
-    );
-  }
-
   private permissionStateFromRoles(roles: Role[]): Record<number, string[]> {
     return roles.reduce(
       (state, role) => ({
@@ -558,6 +510,148 @@ export class IdentityAccessStore {
       }),
       {},
     );
+  }
+
+  private loadDemoOrganizationUsers(
+    organizations: Organization[],
+    context: DemoSessionContext,
+    onReady?: () => void,
+  ): void {
+    this.organizationsSignal.set(organizations);
+    this.organizationsLoaded = true;
+    this.organizationsRequestInFlight = false;
+
+    const organization = this.demoOrganizationFrom(organizations, context.organizationId);
+
+    if (!organization) {
+      this.loadDemoUsersFromOrganizations(organizations, context, onReady);
+      return;
+    }
+
+    this.loadDemoUsersForOrganization(organization, organizations, context, onReady);
+  }
+
+  private loadDemoUsersForOrganization(
+    organization: Organization,
+    organizations: Organization[],
+    context: DemoSessionContext,
+    onReady?: () => void,
+  ): void {
+    this.setCurrentOrganization(organization);
+    this.identityAccessApi.getUsersForOrganization(organization.id).subscribe({
+      next: (users) => this.loadDemoRoles(users, organizations, context, onReady),
+      error: (error) => this.handleDemoSessionError(error),
+    });
+  }
+
+  private loadDemoUsersFromOrganizations(
+    organizations: Organization[],
+    context: DemoSessionContext,
+    onReady?: () => void,
+    index = 0,
+    fallback?: DemoOrganizationUsers,
+  ): void {
+    const organization = organizations[index];
+
+    if (!organization) {
+      if (fallback) {
+        this.setCurrentOrganization(fallback.organization);
+        this.loadDemoRoles(fallback.users, organizations, {}, onReady);
+        return;
+      }
+
+      this.finishDemoSessionLoading();
+      return;
+    }
+
+    this.identityAccessApi.getUsersForOrganization(organization.id).subscribe({
+      next: (users) => {
+        const nextFallback = fallback ?? (users.length ? { organization, users } : undefined);
+
+        if (this.requestedDemoUserFrom(users, context.userId)) {
+          this.setCurrentOrganization(organization);
+          this.loadDemoRoles(users, organizations, context, onReady);
+          return;
+        }
+
+        this.loadDemoUsersFromOrganizations(
+          organizations,
+          context,
+          onReady,
+          index + 1,
+          nextFallback,
+        );
+      },
+      error: (error) => this.handleDemoSessionError(error),
+    });
+  }
+
+  private loadDemoRoles(
+    users: User[],
+    organizations: Organization[],
+    context: DemoSessionContext,
+    onReady?: () => void,
+  ): void {
+    const organizationId = this.organizationScope.activeOrganizationId();
+    this.usersSignal.set(users);
+    this.usersLoadedForOrganizationId = organizationId;
+    this.usersRequestInFlightForOrganizationId = null;
+
+    const user = this.demoUserFrom(users, context.userId);
+
+    if (!user) {
+      this.finishDemoSessionLoading();
+      return;
+    }
+
+    this.setCurrentUser(user);
+    this.identityAccessApi.getRoles().subscribe({
+      next: (roles) => {
+        this.rolesSignal.set(roles);
+        this.rolesLoaded = true;
+        this.rolesRequestInFlight = false;
+        this.setCurrentContextFrom(users, roles, organizations);
+        this.finishDemoSessionLoading();
+
+        if (user) {
+          onReady?.();
+        }
+      },
+      error: (error) => this.handleDemoSessionError(error),
+    });
+  }
+
+  private demoOrganizationFrom(
+    organizations: Organization[],
+    organizationId?: number,
+  ): Organization | undefined {
+    if (!organizationId) {
+      return undefined;
+    }
+
+    return organizations.find(organization => organization.id === organizationId);
+  }
+
+  private demoUserFrom(users: User[], userId?: number): User | undefined {
+    if (userId) {
+      return users.find(user => user.id === userId) ?? users.find(user => user.id === 1) ?? users[0];
+    }
+
+    return users.find(user => user.id === 1) ?? users[0];
+  }
+
+  private requestedDemoUserFrom(users: User[], userId?: number): User | undefined {
+    return users.find(user => user.id === (userId ?? 1));
+  }
+
+  private handleDemoSessionError(error: Error): void {
+    this.errorSignal.set(error.message);
+    this.finishDemoSessionLoading();
+  }
+
+  private finishDemoSessionLoading(): void {
+    this.demoSessionRequestInFlight = false;
+    this.loadingSignal.set(false);
   }
 
   private permissionKeysFromRole(role: Role): string[] {
@@ -589,58 +683,9 @@ export class IdentityAccessStore {
     );
   }
 
-  private roleWithPermissionKeys(role: Role, permissionKeys: string[]): Role {
-    return new Role(
-      role.id,
-      role.name,
-      role.label,
-      this.orderPermissionKeys(permissionKeys).map(
-        (permissionKey, index) =>
-          new Permission(
-            index + 1,
-            this.permissionDefinitionFor(permissionKey).resource,
-            this.permissionDefinitionFor(permissionKey).action,
-            permissionKey,
-          ),
-      ),
-    );
-  }
-
-  private permissionDefinitionFor(permissionKey: string): PermissionDefinition {
-    return (
-      this.permissionDefinitions.find((definition) => definition.key === permissionKey) ??
-      this.permissionDefinitions[this.permissionDefinitions.length - 1]
-    );
-  }
-
-  private nextPermissionKeys(
-    currentKeys: string[],
-    permissionKey: string,
-    checked: boolean,
-  ): string[] {
-    const nextKeys = checked
-      ? [...currentKeys, permissionKey]
-      : currentKeys.filter((currentKey) => currentKey !== permissionKey);
-
-    return this.orderPermissionKeys(nextKeys);
-  }
-
   private orderPermissionKeys(permissionKeys: string[]): string[] {
     return this.availablePermissionKeys.filter((permissionKey) =>
       permissionKeys.includes(permissionKey),
-    );
-  }
-
-  private setPermissionKeysForRole(roleId: number, permissionKeys: string[]): void {
-    this.rolePermissionKeysByRoleIdSignal.update((current) => ({
-      ...current,
-      [roleId]: this.orderPermissionKeys(permissionKeys),
-    }));
-  }
-
-  private updateRoleState(role: Role): void {
-    this.rolesSignal.update((roles) =>
-      roles.map((currentRole) => (currentRole.id === role.id ? role : currentRole)),
     );
   }
 }

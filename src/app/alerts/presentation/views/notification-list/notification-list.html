@@ -6,8 +6,8 @@
     </div>
   </div>
 
-  <div class="notification-toolbar notification-workbar">
-    <nav class="work-tabs notification-filter-tabs" aria-label="Notification filters">
+  <div class="notification-toolbar">
+    <nav class="notification-filter-tabs" aria-label="Notification filters">
       <button
         type="button"
         [class.active]="selectedNotificationFilter() === 'active'"
@@ -36,7 +36,7 @@
       <input
         type="search"
         [value]="searchTerm()"
-        placeholder="Search notifications by asset, recipient, status or channel..."
+        [placeholder]="'alerts.notification-list.search-placeholder' | translate"
         (input)="updateSearchTerm($any($event.target).value)"
       />
     </label>
@@ -54,6 +54,23 @@
           <p class="notification-subtitle">
             {{ 'alerts.notification-list.card-subtitle' | translate }}
           </p>
+        </div>
+        <div class="notification-summary">
+          <span class="notification-count">
+            {{ notifications().length }} {{ 'alerts.notification-list.total' | translate }}
+          </span>
+          <span class="notification-count active">
+            {{ alertsStore.openIncidentsCount() }}
+            {{ 'alerts.notification-list.active-alerts' | translate }}
+          </span>
+          <span class="notification-count pending">
+            {{ alertsStore.pendingNotificationsCount() }}
+            {{ 'alerts.notification-list.pending' | translate }}
+          </span>
+          <span class="notification-count failed">
+            {{ alertsStore.failedNotificationsCount() }}
+            {{ 'alerts.notification-list.failed' | translate }}
+          </span>
         </div>
       </div>
 
@@ -77,7 +94,7 @@
 
             <div class="notification-content">
               <div class="notification-title-line">
-                <span>{{ notification.assetName }}</span>
+                <span>{{ notificationTitle(notification) }}</span>
                 <small>{{ notificationChannelLabelKey(notification) | translate }}</small>
                 @if (incidentForNotification(notification); as incident) {
                   <small

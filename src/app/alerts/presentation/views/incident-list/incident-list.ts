@@ -13,10 +13,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
+import { finalize } from 'rxjs';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
 import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
+import { Notification } from '../../../domain/model/notification.entity';
 
 type IncidentPanel = 'incidents' | 'closure';
 
@@ -42,6 +44,9 @@ export class IncidentList implements OnInit {
   private readonly fb = inject(FormBuilder);
   @ViewChild('closureCard') private closureCard?: ElementRef<HTMLElement>;
   protected readonly closureSubmitted = signal(false);
+  protected readonly selectedNotificationIncident = signal<Incident | null>(null);
+  protected readonly incidentNotifications = signal<Notification[]>([]);
+  protected readonly loadingIncidentNotifications = signal(false);
   protected readonly pageSize = 10;
   protected readonly currentPage = signal(1);
   protected readonly searchTerm = signal('');
@@ -111,7 +116,7 @@ export class IncidentList implements OnInit {
    * @summary Initializes the incident list view state.
    */
   ngOnInit(): void {
-    this.alertsStore.loadIncidents();
+    this.alertsStore.loadIncidents({ evaluateReadings: true });
   }
 
   protected recognize(incident: Incident): void {
@@ -189,19 +194,6 @@ export class IncidentList implements OnInit {
       });
   }
 
-  protected reviewEscalation(incident: Incident): void {
-    if (
-      this.alertsStore.reviewingEscalationId() === incident.id ||
-      (!incident.isEscalated && !incident.isPendingEscalationConfiguration)
-    ) {
-      return;
-    }
-
-    this.alertsStore.reviewEscalation(incident, this.profileUserName()).subscribe({
-      error: () => undefined,
-    });
-  }
-
   protected selectIncidentForClosure(incident: Incident): void {
     if (!incident.isRecognized) {
       return;
@@ -216,6 +208,20 @@ export class IncidentList implements OnInit {
         block: 'start',
       }),
     );
+  }
+
+  protected reviewIncidentNotifications(incident: Incident): void {
+    this.selectedNotificationIncident.set(incident);
+    this.incidentNotifications.set([]);
+    this.loadingIncidentNotifications.set(true);
+
+    this.alertsStore
+      .notificationsForIncident(incident.id)
+      .pipe(finalize(() => this.loadingIncidentNotifications.set(false)))
+      .subscribe({
+        next: (notifications) => this.incidentNotifications.set(notifications),
+        error: () => this.alertsStore.setFeedback('alerts.incident-list.feedback-error'),
+      });
   }
 
   protected stabilizeSelectedIncident(): void {
@@ -264,7 +270,7 @@ export class IncidentList implements OnInit {
     return [
       'alerts.incident-list.feedback-recognized',
       'alerts.incident-list.feedback-closed',
-      'alerts.incident-list.feedback-escalation-reviewed',
+      'alerts.incident-list.feedback-stabilized',
     ].includes(feedback);
   }
 
@@ -292,6 +298,14 @@ export class IncidentList implements OnInit {
 
   protected typeLabelKey(incident: Incident): string {
     return `alerts.incident-list.type-${incident.type}`;
+  }
+
+  protected notificationChannelLabelKey(notification: Notification): string {
+    return `alerts.notification-list.channel-${notification.channel}`;
+  }
+
+  protected notificationStatusLabelKey(notification: Notification): string {
+    return `alerts.notification-list.status-${notification.status}`;
   }
 
   protected formatDate(isoDate: string): string {

@@ -9,7 +9,7 @@ interface ContextLink {
   path: string;
   labelKey: string;
   visible: boolean;
-  queryParams?: Record<string, string>;
+  queryParams?: Record<string, string | number>;
 }
 
 export interface OrganizationMemberSummary {
@@ -17,8 +17,6 @@ export interface OrganizationMemberSummary {
   fullName: string;
   initials: string;
   roleLabelKey: string;
-  status: 'online' | 'busy' | 'offline';
-  statusLabel: string;
 }
 
 /**
@@ -36,7 +34,7 @@ export interface OrganizationMemberSummary {
     LanguageSwitcher,
   ],
   templateUrl: './dashboard-shell.html',
-  styleUrls: ['./dashboard-shell.css'],
+  styleUrl: './dashboard-shell.css',
 })
 export class DashboardShell {
   private readonly router = inject(Router);
@@ -51,26 +49,54 @@ export class DashboardShell {
   @Input() assetIssuesCount = 0;
   @Input() pendingAlertsCount = 0;
   @Input() organizationMembers: OrganizationMemberSummary[] = [];
+  @Input() contextQueryParams: Record<string, number> = {};
 
   @Output() signedOut = new EventEmitter<void>();
   @Output() monthlyReportRequested = new EventEmitter<void>();
 
-  protected contextualLinks(): ContextLink[] {
-    const url = this.router.url;
-    if (
-      url.includes('/asset-management/assets') ||
-      url.includes('/monitoring/assets') ||
-      this.isAccessRoute() ||
-      this.isSettingsRoute() ||
-      this.isReportsRoute()
-    ) {
-      return [];
-    }
+  protected accessDropdownOpen = false;
+  protected accessDropdownTouched = false;
+  protected reportsDropdownOpen = false;
+  protected reportsDropdownTouched = false;
+  protected settingsDropdownOpen = false;
+  protected settingsDropdownTouched = false;
 
+  protected isAccessDropdownOpen(isActive: boolean): boolean {
+    return this.accessDropdownTouched ? this.accessDropdownOpen : isActive || this.isAccessRoute();
+  }
+
+  protected isReportsDropdownOpen(isActive: boolean): boolean {
+    return this.reportsDropdownTouched
+      ? this.reportsDropdownOpen
+      : isActive || this.isReportsRoute();
+  }
+
+  protected isSettingsDropdownOpen(isActive: boolean): boolean {
+    return this.settingsDropdownTouched
+      ? this.settingsDropdownOpen
+      : isActive || this.isSettingsRoute();
+  }
+
+  protected toggleAccessDropdown(isActive: boolean): void {
+    this.accessDropdownOpen = !this.isAccessDropdownOpen(isActive);
+    this.accessDropdownTouched = true;
+  }
+
+  protected toggleReportsDropdown(isActive: boolean): void {
+    this.reportsDropdownOpen = !this.isReportsDropdownOpen(isActive);
+    this.reportsDropdownTouched = true;
+  }
+
+  protected toggleSettingsDropdown(isActive: boolean): void {
+    this.settingsDropdownOpen = !this.isSettingsDropdownOpen(isActive);
+    this.settingsDropdownTouched = true;
+  }
+
+  protected contextualLinks(): ContextLink[] {
     if (this.isAccessRoute()) {
       return [
         {
-          path: '/identity-access/roles-permissions',
+          path: '/identity-access/users',
           labelKey: 'dashboard-shell.nav-users',
           visible: true,
         },
@@ -145,21 +171,13 @@ export class DashboardShell {
 
     const queryParams = new URLSearchParams(currentQuery);
 
-    return expectedParams.every(([key, value]) => {
-      const currentValue = queryParams.get(key);
-
-      if (currentValue === value) {
-        return true;
-      }
-
-      return (
-        (!currentValue && key === 'tab' && value === 'cold-room') ||
-        (!currentValue && key === 'type' && value === 'cold-room')
-      );
-    });
+    return expectedParams.every(([key, value]) => queryParams.get(key) === value);
   }
+
   protected openSettings(): void {
-    void this.router.navigate(['/asset-management/safety-ranges']);
+    void this.router.navigate(['/asset-management/safety-ranges'], {
+      queryParams: this.contextQueryParams,
+    });
   }
 
   protected logout(): void {
