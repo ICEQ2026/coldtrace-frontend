@@ -1,11 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Varela+Round&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+@import './styles/coldtrace-work-surfaces-layout.css';
+@import './styles/coldtrace-work-surfaces-controls.css';
+@import './styles/coldtrace-work-surfaces-sections.css';
+@import './styles/coldtrace-work-surfaces-final.css';
+@import './styles/coldtrace-asset-management.css';
+@import './styles/coldtrace-identity-access.css';
+@import './styles/coldtrace-alerts.css';
+@import './styles/coldtrace-maintenance.css';
+@import './styles/coldtrace-monitoring.css';
+@import './styles/coldtrace-reports.css';
+@import './styles/coldtrace-shell.css';
 
 :root {
-  --color-background: #f7f8fa;
-  --color-text: #404040;
-  --color-primary: #9aaee7;
-  --color-border: #e4e7eb;
+  --color-background: #f5f6f8;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-text: #263348;
+  --color-text-muted: #667085;
+  --color-text-subtle: #98a2b3;
+  --color-primary: #2563eb;
+  --color-primary-soft: #eff4ff;
+  --color-border: #e4e7ec;
+  --color-border-strong: #d0d5dd;
+  --color-success: #176900;
+  --color-success-soft: #eaf8f0;
+  --color-warning: #b16f0b;
+  --color-warning-soft: #fff8e8;
+  --color-danger: #b51313;
+  --color-danger-soft: #feeceb;
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 18px rgba(16, 24, 40, 0.06);
+  --shadow-soft: 0 1px 3px rgba(16, 24, 40, 0.08);
+  --radius-card: 8px;
+  --radius-control: 8px;
 }
 
 html,
@@ -28,7 +55,14 @@ body {
   color: var(--color-text);
   background: var(--color-background);
   line-height: 1.6;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Arial,
+    sans-serif;
   font-size: 15px;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -61,4 +95,28 @@ select {
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+button,
+a,
+input,
+select,
+textarea {
+  letter-spacing: 0;
+}
+
+button {
+  font-weight: 800;
+}
+
+input,
+select,
+textarea {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Arial,
+    sans-serif;
 }

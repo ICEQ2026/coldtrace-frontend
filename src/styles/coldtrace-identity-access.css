@@ -1,0 +1,404 @@
+body app-user-access-list .access-summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+}
+
+body app-user-access-list .access-summary article {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 14px;
+  min-height: 96px;
+}
+
+body app-user-access-list .access-summary article mat-icon {
+  align-items: center;
+  background: var(--accent-bg, var(--color-primary-soft));
+  border-radius: 8px;
+  color: var(--accent-text, var(--color-primary));
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-size: 22px;
+  height: 42px;
+  justify-content: center;
+  width: 42px;
+}
+
+body app-user-access-list .access-summary article div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+body app-user-form .form-card {
+  max-width: 1080px !important;
+  width: min(1080px, 100%) !important;
+}
+
+body app-user-form .user-form {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body app-user-form .form-actions {
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+}
+
+body app-role-permission-form .permission-editor {
+  margin-top: 0;
+}
+
+body app-role-permission-form .role-permission-row {
+  align-items: start;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  padding: 16px;
+}
+
+body app-role-permission-form .permission-list {
+  gap: 8px;
+}
+
+body app-role-permission-form .permission-toggle span {
+  border-color: var(--color-border) !important;
+  min-height: 26px;
+}
+
+@media (max-width: 720px) {
+body app-user-form .user-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+body app-user-access-list .access-header {
+  margin: 22px 0 16px;
+}
+
+body app-user-access-list .access-header h1 {
+  color: #0f172a;
+  font:
+    800 28px/34px Inter,
+    Arial,
+    sans-serif;
+}
+
+body app-user-access-list .search-box {
+  margin: 28px 0 22px;
+  width: min(520px, 100%);
+}
+
+body app-user-access-list .access-summary {
+  gap: 18px;
+  grid-template-columns: repeat(3, minmax(240px, 1fr));
+}
+
+body app-user-access-list .access-summary article {
+  align-items: center;
+  flex-direction: row;
+  gap: 16px;
+  min-height: 118px;
+  padding: 20px 22px;
+}
+
+body app-user-access-list .summary-icon {
+  align-items: center;
+  border-radius: 8px;
+  display: inline-flex;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+
+body app-user-access-list .summary-icon mat-icon {
+  font-size: 22px;
+  height: 22px;
+  width: 22px;
+}
+
+body app-user-access-list .accent-blue .summary-icon {
+  background: #eef2ff;
+  color: #2563eb;
+}
+
+body app-user-access-list .accent-green .summary-icon {
+  background: #eaf8f0;
+  color: #176900;
+}
+
+body app-user-access-list .accent-amber .summary-icon {
+  background: #fff6df;
+  color: #9a650d;
+}
+
+body app-user-access-list .summary-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+body app-user-access-list .summary-copy strong {
+  color: #0f172a;
+  font:
+    800 28px/34px Inter,
+    Arial,
+    sans-serif;
+}
+
+body app-user-access-list .summary-copy small {
+  color: #98a2b3;
+  font:
+    700 11px/16px Inter,
+    Arial,
+    sans-serif;
+}
+
+body app-user-access-list .table-card {
+  padding: 28px 30px 30px;
+}
+
+body app-user-access-list .primary-action,
+body app-user-access-list .secondary-action,
+body app-user-access-list .reload-action,
+body app-user-access-list .save-action,
+body app-user-access-list .delete-action {
+  align-items: center;
+  border-radius: 8px;
+  display: inline-flex;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif;
+  gap: 7px;
+  min-height: 34px;
+  padding: 6px 12px;
+}
+
+body app-user-access-list .primary-action {
+  background: #2563eb !important;
+  border: 1px solid #2563eb !important;
+  color: #fff !important;
+}
+
+body app-user-access-list .secondary-action,
+body app-user-access-list .reload-action,
+body app-user-access-list .save-action {
+  background: #fff !important;
+  border: 1px solid #d7deea !important;
+  color: #526174 !important;
+}
+
+body app-user-access-list .delete-action {
+  background: #fff !important;
+  border: 1px solid #f0b8b8 !important;
+  color: #b42318 !important;
+}
+
+body app-user-access-list .primary-action mat-icon,
+body app-user-access-list .secondary-action mat-icon,
+body app-user-access-list .reload-action mat-icon {
+  font-size: 17px;
+  height: 17px;
+  width: 17px;
+}
+
+body app-user-access-list .access-table th,
+body app-user-access-list .access-table td {
+  font-family: Inter, Arial, sans-serif;
+}
+
+body app-user-access-list .access-table th {
+  color: #98a2b3;
+  font-weight: 800;
+}
+
+body app-user-access-list .access-table td {
+  color: #323c4d;
+  font-size: 12px;
+}
+
+body app-user-access-list .permission-list span,
+body app-user-access-list .role-pill {
+  border-radius: 7px;
+}
+
+body app-user-access-list .access-summary article.summary-card {
+  align-items: center !important;
+  flex-direction: row !important;
+  gap: 16px !important;
+  justify-content: flex-start !important;
+  text-align: left;
+}
+
+body app-user-access-list .access-summary .summary-icon {
+  display: inline-flex !important;
+  flex: 0 0 auto;
+  height: 44px !important;
+  justify-content: center !important;
+  width: 44px !important;
+}
+
+body app-user-access-list .access-summary .summary-copy {
+  align-items: start;
+  display: grid !important;
+  justify-items: start;
+}
+
+body app-user-access-list .access-summary .summary-copy span,
+body app-user-access-list .access-summary .summary-copy strong,
+body app-user-access-list .access-summary .summary-copy small {
+  text-align: left;
+}
+
+body
+:is(app-user-access-list, app-user-form, app-role-permission-form)
+:is(.access-header, .access-view-header) {
+  align-items: flex-start !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  margin: 0 0 16px !important;
+  padding: 0 !important;
+}
+
+body :is(app-user-access-list, app-user-form, app-role-permission-form) .section-tabs {
+  margin: -2px 0 18px !important;
+}
+
+body app-user-access-list .access-workbar {
+  align-items: center !important;
+}
+
+body app-user-access-list .access-workbar .search-box {
+  align-self: center !important;
+}
+
+body
+:is(app-user-access-list, app-user-form, app-role-permission-form)
+:is(.access-header, .access-view-header) {
+  display: grid !important;
+  gap: 0 !important;
+  justify-content: start !important;
+  margin: 0 0 16px !important;
+}
+
+body app-user-access-list .access-workbar {
+  grid-template-columns: auto minmax(260px, 1fr) !important;
+  margin: 2px 0 18px !important;
+}
+
+body app-user-access-list .access-workbar .search-box {
+  justify-self: stretch !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+body app-user-access-list .access-summary {
+  margin-top: 0 !important;
+}
+
+body app-user-form .form-actions {
+  align-items: center !important;
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: flex-end !important;
+}
+
+body app-user-form .form-actions :is(.secondary-action, .primary-form-action) {
+  border-radius: 8px !important;
+  min-height: 40px !important;
+  padding: 0 16px !important;
+}
+
+body app-user-form .form-actions .secondary-action {
+  min-width: 112px !important;
+}
+
+body app-user-form .form-actions .primary-form-action {
+  min-width: 136px !important;
+}
+
+body
+:is(app-user-access-list, app-user-form, app-role-permission-form)
+:is(.access-header, .access-view-header) {
+  align-items: flex-start !important;
+  display: grid !important;
+  gap: 0 !important;
+  justify-content: start !important;
+  margin: 0 0 14px !important;
+  padding: 0 !important;
+}
+
+body
+:is(app-user-access-list, app-user-form, app-role-permission-form)
+:is(.access-header, .access-view-header)
+> div {
+  display: grid !important;
+  gap: 0 !important;
+}
+
+body
+:is(app-user-access-list, app-user-form, app-role-permission-form)
+:is(.access-header, .access-view-header)
+p {
+  max-width: 720px !important;
+  position: static !important;
+  white-space: normal !important;
+}
+
+body app-user-access-list .access-workbar {
+  align-items: center !important;
+  display: grid !important;
+  gap: 18px !important;
+  grid-template-columns: auto minmax(260px, 420px) minmax(150px, 1fr) !important;
+  margin: 2px 0 18px !important;
+  min-height: 42px !important;
+}
+
+body app-user-access-list .access-workbar .section-tabs {
+  margin: 0 !important;
+}
+
+body app-user-access-list .access-workbar .search-box {
+  justify-self: stretch !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+
+body :is(app-user-form, app-role-permission-form) .section-tabs {
+  margin: 0 0 18px !important;
+}
+
+body app-user-form .form-card {
+  margin-top: 0 !important;
+}
+
+body app-user-form .form-actions {
+  align-items: center !important;
+  display: flex !important;
+  gap: 14px !important;
+  justify-content: flex-end !important;
+}
+
+body app-user-form .form-actions :is(.secondary-action, .primary-form-action) {
+  align-items: center !important;
+  border-radius: 8px !important;
+  display: inline-flex !important;
+  font:
+    800 12px/20px Inter,
+    Arial,
+    sans-serif !important;
+  gap: 7px !important;
+  height: 40px !important;
+  justify-content: center !important;
+  line-height: 20px !important;
+  padding: 0 16px !important;
+  white-space: nowrap !important;
+}
+
+body app-user-form .form-actions .secondary-action {
+  min-width: 110px !important;
+}
+
+body app-user-form .form-actions .primary-form-action {
+  min-width: 136px !important;
+}
