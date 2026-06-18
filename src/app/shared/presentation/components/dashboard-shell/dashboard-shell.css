@@ -69,17 +69,18 @@
 .counter { border-radius: 999px; font-size: 10px; font-weight: 800; padding: 4px 8px; }
 .badge-red { background: var(--color-danger-soft); color: var(--color-danger); }
 
-.team-card { margin: 24px 34px 0; }
-.team-card-header { color: #667085; justify-content: space-between; margin-bottom: 12px; }
-.team-card-header span { font-size: 14px; font-weight: 700; }
-.team-manage-link { color: var(--color-primary); text-decoration: none; }
-.team-list { display: grid; gap: 8px; }
-.team-member { border-radius: 8px; gap: 10px; padding: 4px 8px; text-decoration: none; }
+.team-card { margin: 18px 36px 0; }
+.team-card-header { color: #667085; justify-content: space-between; margin-bottom: 8px; }
+.team-card-header span { font-size: 12px; font-weight: 700; line-height: 18px; }
+.team-manage-link { color: var(--color-primary); display: inline-flex; text-decoration: none; }
+.team-manage-link mat-icon { font-size: 20px; height: 20px; line-height: 20px; width: 20px; }
+.team-list { display: grid; gap: 3px; }
+.team-member { border-radius: 8px; gap: 8px; min-height: 30px; padding: 2px 4px; text-decoration: none; }
 .team-member:hover { background: rgba(37, 99, 235, 0.04); }
-.member-avatar { color: var(--color-text); font-size: 13px; font-weight: 800; min-width: 28px; }
+.member-avatar { color: var(--color-text); font-size: 11px; font-weight: 800; min-width: 24px; }
 .member-copy { display: grid; gap: 1px; min-width: 0; }
-.member-name { color: var(--color-text); font-size: 13px; font-weight: 800; line-height: 18px; }
-.member-role { color: var(--color-text-subtle); font-size: 11px; font-weight: 800; line-height: 15px; }
+.member-name { color: var(--color-text); font-size: 11px; font-weight: 800; line-height: 14px; }
+.member-role { color: var(--color-text-subtle); font-size: 9.5px; font-weight: 800; line-height: 12px; }
 
 .sidebar-footer { display: grid; gap: 22px; padding: 0 32px; }
 .drag-upload { background: #fff; border: 1px dashed var(--color-border); border-radius: 8px; color: var(--color-primary); flex-direction: column; gap: 8px; justify-content: center; min-height: 126px; }
