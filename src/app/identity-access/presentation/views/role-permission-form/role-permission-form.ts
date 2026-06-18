@@ -20,7 +20,7 @@ type RolePermissionFeedback = 'idle' | 'server-error';
   selector: 'app-role-permission-form',
   imports: [MatButton, TranslatePipe, ListPagination],
   templateUrl: './role-permission-form.html',
-  styleUrl: '../user-access-list/user-access-list.css',
+  styleUrl: './role-permission-form.css',
 })
 export class RolePermissionForm implements OnInit {
   protected readonly identityAccessStore = inject(IdentityAccessStore);

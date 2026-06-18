@@ -1,16 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Varela+Round&display=swap');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import './styles/coldtrace-work-surfaces-layout.css';
-@import './styles/coldtrace-work-surfaces-controls.css';
-@import './styles/coldtrace-work-surfaces-sections.css';
-@import './styles/coldtrace-work-surfaces-final.css';
-@import './styles/coldtrace-asset-management.css';
-@import './styles/coldtrace-identity-access.css';
-@import './styles/coldtrace-alerts.css';
-@import './styles/coldtrace-maintenance.css';
-@import './styles/coldtrace-monitoring.css';
-@import './styles/coldtrace-reports.css';
-@import './styles/coldtrace-shell.css';
 
 :root {
   --color-background: #f5f6f8;
@@ -75,27 +64,6 @@ select {
   font: inherit;
 }
 
-.summary-grid span {
-  line-height: 20px;
-}
-
-.summary-grid strong {
-  line-height: 28px;
-}
-
-.brand-organization {
-  color: #98a2b3;
-  display: block;
-  font-size: 11px;
-  font-weight: 800;
-  line-height: 16px;
-  margin-top: 6px;
-  max-width: 220px;
-  overflow: hidden;
-  text-align: center;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 button,
 a,
 input,
