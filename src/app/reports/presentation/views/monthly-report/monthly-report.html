@@ -11,23 +11,6 @@
       <h1 id="monthly-title">{{ 'reports.monthly.title' | translate }}</h1>
       <p>{{ 'reports.monthly.subtitle' | translate }}</p>
     </div>
-
-    <div class="heading-actions">
-      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
-        <mat-icon aria-hidden="true">refresh</mat-icon>
-        {{ 'reports.monthly.reload' | translate }}
-      </button>
-      <button
-        mat-flat-button
-        type="button"
-        class="primary-action"
-        [disabled]="!canDownloadReport() || !canDownloadReports()"
-        (click)="downloadMonthlyReport()"
-      >
-        <mat-icon aria-hidden="true">download</mat-icon>
-        {{ 'reports.monthly.download' | translate }}
-      </button>
-    </div>
   </div>
 
   @if (feedback() === 'downloaded') {
@@ -65,6 +48,23 @@
       <div class="filter-meta">
         <span>{{ 'reports.monthly.generated-reports' | translate }}</span>
         <strong>{{ generatedReportsCount() }}</strong>
+      </div>
+
+      <div class="report-card-actions">
+        <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+          <mat-icon aria-hidden="true">refresh</mat-icon>
+          {{ 'reports.monthly.reload' | translate }}
+        </button>
+        <button
+          mat-flat-button
+          type="button"
+          class="primary-action"
+          [disabled]="!canDownloadReport() || !canDownloadReports()"
+          (click)="downloadMonthlyReport()"
+        >
+          <mat-icon aria-hidden="true">download</mat-icon>
+          {{ 'reports.monthly.download' | translate }}
+        </button>
       </div>
     </section>
 

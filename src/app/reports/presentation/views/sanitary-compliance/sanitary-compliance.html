@@ -11,23 +11,6 @@
       <h1 id="compliance-title">{{ 'reports.compliance.title' | translate }}</h1>
       <p>{{ 'reports.compliance.subtitle' | translate }}</p>
     </div>
-
-    <div class="heading-actions">
-      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
-        <mat-icon aria-hidden="true">refresh</mat-icon>
-        {{ 'reports.compliance.reload' | translate }}
-      </button>
-      <button
-        mat-flat-button
-        type="button"
-        class="primary-action"
-        [disabled]="!canExportReport() || !canExportReports()"
-        (click)="exportComplianceReport()"
-      >
-        <mat-icon aria-hidden="true">download</mat-icon>
-        {{ 'reports.compliance.export' | translate }}
-      </button>
-    </div>
   </div>
 
   @if (feedback() === 'exported') {
@@ -85,6 +68,23 @@
       <div class="filter-meta">
         <span>{{ 'reports.compliance.generated-reports' | translate }}</span>
         <strong>{{ generatedReportsCount() }}</strong>
+      </div>
+
+      <div class="report-card-actions">
+        <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+          <mat-icon aria-hidden="true">refresh</mat-icon>
+          {{ 'reports.compliance.reload' | translate }}
+        </button>
+        <button
+          mat-flat-button
+          type="button"
+          class="primary-action"
+          [disabled]="!canExportReport() || !canExportReports()"
+          (click)="exportComplianceReport()"
+        >
+          <mat-icon aria-hidden="true">download</mat-icon>
+          {{ 'reports.compliance.export' | translate }}
+        </button>
       </div>
     </section>
 

@@ -1,74 +1,25 @@
-body app-daily-log .heading-actions .primary-action,
-body app-daily-log .heading-actions .secondary-action {
-  padding-inline: 12px !important;
-}
-
 body app-daily-log .filter-card {
-  grid-template-columns: 280px 280px minmax(0, 1fr) !important;
+  grid-template-columns: minmax(220px, 280px) minmax(240px, 320px) minmax(110px, 1fr) auto !important;
 }
 
-body app-monthly-report .filter-card,
-body app-sanitary-compliance .filter-card,
-body app-compliance-findings .filter-card,
+body app-monthly-report .filter-card {
+  grid-template-columns: minmax(200px, 260px) minmax(110px, 1fr) auto !important;
+}
+
+body app-sanitary-compliance .filter-card {
+  grid-template-columns: repeat(3, minmax(170px, 230px)) minmax(110px, 1fr) auto !important;
+}
+
+body app-compliance-findings .filter-card {
+  grid-template-columns: repeat(4, minmax(150px, 220px)) auto !important;
+}
+
 body app-audit-evidence .filter-card {
-  grid-template-columns: repeat(3, minmax(180px, 240px)) minmax(0, 1fr) !important;
+  grid-template-columns: repeat(3, minmax(170px, 230px)) auto !important;
 }
 
 body app-operational-history .summary-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-}
-
-body app-audit-evidence .heading-actions .primary-action,
-body app-audit-evidence .heading-actions .primary-action.mat-mdc-unelevated-button {
-  --mdc-filled-button-container-height: 36px !important;
-  height: 36px !important;
-  min-height: 36px !important;
-  width: auto !important;
-}
-
-html
-body
-app-audit-evidence
-.page-heading
-.heading-actions
-button.primary-action.mat-mdc-unelevated-button.mdc-button {
-  height: 36px !important;
-  min-height: 36px !important;
-  width: auto !important;
-}
-
-html
-body
-:is(app-monthly-report, app-sanitary-compliance, app-compliance-findings, app-audit-evidence)
-.page-heading
-.heading-actions {
-  align-items: center !important;
-  flex-wrap: nowrap !important;
-  height: 36px !important;
-}
-
-html
-body
-:is(app-monthly-report, app-sanitary-compliance, app-compliance-findings, app-audit-evidence)
-.page-heading
-.heading-actions
-button.primary-action.mat-mdc-unelevated-button.mdc-button {
-  --mdc-filled-button-container-height: 36px !important;
-  height: 36px !important;
-  min-height: 36px !important;
-  min-width: 0 !important;
-  width: auto !important;
-}
-
-html
-body
-:is(app-monthly-report, app-sanitary-compliance, app-compliance-findings, app-audit-evidence)
-.page-heading {
-  min-height: 56px !important;
-}
-
-body app-operational-history .history-page {
-  padding: 0 !important;
 }
 
 body
@@ -80,31 +31,197 @@ app-operational-history
   width: 100% !important;
 }
 
-html body app-monthly-report .page-heading {
-  align-items: center !important;
-  background: var(--color-surface) !important;
-  border: 1px solid var(--color-border) !important;
-  border-radius: var(--radius-card) !important;
-  box-shadow: var(--shadow-card) !important;
-  display: flex !important;
-  gap: 18px !important;
-  justify-content: space-between !important;
-  margin: 0 0 18px !important;
-  min-height: 96px !important;
-  padding: 18px 22px !important;
+body app-operational-history .history-page {
+  padding: 0 !important;
 }
 
-html body app-monthly-report .page-heading .heading-actions {
+html
+body
+:is(
+  app-daily-log,
+  app-monthly-report,
+  app-sanitary-compliance,
+  app-compliance-findings,
+  app-audit-evidence
+)
+.filter-card {
+  align-items: end !important;
+}
+
+html
+body
+:is(
+  app-daily-log,
+  app-monthly-report,
+  app-sanitary-compliance,
+  app-compliance-findings,
+  app-audit-evidence
+)
+.filter-card
+.filter-meta {
   align-items: center !important;
-  align-self: center !important;
+  align-self: end !important;
+  background: #f8fafc !important;
+  border: 1px solid #e7edf6 !important;
+  border-radius: 8px !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  gap: 10px !important;
+  justify-self: end !important;
+  min-height: 40px !important;
+  padding: 0 14px !important;
+  text-align: left !important;
+}
+
+html
+body
+:is(
+  app-daily-log,
+  app-monthly-report,
+  app-sanitary-compliance,
+  app-compliance-findings,
+  app-audit-evidence
+)
+.filter-card
+.filter-meta
+span {
+  line-height: 18px !important;
+  white-space: nowrap !important;
+}
+
+html
+body
+:is(
+  app-daily-log,
+  app-monthly-report,
+  app-sanitary-compliance,
+  app-compliance-findings,
+  app-audit-evidence
+)
+.filter-card
+.filter-meta
+strong {
+  align-items: center !important;
+  display: flex !important;
+  font-size: 24px !important;
+  line-height: 28px !important;
+  min-height: auto !important;
+}
+
+html
+body
+:is(
+  app-daily-log,
+  app-monthly-report,
+  app-sanitary-compliance,
+  app-compliance-findings,
+  app-audit-evidence
+)
+.filter-card
+.report-card-actions {
+  align-items: center !important;
+  align-self: end !important;
   display: flex !important;
   flex-wrap: wrap !important;
   gap: 10px !important;
-  height: auto !important;
   justify-content: flex-end !important;
-  margin: 0 0 0 auto !important;
-  position: static !important;
-  right: auto !important;
-  top: auto !important;
-  z-index: auto !important;
+  min-height: 40px !important;
+}
+
+html
+body
+:is(
+  app-daily-log,
+  app-monthly-report,
+  app-sanitary-compliance,
+  app-compliance-findings,
+  app-audit-evidence
+)
+.filter-card
+.report-card-actions
+:is(button.primary-action, button.secondary-action, .mat-mdc-button-base) {
+  height: 40px !important;
+  min-height: 40px !important;
+  white-space: nowrap !important;
+  width: auto !important;
+}
+
+@media (max-width: 1280px) {
+  body app-daily-log .filter-card,
+  body app-monthly-report .filter-card,
+  body app-sanitary-compliance .filter-card,
+  body app-compliance-findings .filter-card,
+  body app-audit-evidence .filter-card {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  html
+  body
+  :is(
+    app-daily-log,
+    app-monthly-report,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .filter-card
+  .filter-meta,
+  html
+  body
+  :is(
+    app-daily-log,
+    app-monthly-report,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .filter-card
+  .report-card-actions {
+    justify-self: start !important;
+  }
+
+  html
+  body
+  :is(
+    app-daily-log,
+    app-monthly-report,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .filter-card
+  .report-card-actions {
+    justify-content: flex-start !important;
+  }
+}
+
+@media (max-width: 720px) {
+  body app-daily-log .filter-card,
+  body app-monthly-report .filter-card,
+  body app-sanitary-compliance .filter-card,
+  body app-compliance-findings .filter-card,
+  body app-audit-evidence .filter-card,
+  body app-operational-history .filter-card {
+    grid-template-columns: 1fr !important;
+  }
+
+  body app-operational-history .summary-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  html
+  body
+  :is(
+    app-daily-log,
+    app-monthly-report,
+    app-sanitary-compliance,
+    app-compliance-findings,
+    app-audit-evidence
+  )
+  .filter-card
+  .report-card-actions
+  :is(button.primary-action, button.secondary-action, .mat-mdc-button-base) {
+    justify-content: center !important;
+    width: 100% !important;
+  }
 }

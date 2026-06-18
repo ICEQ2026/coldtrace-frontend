@@ -11,17 +11,6 @@
       <h1 id="daily-log-title">{{ 'reports.daily-log.title' | translate }}</h1>
       <p>{{ 'reports.daily-log.subtitle' | translate }}</p>
     </div>
-
-    <div class="heading-actions">
-      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
-        <mat-icon aria-hidden="true">refresh</mat-icon>
-        {{ 'reports.daily-log.reload' | translate }}
-      </button>
-      <button mat-flat-button type="button" class="primary-action" (click)="generateDailyLog()">
-        <mat-icon aria-hidden="true">article</mat-icon>
-        {{ 'reports.daily-log.generate' | translate }}
-      </button>
-    </div>
   </div>
 
   @if (feedback() === 'generated') {
@@ -56,6 +45,17 @@
     <div class="filter-meta">
       <span>{{ 'reports.daily-log.generated-reports' | translate }}</span>
       <strong>{{ generatedReportsCount() }}</strong>
+    </div>
+
+    <div class="report-card-actions">
+      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+        <mat-icon aria-hidden="true">refresh</mat-icon>
+        {{ 'reports.daily-log.reload' | translate }}
+      </button>
+      <button mat-flat-button type="button" class="primary-action" (click)="generateDailyLog()">
+        <mat-icon aria-hidden="true">article</mat-icon>
+        {{ 'reports.daily-log.generate' | translate }}
+      </button>
     </div>
   </section>
 
