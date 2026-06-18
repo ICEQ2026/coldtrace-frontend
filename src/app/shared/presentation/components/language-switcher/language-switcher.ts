@@ -17,6 +17,7 @@ import { TranslateService } from '@ngx-translate/core';
 export class LanguageSwitcher {
   protected currentLang: string;
   protected languages: string[];
+  protected menuOpen = false;
   private translate: TranslateService;
 
   constructor() {
@@ -31,6 +32,11 @@ export class LanguageSwitcher {
   useLanguage(language: string) {
     this.translate.use(language);
     this.currentLang = language;
+    this.menuOpen = false;
+  }
+
+  protected toggleMenu() {
+    this.menuOpen = !this.menuOpen;
   }
 
   protected flagFor(language: string): string {

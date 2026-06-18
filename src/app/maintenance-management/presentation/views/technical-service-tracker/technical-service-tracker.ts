@@ -1,7 +1,6 @@
 import { NgClass } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -15,6 +14,7 @@ import { Organization } from '../../../../identity-access/domain/model/organizat
 import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { MaintenanceManagementStore } from '../../../application/maintenance-management.store';
 import { TechnicalServiceRequest } from '../../../domain/model/technical-service-request.entity';
 import { TechnicalServiceStatus } from '../../../domain/model/technical-service-status.enum';
@@ -36,7 +36,14 @@ type TechnicalServiceFeedback =
  */
 @Component({
   selector: 'app-technical-service-tracker',
-  imports: [MatButton, MatIcon, MatProgressSpinner, NgClass, ReactiveFormsModule, TranslatePipe],
+  imports: [
+    MatIcon,
+    MatProgressSpinner,
+    NgClass,
+    ReactiveFormsModule,
+    TranslatePipe,
+    ListPagination,
+  ],
   templateUrl: './technical-service-tracker.html',
   styleUrl: './technical-service-tracker.css',
 })
@@ -55,6 +62,8 @@ export class TechnicalServiceTracker implements OnInit {
   protected readonly requestSubmitted = signal(false);
   protected readonly closureSubmitted = signal(false);
   protected readonly feedback = signal<TechnicalServiceFeedback>('idle');
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -109,6 +118,9 @@ export class TechnicalServiceTracker implements OnInit {
       .filter((request) => request.organizationId === organizationId)
       .sort((a, b) => b.requestedDate.localeCompare(a.requestedDate));
   });
+  protected readonly paginatedRequests = computed(() =>
+    this.paginate(this.organizationRequests(), this.currentPage()),
+  );
   protected readonly openRequests = computed(() => {
     return this.organizationRequests().filter((request) => this.isOpenRequest(request));
   });
@@ -133,8 +145,6 @@ export class TechnicalServiceTracker implements OnInit {
   protected loadPageData(): void {
     this.identityLoading.set(true);
     this.feedback.set('idle');
-    this.assetManagementStore.loadGateways();
-    this.maintenanceStore.loadTechnicalServiceRequests();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -184,6 +194,7 @@ export class TechnicalServiceTracker implements OnInit {
     }
 
     const nextRequestId = this.nextTechnicalServiceRequestId();
+    const requestedBy = this.identityAccessStore.currentUserNameFrom(this.users());
     const technicalServiceRequest = new TechnicalServiceRequest(
       nextRequestId,
       organizationId,
@@ -196,6 +207,11 @@ export class TechnicalServiceTracker implements OnInit {
       null,
       null,
       null,
+      null,
+      asset.locationId,
+      asset.name,
+      null,
+      requestedBy,
       null,
     );
 
@@ -242,6 +258,9 @@ export class TechnicalServiceTracker implements OnInit {
     const nextStatus = functionalTestPassed
       ? TechnicalServiceStatus.Closed
       : TechnicalServiceStatus.PendingReview;
+    const closedBy = functionalTestPassed
+      ? this.identityAccessStore.currentUserNameFrom(this.users())
+      : null;
     const updatedRequest = new TechnicalServiceRequest(
       request.id,
       request.organizationId,
@@ -255,6 +274,11 @@ export class TechnicalServiceTracker implements OnInit {
       this.closureForm.controls.resultNotes.value.trim(),
       functionalTestPassed,
       functionalTestPassed ? this.today : null,
+      request.assetLocationId,
+      request.assetName,
+      request.incidentId,
+      request.requestedBy,
+      closedBy,
     );
 
     this.saving.set(true);
@@ -313,6 +337,10 @@ export class TechnicalServiceTracker implements OnInit {
     const control = this.closureForm.controls[controlName];
 
     return control.invalid && (control.touched || this.closureSubmitted());
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
   }
 
   protected assetNameFor(assetId: number): string {
@@ -379,5 +407,13 @@ export class TechnicalServiceTracker implements OnInit {
     const day = `${date.getDate()}`.padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }

@@ -1,6 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButton } from '@angular/material/button';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin, switchMap, throwError } from 'rxjs';
@@ -18,7 +17,7 @@ type UserFormFeedback = 'idle' | 'duplicate-email' | 'invalid-role' | 'success' 
  */
 @Component({
   selector: 'app-user-form',
-  imports: [MatButton, ReactiveFormsModule, RouterLink, TranslatePipe],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe],
   templateUrl: './user-form.html',
   styleUrl: './user-form.css',
 })

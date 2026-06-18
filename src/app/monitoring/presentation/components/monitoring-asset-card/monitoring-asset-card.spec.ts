@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideTranslateService } from '@ngx-translate/core';
 import { Asset } from '../../../../asset-management/domain/model/asset.entity';
 import { AssetStatus } from '../../../../asset-management/domain/model/asset-status.enum';
 import { AssetType } from '../../../../asset-management/domain/model/asset-type.enum';
@@ -11,7 +12,8 @@ describe('MonitoringAssetCard', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MonitoringAssetCard]
+      imports: [MonitoringAssetCard],
+      providers: [provideTranslateService()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MonitoringAssetCard);
@@ -21,9 +23,8 @@ describe('MonitoringAssetCard', () => {
       1,
       'CR-001',
       AssetType.ColdRoom,
-      null,
+      1,
       'Cold Room 01',
-      'San Miguel',
       1200,
       'Main cold room',
       AssetStatus.Active,

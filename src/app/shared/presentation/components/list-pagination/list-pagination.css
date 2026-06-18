@@ -1,0 +1,100 @@
+:host {
+  display: block;
+}
+
+.table-pagination {
+  align-items: center;
+  border-top: 0.5px solid #ececec;
+  color: #757575;
+  display: flex;
+  font:
+    400 12px/14px 'Varela Round',
+    Arial,
+    sans-serif;
+  gap: 16px;
+  justify-content: space-between;
+  margin-top: 18px;
+  overflow: hidden;
+  padding-top: 18px;
+}
+
+.footer-meta {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 10px;
+  white-space: nowrap;
+}
+
+.page-range {
+  color: #98a2b3;
+}
+
+.pager {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  gap: 6px;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.pager button {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #ebeef2;
+  border-radius: 8px;
+  color: #4a4a4a;
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 30px;
+  justify-content: center;
+  min-width: 30px;
+  padding: 0 8px;
+}
+
+.pager button.active {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+.pager button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.pager-ellipsis {
+  color: #98a2b3;
+  display: inline-flex;
+  flex: 0 0 auto;
+  font-weight: 800;
+  justify-content: center;
+  min-width: 18px;
+}
+
+.pager mat-icon {
+  font-size: 16px;
+  height: 16px;
+  line-height: 16px;
+  width: 16px;
+}
+
+@media (max-width: 900px) {
+  .table-pagination {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+    overflow: visible;
+  }
+
+  .footer-meta {
+    white-space: normal;
+  }
+
+  .pager {
+    justify-content: flex-start;
+  }
+}

@@ -11,23 +11,6 @@
       <h1 id="audit-title">{{ 'reports.audit.title' | translate }}</h1>
       <p>{{ 'reports.audit.subtitle' | translate }}</p>
     </div>
-
-    <div class="heading-actions">
-      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
-        <mat-icon aria-hidden="true">refresh</mat-icon>
-        {{ 'reports.audit.reload' | translate }}
-      </button>
-      <button
-        mat-flat-button
-        type="button"
-        class="primary-action"
-        [disabled]="!canExportEvidence()"
-        (click)="exportEvidence()"
-      >
-        <mat-icon aria-hidden="true">download</mat-icon>
-        {{ 'reports.audit.export' | translate }}
-      </button>
-    </div>
   </div>
 
   @if (feedback() === 'exported') {
@@ -81,6 +64,23 @@
           }
         </select>
       </label>
+
+      <div class="report-card-actions">
+        <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+          <mat-icon aria-hidden="true">refresh</mat-icon>
+          {{ 'reports.audit.reload' | translate }}
+        </button>
+        <button
+          mat-flat-button
+          type="button"
+          class="primary-action"
+          [disabled]="!canExportEvidence()"
+          (click)="exportEvidence()"
+        >
+          <mat-icon aria-hidden="true">download</mat-icon>
+          {{ 'reports.audit.export' | translate }}
+        </button>
+      </div>
     </section>
 
     <section class="summary-grid" aria-label="Audit evidence summary">
@@ -170,7 +170,7 @@
 
         @if (auditEvidence().reports.length) {
           <div class="evidence-list">
-            @for (report of auditEvidence().reports; track trackReport($index, report)) {
+            @for (report of paginatedReports(); track trackReport($index, report)) {
               <div class="evidence-row">
                 <mat-icon aria-hidden="true">description</mat-icon>
                 <div>
@@ -180,6 +180,12 @@
               </div>
             }
           </div>
+          <app-list-pagination
+            [page]="reportsPage()"
+            [total]="auditEvidence().reports.length"
+            [pageSize]="pageSize"
+            (pageChange)="updateReportsPage($event)"
+          />
         } @else {
           <div class="empty-state compact-empty">
             <mat-icon aria-hidden="true">file_download_off</mat-icon>
@@ -199,7 +205,7 @@
 
         @if (auditEvidence().findings.length) {
           <div class="evidence-list">
-            @for (finding of auditEvidence().findings; track trackFinding($index, finding)) {
+            @for (finding of paginatedFindings(); track trackFinding($index, finding)) {
               <div class="evidence-row">
                 <mat-icon aria-hidden="true">rule</mat-icon>
                 <div>
@@ -214,6 +220,12 @@
               </div>
             }
           </div>
+          <app-list-pagination
+            [page]="findingsPage()"
+            [total]="auditEvidence().findings.length"
+            [pageSize]="pageSize"
+            (pageChange)="updateFindingsPage($event)"
+          />
         } @else {
           <div class="empty-state compact-empty">
             <mat-icon aria-hidden="true">task_alt</mat-icon>

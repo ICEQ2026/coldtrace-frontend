@@ -24,14 +24,21 @@
 }
 
 .filter-field textarea {
+  background: #f4f4f4;
   border: 1px solid #d0d5dd;
   border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.14);
+  box-sizing: border-box;
   color: #344054;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
-  padding: 10px 12px;
+  line-height: 1.35;
+  min-height: 38px;
+  outline: none;
+  padding: 9px 12px;
   resize: vertical;
+  width: 100%;
 }
 
 .save-actions {
@@ -48,6 +55,18 @@
   --accent-text: #2563eb;
 }
 
+.summary-card strong {
+  line-height: 28px;
+}
+
+.primary-action {
+  line-height: 24px;
+}
+
+.secondary-action {
+  line-height: 32px;
+}
+
 .data-table {
   min-width: 1040px;
 }
@@ -56,6 +75,56 @@
   color: #98a2b3;
   font-weight: 800;
   text-align: center;
+}
+
+.status-warning {
+  background: #fff8e8;
+  color: #b16f0b;
+}
+
+.status-danger {
+  background: #feeceb;
+  color: #b51313;
+}
+
+.status-select-field {
+  align-items: center;
+  border-radius: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 6px;
+  min-height: 26px;
+  padding: 3px 8px;
+  position: relative;
+  white-space: nowrap;
+}
+
+.status-select-field span,
+.status-select-field mat-icon {
+  pointer-events: none;
+}
+
+.status-select-field mat-icon {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+}
+
+.status-select-field select {
+  appearance: none;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  inset: 0;
+  opacity: 0;
+  outline: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.status-select-field.disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 @media (max-width: 1080px) {

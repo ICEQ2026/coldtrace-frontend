@@ -44,8 +44,22 @@
   <section class="form-card" aria-labelledby="cold-room-form-title">
     <div class="section-heading">
       <div>
-        <h2 id="cold-room-form-title">{{ formTitleKey() | translate }}</h2>
-        <p>{{ formSubtitleKey() | translate }}</p>
+        <h2 id="cold-room-form-title">
+          {{
+            (editingAssetId()
+              ? 'asset-management.form.edit-title'
+              : formTitleKey()
+            ) | translate
+          }}
+        </h2>
+        <p>
+          {{
+            (editingAssetId()
+              ? 'asset-management.form.edit-subtitle'
+              : formSubtitleKey()
+            ) | translate
+          }}
+        </p>
       </div>
     </div>
 
@@ -56,7 +70,6 @@
           type="text"
           formControlName="internalId"
           [placeholder]="internalIdPlaceholder()"
-          readonly
         />
         @if (hasControlError('internalId')) {
           <small>{{ 'asset-management.form.internal-id-error' | translate }}</small>
@@ -76,15 +89,15 @@
       </label>
 
       <label class="form-field">
-        <span>{{ 'asset-management.form.gateway' | translate }}</span>
-        <select formControlName="gatewayId">
-          <option [ngValue]="0">{{ 'asset-management.form.select-gateway' | translate }}</option>
-          @for (gateway of organizationGateways(); track gateway.id) {
-            <option [ngValue]="gateway.id">{{ gateway.uuid }} - {{ gateway.location }}</option>
+        <span>{{ 'asset-management.form.location' | translate }}</span>
+        <select formControlName="locationId">
+          <option [ngValue]="0">{{ 'asset-management.form.select-location' | translate }}</option>
+          @for (location of organizationLocations(); track location.id) {
+            <option [ngValue]="location.id">{{ location.name }}</option>
           }
         </select>
-        @if (hasControlError('gatewayId')) {
-          <small>{{ 'asset-management.form.gateway-error' | translate }}</small>
+        @if (hasControlError('locationId')) {
+          <small>{{ 'asset-management.form.location-error' | translate }}</small>
         }
       </label>
 
@@ -96,11 +109,20 @@
         }
       </label>
 
+      <label class="form-field">
+        <span>{{ 'asset-management.form.status' | translate }}</span>
+        <select formControlName="status">
+          @for (status of assetStatuses; track status) {
+            <option [ngValue]="status">{{ assetStatusLabel(status) }}</option>
+          }
+        </select>
+      </label>
+
       <div class="form-field">
         <span>{{ 'asset-management.form.location' | translate }}</span>
-        <div class="derived-field" [class.empty]="!selectedGatewayForForm()">
-          @if (selectedGatewayForForm(); as gateway) {
-            {{ gateway.location }}
+        <div class="derived-field" [class.empty]="selectedLocationForForm() === 'N/A'">
+          @if (selectedLocationForForm() !== 'N/A') {
+            {{ selectedLocationForForm() }}
           } @else {
             {{ 'asset-management.form.location-derived-empty' | translate }}
           }
@@ -121,7 +143,14 @@
           {{ 'asset-management.form.cancel' | translate }}
         </button>
         <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
-          {{ (creating() ? 'asset-management.form.creating' : formCreateKey()) | translate }}
+          {{
+            (creating()
+              ? 'asset-management.form.creating'
+              : editingAssetId()
+                ? 'asset-management.form.update'
+                : formCreateKey()
+            ) | translate
+          }}
         </button>
       </div>
     </form>
@@ -133,9 +162,21 @@
     <div class="section-heading">
       <div>
         <h2 id="iot-device-form-title">
-          {{ 'asset-management.iot-devices.form-title' | translate }}
+          {{
+            (editingIoTDeviceId()
+              ? 'asset-management.iot-devices.form-edit-title'
+              : 'asset-management.iot-devices.form-title'
+            ) | translate
+          }}
         </h2>
-        <p>{{ 'asset-management.iot-devices.form-subtitle' | translate }}</p>
+        <p>
+          {{
+            (editingIoTDeviceId()
+              ? 'asset-management.iot-devices.form-edit-subtitle'
+              : 'asset-management.iot-devices.form-subtitle'
+            ) | translate
+          }}
+        </p>
       </div>
     </div>
 
@@ -146,7 +187,6 @@
           type="text"
           formControlName="internalId"
           [placeholder]="'asset-management.iot-devices.form.internal-id-placeholder' | translate"
-          readonly
         />
         @if (hasIoTDeviceControlError('internalId')) {
           <small>{{ 'asset-management.iot-devices.form.internal-id-error' | translate }}</small>
@@ -196,6 +236,19 @@
       </label>
 
       <label class="form-field">
+        <span>{{ 'asset-management.iot-devices.table.gateway' | translate }}</span>
+        <select formControlName="gatewayId">
+          <option [ngValue]="0">{{ 'asset-management.form.select-gateway' | translate }}</option>
+          @for (gateway of organizationGateways(); track gateway.id) {
+            <option [ngValue]="gateway.id">{{ gatewayNameById(gateway.id) }}</option>
+          }
+        </select>
+        @if (hasIoTDeviceControlError('gatewayId')) {
+          <small>{{ 'asset-management.form.gateway-error' | translate }}</small>
+        }
+      </label>
+
+      <label class="form-field">
         <span>{{ 'asset-management.iot-devices.form.asset' | translate }}</span>
         <select formControlName="assetId">
           <option [ngValue]="0">
@@ -205,6 +258,37 @@
             <option [ngValue]="asset.id">{{ asset.uuid }} - {{ asset.name }}</option>
           }
         </select>
+      </label>
+
+      <label class="form-field">
+        <span>{{ 'asset-management.iot-devices.form.status' | translate }}</span>
+        <select formControlName="status">
+          @for (status of iotDeviceStatuses; track status) {
+            <option [ngValue]="status">
+              {{ 'asset-management.iot-devices.status.' + status | translate }}
+            </option>
+          }
+        </select>
+      </label>
+
+      <label class="form-field">
+        <span>{{ 'asset-management.iot-devices.form.calibration-status' | translate }}</span>
+        <select formControlName="calibrationStatus">
+          @for (status of calibrationStatuses; track status) {
+            <option [ngValue]="status">{{ calibrationLabelKey(status) | translate }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="form-field">
+        <span>{{ 'asset-management.iot-devices.form.last-calibration' | translate }}</span>
+        <input
+          type="text"
+          formControlName="lastCalibrationDate"
+          [placeholder]="
+            'asset-management.iot-devices.form.last-calibration-placeholder' | translate
+          "
+        />
       </label>
 
       <label class="form-field">
@@ -218,6 +302,14 @@
         />
       </label>
 
+      <label class="form-field">
+        <span>{{ 'asset-management.iot-devices.form.reading-frequency' | translate }}</span>
+        <input type="number" min="5" max="1440" formControlName="readingFrequencyMinutes" />
+        @if (hasIoTDeviceControlError('readingFrequencyMinutes')) {
+          <small>{{ 'asset-management.iot-devices.form.reading-frequency-error' | translate }}</small>
+        }
+      </label>
+
       <div class="form-actions">
         <button mat-stroked-button type="button" class="secondary-action" (click)="toggleForm()">
           {{ 'asset-management.form.cancel' | translate }}
@@ -226,7 +318,9 @@
           {{
             (creating()
               ? 'asset-management.form.creating'
-              : 'asset-management.iot-devices.form-create'
+              : editingIoTDeviceId()
+                ? 'asset-management.iot-devices.form-update'
+                : 'asset-management.iot-devices.form-create'
             ) | translate
           }}
         </button>
@@ -239,8 +333,22 @@
   <section class="form-card" aria-labelledby="gateway-form-title">
     <div class="section-heading">
       <div>
-        <h2 id="gateway-form-title">{{ 'asset-management.gateways.form-title' | translate }}</h2>
-        <p>{{ 'asset-management.gateways.form-subtitle' | translate }}</p>
+        <h2 id="gateway-form-title">
+          {{
+            (editingGatewayId()
+              ? 'asset-management.gateways.form-edit-title'
+              : 'asset-management.gateways.form-title'
+            ) | translate
+          }}
+        </h2>
+        <p>
+          {{
+            (editingGatewayId()
+              ? 'asset-management.gateways.form-edit-subtitle'
+              : 'asset-management.gateways.form-subtitle'
+            ) | translate
+          }}
+        </p>
       </div>
     </div>
 
@@ -251,7 +359,6 @@
           type="text"
           formControlName="internalId"
           [placeholder]="'asset-management.gateways.form.internal-id-placeholder' | translate"
-          readonly
         />
         @if (hasGatewayControlError('internalId')) {
           <small>{{ 'asset-management.gateways.form.internal-id-error' | translate }}</small>
@@ -272,12 +379,13 @@
 
       <label class="form-field">
         <span>{{ 'asset-management.gateways.form.location' | translate }}</span>
-        <input
-          type="text"
-          formControlName="location"
-          [placeholder]="'asset-management.gateways.form.location-placeholder' | translate"
-        />
-        @if (hasGatewayControlError('location')) {
+        <select formControlName="locationId">
+          <option [ngValue]="0">{{ 'asset-management.form.select-location' | translate }}</option>
+          @for (location of organizationLocations(); track location.id) {
+            <option [ngValue]="location.id">{{ location.name }}</option>
+          }
+        </select>
+        @if (hasGatewayControlError('locationId')) {
           <small>{{ 'asset-management.gateways.form.location-error' | translate }}</small>
         }
       </label>
@@ -311,12 +419,186 @@
           {{
             (creating()
               ? 'asset-management.form.creating'
-              : 'asset-management.gateways.form-create'
+              : editingGatewayId()
+                ? 'asset-management.gateways.form-update'
+                : 'asset-management.gateways.form-create'
             ) | translate
           }}
         </button>
       </div>
     </form>
+  </section>
+}
+
+@if (formVisible() && canManageAssets() && selectedTab() === 'location') {
+  <section class="form-card" aria-labelledby="location-form-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="location-form-title">
+          {{
+            (editingLocationId()
+              ? 'asset-management.locations.form-edit-title'
+              : 'asset-management.locations.form-title'
+            ) | translate
+          }}
+        </h2>
+        <p>
+          {{
+            (editingLocationId()
+              ? 'asset-management.locations.form-edit-subtitle'
+              : 'asset-management.locations.form-subtitle'
+            ) | translate
+          }}
+        </p>
+      </div>
+    </div>
+
+    <form class="cold-room-form" [formGroup]="locationForm" (ngSubmit)="submitLocation()">
+      <label class="form-field">
+        <span>{{ 'asset-management.locations.form.name' | translate }}</span>
+        <input
+          type="text"
+          formControlName="name"
+          [placeholder]="'asset-management.locations.form.name-placeholder' | translate"
+        />
+        @if (hasLocationControlError('name')) {
+          <small>{{ 'asset-management.locations.form.name-error' | translate }}</small>
+        }
+      </label>
+
+      <label class="form-field">
+        <span>{{ 'asset-management.locations.form.type' | translate }}</span>
+        <select formControlName="type">
+          @for (type of locationTypes; track type) {
+            <option [value]="type">{{ locationTypeLabelKey(type) | translate }}</option>
+          }
+        </select>
+        @if (hasLocationControlError('type')) {
+          <small>{{ 'asset-management.locations.form.type-error' | translate }}</small>
+        }
+      </label>
+
+      <label class="form-field">
+        <span>{{ 'asset-management.locations.form.status' | translate }}</span>
+        <select formControlName="status">
+          @for (status of locationStatuses; track status) {
+            <option [value]="status">{{ locationStatusLabelKey(status) | translate }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="form-field">
+        <span>{{ 'asset-management.locations.form.address' | translate }}</span>
+        <input
+          type="text"
+          formControlName="address"
+          [placeholder]="'asset-management.locations.form.address-placeholder' | translate"
+        />
+      </label>
+
+      <label class="form-field full">
+        <span>{{ 'asset-management.locations.form.description' | translate }}</span>
+        <textarea
+          rows="3"
+          formControlName="description"
+          [placeholder]="'asset-management.locations.form.description-placeholder' | translate"
+        ></textarea>
+      </label>
+
+      <div class="form-actions">
+        <button mat-stroked-button type="button" class="secondary-action" (click)="toggleForm()">
+          {{ 'asset-management.form.cancel' | translate }}
+        </button>
+        <button mat-flat-button type="submit" class="primary-action" [disabled]="creating()">
+          {{
+            (creating()
+              ? 'asset-management.form.creating'
+              : editingLocationId()
+                ? 'asset-management.locations.form-update'
+                : 'asset-management.locations.form-create'
+            ) | translate
+          }}
+        </button>
+      </div>
+    </form>
+  </section>
+}
+
+@if (selectedTab() === 'location') {
+  <section class="table-card" aria-labelledby="location-table-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="location-table-title">{{ 'asset-management.locations.title' | translate }}</h2>
+        <p>{{ 'asset-management.locations.subtitle' | translate }}</p>
+      </div>
+      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+        {{ 'asset-management.reload' | translate }}
+      </button>
+    </div>
+
+    <div class="assets-table-wrapper">
+      <table class="assets-table location-table">
+        <thead>
+          <tr>
+            <th>{{ 'asset-management.locations.table.name' | translate }}</th>
+            <th>{{ 'asset-management.locations.table.type' | translate }}</th>
+            <th>{{ 'asset-management.locations.table.address' | translate }}</th>
+            <th>{{ 'asset-management.locations.table.description' | translate }}</th>
+            <th>{{ 'asset-management.locations.table.status' | translate }}</th>
+            @if (canManageAssets()) {
+              <th>{{ 'asset-management.table.actions' | translate }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (location of paginatedLocations(); track location.id) {
+            <tr>
+              <td [attr.data-label]="'asset-management.locations.table.name' | translate">
+                {{ location.name }}
+              </td>
+              <td [attr.data-label]="'asset-management.locations.table.type' | translate">
+                {{ locationTypeLabelKey(location.type) | translate }}
+              </td>
+              <td [attr.data-label]="'asset-management.locations.table.address' | translate">
+                {{ location.address || 'N/A' }}
+              </td>
+              <td [attr.data-label]="'asset-management.locations.table.description' | translate">
+                {{ location.description || 'N/A' }}
+              </td>
+              <td [attr.data-label]="'asset-management.locations.table.status' | translate">
+                <span class="status-pill" [ngClass]="locationStatusToneClass(location.status)">
+                  {{ locationStatusLabelKey(location.status) | translate }}
+                </span>
+              </td>
+              @if (canManageAssets()) {
+                <td [attr.data-label]="'asset-management.table.actions' | translate">
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    class="secondary-action"
+                    (click)="editLocation(location)"
+                  >
+                    {{ 'asset-management.locations.edit' | translate }}
+                  </button>
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr>
+              <td class="empty-state" [attr.colspan]="canManageAssets() ? 6 : 5">
+                {{ 'asset-management.locations.empty' | translate }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <app-list-pagination
+      [page]="locationPage()"
+      [total]="filteredLocations().length"
+      [pageSize]="pageSize"
+      (pageChange)="updateLocationPage($event)"
+    />
   </section>
 }
 
@@ -356,10 +638,13 @@
             <th>{{ 'asset-management.iot-devices.table.status' | translate }}</th>
             <th>{{ 'asset-management.iot-devices.table.calibration' | translate }}</th>
             <th>{{ 'asset-management.iot-devices.table.next-calibration' | translate }}</th>
+            @if (canManageAssets()) {
+              <th>{{ 'asset-management.table.actions' | translate }}</th>
+            }
           </tr>
         </thead>
         <tbody>
-          @for (iotDevice of organizationIoTDevices(); track iotDevice.id) {
+          @for (iotDevice of paginatedIoTDevices(); track iotDevice.id) {
             <tr>
               <td [attr.data-label]="'asset-management.iot-devices.table.id' | translate">
                 {{ iotDevice.uuid }}
@@ -403,10 +688,22 @@
               >
                 {{ iotDevice.nextCalibrationDate }}
               </td>
+              @if (canManageAssets()) {
+                <td [attr.data-label]="'asset-management.table.actions' | translate">
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    class="secondary-action"
+                    (click)="editIoTDevice(iotDevice)"
+                  >
+                    {{ 'asset-management.edit' | translate }}
+                  </button>
+                </td>
+              }
             </tr>
           } @empty {
             <tr>
-              <td class="empty-state" colspan="9">
+              <td class="empty-state" [attr.colspan]="canManageAssets() ? 10 : 9">
                 {{ 'asset-management.iot-devices.empty' | translate }}
               </td>
             </tr>
@@ -414,6 +711,12 @@
         </tbody>
       </table>
     </div>
+    <app-list-pagination
+      [page]="iotDevicePage()"
+      [total]="organizationIoTDevices().length"
+      [pageSize]="pageSize"
+      (pageChange)="updateIoTDevicePage($event)"
+    />
   </section>
 }
 
@@ -440,10 +743,13 @@
             <th>{{ 'asset-management.gateways.table.assets' | translate }}</th>
             <th>{{ 'asset-management.gateways.table.devices' | translate }}</th>
             <th>{{ 'asset-management.gateways.table.status' | translate }}</th>
+            @if (canManageAssets()) {
+              <th>{{ 'asset-management.table.actions' | translate }}</th>
+            }
           </tr>
         </thead>
         <tbody>
-          @for (gateway of organizationGateways(); track gateway.id) {
+          @for (gateway of paginatedGateways(); track gateway.id) {
             <tr>
               <td [attr.data-label]="'asset-management.gateways.table.id' | translate">
                 {{ gateway.uuid }}
@@ -452,7 +758,7 @@
                 {{ gateway.name }}
               </td>
               <td [attr.data-label]="'asset-management.gateways.table.location' | translate">
-                {{ gateway.location }}
+                {{ gatewayLocationFor(gateway) }}
               </td>
               <td [attr.data-label]="'asset-management.gateways.table.network' | translate">
                 {{ gateway.network }}
@@ -468,10 +774,22 @@
                   {{ gatewayStatusLabelKey(gateway.status) | translate }}
                 </span>
               </td>
+              @if (canManageAssets()) {
+                <td [attr.data-label]="'asset-management.table.actions' | translate">
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    class="secondary-action"
+                    (click)="editGateway(gateway)"
+                  >
+                    {{ 'asset-management.edit' | translate }}
+                  </button>
+                </td>
+              }
             </tr>
           } @empty {
             <tr>
-              <td class="empty-state" colspan="7">
+              <td class="empty-state" [attr.colspan]="canManageAssets() ? 8 : 7">
                 {{ 'asset-management.gateways.empty' | translate }}
               </td>
             </tr>
@@ -479,6 +797,12 @@
         </tbody>
       </table>
     </div>
+    <app-list-pagination
+      [page]="gatewayPage()"
+      [total]="organizationGateways().length"
+      [pageSize]="pageSize"
+      (pageChange)="updateGatewayPage($event)"
+    />
   </section>
 }
 
@@ -513,10 +837,13 @@
               <th>{{ 'asset-management.table.entry-date' | translate }}</th>
               <th>{{ 'asset-management.table.status' | translate }}</th>
               <th>{{ 'asset-management.table.connectivity' | translate }}</th>
+              @if (canManageAssets()) {
+                <th>{{ 'asset-management.table.actions' | translate }}</th>
+              }
             </tr>
           </thead>
           <tbody>
-            @for (asset of filteredAssets(); track asset.id) {
+            @for (asset of paginatedAssets(); track asset.id) {
               <tr>
                 <td [attr.data-label]="'asset-management.table.id' | translate">
                   {{ asset.uuid }}
@@ -583,17 +910,29 @@
                 <td [attr.data-label]="'asset-management.table.connectivity' | translate">
                   <span
                     class="connectivity"
-                    [class.online]="asset.connectivity === connectivityStatus.Online"
-                    [class.unstable]="asset.connectivity === connectivityStatus.Unstable"
-                    [class.offline]="asset.connectivity === connectivityStatus.Offline"
+                    [class.online]="displayedConnectivity(asset) === connectivityStatus.Online"
+                    [class.unstable]="displayedConnectivity(asset) === connectivityStatus.Unstable"
+                    [class.offline]="displayedConnectivity(asset) === connectivityStatus.Offline"
                   >
-                    {{ connectivityLabelKey(asset.connectivity) | translate }}
+                    {{ connectivityLabelKey(displayedConnectivity(asset)) | translate }}
                   </span>
                 </td>
+                @if (canManageAssets()) {
+                  <td [attr.data-label]="'asset-management.table.actions' | translate">
+                    <button
+                      mat-stroked-button
+                      type="button"
+                      class="secondary-action"
+                      (click)="editAsset(asset)"
+                    >
+                      {{ 'asset-management.edit' | translate }}
+                    </button>
+                  </td>
+                }
               </tr>
             } @empty {
               <tr>
-                <td class="empty-state" colspan="9">
+                <td class="empty-state" [attr.colspan]="canManageAssets() ? 10 : 9">
                   {{ 'asset-management.empty' | translate }}
                 </td>
               </tr>
@@ -602,14 +941,12 @@
         </table>
       </div>
 
-      <footer class="table-footer">
-        <span>{{
-          'asset-management.item-count' | translate: { count: filteredAssets().length }
-        }}</span>
-        <div class="pager" aria-label="Pagination">
-          <button mat-stroked-button type="button" disabled>1</button>
-        </div>
-      </footer>
+      <app-list-pagination
+        [page]="assetPage()"
+        [total]="filteredAssets().length"
+        [pageSize]="pageSize"
+        (pageChange)="updateAssetPage($event)"
+      />
     }
   </section>
 }

@@ -99,10 +99,18 @@
 }
 
 .password-control input {
+  appearance: none;
+  background: transparent;
   border: 0;
   box-shadow: none;
   flex: 1;
   min-width: 0;
+  outline: none;
+}
+
+.password-control input::-ms-clear,
+.password-control input::-ms-reveal {
+  display: none;
 }
 
 .icon-button {

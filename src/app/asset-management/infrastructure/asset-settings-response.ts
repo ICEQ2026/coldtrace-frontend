@@ -10,11 +10,14 @@ export interface AssetSettingsResource extends BaseResource {
   iotDeviceTypes: string[];
   minimumTemperature: number;
   maximumTemperature: number;
+  minimumHumidity: number;
   maximumHumidity: number;
   calibrationFrequencyDays: number;
   temperatureUnit: string;
   humidityUnit: string;
   weightUnit: string;
+  readingFrequencySeconds: number;
+  alertThresholdMinutes: number;
   assetId?: number | null;
 }
 

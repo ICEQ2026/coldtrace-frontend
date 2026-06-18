@@ -40,6 +40,8 @@ interface TemperatureLimits {
   max: number;
 }
 
+type ThermalState = 'frozen' | 'refrigerated' | 'ambient' | 'noData';
+
 /**
  * @summary Presents the operational dashboard user interface in the monitoring bounded context.
  */
@@ -84,6 +86,9 @@ export class OperationalDashboard implements OnInit {
   });
   protected readonly organizationGateways = computed(() => {
     return this.assetStore.gatewaysForOrganization(this.activeOrganizationId());
+  });
+  protected readonly organizationLocations = computed(() => {
+    return this.assetStore.locationsForOrganization(this.activeOrganizationId());
   });
   protected readonly organizationMaintenanceSchedules = computed(() => {
     return this.maintenanceStore.schedulesForOrganization(this.activeOrganizationId());
@@ -190,10 +195,11 @@ export class OperationalDashboard implements OnInit {
     this.assetStore.loadAssets();
     this.assetStore.loadIoTDevices();
     this.assetStore.loadGateways();
+    this.assetStore.loadLocations();
     this.assetStore.loadAssetSettings();
     this.maintenanceStore.loadMaintenanceSchedules();
     this.maintenanceStore.loadTechnicalServiceRequests();
-    this.alertsStore.loadIncidents();
+    this.alertsStore.loadIncidents({ evaluateReadings: true });
     this.monitoringStore.loadReadings();
     this.startReadingsUpdates();
   }
@@ -437,53 +443,41 @@ export class OperationalDashboard implements OnInit {
       return [];
     }
 
+    const latestReadingsByAssetId = this.latestTemperatureReadingsByAssetId();
+    const counts: Record<ThermalState, number> = {
+      frozen: 0,
+      refrigerated: 0,
+      ambient: 0,
+      noData: 0,
+    };
+
+    assets.forEach((asset) => {
+      counts[this.thermalStateForAsset(asset, latestReadingsByAssetId)] += 1;
+    });
+
     const groups = [
       {
         id: 1,
         label: 'monitoring.operational.storage-frozen',
-        count: assets.filter((asset) => {
-          const temperature = this.temperatureFromAsset(asset.currentTemperature);
-          return temperature !== null && temperature <= 0;
-        }).length,
+        count: counts.frozen,
         color: '#91BDFF',
       },
       {
         id: 2,
         label: 'monitoring.operational.storage-refrigerated',
-        count: assets.filter((asset) => {
-          const temperature = this.temperatureFromAsset(asset.currentTemperature);
-          const maximumTemperature = this.maximumTemperatureForAsset(asset);
-          return (
-            temperature !== null &&
-            maximumTemperature !== null &&
-            temperature > 0 &&
-            temperature <= maximumTemperature
-          );
-        }).length,
+        count: counts.refrigerated,
         color: '#51BD7A',
       },
       {
         id: 3,
         label: 'monitoring.operational.storage-ambient',
-        count: assets.filter((asset) => {
-          const temperature = this.temperatureFromAsset(asset.currentTemperature);
-          const maximumTemperature = this.maximumTemperatureForAsset(asset);
-          return (
-            temperature !== null &&
-            maximumTemperature !== null &&
-            temperature > maximumTemperature
-          );
-        }).length,
+        count: counts.ambient,
         color: '#F5BD38',
       },
       {
         id: 4,
         label: 'monitoring.operational.storage-other',
-        count: assets.filter((asset) => {
-          const temperature = this.temperatureFromAsset(asset.currentTemperature);
-          const maximumTemperature = this.maximumTemperatureForAsset(asset);
-          return temperature === null || (temperature > 0 && maximumTemperature === null);
-        }).length,
+        count: counts.noData,
         color: '#9AA3AF',
       },
     ];
@@ -498,6 +492,42 @@ export class OperationalDashboard implements OnInit {
           color: group.color,
         }),
     );
+  }
+
+  private latestTemperatureReadingsByAssetId(): Map<number, SensorReading> {
+    const readingsByAssetId = new Map<number, SensorReading>();
+
+    this.organizationReadings().forEach((reading) => {
+      if (reading.temperature === null || readingsByAssetId.has(reading.assetId)) {
+        return;
+      }
+
+      readingsByAssetId.set(reading.assetId, reading);
+    });
+
+    return readingsByAssetId;
+  }
+
+  private thermalStateForAsset(
+    asset: Asset,
+    readingsByAssetId: Map<number, SensorReading>,
+  ): ThermalState {
+    const reading = readingsByAssetId.get(asset.id);
+    const settings = this.assetStore.settingsForAsset(this.activeOrganizationId(), asset.id);
+
+    if (!reading || reading.temperature === null || !settings) {
+      return 'noData';
+    }
+
+    if (reading.temperature <= 0) {
+      return 'frozen';
+    }
+
+    if (reading.temperature <= settings.maximumTemperature) {
+      return 'refrigerated';
+    }
+
+    return 'ambient';
   }
 
   private buildMaintenanceTasks(): MaintenanceTask[] {
@@ -563,7 +593,7 @@ export class OperationalDashboard implements OnInit {
         (gateway, index) =>
           new MaintenanceTask({
             id: calibrationTasks.length + index + 1,
-            label: `${gateway.uuid} · ${gateway.location}`,
+            label: `${gateway.uuid} · ${this.gatewayLocationFor(gateway.locationId)}`,
             icon: gateway.status === GatewayStatus.Offline ? 'wifi_off' : 'router',
             status: gateway.status === GatewayStatus.Offline ? 'to-do' : 'doing',
           }),
@@ -601,6 +631,10 @@ export class OperationalDashboard implements OnInit {
 
   private assetNameFor(assetId: number): string {
     return this.organizationAssets().find((asset) => asset.id === assetId)?.name ?? `Asset #${assetId}`;
+  }
+
+  private gatewayLocationFor(locationId: number): string {
+    return this.assetStore.locationNameById(locationId, this.organizationLocations());
   }
 
   private maintenanceTaskStatus(
@@ -747,6 +781,8 @@ export class OperationalDashboard implements OnInit {
         return 'monitoring.operational.type-low-temp';
       case 'high-humidity':
         return 'monitoring.operational.type-high-humidity';
+      case 'low-humidity':
+        return 'monitoring.operational.type-low-humidity';
       case 'low-battery':
         return 'monitoring.operational.type-low-battery';
       case 'low-signal':
@@ -779,6 +815,7 @@ export class OperationalDashboard implements OnInit {
       case 'high-temperature':
         return 'device_thermostat';
       case 'high-humidity':
+      case 'low-humidity':
         return 'water_drop';
       case 'low-battery':
         return 'battery_alert';
@@ -806,8 +843,14 @@ export class OperationalDashboard implements OnInit {
   private alertTypeKey(reading: SensorReading): string {
     const settings = this.settingsForReading(reading);
 
-    if (settings && reading.humidity !== null && reading.humidity > settings.maximumHumidity) {
-      return 'monitoring.operational.type-high-humidity';
+    if (
+      settings &&
+      reading.humidity !== null &&
+      this.isHumidityOutOfRange(reading.humidity, settings)
+    ) {
+      return reading.humidity > settings.maximumHumidity
+        ? 'monitoring.operational.type-high-humidity'
+        : 'monitoring.operational.type-low-humidity';
     }
 
     if (reading.motionDetected) {
@@ -876,6 +919,10 @@ export class OperationalDashboard implements OnInit {
     }
 
     return 'sensors';
+  }
+
+  private isHumidityOutOfRange(humidity: number, settings: AssetSettings): boolean {
+    return humidity < settings.minimumHumidity || humidity > settings.maximumHumidity;
   }
 
   private getThermalSeverity(
@@ -967,18 +1014,6 @@ export class OperationalDashboard implements OnInit {
     return `${new Date(date).getHours().toString().padStart(2, '0')}:00`;
   }
 
-  private averageAssetTemperature(): number | null {
-    const temperatures = this.organizationAssets()
-      .map((asset) => this.temperatureFromAsset(asset.currentTemperature))
-      .filter((temperature): temperature is number => temperature !== null);
-
-    if (!temperatures.length) {
-      return null;
-    }
-
-    return this.average(temperatures);
-  }
-
   private currentTemperatureLimits(): TemperatureLimits {
     const settings = this.currentSettings();
 
@@ -989,17 +1024,8 @@ export class OperationalDashboard implements OnInit {
       };
     }
 
-    return this.temperatureLimitsFromValues([
-      ...this.organizationReadings().map((reading) => reading.temperature),
-      ...this.organizationAssets().map((asset) => this.temperatureFromAsset(asset.currentTemperature)),
-    ]);
-  }
-
-  private maximumTemperatureForAsset(asset: Asset): number | null {
-    return (
-      this.assetStore.settingsForAsset(this.activeOrganizationId(), asset.id)?.maximumTemperature ??
-      this.currentSettings()?.maximumTemperature ??
-      null
+    return this.temperatureLimitsFromValues(
+      this.organizationReadings().map((reading) => reading.temperature),
     );
   }
 
@@ -1031,11 +1057,6 @@ export class OperationalDashboard implements OnInit {
 
   private average(values: number[]): number {
     return values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1);
-  }
-
-  private temperatureFromAsset(currentTemperature: string): number | null {
-    const temperature = Number(currentTemperature.replace('°C', '').trim());
-    return Number.isFinite(temperature) ? temperature : null;
   }
 
   private formatDate(date: string): string {

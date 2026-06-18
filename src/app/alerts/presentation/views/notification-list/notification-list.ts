@@ -1,12 +1,15 @@
-import { Component, computed, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
 import { Notification } from '../../../domain/model/notification.entity';
+
+type NotificationFilter = 'active' | 'pending' | 'failed';
 
 /**
  * @summary Presents the notification list user interface in the alerts bounded context.
@@ -14,7 +17,13 @@ import { Notification } from '../../../domain/model/notification.entity';
 @Component({
   selector: 'app-notification-list',
   standalone: true,
-  imports: [TranslateModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule],
+  imports: [
+    TranslateModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    ListPagination,
+  ],
   templateUrl: './notification-list.html',
   styleUrl: './notification-list.css',
 })
@@ -24,11 +33,45 @@ export class NotificationList implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly feedbackDismissDelayMs = 3000;
   private feedbackDismissTimeoutId: number | null = null;
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
+  protected readonly searchTerm = signal('');
+  protected readonly selectedNotificationFilter = signal<NotificationFilter>('active');
   protected readonly notifications = computed(() => {
     return [...this.alertsStore.activeNotifications()].sort(
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
   });
+  protected readonly filteredNotifications = computed(() => {
+    const normalizedSearch = this.searchTerm().trim().toLowerCase();
+    const filteredByStatus = this.notifications().filter((notification) =>
+      this.matchesNotificationFilter(notification),
+    );
+
+    if (!normalizedSearch) {
+      return filteredByStatus;
+    }
+
+    return filteredByStatus.filter((notification) => {
+      const incident = this.incidentForNotification(notification);
+
+      return [
+        notification.assetName,
+        notification.message,
+        notification.recipient,
+        notification.channel,
+        notification.status,
+        incident?.severity ?? '',
+        incident?.escalationStatus ?? '',
+      ]
+        .join(' ')
+        .toLowerCase()
+        .includes(normalizedSearch);
+    });
+  });
+  protected readonly paginatedNotifications = computed(() =>
+    this.paginate(this.filteredNotifications(), this.currentPage()),
+  );
   protected readonly canAttendNotifications = computed(() => this.alertsStore.canResolveAlerts());
 
   constructor() {
@@ -40,7 +83,7 @@ export class NotificationList implements OnInit {
    */
   ngOnInit(): void {
     this.alertsStore.clearFeedback();
-    this.alertsStore.loadIncidents();
+    this.alertsStore.loadIncidents({ evaluateReadings: true });
   }
 
   protected notificationChannelIcon(notification: Notification): string {
@@ -67,6 +110,10 @@ export class NotificationList implements OnInit {
       this.alertsStore.incidents().find((incident) => incident.id === notification.incidentId) ??
       null
     );
+  }
+
+  protected notificationTitle(notification: Notification): string {
+    return this.incidentForNotification(notification)?.assetName || notification.message;
   }
 
   protected escalationLabelKey(incident: Incident): string {
@@ -105,6 +152,20 @@ export class NotificationList implements OnInit {
     });
   }
 
+  protected selectNotificationFilter(filter: NotificationFilter): void {
+    this.selectedNotificationFilter.set(filter);
+    this.currentPage.set(1);
+  }
+
+  protected updateSearchTerm(value: string): void {
+    this.searchTerm.set(value);
+    this.currentPage.set(1);
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
+  }
+
   protected formatDate(isoDate: string): string {
     return new Intl.DateTimeFormat('en-GB', {
       day: '2-digit',
@@ -131,5 +192,24 @@ export class NotificationList implements OnInit {
 
     window.clearTimeout(this.feedbackDismissTimeoutId);
     this.feedbackDismissTimeoutId = null;
+  }
+
+  private matchesNotificationFilter(notification: Notification): boolean {
+    switch (this.selectedNotificationFilter()) {
+      case 'active':
+        return Boolean(this.incidentForNotification(notification)?.isOpen);
+      case 'pending':
+        return notification.isPending;
+      case 'failed':
+        return notification.isFailed;
+    }
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }

@@ -12,11 +12,14 @@ export class AssetSettings implements BaseEntity {
     private readonly _iotDeviceTypes: string[],
     private readonly _minimumTemperature: number,
     private readonly _maximumTemperature: number,
+    private readonly _minimumHumidity: number,
     private readonly _maximumHumidity: number,
     private readonly _calibrationFrequencyDays: number,
     private readonly _temperatureUnit: string,
     private readonly _humidityUnit: string,
     private readonly _weightUnit: string,
+    private readonly _readingFrequencySeconds: number,
+    private readonly _alertThresholdMinutes: number,
     private readonly _assetId: number | null = null,
   ) {}
 
@@ -48,6 +51,10 @@ export class AssetSettings implements BaseEntity {
     return this._maximumTemperature;
   }
 
+  get minimumHumidity(): number {
+    return this._minimumHumidity;
+  }
+
   get maximumHumidity(): number {
     return this._maximumHumidity;
   }
@@ -66,6 +73,14 @@ export class AssetSettings implements BaseEntity {
 
   get weightUnit(): string {
     return this._weightUnit;
+  }
+
+  get readingFrequencySeconds(): number {
+    return this._readingFrequencySeconds;
+  }
+
+  get alertThresholdMinutes(): number {
+    return this._alertThresholdMinutes;
   }
 
   get assetId(): number | null {

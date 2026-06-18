@@ -10,12 +10,22 @@
       </div>
 
       <nav class="side-menu">
-        <a class="menu-item" routerLink="/identity-access/dashboard" routerLinkActive="active">
+        <a
+          class="menu-item"
+          routerLink="/identity-access/dashboard"
+          [queryParams]="contextQueryParams"
+          routerLinkActive="active"
+        >
           <mat-icon class="menu-icon">dashboard</mat-icon>
           <span class="menu-label">{{ 'dashboard-shell.nav-main' | translate }}</span>
         </a>
 
-        <a class="menu-item" routerLink="/asset-management/assets" routerLinkActive="active">
+        <a
+          class="menu-item"
+          routerLink="/asset-management/assets"
+          [queryParams]="contextQueryParams"
+          routerLinkActive="active"
+        >
           <mat-icon class="menu-icon">inventory_2</mat-icon>
           <span class="menu-label">{{ 'dashboard-shell.nav-assets' | translate }}</span>
           @if (assetIssuesCount > 0) {
@@ -24,13 +34,23 @@
         </a>
 
         @if (canMonitorAssets) {
-          <a class="menu-item" routerLink="/monitoring/assets" routerLinkActive="active">
+          <a
+            class="menu-item"
+            routerLink="/monitoring/assets"
+            [queryParams]="contextQueryParams"
+            routerLinkActive="active"
+          >
             <mat-icon class="menu-icon">sensors</mat-icon>
             <span class="menu-label">{{ 'dashboard-shell.nav-monitoring' | translate }}</span>
           </a>
         }
 
-        <a class="menu-item" routerLink="/alerts/incidents" routerLinkActive="active">
+        <a
+          class="menu-item"
+          routerLink="/alerts/incidents"
+          [queryParams]="contextQueryParams"
+          routerLinkActive="active"
+        >
           <mat-icon class="menu-icon">warning</mat-icon>
           <span class="menu-label">{{ 'dashboard-shell.nav-alerts' | translate }}</span>
           @if (pendingAlertsCount > 0) {
@@ -59,6 +79,7 @@
               <a
                 class="sub-menu-link"
                 routerLink="/identity-access/users"
+                [queryParams]="contextQueryParams"
                 routerLinkActive="active"
               >
                 {{ 'dashboard-shell.nav-users' | translate }}
@@ -67,6 +88,7 @@
                 <a
                   class="sub-menu-link"
                   routerLink="/identity-access/roles-permissions/users/new"
+                  [queryParams]="contextQueryParams"
                   routerLinkActive="active"
                 >
                   {{ 'dashboard-shell.nav-new-user' | translate }}
@@ -76,6 +98,7 @@
                 <a
                   class="sub-menu-link"
                   routerLink="/identity-access/roles-permissions/permissions"
+                  [queryParams]="contextQueryParams"
                   routerLinkActive="active"
                 >
                   {{ 'dashboard-shell.nav-permissions' | translate }}
@@ -106,6 +129,7 @@
               <a
                 class="sub-menu-link"
                 routerLink="/asset-management/safety-ranges"
+                [queryParams]="contextQueryParams"
                 routerLinkActive="active"
               >
                 {{ 'dashboard-shell.nav-safety-ranges' | translate }}
@@ -113,6 +137,7 @@
               <a
                 class="sub-menu-link"
                 routerLink="/asset-management/operational-parameters"
+                [queryParams]="contextQueryParams"
                 routerLinkActive="active"
               >
                 {{ 'dashboard-shell.nav-operational-parameters' | translate }}
@@ -120,6 +145,7 @@
               <a
                 class="sub-menu-link"
                 routerLink="/maintenance/preventive"
+                [queryParams]="contextQueryParams"
                 routerLinkActive="active"
               >
                 {{ 'dashboard-shell.nav-preventive-maintenance' | translate }}
@@ -127,6 +153,7 @@
               <a
                 class="sub-menu-link"
                 routerLink="/maintenance/technical-service"
+                [queryParams]="contextQueryParams"
                 routerLinkActive="active"
               >
                 {{ 'dashboard-shell.nav-technical-service' | translate }}
@@ -153,24 +180,50 @@
           </button>
           @if (isReportsDropdownOpen(reportsGroup.isActive)) {
             <div class="sub-menu" aria-label="Reports navigation">
-              <a class="sub-menu-link" routerLink="/reports/daily-log" routerLinkActive="active">
+              <a
+                class="sub-menu-link"
+                routerLink="/reports/daily-log"
+                [queryParams]="contextQueryParams"
+                routerLinkActive="active"
+              >
                 {{ 'dashboard-shell.nav-daily-log' | translate }}
               </a>
-              <a class="sub-menu-link" routerLink="/reports/monthly" routerLinkActive="active">
+              <a
+                class="sub-menu-link"
+                routerLink="/reports/monthly"
+                [queryParams]="contextQueryParams"
+                routerLinkActive="active"
+              >
                 {{ 'dashboard-shell.nav-monthly-report' | translate }}
               </a>
-              <a class="sub-menu-link" routerLink="/reports/history" routerLinkActive="active">
+              <a
+                class="sub-menu-link"
+                routerLink="/reports/history"
+                [queryParams]="contextQueryParams"
+                routerLinkActive="active"
+              >
                 {{ 'dashboard-shell.nav-history' | translate }}
               </a>
-              <a class="sub-menu-link" routerLink="/reports/compliance" routerLinkActive="active">
+              <a
+                class="sub-menu-link"
+                routerLink="/reports/compliance"
+                [queryParams]="contextQueryParams"
+                routerLinkActive="active"
+              >
                 {{ 'dashboard-shell.nav-compliance' | translate }}
               </a>
-              <a class="sub-menu-link" routerLink="/reports/findings" routerLinkActive="active">
+              <a
+                class="sub-menu-link"
+                routerLink="/reports/findings"
+                [queryParams]="contextQueryParams"
+                routerLinkActive="active"
+              >
                 {{ 'dashboard-shell.nav-findings' | translate }}
               </a>
               <a
                 class="sub-menu-link"
                 routerLink="/reports/audit-evidence"
+                [queryParams]="contextQueryParams"
                 routerLinkActive="active"
               >
                 {{ 'dashboard-shell.nav-audit-evidence' | translate }}
@@ -179,7 +232,12 @@
           }
         </div>
 
-        <a class="menu-item" routerLink="/alerts/notifications" routerLinkActive="active">
+        <a
+          class="menu-item"
+          routerLink="/alerts/notifications"
+          [queryParams]="contextQueryParams"
+          routerLinkActive="active"
+        >
           <mat-icon class="menu-icon">notifications</mat-icon>
           <span class="menu-label">{{ 'dashboard-shell.nav-notifications' | translate }}</span>
           @if (pendingAlertsCount > 0) {
@@ -187,6 +245,36 @@
           }
         </a>
       </nav>
+      @if (organizationMembers.length) {
+        <section class="team-card" aria-label="Organization members">
+          <div class="team-card-header">
+            <span>{{ 'dashboard-shell.team-members' | translate }}</span>
+            <a
+              class="team-manage-link"
+              routerLink="/identity-access/roles-permissions"
+              [queryParams]="contextQueryParams"
+              [attr.aria-label]="'dashboard-shell.team-manage' | translate"
+            >
+              <mat-icon>manage_accounts</mat-icon>
+            </a>
+          </div>
+          <div class="team-list">
+            @for (member of organizationMembers; track member.id) {
+              <a
+                class="team-member"
+                routerLink="/identity-access/roles-permissions"
+                [queryParams]="contextQueryParams"
+              >
+                <span class="member-avatar">{{ member.initials }}</span>
+                <span class="member-copy">
+                  <span class="member-name">{{ member.fullName }}</span>
+                  <small class="member-role">{{ member.roleLabelKey | translate }}</small>
+                </span>
+              </a>
+            }
+          </div>
+        </section>
+      }
     </div>
 
     <div class="sidebar-footer">
@@ -213,37 +301,57 @@
   <!-- WORKSPACE -->
   <section class="workspace">
     <header class="topbar">
-      @if (pendingAlertsCount > 0) {
-        <a
-          class="notification-shortcut"
-          routerLink="/alerts/notifications"
-          [attr.aria-label]="
-            'dashboard-shell.notification-shortcut' | translate: { count: pendingAlertsCount }
-          "
-        >
-          <mat-icon>notifications_active</mat-icon>
-          <span>
-            {{
-              'dashboard-shell.notification-shortcut' | translate: { count: pendingAlertsCount }
-            }}
-          </span>
-        </a>
-      }
+      <nav class="context-nav" aria-label="Section navigation">
+        @for (link of contextualLinks(); track link.path) {
+          @if (link.visible) {
+            <a
+              [routerLink]="link.path"
+              [queryParams]="link.queryParams ?? contextQueryParams"
+              [class.active]="isContextLinkActive(link)"
+            >
+              {{ link.labelKey | translate }}
+            </a>
+          }
+        }
+      </nav>
 
-      <div class="user-profile">
-        <div class="avatar-wrapper">
-          <div class="avatar-container">
-            <mat-icon class="avatar-placeholder">person</mat-icon>
+      <div class="topbar-actions">
+        @if (pendingAlertsCount > 0) {
+          <a
+            class="notification-shortcut"
+            routerLink="/alerts/notifications"
+            [queryParams]="contextQueryParams"
+            [attr.aria-label]="
+              'dashboard-shell.notification-shortcut' | translate: { count: pendingAlertsCount }
+            "
+          >
+            <mat-icon>notifications_active</mat-icon>
+            <span>
+              {{
+                'dashboard-shell.notification-shortcut' | translate: { count: pendingAlertsCount }
+              }}
+            </span>
+          </a>
+        }
+
+        <div class="user-profile">
+          <div class="avatar-wrapper">
+            <div class="avatar-container">
+              <mat-icon class="avatar-placeholder">person</mat-icon>
+            </div>
           </div>
-          <span class="profile-status"></span>
-        </div>
-        <div class="profile-meta">
-          <span class="name">{{ profileUserName }}</span>
-          <span class="role">{{ profileRoleLabelKey | translate }}</span>
-        </div>
-        <div class="user-actions">
-          <button mat-icon-button><mat-icon>settings</mat-icon></button>
-          <button mat-icon-button (click)="logout()"><mat-icon>logout</mat-icon></button>
+          <div class="profile-meta">
+            <span class="name">{{ profileUserName }}</span>
+            <span class="role">{{ profileRoleLabelKey | translate }}</span>
+          </div>
+          <div class="user-actions">
+            <button mat-icon-button type="button" (click)="openSettings()">
+              <mat-icon>settings</mat-icon>
+            </button>
+            <button mat-icon-button type="button" (click)="logout()">
+              <mat-icon>logout</mat-icon>
+            </button>
+          </div>
         </div>
       </div>
     </header>

@@ -6,21 +6,19 @@
     </div>
 
     @if (canMonitorAssets()) {
-      <nav class="monitoring-tabs">
-        @for (tab of tabs; track tab) {
-          <button
-            type="button"
-            [class.active]="activeType() === tab.type"
-            (click)="activeType.set(tab.type)"
-          >
-            {{ tab.labelKey | translate }}
-          </button>
-        }
-      </nav>
-    }
+      <div class="assets-toolbar monitoring-workbar" aria-label="Monitoring filters and status">
+        <nav class="monitoring-tabs" aria-label="Monitoring asset sections">
+          @for (tab of tabs; track tab.type) {
+            <button
+              type="button"
+              [class.active]="activeType() === tab.type"
+              (click)="selectAssetType(tab.type)"
+            >
+              {{ tab.labelKey | translate }}
+            </button>
+          }
+        </nav>
 
-    @if (canMonitorAssets()) {
-      <div class="assets-toolbar">
         <label class="search-box">
           <mat-icon class="search-icon">search</mat-icon>
           <input
@@ -54,7 +52,7 @@
     </div>
   } @else {
     <div class="monitoring-list">
-      @for (item of filteredItems(); track item.asset.id) {
+      @for (item of paginatedItems(); track item.asset.id) {
         <app-monitoring-asset-card
           [asset]="item.asset"
           [device]="item.device"
@@ -70,6 +68,15 @@
           <mat-icon>inventory_2</mat-icon>
           <p>{{ 'monitoring.asset-monitoring.empty' | translate }}</p>
         </div>
+      }
+
+      @if (filteredItems().length > 0) {
+        <app-list-pagination
+          [page]="currentPage()"
+          [total]="filteredItems().length"
+          [pageSize]="pageSize"
+          (pageChange)="updatePage($event)"
+        />
       }
     </div>
   }

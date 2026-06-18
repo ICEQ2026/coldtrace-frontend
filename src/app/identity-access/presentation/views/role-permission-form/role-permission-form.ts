@@ -9,17 +9,18 @@ import { Organization } from '../../../domain/model/organization.entity';
 import { Role } from '../../../domain/model/role.entity';
 import { User } from '../../../domain/model/user.entity';
 import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 
-type RolePermissionFeedback = 'idle' | 'saved' | 'server-error';
+type RolePermissionFeedback = 'idle' | 'server-error';
 
 /**
  * @summary Presents the role permission form user interface in the identity access bounded context.
  */
 @Component({
   selector: 'app-role-permission-form',
-  imports: [MatButton, TranslatePipe],
+  imports: [MatButton, TranslatePipe, ListPagination],
   templateUrl: './role-permission-form.html',
-  styleUrl: '../user-access-list/user-access-list.css',
+  styleUrl: './role-permission-form.css',
 })
 export class RolePermissionForm implements OnInit {
   protected readonly identityAccessStore = inject(IdentityAccessStore);
@@ -28,8 +29,9 @@ export class RolePermissionForm implements OnInit {
   private readonly router = inject(Router);
 
   protected readonly loading = signal(false);
-  protected readonly savingRoleId = signal<number | null>(null);
   protected readonly feedback = signal<RolePermissionFeedback>('idle');
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly roles = signal<Role[]>([]);
   protected readonly users = signal<User[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -41,11 +43,13 @@ export class RolePermissionForm implements OnInit {
   protected readonly profileRoleLabelKey = computed(
     () => this.identityAccessStore.currentRoleLabelKeyFrom(this.users(), this.roles())
   );
-  protected readonly canManageAccess = computed(
-    () => this.identityAccessStore.canManageRolePermissions(this.users(), this.roles())
-  );
   protected readonly assetIssueCount = computed(() => {
     return this.assetManagementStore.assetIssueCountFor(this.activeOrganizationId());
+  });
+  protected readonly paginatedRoles = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.pageSize;
+
+    return this.roles().slice(startIndex, startIndex + this.pageSize);
   });
 
   /**
@@ -58,7 +62,6 @@ export class RolePermissionForm implements OnInit {
   protected loadRoles(): void {
     this.loading.set(true);
     this.feedback.set('idle');
-    this.assetManagementStore.loadAssets();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -85,42 +88,13 @@ export class RolePermissionForm implements OnInit {
     return `roles-permissions.roles.${role.name}`;
   }
 
-  protected isPermissionSelected(role: Role, permissionKey: string): boolean {
-    return this.identityAccessStore.isPermissionSelected(role, permissionKey);
-  }
-
-  protected isPermissionToggleDisabled(role: Role, permissionKey: string): boolean {
-    return (
-      !this.canManageAccess() ||
-      this.savingRoleId() === role.id ||
-      this.identityAccessStore.isPermissionToggleDisabled(role, permissionKey)
-    );
-  }
-
-  protected toggleRolePermission(role: Role, permissionKey: string, checked: boolean): void {
-    if (!this.canManageAccess()) {
-      return;
-    }
-
-    this.savingRoleId.set(role.id);
-    this.feedback.set('idle');
-    this.identityAccessStore
-      .toggleRolePermission(role, permissionKey, checked)
-      .pipe(finalize(() => this.savingRoleId.set(null)))
-      .subscribe({
-        next: (savedRole) => {
-          this.roles.update((roles) =>
-            roles.map((currentRole) => (currentRole.id === savedRole.id ? savedRole : currentRole)),
-          );
-          this.feedback.set('saved');
-        },
-        error: () => this.feedback.set('server-error'),
-      });
-  }
-
   protected logout(): void {
     this.identityAccessStore.clearCurrentUser();
     void this.router.navigate(['/identity-access/sign-in']);
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
   }
 
   private activeOrganizationId(): number | null {

@@ -4,9 +4,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslateModule } from '@ngx-translate/core';
+import { finalize } from 'rxjs';
 import { IdentityAccessStore } from '../../../../identity-access/application/identity-access.store';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { AlertsStore } from '../../../application/alerts.store';
 import { Incident } from '../../../domain/model/incident.entity';
+import { Notification } from '../../../domain/model/notification.entity';
 
 /**
  * @summary Presents the incident list user interface in the alerts bounded context.
@@ -14,7 +17,13 @@ import { Incident } from '../../../domain/model/incident.entity';
 @Component({
   selector: 'app-incident-list',
   standalone: true,
-  imports: [TranslateModule, MatIconModule, MatProgressSpinnerModule, ReactiveFormsModule],
+  imports: [
+    TranslateModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    ReactiveFormsModule,
+    ListPagination,
+  ],
   templateUrl: './incident-list.html',
   styleUrl: './incident-list.css',
 })
@@ -24,12 +33,20 @@ export class IncidentList implements OnInit {
   private readonly fb = inject(FormBuilder);
   @ViewChild('closureCard') private closureCard?: ElementRef<HTMLElement>;
   protected readonly closureSubmitted = signal(false);
+  protected readonly selectedNotificationIncident = signal<Incident | null>(null);
+  protected readonly incidentNotifications = signal<Notification[]>([]);
+  protected readonly loadingIncidentNotifications = signal(false);
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly canResolveAlerts = computed(() => this.alertsStore.canResolveAlerts());
   protected readonly profileUserName = computed(() =>
     this.identityStore.currentUserNameFrom(this.identityStore.users()),
   );
   protected readonly activeIncidents = computed(() =>
     this.alertsStore.incidents().filter((incident) => !incident.isClosed),
+  );
+  protected readonly paginatedIncidents = computed(() =>
+    this.paginate(this.activeIncidents(), this.currentPage()),
   );
   protected readonly pendingClosureIncidents = computed(() =>
     this.activeIncidents().filter((incident) => incident.isRecognized),
@@ -63,7 +80,7 @@ export class IncidentList implements OnInit {
    * @summary Initializes the incident list view state.
    */
   ngOnInit(): void {
-    this.alertsStore.loadIncidents();
+    this.alertsStore.loadIncidents({ evaluateReadings: true });
   }
 
   protected recognize(incident: Incident): void {
@@ -74,6 +91,10 @@ export class IncidentList implements OnInit {
     this.alertsStore.recognizeIncident(incident, userName).subscribe({
       error: () => undefined,
     });
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
   }
 
   protected closeIncident(): void {
@@ -124,19 +145,6 @@ export class IncidentList implements OnInit {
       });
   }
 
-  protected reviewEscalation(incident: Incident): void {
-    if (
-      this.alertsStore.reviewingEscalationId() === incident.id ||
-      (!incident.isEscalated && !incident.isPendingEscalationConfiguration)
-    ) {
-      return;
-    }
-
-    this.alertsStore.reviewEscalation(incident, this.profileUserName()).subscribe({
-      error: () => undefined,
-    });
-  }
-
   protected selectIncidentForClosure(incident: Incident): void {
     if (!incident.isRecognized) {
       return;
@@ -148,6 +156,20 @@ export class IncidentList implements OnInit {
       behavior: 'smooth',
       block: 'start',
     }));
+  }
+
+  protected reviewIncidentNotifications(incident: Incident): void {
+    this.selectedNotificationIncident.set(incident);
+    this.incidentNotifications.set([]);
+    this.loadingIncidentNotifications.set(true);
+
+    this.alertsStore
+      .notificationsForIncident(incident.id)
+      .pipe(finalize(() => this.loadingIncidentNotifications.set(false)))
+      .subscribe({
+        next: (notifications) => this.incidentNotifications.set(notifications),
+        error: () => this.alertsStore.setFeedback('alerts.incident-list.feedback-error'),
+      });
   }
 
   protected stabilizeSelectedIncident(): void {
@@ -191,7 +213,7 @@ export class IncidentList implements OnInit {
     return [
       'alerts.incident-list.feedback-recognized',
       'alerts.incident-list.feedback-closed',
-      'alerts.incident-list.feedback-escalation-reviewed',
+      'alerts.incident-list.feedback-stabilized',
     ].includes(feedback);
   }
 
@@ -221,6 +243,14 @@ export class IncidentList implements OnInit {
     return `alerts.incident-list.type-${incident.type}`;
   }
 
+  protected notificationChannelLabelKey(notification: Notification): string {
+    return `alerts.notification-list.channel-${notification.channel}`;
+  }
+
+  protected notificationStatusLabelKey(notification: Notification): string {
+    return `alerts.notification-list.status-${notification.status}`;
+  }
+
   protected formatDate(isoDate: string): string {
     return new Intl.DateTimeFormat('en-GB', {
       day: '2-digit',
@@ -229,5 +259,13 @@ export class IncidentList implements OnInit {
       hour: '2-digit',
       minute: '2-digit',
     }).format(new Date(isoDate));
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }

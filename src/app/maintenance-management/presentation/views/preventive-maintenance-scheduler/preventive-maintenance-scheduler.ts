@@ -16,6 +16,7 @@ import { Organization } from '../../../../identity-access/domain/model/organizat
 import { Role } from '../../../../identity-access/domain/model/role.entity';
 import { User } from '../../../../identity-access/domain/model/user.entity';
 import { IdentityAccessApi } from '../../../../identity-access/infrastructure/identity-access-api';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { MaintenanceManagementStore } from '../../../application/maintenance-management.store';
 import { MaintenanceSchedule } from '../../../domain/model/maintenance-schedule.entity';
 import { MaintenanceScheduleStatus } from '../../../domain/model/maintenance-schedule-status.enum';
@@ -27,6 +28,7 @@ type PreventiveMaintenanceFeedback =
   | 'invalid'
   | 'invalid-asset'
   | 'duplicate'
+  | 'status-updated'
   | 'access-denied'
   | 'server-error';
 
@@ -35,7 +37,15 @@ type PreventiveMaintenanceFeedback =
  */
 @Component({
   selector: 'app-preventive-maintenance-scheduler',
-  imports: [MatButton, MatIcon, MatProgressSpinner, NgClass, ReactiveFormsModule, TranslatePipe],
+  imports: [
+    MatButton,
+    MatIcon,
+    MatProgressSpinner,
+    NgClass,
+    ReactiveFormsModule,
+    TranslatePipe,
+    ListPagination,
+  ],
   templateUrl: './preventive-maintenance-scheduler.html',
   styleUrl: './preventive-maintenance-scheduler.css',
 })
@@ -53,6 +63,15 @@ export class PreventiveMaintenanceScheduler implements OnInit {
   protected readonly saving = signal(false);
   protected readonly submitted = signal(false);
   protected readonly feedback = signal<PreventiveMaintenanceFeedback>('idle');
+  protected readonly updatingScheduleId = signal<number | null>(null);
+  protected readonly maintenanceScheduleStatuses: MaintenanceScheduleStatus[] = [
+    MaintenanceScheduleStatus.Scheduled,
+    MaintenanceScheduleStatus.Pending,
+    MaintenanceScheduleStatus.Completed,
+    MaintenanceScheduleStatus.Canceled,
+  ];
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -103,6 +122,9 @@ export class PreventiveMaintenanceScheduler implements OnInit {
       .filter((schedule) => schedule.organizationId === organizationId)
       .sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate));
   });
+  protected readonly paginatedSchedules = computed(() =>
+    this.paginate(this.organizationSchedules(), this.currentPage()),
+  );
   protected readonly openSchedules = computed(() => {
     return this.organizationSchedules().filter((schedule) => this.isOpenSchedule(schedule));
   });
@@ -128,8 +150,6 @@ export class PreventiveMaintenanceScheduler implements OnInit {
   protected loadPageData(): void {
     this.identityLoading.set(true);
     this.feedback.set('idle');
-    this.assetManagementStore.loadGateways();
-    this.maintenanceStore.loadMaintenanceSchedules();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -236,6 +256,47 @@ export class PreventiveMaintenanceScheduler implements OnInit {
     this.maintenanceForm.markAsPristine();
   }
 
+  protected updateScheduleStatus(schedule: MaintenanceSchedule, value: string): void {
+    const nextStatus = this.maintenanceScheduleStatuses.find((status) => status === value);
+
+    this.feedback.set('idle');
+
+    if (!nextStatus || nextStatus === schedule.status || !this.canScheduleMaintenance()) {
+      return;
+    }
+
+    const nextSchedule = new MaintenanceSchedule(
+      schedule.id,
+      schedule.organizationId,
+      schedule.uuid,
+      schedule.assetId,
+      schedule.iotDeviceId,
+      schedule.scheduledDate,
+      schedule.period,
+      schedule.observations,
+      nextStatus,
+      schedule.createdAt,
+      schedule.frequencyDays,
+      schedule.responsibleUserId,
+    );
+
+    this.updatingScheduleId.set(schedule.id);
+    this.maintenanceStore
+      .updateMaintenanceSchedule(nextSchedule)
+      .pipe(finalize(() => this.updatingScheduleId.set(null)))
+      .subscribe({
+        next: (updatedSchedule) => {
+          this.maintenanceSchedules.update((schedules) =>
+            schedules.map((currentSchedule) =>
+              currentSchedule.id === updatedSchedule.id ? updatedSchedule : currentSchedule,
+            ),
+          );
+          this.feedback.set('status-updated');
+        },
+        error: () => this.feedback.set('server-error'),
+      });
+  }
+
   protected hasControlError(controlName: keyof typeof this.maintenanceForm.controls): boolean {
     const control = this.maintenanceForm.controls[controlName];
 
@@ -244,6 +305,10 @@ export class PreventiveMaintenanceScheduler implements OnInit {
 
   protected hasDateError(): boolean {
     return this.hasControlError('scheduledDate') || (this.submitted() && this.isPastDate());
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
   }
 
   protected assetNameFor(schedule: MaintenanceSchedule): string {
@@ -329,5 +394,13 @@ export class PreventiveMaintenanceScheduler implements OnInit {
     const day = `${date.getDate()}`.padStart(2, '0');
 
     return `${year}-${month}-${day}`;
+  }
+
+  private paginate<T>(items: T[], page: number): T[] {
+    const pageCount = Math.max(Math.ceil(items.length / this.pageSize), 1);
+    const currentPage = Math.min(Math.max(page, 1), pageCount);
+    const startIndex = (currentPage - 1) * this.pageSize;
+
+    return items.slice(startIndex, startIndex + this.pageSize);
   }
 }

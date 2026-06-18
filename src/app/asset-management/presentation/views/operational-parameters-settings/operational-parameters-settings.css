@@ -78,6 +78,31 @@
   min-height: 66px;
 }
 
+.primary-action,
+.secondary-action {
+  box-shadow: none;
+  width: auto;
+}
+
+.primary-action {
+  border: 1px solid #2563eb !important;
+  font-family: 'Varela Round', Arial, sans-serif;
+  height: 48px;
+  line-height: 24px;
+}
+
+.secondary-action {
+  line-height: 32px;
+}
+
+.primary-action mat-icon,
+.secondary-action mat-icon {
+  font-size: 24px;
+  height: 24px;
+  line-height: 24px;
+  width: 24px;
+}
+
 .save-actions .primary-action {
   min-width: 172px;
 }

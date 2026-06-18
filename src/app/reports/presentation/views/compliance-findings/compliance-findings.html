@@ -11,13 +11,6 @@
       <h1 id="findings-title">{{ 'reports.findings.title' | translate }}</h1>
       <p>{{ 'reports.findings.subtitle' | translate }}</p>
     </div>
-
-    <div class="heading-actions">
-      <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
-        <mat-icon aria-hidden="true">refresh</mat-icon>
-        {{ 'reports.findings.reload' | translate }}
-      </button>
-    </div>
   </div>
 
   @if (feedback() === 'closed') {
@@ -80,6 +73,13 @@
           }
         </select>
       </label>
+
+      <div class="report-card-actions">
+        <button mat-stroked-button type="button" class="secondary-action" (click)="loadPageData()">
+          <mat-icon aria-hidden="true">refresh</mat-icon>
+          {{ 'reports.findings.reload' | translate }}
+        </button>
+      </div>
     </section>
 
     <section class="summary-grid" aria-label="Compliance findings summary">
@@ -153,7 +153,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (finding of complianceReport().findings; track trackFinding($index, finding)) {
+              @for (finding of paginatedFindings(); track trackFinding($index, finding)) {
                 <tr>
                   <td>
                     <strong>{{ finding.assetName }}</strong>
@@ -195,6 +195,13 @@
             </tbody>
           </table>
         </div>
+
+        <app-list-pagination
+          [page]="currentPage()"
+          [total]="complianceReport().findings.length"
+          [pageSize]="pageSize"
+          (pageChange)="updatePage($event)"
+        />
       } @else {
         <div class="empty-state">
           <mat-icon aria-hidden="true">task_alt</mat-icon>

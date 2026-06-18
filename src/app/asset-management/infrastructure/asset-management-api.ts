@@ -2,31 +2,57 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { BaseApi } from '../../shared/infrastructure/base-api';
+import { OrganizationScopeStore } from '../../shared/infrastructure/organization-scope.store';
 import { Asset } from '../domain/model/asset.entity';
 import { AssetSettings } from '../domain/model/asset-settings.entity';
 import { Gateway } from '../domain/model/gateway.entity';
 import { IoTDevice } from '../domain/model/iot-device.entity';
+import { Location } from '../domain/model/location.entity';
 import { AssetSettingsApiEndpoint } from './asset-settings-api-endpoint';
 import { AssetsApiEndpoint } from './assets-api-endpoint';
 import { GatewaysApiEndpoint } from './gateways-api-endpoint';
 import { IoTDevicesApiEndpoint } from './iot-devices-api-endpoint';
+import { LocationsApiEndpoint } from './locations-api-endpoint';
 
 /**
  * @summary Groups asset management API operations used by application stores and views.
  */
 @Injectable({ providedIn: 'root' })
 export class AssetManagementApi extends BaseApi {
+  private readonly locationsEndpoint: LocationsApiEndpoint;
   private readonly assetsEndpoint: AssetsApiEndpoint;
   private readonly iotDevicesEndpoint: IoTDevicesApiEndpoint;
   private readonly gatewaysEndpoint: GatewaysApiEndpoint;
   private readonly assetSettingsEndpoint: AssetSettingsApiEndpoint;
 
-  constructor(httpClient: HttpClient) {
+  constructor(httpClient: HttpClient, organizationScope: OrganizationScopeStore) {
     super();
-    this.assetsEndpoint = new AssetsApiEndpoint(httpClient);
-    this.iotDevicesEndpoint = new IoTDevicesApiEndpoint(httpClient);
-    this.gatewaysEndpoint = new GatewaysApiEndpoint(httpClient);
-    this.assetSettingsEndpoint = new AssetSettingsApiEndpoint(httpClient);
+    this.locationsEndpoint = new LocationsApiEndpoint(httpClient, organizationScope);
+    this.assetsEndpoint = new AssetsApiEndpoint(httpClient, organizationScope);
+    this.iotDevicesEndpoint = new IoTDevicesApiEndpoint(httpClient, organizationScope);
+    this.gatewaysEndpoint = new GatewaysApiEndpoint(httpClient, organizationScope);
+    this.assetSettingsEndpoint = new AssetSettingsApiEndpoint(httpClient, organizationScope);
+  }
+
+  /**
+   * @summary Fetches locations from the API endpoint.
+   */
+  getLocations(): Observable<Location[]> {
+    return this.locationsEndpoint.getAll();
+  }
+
+  /**
+   * @summary Persists a location and appends it to local state.
+   */
+  createLocation(location: Location): Observable<Location> {
+    return this.locationsEndpoint.create(location);
+  }
+
+  /**
+   * @summary Persists location changes and replaces the local entry.
+   */
+  updateLocation(location: Location): Observable<Location> {
+    return this.locationsEndpoint.update(location, location.id);
   }
 
   /**
@@ -100,6 +126,13 @@ export class AssetManagementApi extends BaseApi {
   }
 
   /**
+   * @summary Fetches effective settings for one asset from the backend endpoint.
+   */
+  getAssetSettingsByAssetId(assetId: number): Observable<AssetSettings> {
+    return this.assetSettingsEndpoint.getByAssetId(assetId);
+  }
+
+  /**
    * @summary Persists asset settings and appends them to local state.
    */
   createAssetSettings(assetSettings: AssetSettings): Observable<AssetSettings> {
@@ -112,4 +145,5 @@ export class AssetManagementApi extends BaseApi {
   updateAssetSettings(assetSettings: AssetSettings): Observable<AssetSettings> {
     return this.assetSettingsEndpoint.update(assetSettings, assetSettings.id);
   }
+
 }

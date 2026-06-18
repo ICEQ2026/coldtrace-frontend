@@ -5,6 +5,20 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageSwitcher } from '../language-switcher/language-switcher';
 
+interface ContextLink {
+  path: string;
+  labelKey: string;
+  visible: boolean;
+  queryParams?: Record<string, string | number>;
+}
+
+export interface OrganizationMemberSummary {
+  id: number;
+  fullName: string;
+  initials: string;
+  roleLabelKey: string;
+}
+
 /**
  * @summary Presents the dashboard shell user interface in the shared bounded context.
  */
@@ -34,6 +48,8 @@ export class DashboardShell {
   @Input() canMonitorAssets = false;
   @Input() assetIssuesCount = 0;
   @Input() pendingAlertsCount = 0;
+  @Input() organizationMembers: OrganizationMemberSummary[] = [];
+  @Input() contextQueryParams: Record<string, number> = {};
 
   @Output() signedOut = new EventEmitter<void>();
   @Output() monthlyReportRequested = new EventEmitter<void>();
@@ -76,6 +92,94 @@ export class DashboardShell {
     this.settingsDropdownTouched = true;
   }
 
+  protected contextualLinks(): ContextLink[] {
+    if (this.isAccessRoute()) {
+      return [
+        {
+          path: '/identity-access/users',
+          labelKey: 'dashboard-shell.nav-users',
+          visible: true,
+        },
+        {
+          path: '/identity-access/roles-permissions/users/new',
+          labelKey: 'dashboard-shell.nav-new-user',
+          visible: this.canManageUsers,
+        },
+        {
+          path: '/identity-access/roles-permissions/permissions',
+          labelKey: 'dashboard-shell.nav-permissions',
+          visible: this.canManageAccess,
+        },
+      ];
+    }
+
+    if (this.isSettingsRoute()) {
+      return [
+        {
+          path: '/asset-management/safety-ranges',
+          labelKey: 'dashboard-shell.nav-safety-ranges',
+          visible: true,
+        },
+        {
+          path: '/asset-management/operational-parameters',
+          labelKey: 'dashboard-shell.nav-operational-parameters',
+          visible: true,
+        },
+        {
+          path: '/maintenance/preventive',
+          labelKey: 'dashboard-shell.nav-preventive-maintenance',
+          visible: true,
+        },
+        {
+          path: '/maintenance/technical-service',
+          labelKey: 'dashboard-shell.nav-technical-service',
+          visible: true,
+        },
+      ];
+    }
+
+    if (this.isReportsRoute()) {
+      return [
+        { path: '/reports/daily-log', labelKey: 'dashboard-shell.nav-daily-log', visible: true },
+        { path: '/reports/monthly', labelKey: 'dashboard-shell.nav-monthly-report', visible: true },
+        { path: '/reports/history', labelKey: 'dashboard-shell.nav-history', visible: true },
+        { path: '/reports/compliance', labelKey: 'dashboard-shell.nav-compliance', visible: true },
+        { path: '/reports/findings', labelKey: 'dashboard-shell.nav-findings', visible: true },
+        {
+          path: '/reports/audit-evidence',
+          labelKey: 'dashboard-shell.nav-audit-evidence',
+          visible: true,
+        },
+      ];
+    }
+
+    return [];
+  }
+
+  protected isContextLinkActive(link: ContextLink): boolean {
+    const [currentPath, currentQuery = ''] = this.router.url.split('?');
+
+    if (currentPath !== link.path) {
+      return false;
+    }
+
+    const expectedParams = Object.entries(link.queryParams ?? {});
+
+    if (!expectedParams.length) {
+      return true;
+    }
+
+    const queryParams = new URLSearchParams(currentQuery);
+
+    return expectedParams.every(([key, value]) => queryParams.get(key) === value);
+  }
+
+  protected openSettings(): void {
+    void this.router.navigate(['/asset-management/safety-ranges'], {
+      queryParams: this.contextQueryParams,
+    });
+  }
+
   protected logout(): void {
     this.signedOut.emit();
   }
@@ -84,7 +188,7 @@ export class DashboardShell {
     this.monthlyReportRequested.emit();
   }
 
-  private isAccessRoute(): boolean {
+  protected isAccessRoute(): boolean {
     const url = this.router.url;
 
     return (
@@ -92,13 +196,13 @@ export class DashboardShell {
     );
   }
 
-  private isReportsRoute(): boolean {
+  protected isReportsRoute(): boolean {
     const url = this.router.url;
 
     return url.includes('/reports') || url.includes('/identity-access/reports');
   }
 
-  private isSettingsRoute(): boolean {
+  protected isSettingsRoute(): boolean {
     const url = this.router.url;
 
     return (

@@ -1,9 +1,9 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
+import { ListPagination } from '../../../../shared/presentation/components/list-pagination/list-pagination';
 import { IdentityAccessStore } from '../../../application/identity-access.store';
 import { AssetManagementStore } from '../../../../asset-management/application/asset-management.store';
 import { Organization } from '../../../domain/model/organization.entity';
@@ -11,7 +11,11 @@ import { Role } from '../../../domain/model/role.entity';
 import { User } from '../../../domain/model/user.entity';
 import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 
-type UserAccessFeedback = 'idle' | 'saved' | 'invalid-role' | 'server-error';
+type UserAccessFeedback =
+  | 'idle'
+  | 'saved'
+  | 'invalid-role'
+  | 'server-error';
 
 interface UserAccessRow {
   user: User;
@@ -27,7 +31,7 @@ interface UserAccessRow {
  */
 @Component({
   selector: 'app-user-access-list',
-  imports: [MatButton, MatIcon, RouterLink, TranslatePipe],
+  imports: [MatIcon, RouterLink, TranslatePipe, ListPagination],
   templateUrl: './user-access-list.html',
   styleUrl: './user-access-list.css',
 })
@@ -44,6 +48,8 @@ export class UserAccessList implements OnInit {
   protected readonly savedUserId = signal<number | null>(null);
   protected readonly invalidUserId = signal<number | null>(null);
   protected readonly searchTerm = signal('');
+  protected readonly pageSize = 10;
+  protected readonly currentPage = signal(1);
   protected readonly users = signal<User[]>([]);
   protected readonly roles = signal<Role[]>([]);
   protected readonly organizations = signal<Organization[]>([]);
@@ -72,6 +78,11 @@ export class UserAccessList implements OnInit {
           .toLowerCase()
           .includes(normalizedSearch);
       });
+  });
+
+  protected readonly paginatedRows = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.pageSize;
+    return this.rows().slice(startIndex, startIndex + this.pageSize);
   });
 
   protected readonly administratorCount = computed(
@@ -213,12 +224,16 @@ export class UserAccessList implements OnInit {
 
   protected updateSearchTerm(value: string): void {
     this.searchTerm.set(value);
+    this.currentPage.set(1);
+  }
+
+  protected updatePage(page: number): void {
+    this.currentPage.set(page);
   }
 
   protected loadAccessData(): void {
     this.loading.set(true);
     this.feedback.set('idle');
-    this.assetManagementStore.loadAssets();
 
     forkJoin({
       users: this.identityAccessApi.getUsers(),
@@ -259,6 +274,10 @@ export class UserAccessList implements OnInit {
 
   private activeOrganizationId(): number | null {
     return this.identityAccessStore.currentOrganizationIdFrom(this.users());
+  }
+
+  private pageCountFor(total: number): number {
+    return Math.max(Math.ceil(total / this.pageSize), 1);
   }
 
   private roleFor(roleId: number): Role | undefined {

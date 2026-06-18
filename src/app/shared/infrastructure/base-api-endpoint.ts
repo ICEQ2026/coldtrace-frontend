@@ -1,11 +1,11 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, of, throwError } from 'rxjs';
 import { BaseAssembler } from './base-assembler';
 import { BaseEntity } from './base-entity';
 import { BaseResource, BaseResponse } from './base-response';
 
 /**
- * @summary Provides generic CRUD operations for JSON Server endpoints.
+ * @summary Provides generic CRUD operations for backend REST endpoints.
  */
 export abstract class BaseApiEndpoint<
   TEntity extends BaseEntity,
@@ -20,9 +20,13 @@ export abstract class BaseApiEndpoint<
   ) {}
 
   /**
-   * @summary Reads a collection from JSON Server and maps raw resources to domain entities.
+   * @summary Reads a collection from the configured endpoint and maps raw resources to domain entities.
    */
   getAll(): Observable<TEntity[]> {
+    if (!this.endpointUrl) {
+      return of([]);
+    }
+
     return this.http.get<TResponse | TResource[]>(this.endpointUrl).pipe(
       map((response) => {
         if (Array.isArray(response)) {
@@ -35,7 +39,7 @@ export abstract class BaseApiEndpoint<
   }
 
   /**
-   * @summary Reads one resource by numeric id using the same endpoint pattern as the class examples.
+   * @summary Reads one resource by numeric id using the configured endpoint pattern.
    */
   getById(id: number): Observable<TEntity> {
     return this.http.get<TResource>(`${this.endpointUrl}/${id}`).pipe(
@@ -64,15 +68,6 @@ export abstract class BaseApiEndpoint<
       map((updated) => this.assembler.toEntityFromResource(updated)),
       catchError(this.handleError('Failed to update entity')),
     );
-  }
-
-  /**
-   * @summary Deletes one resource by numeric id from the configured endpoint.
-   */
-  delete(id: number): Observable<void> {
-    return this.http
-      .delete<void>(`${this.endpointUrl}/${id}`)
-      .pipe(catchError(this.handleError(`Failed to delete entity with id: ${id}`)));
   }
 
   protected handleError(operation: string) {
