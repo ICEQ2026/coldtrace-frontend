@@ -14,8 +14,15 @@
   flex-direction: column;
   height: 100vh;
   justify-content: space-between;
+  -ms-overflow-style: none;
   overflow: auto;
   padding: 28px 0 24px;
+  scrollbar-width: none;
+}
+
+.side-panel::-webkit-scrollbar {
+  height: 0;
+  width: 0;
 }
 
 .brand-section,
