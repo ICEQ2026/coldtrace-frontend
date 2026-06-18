@@ -79,3 +79,32 @@ app-operational-history
   max-width: none !important;
   width: 100% !important;
 }
+
+html body app-monthly-report .page-heading {
+  align-items: center !important;
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-card) !important;
+  display: flex !important;
+  gap: 18px !important;
+  justify-content: space-between !important;
+  margin: 0 0 18px !important;
+  min-height: 96px !important;
+  padding: 18px 22px !important;
+}
+
+html body app-monthly-report .page-heading .heading-actions {
+  align-items: center !important;
+  align-self: center !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  height: auto !important;
+  justify-content: flex-end !important;
+  margin: 0 0 0 auto !important;
+  position: static !important;
+  right: auto !important;
+  top: auto !important;
+  z-index: auto !important;
+}
