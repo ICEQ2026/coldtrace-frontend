@@ -252,7 +252,7 @@ Product UI text is kept in English by default, with Spanish support where transl
 
 ## API Integration
 
-Development uses the Spring Boot backend through Angular's proxy configuration.
+Development and production builds call the deployed Spring Boot backend directly.
 
 The frontend reads endpoint paths from:
 
@@ -261,13 +261,7 @@ src/environments/environment.development.ts
 src/environments/environment.ts
 ```
 
-The local backend URL is:
-
-```txt
-http://localhost:8080
-```
-
-Production is configured to use the hosted backend:
+The hosted backend URL is:
 
 ```txt
 https://coldtrace-platform-dtbzbm7bta-uc.a.run.app

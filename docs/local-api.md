@@ -13,19 +13,7 @@ src/environments/environment.development.ts
 src/environments/environment.ts
 ```
 
-Development keeps `platformProviderApiBaseUrl` empty and uses Angular's proxy configuration:
-
-```txt
-proxy.conf.json
-```
-
-The proxy forwards API calls to:
-
-```txt
-http://localhost:8080
-```
-
-Production builds point to the deployed backend:
+Development and production builds point to the deployed backend:
 
 ```txt
 https://coldtrace-platform-dtbzbm7bta-uc.a.run.app
@@ -34,13 +22,6 @@ https://coldtrace-platform-dtbzbm7bta-uc.a.run.app
 ---
 
 ## Run Locally
-
-Start the Spring Boot backend:
-
-```bash
-cd ../coldtrace-platform
-./mvnw spring-boot:run
-```
 
 Start the Angular application:
 

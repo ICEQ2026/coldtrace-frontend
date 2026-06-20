@@ -4,38 +4,6 @@
   "outputDirectory": "dist/coldtrace-frontend/browser",
   "rewrites": [
     {
-      "source": "/roles",
-      "destination": "https://coldtrace-platform-dtbzbm7bta-uc.a.run.app/roles"
-    },
-    {
-      "source": "/roles/:path*",
-      "destination": "https://coldtrace-platform-dtbzbm7bta-uc.a.run.app/roles/:path*"
-    },
-    {
-      "source": "/organization-sign-ups",
-      "destination": "https://coldtrace-platform-dtbzbm7bta-uc.a.run.app/organization-sign-ups"
-    },
-    {
-      "source": "/organization-sign-ups/:path*",
-      "destination": "https://coldtrace-platform-dtbzbm7bta-uc.a.run.app/organization-sign-ups/:path*"
-    },
-    {
-      "source": "/organizations",
-      "destination": "https://coldtrace-platform-dtbzbm7bta-uc.a.run.app/organizations"
-    },
-    {
-      "source": "/organizations/:path*",
-      "destination": "https://coldtrace-platform-dtbzbm7bta-uc.a.run.app/organizations/:path*"
-    },
-    {
-      "source": "/password-reset-requests",
-      "destination": "https://coldtrace-platform-dtbzbm7bta-uc.a.run.app/password-reset-requests"
-    },
-    {
-      "source": "/password-reset-requests/:path*",
-      "destination": "https://coldtrace-platform-dtbzbm7bta-uc.a.run.app/password-reset-requests/:path*"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

@@ -70,13 +70,7 @@ Open:
 http://localhost:4200
 ```
 
-During local development, Angular uses `proxy.conf.json` and forwards API calls to:
-
-```txt
-http://localhost:8080
-```
-
-Production builds use:
+During local development and production builds, Angular calls the deployed backend directly:
 
 ```txt
 https://coldtrace-platform-dtbzbm7bta-uc.a.run.app
