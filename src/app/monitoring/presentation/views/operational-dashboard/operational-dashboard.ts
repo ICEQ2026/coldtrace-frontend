@@ -27,6 +27,7 @@ import { RecentAlert } from '../../../domain/model/recent-alert.entity';
 import { SensorReading } from '../../../domain/model/sensor-reading.entity';
 import { StorageDistributionItem } from '../../../domain/model/storage-distribution-item.entity';
 import { TemperaturePoint } from '../../../domain/model/temperature-point.entity';
+import { DashboardAiAssistant } from '../../components/dashboard-ai-assistant/dashboard-ai-assistant';
 import { IncidentsChart } from '../../components/incidents-chart/incidents-chart';
 import { MaintenanceList } from '../../components/maintenance-list/maintenance-list';
 import { RecentAlerts } from '../../components/recent-alerts/recent-alerts';
@@ -53,6 +54,7 @@ type ThermalState = 'frozen' | 'refrigerated' | 'ambient' | 'noData';
     MatIconModule,
     MatProgressSpinnerModule,
     StatCard,
+    DashboardAiAssistant,
     TemperatureChart,
     StorageDistribution,
     MaintenanceList,
@@ -122,6 +124,11 @@ export class OperationalDashboard implements OnInit {
   protected readonly criticalAlertsKpi = computed(() => this.buildCriticalAlertsKpi());
   protected readonly activeSensorsKpi = computed(() => this.buildActiveSensorsKpi());
   protected readonly incidentsKpi = computed(() => this.buildIncidentsKpi());
+  protected readonly thermalCompliancePercent = computed(() => {
+    return this.thermalComplianceFor(
+      this.organizationReadings().filter((reading) => reading.temperature !== null),
+    );
+  });
   protected readonly thermalComplianceKpi = computed(() => this.buildThermalComplianceKpi());
   protected readonly temperaturePoints = computed(() => this.buildTemperaturePoints());
   protected readonly storageDistribution = computed(() => this.buildStorageDistribution());
@@ -360,7 +367,7 @@ export class OperationalDashboard implements OnInit {
     const thermalReadings = this.organizationReadings().filter(
       (reading) => reading.temperature !== null,
     );
-    const compliance = this.thermalComplianceFor(thermalReadings);
+    const compliance = this.thermalCompliancePercent();
 
     return this.kpi({
       id: 5,

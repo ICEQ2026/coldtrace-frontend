@@ -42,6 +42,7 @@ export class Layout implements OnInit {
     '/identity-access/reports',
     '/identity-access/users',
     '/identity-access/roles-permissions',
+    '/settings',
     '/alerts',
     '/monitoring',
     '/reports',
@@ -81,12 +82,20 @@ export class Layout implements OnInit {
       return 'maintenance.technical-service.page-title';
     }
 
+    if (currentUrl.includes('/settings/billing')) {
+      return 'dashboard-shell.nav-billing';
+    }
+
     if (currentUrl.includes('/monitoring/assets')) {
       return 'monitoring.asset-monitoring.page-title';
     }
 
     if (currentUrl.includes('/monitoring')) {
       return 'monitoring.operational.title';
+    }
+
+    if (currentUrl.includes('/alerts/ai-guidance')) {
+      return 'dashboard-shell.nav-ai-guidance';
     }
 
     if (currentUrl.includes('/alerts/notifications')) {
@@ -126,6 +135,10 @@ export class Layout implements OnInit {
 
     if (currentUrl.includes('/reports/compliance')) {
       return 'reports.compliance.page-title';
+    }
+
+    if (currentUrl.includes('/reports/ai-summary')) {
+      return 'dashboard-shell.nav-ai-summary';
     }
 
     if (currentUrl.includes('/reports/findings')) {

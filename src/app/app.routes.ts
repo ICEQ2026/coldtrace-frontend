@@ -18,6 +18,8 @@ const maintenanceManagementRoutes = () =>
   import('./maintenance-management/presentation/maintenance-management.routes').then(
     (m) => m.maintenanceManagementRoutes,
   );
+const billingRoutes = () =>
+  import('./billing/presentation/billing.routes').then((m) => m.billingRoutes);
 const pageNotFound = () =>
   import('./shared/presentation/views/page-not-found/page-not-found').then((m) => m.PageNotFound);
 
@@ -31,6 +33,7 @@ export const routes: Routes = [
   { path: 'reports', loadChildren: reportsRoutes },
   { path: 'alerts', loadChildren: alertsRoutes },
   { path: 'maintenance', loadChildren: maintenanceManagementRoutes },
+  { path: 'settings', loadChildren: billingRoutes },
   { path: '', redirectTo: '/identity-access/sign-in', pathMatch: 'full' },
   { path: '**', loadComponent: pageNotFound, title: 'ColdTrace - Page Not Found' },
 ];

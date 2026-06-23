@@ -135,6 +135,27 @@ export class DashboardShell {
           labelKey: 'dashboard-shell.nav-technical-service',
           visible: true,
         },
+        {
+          path: '/settings/billing',
+          labelKey: 'dashboard-shell.nav-billing',
+          visible: true,
+        },
+      ];
+    }
+
+    if (this.isAlertsRoute()) {
+      return [
+        { path: '/alerts/incidents', labelKey: 'dashboard-shell.nav-incidents', visible: true },
+        {
+          path: '/alerts/ai-guidance',
+          labelKey: 'dashboard-shell.nav-ai-guidance',
+          visible: true,
+        },
+        {
+          path: '/alerts/notifications',
+          labelKey: 'dashboard-shell.nav-notifications',
+          visible: true,
+        },
       ];
     }
 
@@ -144,6 +165,7 @@ export class DashboardShell {
         { path: '/reports/monthly', labelKey: 'dashboard-shell.nav-monthly-report', visible: true },
         { path: '/reports/history', labelKey: 'dashboard-shell.nav-history', visible: true },
         { path: '/reports/compliance', labelKey: 'dashboard-shell.nav-compliance', visible: true },
+        { path: '/reports/ai-summary', labelKey: 'dashboard-shell.nav-ai-summary', visible: true },
         { path: '/reports/findings', labelKey: 'dashboard-shell.nav-findings', visible: true },
         {
           path: '/reports/audit-evidence',
@@ -202,13 +224,18 @@ export class DashboardShell {
     return url.includes('/reports') || url.includes('/identity-access/reports');
   }
 
+  protected isAlertsRoute(): boolean {
+    return this.router.url.includes('/alerts');
+  }
+
   protected isSettingsRoute(): boolean {
     const url = this.router.url;
 
     return (
       url.includes('/asset-management/safety-ranges') ||
       url.includes('/asset-management/operational-parameters') ||
-      url.includes('/maintenance')
+      url.includes('/maintenance') ||
+      url.includes('/settings')
     );
   }
 }

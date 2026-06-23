@@ -158,6 +158,14 @@
               >
                 {{ 'dashboard-shell.nav-technical-service' | translate }}
               </a>
+              <a
+                class="sub-menu-link"
+                routerLink="/settings/billing"
+                [queryParams]="contextQueryParams"
+                routerLinkActive="active"
+              >
+                {{ 'dashboard-shell.nav-billing' | translate }}
+              </a>
             </div>
           }
         </div>
@@ -211,6 +219,14 @@
                 routerLinkActive="active"
               >
                 {{ 'dashboard-shell.nav-compliance' | translate }}
+              </a>
+              <a
+                class="sub-menu-link"
+                routerLink="/reports/ai-summary"
+                [queryParams]="contextQueryParams"
+                routerLinkActive="active"
+              >
+                {{ 'dashboard-shell.nav-ai-summary' | translate }}
               </a>
               <a
                 class="sub-menu-link"
