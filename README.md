@@ -82,24 +82,6 @@ Production builds call the deployed backend:
 https://coldtrace-platform-dtbzbm7bta-uc.a.run.app
 ```
 
-### Social OAuth Configuration
-
-Google and Apple browser OAuth settings are runtime configuration and are not committed to source control.
-
-For local development, copy the template and fill the provider-console values:
-
-```bash
-cp public/config/oauth.config.example.json public/config/oauth.config.json
-```
-
-For deployments, configure these environment variables before `npm run build`:
-
-```txt
-GOOGLE_OAUTH_CLIENT_ID
-APPLE_OAUTH_CLIENT_ID
-APPLE_OAUTH_REDIRECT_URI
-```
-
 ## Build and Test
 
 ```bash

@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { SocialTokenExchangeRequest } from './authentication-response';
-import { OAuthRuntimeConfigService } from './oauth-runtime-config.service';
 
 interface AppleAuthorizationResponse {
   authorization?: {
@@ -46,62 +46,62 @@ declare global {
  */
 @Injectable({ providedIn: 'root' })
 export class AppleIdentityService {
-  private readonly oauthRuntimeConfig = inject(OAuthRuntimeConfigService);
   private scriptLoading?: Promise<void>;
+
+  get configured(): boolean {
+    return !!environment.appleOAuthClientId && !!environment.appleOAuthRedirectUri;
+  }
 
   signIn(
     onCredential: (credential: AppleIdentityCredential) => void,
     onUnavailable: () => void,
   ): void {
-    void this.startSignIn(onCredential, onUnavailable).catch(() => onUnavailable());
-  }
-
-  private async startSignIn(
-    onCredential: (credential: AppleIdentityCredential) => void,
-    onUnavailable: () => void,
-  ): Promise<void> {
-    const { appleOAuthClientId, appleOAuthRedirectUri } = await this.oauthRuntimeConfig.load();
-
-    if (!appleOAuthClientId || !appleOAuthRedirectUri) {
+    if (!this.configured) {
       onUnavailable();
       return;
     }
 
     const nonce = this.createNonce();
-    await this.loadScript();
+    this.loadScript()
+      .then(() => {
+        const appleAuth = window.AppleID?.auth;
 
-    const appleAuth = window.AppleID?.auth;
+        if (!appleAuth) {
+          onUnavailable();
+          return;
+        }
 
-    if (!appleAuth) {
-      onUnavailable();
-      return;
-    }
+        appleAuth.init({
+          clientId: environment.appleOAuthClientId,
+          scope: 'name email',
+          redirectURI: environment.appleOAuthRedirectUri,
+          state: 'coldtrace-social-auth',
+          nonce,
+          usePopup: true,
+        });
 
-    appleAuth.init({
-      clientId: appleOAuthClientId,
-      scope: 'name email',
-      redirectURI: appleOAuthRedirectUri,
-      state: 'coldtrace-social-auth',
-      nonce,
-      usePopup: true,
-    });
+        appleAuth
+          .signIn()
+          .then((response) => {
+            const authorizationCode = response.authorization?.code?.trim();
+            const idToken = response.authorization?.id_token?.trim();
 
-    const response = await appleAuth.signIn();
-    const authorizationCode = response.authorization?.code?.trim();
-    const idToken = response.authorization?.id_token?.trim();
+            if (!authorizationCode && !idToken) {
+              onUnavailable();
+              return;
+            }
 
-    if (!authorizationCode && !idToken) {
-      onUnavailable();
-      return;
-    }
-
-    onCredential({
-      ...(idToken ? { idToken } : {}),
-      ...(authorizationCode ? { authorizationCode } : {}),
-      redirectUri: appleOAuthRedirectUri,
-      nonce,
-      ...this.getUserProfile(response),
-    });
+            onCredential({
+              ...(idToken ? { idToken } : {}),
+              ...(authorizationCode ? { authorizationCode } : {}),
+              redirectUri: environment.appleOAuthRedirectUri,
+              nonce,
+              ...this.getUserProfile(response),
+            });
+          })
+          .catch(() => onUnavailable());
+      })
+      .catch(() => onUnavailable());
   }
 
   private loadScript(): Promise<void> {

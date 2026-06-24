@@ -40,7 +40,6 @@ yarn-error.log
 testem.log
 /typings
 __screenshots__/
-public/config/oauth.config.json
 
 # System files
 .DS_Store

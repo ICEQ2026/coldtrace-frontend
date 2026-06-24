@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { environment } from '../../../environments/environment';
 import { SocialTokenExchangeRequest } from './authentication-response';
-import { OAuthRuntimeConfigService } from './oauth-runtime-config.service';
 
 interface GoogleCodeResponse {
   code?: string;
@@ -39,55 +39,51 @@ declare global {
  */
 @Injectable({ providedIn: 'root' })
 export class GoogleIdentityService {
-  private readonly oauthRuntimeConfig = inject(OAuthRuntimeConfigService);
   private scriptLoading?: Promise<void>;
+
+  get configured(): boolean {
+    return !!environment.googleOAuthClientId;
+  }
 
   signIn(
     onCredential: (credential: GoogleIdentityCredential) => void,
     onUnavailable: () => void,
   ): void {
-    void this.startSignIn(onCredential, onUnavailable).catch(() => onUnavailable());
-  }
-
-  private async startSignIn(
-    onCredential: (credential: GoogleIdentityCredential) => void,
-    onUnavailable: () => void,
-  ): Promise<void> {
-    const { googleOAuthClientId } = await this.oauthRuntimeConfig.load();
-
-    if (!googleOAuthClientId) {
+    if (!this.configured) {
       onUnavailable();
       return;
     }
 
-    await this.loadScript();
+    this.loadScript()
+      .then(() => {
+        const googleOAuth = window.google?.accounts?.oauth2;
 
-    const googleOAuth = window.google?.accounts?.oauth2;
+        if (!googleOAuth) {
+          onUnavailable();
+          return;
+        }
 
-    if (!googleOAuth) {
-      onUnavailable();
-      return;
-    }
-
-    googleOAuth
-      .initCodeClient({
-        client_id: googleOAuthClientId,
-        scope: 'openid email profile',
-        ux_mode: 'popup',
-        include_granted_scopes: true,
-        callback: (response) => {
-          if (!response.code || response.error) {
-            onUnavailable();
-            return;
-          }
-          onCredential({
-            authorizationCode: response.code,
-            redirectUri: window.location.origin,
-          });
-        },
-        error_callback: onUnavailable,
+        googleOAuth
+          .initCodeClient({
+            client_id: environment.googleOAuthClientId,
+            scope: 'openid email profile',
+            ux_mode: 'popup',
+            include_granted_scopes: true,
+            callback: (response) => {
+              if (!response.code || response.error) {
+                onUnavailable();
+                return;
+              }
+              onCredential({
+                authorizationCode: response.code,
+                redirectUri: window.location.origin,
+              });
+            },
+            error_callback: onUnavailable,
+          })
+          .requestCode({ prompt: 'select_account' });
       })
-      .requestCode({ prompt: 'select_account' });
+      .catch(() => onUnavailable());
   }
 
   private loadScript(): Promise<void> {

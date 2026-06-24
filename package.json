@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node scripts/write-oauth-config.mjs && ng serve",
-    "build": "node scripts/write-oauth-config.mjs && ng build",
-    "watch": "node scripts/write-oauth-config.mjs && ng build --watch --configuration development",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
   "private": true,
