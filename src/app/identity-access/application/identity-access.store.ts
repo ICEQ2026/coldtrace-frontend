@@ -19,16 +19,6 @@ interface LoadOptions {
   force?: boolean;
 }
 
-interface DemoSessionContext {
-  organizationId?: number;
-  userId?: number;
-}
-
-interface DemoOrganizationUsers {
-  organization: Organization;
-  users: User[];
-}
-
 /**
  * @summary Manages identity access state and workflows for presentation components.
  */
@@ -50,7 +40,6 @@ export class IdentityAccessStore {
   private organizationsRequestInFlight = false;
   private rolesLoaded = false;
   private rolesRequestInFlight = false;
-  private demoSessionRequestInFlight = false;
   readonly manageAdministratorsPermissionKey = 'roles-permissions.permissions.manage-administrators';
   readonly manageUsersPermissionKey = 'roles-permissions.permissions.manage-users';
   readonly manageAssetsPermissionKey = 'roles-permissions.permissions.manage-assets';
@@ -221,23 +210,6 @@ export class IdentityAccessStore {
   }
 
   /**
-   * @summary Loads a seeded demo context while real authentication is not available.
-   */
-  loadDemoSession(context: DemoSessionContext = {}, onReady?: () => void): void {
-    if (this.currentUserId() || this.demoSessionRequestInFlight) {
-      return;
-    }
-
-    this.demoSessionRequestInFlight = true;
-    this.loadingSignal.set(true);
-    this.errorSignal.set(null);
-    this.identityAccessApi.getOrganizations().subscribe({
-      next: (organizations) => this.loadDemoOrganizationUsers(organizations, context, onReady),
-      error: (error) => this.handleDemoSessionError(error),
-    });
-  }
-
-  /**
    * @summary Stores the active user identifier and display name.
    */
   setCurrentUser(user: User): void {
@@ -310,20 +282,14 @@ export class IdentityAccessStore {
   }
 
   /**
-   * @summary Resolves the current user with the seeded demo fallback.
+   * @summary Resolves the current authenticated user from loaded organization users.
    */
   currentUserFrom(users: User[]): User | undefined {
     const currentUserId = this.currentUserId();
 
-    if (currentUserId) {
-      const currentUser = users.find(user => user.id === currentUserId);
-
-      if (currentUser) {
-        return currentUser;
-      }
-    }
-
-    return users.find(user => user.id === 1) ?? users[0];
+    return currentUserId
+      ? users.find(user => user.id === currentUserId)
+      : undefined;
   }
 
   /**
@@ -513,148 +479,6 @@ export class IdentityAccessStore {
       }),
       {},
     );
-  }
-
-  private loadDemoOrganizationUsers(
-    organizations: Organization[],
-    context: DemoSessionContext,
-    onReady?: () => void,
-  ): void {
-    this.organizationsSignal.set(organizations);
-    this.organizationsLoaded = true;
-    this.organizationsRequestInFlight = false;
-
-    const organization = this.demoOrganizationFrom(organizations, context.organizationId);
-
-    if (!organization) {
-      this.loadDemoUsersFromOrganizations(organizations, context, onReady);
-      return;
-    }
-
-    this.loadDemoUsersForOrganization(organization, organizations, context, onReady);
-  }
-
-  private loadDemoUsersForOrganization(
-    organization: Organization,
-    organizations: Organization[],
-    context: DemoSessionContext,
-    onReady?: () => void,
-  ): void {
-    this.setCurrentOrganization(organization);
-    this.identityAccessApi.getUsersForOrganization(organization.id).subscribe({
-      next: (users) => this.loadDemoRoles(users, organizations, context, onReady),
-      error: (error) => this.handleDemoSessionError(error),
-    });
-  }
-
-  private loadDemoUsersFromOrganizations(
-    organizations: Organization[],
-    context: DemoSessionContext,
-    onReady?: () => void,
-    index = 0,
-    fallback?: DemoOrganizationUsers,
-  ): void {
-    const organization = organizations[index];
-
-    if (!organization) {
-      if (fallback) {
-        this.setCurrentOrganization(fallback.organization);
-        this.loadDemoRoles(fallback.users, organizations, {}, onReady);
-        return;
-      }
-
-      this.finishDemoSessionLoading();
-      return;
-    }
-
-    this.identityAccessApi.getUsersForOrganization(organization.id).subscribe({
-      next: (users) => {
-        const nextFallback = fallback ?? (users.length ? { organization, users } : undefined);
-
-        if (this.requestedDemoUserFrom(users, context.userId)) {
-          this.setCurrentOrganization(organization);
-          this.loadDemoRoles(users, organizations, context, onReady);
-          return;
-        }
-
-        this.loadDemoUsersFromOrganizations(
-          organizations,
-          context,
-          onReady,
-          index + 1,
-          nextFallback,
-        );
-      },
-      error: (error) => this.handleDemoSessionError(error),
-    });
-  }
-
-  private loadDemoRoles(
-    users: User[],
-    organizations: Organization[],
-    context: DemoSessionContext,
-    onReady?: () => void,
-  ): void {
-    const organizationId = this.organizationScope.activeOrganizationId();
-    this.usersSignal.set(users);
-    this.usersLoadedForOrganizationId = organizationId;
-    this.usersRequestInFlightForOrganizationId = null;
-
-    const user = this.demoUserFrom(users, context.userId);
-
-    if (!user) {
-      this.finishDemoSessionLoading();
-      return;
-    }
-
-    this.setCurrentUser(user);
-    this.identityAccessApi.getRoles().subscribe({
-      next: (roles) => {
-        this.rolesSignal.set(roles);
-        this.rolesLoaded = true;
-        this.rolesRequestInFlight = false;
-        this.setCurrentContextFrom(users, roles, organizations);
-        this.finishDemoSessionLoading();
-
-        if (user) {
-          onReady?.();
-        }
-      },
-      error: (error) => this.handleDemoSessionError(error),
-    });
-  }
-
-  private demoOrganizationFrom(
-    organizations: Organization[],
-    organizationId?: number,
-  ): Organization | undefined {
-    if (!organizationId) {
-      return undefined;
-    }
-
-    return organizations.find(organization => organization.id === organizationId);
-  }
-
-  private demoUserFrom(users: User[], userId?: number): User | undefined {
-    if (userId) {
-      return users.find(user => user.id === userId) ?? users.find(user => user.id === 1) ?? users[0];
-    }
-
-    return users.find(user => user.id === 1) ?? users[0];
-  }
-
-  private requestedDemoUserFrom(users: User[], userId?: number): User | undefined {
-    return users.find(user => user.id === (userId ?? 1));
-  }
-
-  private handleDemoSessionError(error: Error): void {
-    this.errorSignal.set(error.message);
-    this.finishDemoSessionLoading();
-  }
-
-  private finishDemoSessionLoading(): void {
-    this.demoSessionRequestInFlight = false;
-    this.loadingSignal.set(false);
   }
 
   private permissionKeysFromRole(role: Role): string[] {
