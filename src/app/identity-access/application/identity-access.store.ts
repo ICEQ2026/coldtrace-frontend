@@ -1,4 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
+import { AuthSessionStore } from '../../shared/infrastructure/auth-session.store';
 import { OrganizationScopeStore } from '../../shared/infrastructure/organization-scope.store';
 import { Organization } from '../domain/model/organization.entity';
 import { PermissionAction } from '../domain/model/permission-action.enum';
@@ -134,6 +135,7 @@ export class IdentityAccessStore {
   constructor(
     private identityAccessApi: IdentityAccessApi,
     private organizationScope: OrganizationScopeStore,
+    private authSession: AuthSessionStore,
   ) {}
 
    /**
@@ -297,6 +299,7 @@ export class IdentityAccessStore {
    * @summary Clears the current user, role, and organization selection state.
    */
   clearCurrentUser(): void {
+    this.authSession.clear();
     this.currentUserIdSignal.set(null);
     this.currentUserNameSignal.set('');
     this.currentRoleLabelKeySignal.set('');

@@ -11,6 +11,13 @@ import {
   CreateOrganizationSignUpRequest,
   OrganizationSignUp,
 } from './organization-sign-ups-response';
+import {
+  AuthenticatedUser,
+  SignInRequest,
+  SocialOrganizationSignUpRequest,
+  SocialTokenExchangeRequest,
+} from './authentication-response';
+import { AuthenticationApiEndpoint } from './authentication-api-endpoint';
 import { OrganizationsApiEndpoint } from './organizations-api-endpoint';
 import { RolesApiEndpoint } from './roles-api-endpoint';
 import { UsersApiEndpoint } from './users-api-endpoint';
@@ -20,6 +27,7 @@ import { UsersApiEndpoint } from './users-api-endpoint';
  */
 @Injectable({ providedIn: 'root' })
 export class IdentityAccessApi extends BaseApi {
+  private readonly authenticationEndpoint: AuthenticationApiEndpoint;
   private readonly organizationSignUpsEndpoint: OrganizationSignUpsApiEndpoint;
   private readonly usersEndpoint: UsersApiEndpoint;
   private readonly organizationsEndpoint: OrganizationsApiEndpoint;
@@ -29,10 +37,42 @@ export class IdentityAccessApi extends BaseApi {
   constructor(httpClient: HttpClient, organizationScope: OrganizationScopeStore) {
     super();
     this.organizationScope = organizationScope;
+    this.authenticationEndpoint = new AuthenticationApiEndpoint(httpClient);
     this.organizationSignUpsEndpoint = new OrganizationSignUpsApiEndpoint(httpClient);
     this.usersEndpoint = new UsersApiEndpoint(httpClient, organizationScope);
     this.organizationsEndpoint = new OrganizationsApiEndpoint(httpClient);
     this.rolesEndpoint = new RolesApiEndpoint(httpClient);
+  }
+
+  /**
+   * @summary Authenticates a user with email and password.
+   */
+  signIn(request: SignInRequest): Observable<AuthenticatedUser> {
+    return this.authenticationEndpoint.signIn(request);
+  }
+
+  /**
+   * @summary Authenticates a user with a Google authorization response.
+   */
+  signInWithGoogle(request: SocialTokenExchangeRequest): Observable<AuthenticatedUser> {
+    return this.authenticationEndpoint.signInWithProvider('google', request);
+  }
+
+  /**
+   * @summary Authenticates a user with a Sign in with Apple authorization response.
+   */
+  signInWithApple(request: SocialTokenExchangeRequest): Observable<AuthenticatedUser> {
+    return this.authenticationEndpoint.signInWithProvider('apple', request);
+  }
+
+  /**
+   * @summary Creates an organization and authenticates the first user with a social provider.
+   */
+  createSocialOrganizationSignUp(
+    provider: 'google' | 'apple',
+    request: SocialOrganizationSignUpRequest,
+  ): Observable<AuthenticatedUser> {
+    return this.authenticationEndpoint.createSocialOrganizationSignUp(provider, request);
   }
 
   /**
@@ -65,8 +105,8 @@ export class IdentityAccessApi extends BaseApi {
   /**
    * @summary Persists a user through the API endpoint.
    */
-  createUser(user: User): Observable<User> {
-    return this.usersEndpoint.create(user);
+  createUser(user: User, password: string): Observable<User> {
+    return this.usersEndpoint.create(user, password);
   }
 
   /**
