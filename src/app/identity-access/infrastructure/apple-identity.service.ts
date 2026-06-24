@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { Injectable, inject } from '@angular/core';
 import { SocialTokenExchangeRequest } from './authentication-response';
+import { OAuthRuntimeConfigService } from './oauth-runtime-config.service';
 
 interface AppleAuthorizationResponse {
   authorization?: {
@@ -46,61 +46,62 @@ declare global {
  */
 @Injectable({ providedIn: 'root' })
 export class AppleIdentityService {
+  private readonly oauthRuntimeConfig = inject(OAuthRuntimeConfigService);
   private scriptLoading?: Promise<void>;
-
-  get configured(): boolean {
-    return !!environment.appleOAuthClientId && !!environment.appleOAuthRedirectUri;
-  }
 
   signIn(
     onCredential: (credential: AppleIdentityCredential) => void,
     onUnavailable: () => void,
   ): void {
-    if (!this.configured) {
+    void this.startSignIn(onCredential, onUnavailable).catch(() => onUnavailable());
+  }
+
+  private async startSignIn(
+    onCredential: (credential: AppleIdentityCredential) => void,
+    onUnavailable: () => void,
+  ): Promise<void> {
+    const { appleOAuthClientId, appleOAuthRedirectUri } = await this.oauthRuntimeConfig.load();
+
+    if (!appleOAuthClientId || !appleOAuthRedirectUri) {
       onUnavailable();
       return;
     }
 
     const nonce = this.createNonce();
-    this.loadScript()
-      .then(() => {
-        const appleAuth = window.AppleID?.auth;
+    await this.loadScript();
 
-        if (!appleAuth) {
-          onUnavailable();
-          return;
-        }
+    const appleAuth = window.AppleID?.auth;
 
-        appleAuth.init({
-          clientId: environment.appleOAuthClientId,
-          scope: 'name email',
-          redirectURI: environment.appleOAuthRedirectUri,
-          state: 'coldtrace-social-auth',
-          nonce,
-          usePopup: true,
-        });
+    if (!appleAuth) {
+      onUnavailable();
+      return;
+    }
 
-        appleAuth.signIn()
-          .then((response) => {
-            const authorizationCode = response.authorization?.code?.trim();
-            const idToken = response.authorization?.id_token?.trim();
+    appleAuth.init({
+      clientId: appleOAuthClientId,
+      scope: 'name email',
+      redirectURI: appleOAuthRedirectUri,
+      state: 'coldtrace-social-auth',
+      nonce,
+      usePopup: true,
+    });
 
-            if (!authorizationCode && !idToken) {
-              onUnavailable();
-              return;
-            }
+    const response = await appleAuth.signIn();
+    const authorizationCode = response.authorization?.code?.trim();
+    const idToken = response.authorization?.id_token?.trim();
 
-            onCredential({
-              ...(idToken ? { idToken } : {}),
-              ...(authorizationCode ? { authorizationCode } : {}),
-              redirectUri: environment.appleOAuthRedirectUri,
-              nonce,
-              ...this.getUserProfile(response),
-            });
-          })
-          .catch(() => onUnavailable());
-      })
-      .catch(() => onUnavailable());
+    if (!authorizationCode && !idToken) {
+      onUnavailable();
+      return;
+    }
+
+    onCredential({
+      ...(idToken ? { idToken } : {}),
+      ...(authorizationCode ? { authorizationCode } : {}),
+      redirectUri: appleOAuthRedirectUri,
+      nonce,
+      ...this.getUserProfile(response),
+    });
   }
 
   private loadScript(): Promise<void> {
@@ -124,7 +125,8 @@ export class AppleIdentityService {
       }
 
       const script = document.createElement('script');
-      script.src = 'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
+      script.src =
+        'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js';
       script.async = true;
       script.defer = true;
       script.onload = () => resolve();
@@ -135,12 +137,13 @@ export class AppleIdentityService {
     return this.scriptLoading;
   }
 
-  private getUserProfile(response: AppleAuthorizationResponse): Pick<AppleIdentityCredential, 'email' | 'fullName'> {
+  private getUserProfile(
+    response: AppleAuthorizationResponse,
+  ): Pick<AppleIdentityCredential, 'email' | 'fullName'> {
     const email = response.user?.email?.trim().toLowerCase();
-    const fullName = [
-      response.user?.name?.firstName?.trim(),
-      response.user?.name?.lastName?.trim(),
-    ].filter(Boolean).join(' ');
+    const fullName = [response.user?.name?.firstName?.trim(), response.user?.name?.lastName?.trim()]
+      .filter(Boolean)
+      .join(' ');
 
     return {
       ...(email ? { email } : {}),

@@ -70,10 +70,34 @@ Open:
 http://localhost:4200
 ```
 
-During local development and production builds, Angular calls the deployed backend directly:
+During local development, Angular calls the local Spring Boot backend:
+
+```txt
+http://localhost:8080
+```
+
+Production builds call the deployed backend:
 
 ```txt
 https://coldtrace-platform-dtbzbm7bta-uc.a.run.app
+```
+
+### Social OAuth Configuration
+
+Google and Apple browser OAuth settings are runtime configuration and are not committed to source control.
+
+For local development, copy the template and fill the provider-console values:
+
+```bash
+cp public/config/oauth.config.example.json public/config/oauth.config.json
+```
+
+For deployments, configure these environment variables before `npm run build`:
+
+```txt
+GOOGLE_OAUTH_CLIENT_ID
+APPLE_OAUTH_CLIENT_ID
+APPLE_OAUTH_REDIRECT_URI
 ```
 
 ## Build and Test
