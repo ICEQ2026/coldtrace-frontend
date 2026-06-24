@@ -14,6 +14,7 @@ import {
 import {
   AuthenticatedUser,
   SignInRequest,
+  SocialIdentityProfile,
   SocialOrganizationSignUpRequest,
   SocialTokenExchangeRequest,
 } from './authentication-response';
@@ -66,6 +67,16 @@ export class IdentityAccessApi extends BaseApi {
   }
 
   /**
+   * @summary Validates a social provider response and returns profile data for onboarding.
+   */
+  getSocialIdentityProfile(
+    provider: 'google' | 'apple',
+    request: SocialTokenExchangeRequest,
+  ): Observable<SocialIdentityProfile> {
+    return this.authenticationEndpoint.getSocialIdentityProfile(provider, request);
+  }
+
+  /**
    * @summary Creates an organization and authenticates the first user with a social provider.
    */
   createSocialOrganizationSignUp(
@@ -78,7 +89,9 @@ export class IdentityAccessApi extends BaseApi {
   /**
    * @summary Creates an organization and its first user through the backend sign-up endpoint.
    */
-  createOrganizationSignUp(request: CreateOrganizationSignUpRequest): Observable<OrganizationSignUp> {
+  createOrganizationSignUp(
+    request: CreateOrganizationSignUpRequest,
+  ): Observable<OrganizationSignUp> {
     return this.organizationSignUpsEndpoint.create(request);
   }
 
@@ -136,5 +149,4 @@ export class IdentityAccessApi extends BaseApi {
   getRoles(): Observable<Role[]> {
     return this.rolesEndpoint.getAll();
   }
-
 }

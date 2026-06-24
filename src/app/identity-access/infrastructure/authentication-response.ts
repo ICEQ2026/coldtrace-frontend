@@ -20,6 +20,15 @@ export interface SocialTokenExchangeRequest {
 }
 
 /**
+ * Validated social provider profile used to prefill organization sign-up.
+ */
+export interface SocialIdentityProfile {
+  idToken: string;
+  email: string;
+  fullName: string;
+}
+
+/**
  * @summary Request payload for social provider organization sign-up.
  */
 export interface SocialOrganizationSignUpRequest extends SocialTokenExchangeRequest {

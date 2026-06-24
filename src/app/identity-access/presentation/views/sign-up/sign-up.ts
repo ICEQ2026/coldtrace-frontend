@@ -1,10 +1,4 @@
-import {
-  Component,
-  NgZone,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, NgZone, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -14,9 +8,18 @@ import { IdentityAccessStore } from '../../../application/identity-access.store'
 import { Organization } from '../../../domain/model/organization.entity';
 import { Role } from '../../../domain/model/role.entity';
 import { User } from '../../../domain/model/user.entity';
-import { AuthenticatedUser } from '../../../infrastructure/authentication-response';
-import { AppleIdentityCredential, AppleIdentityService } from '../../../infrastructure/apple-identity.service';
-import { GoogleIdentityCredential, GoogleIdentityService } from '../../../infrastructure/google-identity.service';
+import {
+  AuthenticatedUser,
+  SocialIdentityProfile,
+} from '../../../infrastructure/authentication-response';
+import {
+  AppleIdentityCredential,
+  AppleIdentityService,
+} from '../../../infrastructure/apple-identity.service';
+import {
+  GoogleIdentityCredential,
+  GoogleIdentityService,
+} from '../../../infrastructure/google-identity.service';
 import { IdentityAccessApi } from '../../../infrastructure/identity-access-api';
 
 type SignUpFeedback =
@@ -117,7 +120,8 @@ export class SignUp {
     const { firstName, lastName } = this.getNameParts(this.signUpForm.controls.fullName.value);
 
     this.creating.set(true);
-    this.identityAccessApi.createOrganizationSignUp({
+    this.identityAccessApi
+      .createOrganizationSignUp({
         legalName: organizationName,
         commercialName: organizationName,
         contactEmail: email,
@@ -163,9 +167,12 @@ export class SignUp {
     }
 
     this.socialCreating.set(true);
-    this.identityAccessApi.createSocialOrganizationSignUp(credential.provider, {
+    this.identityAccessApi
+      .createSocialOrganizationSignUp(credential.provider, {
         ...(credential.idToken ? { idToken: credential.idToken } : {}),
-        ...(credential.authorizationCode ? { authorizationCode: credential.authorizationCode } : {}),
+        ...(credential.authorizationCode
+          ? { authorizationCode: credential.authorizationCode }
+          : {}),
         ...(credential.redirectUri ? { redirectUri: credential.redirectUri } : {}),
         ...(credential.nonce ? { nonce: credential.nonce } : {}),
         organizationName: this.socialSignUpForm.controls.organizationName.value.trim(),
@@ -197,7 +204,9 @@ export class SignUp {
     return control.invalid && (control.touched || this.submitted());
   }
 
-  protected hasSocialControlError(controlName: keyof typeof this.socialSignUpForm.controls): boolean {
+  protected hasSocialControlError(
+    controlName: keyof typeof this.socialSignUpForm.controls,
+  ): boolean {
     const control = this.socialSignUpForm.controls[controlName];
     return control.invalid && (control.touched || this.socialSubmitted());
   }
@@ -230,18 +239,41 @@ export class SignUp {
   }
 
   private startGoogleSignUp(credential: GoogleIdentityCredential): void {
+    this.creating.set(true);
+    this.identityAccessApi
+      .getSocialIdentityProfile('google', {
+        ...(credential.idToken ? { idToken: credential.idToken } : {}),
+        ...(credential.authorizationCode
+          ? { authorizationCode: credential.authorizationCode }
+          : {}),
+        ...(credential.redirectUri ? { redirectUri: credential.redirectUri } : {}),
+        ...(credential.nonce ? { nonce: credential.nonce } : {}),
+      })
+      .pipe(finalize(() => this.creating.set(false)))
+      .subscribe({
+        next: (profile) => this.openGoogleSocialSignUp(credential, profile),
+        error: (error) => this.handleSignUpError(error),
+      });
+  }
+
+  private openGoogleSocialSignUp(
+    credential: GoogleIdentityCredential,
+    profile: SocialIdentityProfile,
+  ): void {
+    const email = profile.email.trim().toLowerCase();
+    const fullName = profile.fullName.trim() || this.suggestNameFromEmail(email);
+
     this.pendingSocialCredential.set({
       provider: 'google',
-      ...(credential.idToken ? { idToken: credential.idToken } : {}),
-      ...(credential.authorizationCode ? { authorizationCode: credential.authorizationCode } : {}),
-      ...(credential.redirectUri ? { redirectUri: credential.redirectUri } : {}),
+      idToken: profile.idToken || credential.idToken,
       ...(credential.nonce ? { nonce: credential.nonce } : {}),
+      ...(email ? { email } : {}),
     });
     this.socialSubmitted.set(false);
     this.feedback.set('idle');
     this.socialSignUpForm.reset({
       organizationName: '',
-      fullName: '',
+      fullName,
       acceptedTerms: true,
     });
   }
@@ -272,9 +304,8 @@ export class SignUp {
   }
 
   private restoreSocialSignUpFromNavigation(): void {
-    const navigationState = (
-      this.router.getCurrentNavigation()?.extras.state ?? window.history.state
-    ) as SocialSignUpNavigationState;
+    const navigationState = (this.router.getCurrentNavigation()?.extras.state ??
+      window.history.state) as SocialSignUpNavigationState;
     const socialSignUp = navigationState.socialSignUp;
 
     if (!socialSignUp?.provider || !socialSignUp.credential) {
@@ -297,7 +328,9 @@ export class SignUp {
     }
   }
 
-  private hasSocialAuthorization(credential: GoogleIdentityCredential | AppleIdentityCredential): boolean {
+  private hasSocialAuthorization(
+    credential: GoogleIdentityCredential | AppleIdentityCredential,
+  ): boolean {
     return !!credential.idToken || !!credential.authorizationCode;
   }
 
@@ -376,7 +409,8 @@ export class SignUp {
     try {
       const claims = this.decodeJwtPayload(idToken);
       const email = this.getTextClaim(claims, 'email').toLowerCase();
-      const fullName = this.getTextClaim(claims, 'name') ||
+      const fullName =
+        this.getTextClaim(claims, 'name') ||
         [this.getTextClaim(claims, 'given_name'), this.getTextClaim(claims, 'family_name')]
           .filter(Boolean)
           .join(' ') ||
@@ -393,9 +427,8 @@ export class SignUp {
       ? this.getSocialProfileFromIdToken(credential.idToken)
       : { email: '', fullName: '' };
     const email = (credential.email || tokenProfile.email).trim().toLowerCase();
-    const fullName = credential.fullName ||
-      tokenProfile.fullName ||
-      this.suggestNameFromEmail(email);
+    const fullName =
+      credential.fullName || tokenProfile.fullName || this.suggestNameFromEmail(email);
 
     return { email, fullName };
   }
@@ -406,7 +439,7 @@ export class SignUp {
       throw new Error('Invalid ID token');
     }
     const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
-    const padded = base64.padEnd(base64.length + ((4 - base64.length % 4) % 4), '=');
+    const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
     const binary = atob(padded);
     const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
     return JSON.parse(new TextDecoder().decode(bytes)) as Record<string, unknown>;

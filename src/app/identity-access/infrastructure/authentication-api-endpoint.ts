@@ -6,6 +6,7 @@ import {
   AuthenticatedUser,
   AuthenticatedUserResource,
   SignInRequest,
+  SocialIdentityProfile,
   SocialOrganizationSignUpRequest,
   SocialTokenExchangeRequest,
 } from './authentication-response';
@@ -20,7 +21,8 @@ export class AuthenticationApiEndpoint {
   constructor(private http: HttpClient) {}
 
   signIn(request: SignInRequest): Observable<AuthenticatedUser> {
-    return this.http.post<AuthenticatedUserResource>(`${this.endpointUrl}/sign-in`, request)
+    return this.http
+      .post<AuthenticatedUserResource>(`${this.endpointUrl}/sign-in`, request)
       .pipe(map((resource) => this.toAuthenticatedUser(resource)));
   }
 
@@ -29,8 +31,21 @@ export class AuthenticationApiEndpoint {
     request: SocialTokenExchangeRequest,
   ): Observable<AuthenticatedUser> {
     return this.http
-      .post<AuthenticatedUserResource>(`${this.endpointUrl}/social/${provider}/token-exchange`, request)
+      .post<AuthenticatedUserResource>(
+        `${this.endpointUrl}/social/${provider}/token-exchange`,
+        request,
+      )
       .pipe(map((resource) => this.toAuthenticatedUser(resource)));
+  }
+
+  getSocialIdentityProfile(
+    provider: 'google' | 'apple',
+    request: SocialTokenExchangeRequest,
+  ): Observable<SocialIdentityProfile> {
+    return this.http.post<SocialIdentityProfile>(
+      `${this.endpointUrl}/social/${provider}/profile-preview`,
+      request,
+    );
   }
 
   createSocialOrganizationSignUp(
